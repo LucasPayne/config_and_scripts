@@ -1,0 +1,70 @@
+set editing-mode vi
+$if mode=vi
+    set keymap vi-command
+    Control-l: clear-screen
+    # Vim bindings
+    "ciw": "wbcw"
+    "diw": "wbdw"
+    "ci\"": "F\"lct\""
+    "ci(": "F(ldt)i"
+    "ci)": "F(ldt)i"
+    "dH": "d^"
+    "dL": "d$"
+    "cH": "c^"
+    "cL": "c$"
+
+    # Match line-editing from vimrc
+    "H": "^"
+    "L": "$"
+    # Vim-surround
+    "siw\"": "wbi\"jkea\"jkwbh"
+    "siw'": "wbi'jkea'jkwbh"
+    "siw(": "wbi(jkea)jkwbh"
+    "siw)": "wbi(jkea)jkwbh"
+    "ds\"": "F\"mtxf\"x`t"
+    "ds'": "F'mtxf'x`t"
+    "ds(": "F(mtxf)x`t"
+    "ds)": "F(mtxf)x`t"
+
+    "sL\"": "mti\"jkLa\"jk`t"
+    "sH\"": "mti\"jkHa\"jk`t"
+    "sL'": "mti'jkLa'jk`t"
+    "sH'": "mti'jkHa'jk`t"
+    "sL(": "mti(jkLa)jk`t"
+    "sH(": "mti(jkHa)jk`t"
+    "sL)": "mti(jkLa)jk`t"
+    "sH)": "mti(jkHa)jk`t"
+
+    "ss\"": "A\"jkI\"jkH"
+    "ss'": "A'jkI'jkH"
+    "ss(": "A)jkI(jkH"
+    "ss)": "A)jkI(jkH"
+    "ss$": "A)jkI$(jkH"
+    # Surround with $().
+    "siw$": "wbi$(jkea)jkwbhh"
+    "sL$": "mti$(jkLa)jk`t"
+    "sH$": "mti$(jkHa)jk`t"
+    "sL$": "mti$(jkLa)jk`t"
+    "sH$": "mti$(jkHa)jk`t"
+    # Todo: This isn't accurate, need to back-search for $(.
+    "ds$": "F$mtxxf)x`t"
+    # Add a preceding $ to parenthesis.
+    # Also could be useful for $$().
+    "cs($": "mtF(i$jk`t"
+    "cs)$": "mtF(i$jk`t"
+    # Todo: fix these.
+    # "cs'\"": "F\"r'mtf\"r'`t"
+    # "cs\"'": "F'r\"mtf'r\"`t"
+
+    # Todo:
+    # More complete text objects.
+    # C-A to start of line
+    # It could be useful for these commands to understand escape sequences.
+    # Ctrl-P, Ctrl-N history search.
+    # Yank with vim text objects.
+    # Ctrl-W (seems to work in bash, not in e.g. python readline).
+
+    set keymap vi-insert
+    Control-l: clear-screen
+    "jk": vi-movement-mode
+$endif

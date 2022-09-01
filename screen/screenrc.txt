@@ -1,0 +1,72 @@
+# GNU screen screenrc.
+
+# Enable alternate screen support.
+# (So vim can restore screen contents.)
+altscreen on
+
+# Set TERM variable.
+term "screen-256color"
+
+# Change command key.
+escape ^Jj
+# escape ^Aa
+# Navigate windows
+bind j prev
+bind k next
+bind ^j prev
+bind ^k next
+
+# TODO: Can Ctrl-apostrophe be bound? Ctrl-V Ctrl-' gives ' in shell and vim.
+# bindkey -t ^' windowlist
+# bindkey -t ^@ windowlist
+# bindkey ^m windowlist
+# bind "^'" windowlist
+
+bind ^r source ~/.screenrc
+
+# Easier to type than shift-A.
+bind r title
+
+# bindkey ; :
+
+# # Window resizing (convenient for an editor with shell below).
+# bind 8 resize 10
+# bind 9 eval "resize max" "resize -10"
+# bind 0 resize max
+
+# Kill a window
+bind x kill # Overwrites lock screen command.
+# Close a split.
+bind X remove
+
+# Status line
+#------------------------------------------------------------
+# https://superuser.com/questions/51988/what-is-the-best-gnu-screen-taskbar-youve-used-seen
+# hardstatus string "%{= KW} %H [%`] %{= Kw}|%{-} %-Lw%{= bW}%n%f %t%{-}%+Lw %=%C%a %Y-%M-%d"
+
+# backtick 0 30 30 sh -c 'screen -ls | grep --color=no -o "$PPID[^[:space:]]*"'
+# backtick 0 30 30 sh -c 'oz'
+
+# todo: Don't source bashrc constantly...
+# backtick 0 30 30 bash -c 'printf " $TICKET_ACTIVE" ; source ~/.bashrc ; tconf -q desc >/dev/null && echo ": $(tconf -q desc)"'
+hardstatus alwayslastline "%` %-Lw %t %+Lw"
+
+# hardstatus alwayslastline "%{b kw}%H %{r}%1` %{w}| %{g}%c %{w}| %{y}%d.%m.%Y %{w}| %{g}%l %{w}| %{-b kw}%u %-Lw%{= rW}%50> %n%f %t %{-}%+Lw%<"
+
+# List of all tabs
+# hardstatus string "%` %{= KW} %{= Kw}|%{-} %-Lw%{= bW}%n%f %t%{-}%+Lw %=%C%a %Y-%M-%d"
+
+# Just list the name of the tab.
+hardstatus string "%{= KW} %{= Kw}%` |%{-} %t %=%C%a %Y-%M-%d"
+# hardstatus string "%` %{= KW} %{= Kw}|%{-} %t %=%C%a %Y-%M-%d"
+
+#------------------------------------------------------------
+
+# Layouts
+# https://superuser.com/questions/69816/how-to-keep-windows-split-after-detaching-reattaching-gnu-screen/516822#516822
+layout save default
+
+
+# Captions
+# caption always "%{= g}[ %{G}${USER}@%H%{g} ][%= %{= w}%?%-Lw%?%{r}(%{W}%n*%f %t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c:%s %{g}][%{Y}%l%{g}]%{=b C}%{W}"
+

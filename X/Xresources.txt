@@ -1,0 +1,140 @@
+! urxvt
+URxvt*buffered: true
+URxvt*cursorBlink: true
+URxvt*underlineColor: green
+URxvt*depth: 32
+URxvt*borderless: 1
+URxvt*scrollBar: false
+URxvt*loginShell: true
+Urxvt*secondaryScroll:  true    # Enable Shift-PageUp/Down in screen
+URxvt*saveLines: 5000
+URxvt*termName: rxvt-unicode
+URxvt.perl-ext-common: default,matcher,font-size
+! URxvt.perl-ext-common: default,matcher,solarized
+! URxvt.keysym.Mod4-c:        perl:solarized:toggle
+! URxvt.solarized.default:    light
+URxvt.urlLauncher: firefox
+URxvt.matcher.button: 1
+
+! Colors
+! URxvt*background: black
+! URxvt*background: rgba:0000/0000/0000/ffff
+! URxvt*foreground: white
+
+! Font
+! URxvt.font: xft:terminus:size=12
+! 6x13 <--- good
+! URxvt.font: -Misc-Fixed-Medium-R-SemiCondensed--13-120-75-75-C-60-ISO10646-1
+
+! http://marklodato.github.io/2014/02/23/fixed-fonts.html
+! https://en.wikipedia.org/wiki/Fixed_(typeface)
+
+! 9x15
+! URxvt.font: -Misc-Fixed-Medium-R-Normal--15-140-75-75-C-90-ISO10646-1
+! 7x14
+! URxvt.font: -Misc-Fixed-Medium-R-Normal--14-130-75-75-C-70-ISO10646-1
+
+! 5x7 <--- good, very small
+! URxvt.font: -Misc-Fixed-Medium-R-Normal--7-70-75-75-C-50-ISO10646-1
+
+
+! 7x13 <--- good
+URxvt.font: -Misc-Fixed-Medium-R-Normal--13-120-75-75-C-70-ISO10646-1
+
+
+
+
+! Cursor
+URxvt.cursorBlink:          true
+URxvt.cursorColor:          #657b83
+URxvt.cursorUnderline:      false
+
+! Pointer
+URxvt.pointerBlank:         true
+
+!!Source http://github.com/altercation/solarized
+
+! Shell background and foreground
+! *background: #002b36
+! *foreground: #657b83
+*background: #000000
+*foreground: #ffffff
+
+! Solarized
+!!*fading: 40
+*fadeColor: #002b36
+*cursorColor: #93a1a1
+*pointerColorBackground: #586e75
+*pointerColorForeground: #93a1a1
+
+!! black dark/light
+! *color0: [95]#073642
+! *color8: [95]#002b36
+*color0: #073642
+*color8: #002b36
+
+!! red dark/light
+*color1: #dc322f
+*color9: #cb4b16
+
+!! green dark/light
+*color2: #859900
+*color10: #586e75
+
+!! yellow dark/light
+*color3: #b58900
+*color11: #657b83
+
+!! blue dark/light
+*color4: #268bd2
+*color12: #839496
+
+!! magenta dark/light
+*color5: #d33682
+*color13: #6c71c4
+
+!! cyan dark/light
+*color6: #2aa198
+*color14: #93a1a1
+
+!! white dark/light
+! *color7: #eee8d5
+! *color15: #fdf6e3
+
+! Bluish
+*color7: #D6D6D1
+*color15: #E7ECEE
+
+! Light yellow
+! *color7: #DEDAAF
+! *color15: #ECE8CB
+
+
+!! Lucius Light
+! ---Doesnt work with screen by default?
+! *background:  #eeeeee
+! *foreground:  #444444
+! *cursorColor: #5f87af
+! *color0:      #444444
+! *color8:      #9e9e9e
+! *color1:      #af0000
+! *color9:      #af0000
+! *color2:      #008700
+! *color10:     #008700
+! *color3:      #af5f00
+! *color11:     #af5f00
+! *color4:      #005faf
+! *color12:     #005faf
+! *color5:      #870087
+! *color13:     #870087
+! *color6:      #008787
+! *color14:     #008787
+! *color7:      #dadada
+! *color15:     #eeeeee
+
+
+URxvt.keysym.C-S-Left:   font-size:reset
+
+! https://stackoverflow.com/questions/16359878/how-to-map-shift-enter
+URxvt.keysym.S-Return:     \033[13;2u
+
