@@ -1,0 +1,16 @@
+#!/bin/sh
+# Fzf wrapper with global bindings.
+#
+# NOTE:
+#    fzf_raw must be in the path. This is the regular fzf.
+
+# Is there a way to map Alt-shift-j and Alt-shift-k?
+# (To page down, page up.)
+
+fzf_raw --bind 'alt-q:abort' \
+        --bind 'alt-j:down' \
+        --bind 'alt-k:up' \
+        --bind 'alt-space:toggle+down' \
+        --bind 'ctrl-d:half-page-down' \
+        --bind 'ctrl-u:half-page-up' \
+         "$@"

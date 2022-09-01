@@ -29,5 +29,5 @@ git mv "__tmp/$name" "repos/$name"
 rm -rf __tmp
 
 # By default enable the plugin.
-ln -s "repos/$name" bundle
+ln -s -r "repos/$name" "bundle/$name"
 echo "Enabled plugin \"$name\""
