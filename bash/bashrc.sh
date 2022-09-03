@@ -14,6 +14,8 @@ alias .sb="source ~/.bashrc"
 
 source "$CONFIG_DIR/scripts/fzf_tools/fzf_tools.sh"
 
+# Risk it...
+alias sudo='sudo env PATH=$PATH'
 
 set -o vi
 
@@ -63,6 +65,7 @@ cursor_row () {
     IFS=';' read -sdR -p $'\E[6n' ROW COL
     echo "${ROW#*[}"
 }
+
 
 #>>>
 
@@ -170,17 +173,9 @@ vimattachserver () {
 #>>>
 
 
-# Readline bindings
+# Navigation
 #    ...
 #<<<
-
-# Shortcut to reopen vim session.
-bind -m vi-insert '"\ew": "\C-uv\n"'
-bind -m vi-command '"\ew": "\C-uv\n"'
-
-#>>>
-
-
 __fzf_navigate () {
     local dir="$1"
     local start_query_string="$2"
@@ -474,15 +469,6 @@ EOF
         fzf_navigate "$dir"
     fi
 }
-# Navigate forward
-bind -m vi-command '"\el": "\C-u\C-lfzf_navigate './'\n"'
-bind -m vi-insert '"\el": "\C-u\C-lfzf_navigate './'\n"'
-# Navigate forward, begin in recursive mode.
-bind -m vi-command '"\er": "\C-u\C-lfzf_navigate './' --recursive\n"'
-bind -m vi-insert '"\er": "\C-u\C-lfzf_navigate './' --recursive\n"'
-# Navigate backward
-bind -m vi-command '"\eh": "\C-ucd ..\n"'
-bind -m vi-insert '"\eh": "\C-ucd ..\n"'
 
 fzf_find () {
     # Consider cf usage as example for what is needed.
@@ -524,7 +510,28 @@ rg_double () {
 }
 
 
+#>>>
+
+
+# Readline bindings
+#    ...
+#<<<
+
+# Shortcut to reopen vim session.
+bind -m vi-insert '"\ew": "\C-uv\n"'
+bind -m vi-command '"\ew": "\C-uv\n"'
+
+# Navigate forward
+bind -m vi-command '"\el": "\C-u\C-lfzf_navigate './'\n"'
+bind -m vi-insert '"\el": "\C-u\C-lfzf_navigate './'\n"'
+# Navigate forward, begin in recursive mode.
+bind -m vi-command '"\er": "\C-u\C-lfzf_navigate './' --recursive\n"'
+bind -m vi-insert '"\er": "\C-u\C-lfzf_navigate './' --recursive\n"'
+# Navigate backward
+bind -m vi-command '"\eh": "\C-ucd ..\n"'
+bind -m vi-insert '"\eh": "\C-ucd ..\n"'
 
 bind -m vi-command '"\ef": "\C-u\C-lfzf_find\n"'
 bind -m vi-insert '"\ef": "\C-u\C-lfzf_find\n"'
 
+#>>>

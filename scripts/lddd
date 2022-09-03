@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# List dynamic libraries and descriptions, if found.
+#
+
+if [ "$#" -ne 1 ] ; then
+    echo "Usage:"
+    echo "    lddd FILE"
+    exit 1
+fi
+path="$1"
+
+library_paths="$(ldd "$path" | cut -d' ' -f 3 | sed '/^$/d ; s/^[[:space:]]*//')"
+    
+for lib in $library_paths ; do
+    dpkg_package_line="$(dpkg -S "$lib")"
+    if [ "$?" -eq 0 ] ; then
+        dpkg_package="$(echo "$dpkg_package_line" | cut -d':' -f 1)"
+        c16 blue ; printf "$lib" ; c16 red ; echo "  ($dpkg_package)" ; c16 --reset
+        # https://stackoverflow.com/questions/20943025/how-can-i-get-sed-to-quit-after-the-first-matching-address-range
+        full_desc="$(apt-cache show "$dpkg_package")"
+
+        echo "$full_desc" | sed -n '/^Description-en/{p; :loop n; p; /^Description-md5/q; b loop}' \
+                          | tail -n+2 \
+                          | head -n-1 \
+                          | while read -r line ; do printf "    " ; echo "$line" ; done
+    else
+        c16 blue ; echo "$lib" ; c16 --reset
+    fi
+done
+

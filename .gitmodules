@@ -4,3 +4,6 @@
 [submodule "vim/__tmp/tagbar"]
 	path = vim/repos/tagbar
 	url = git@github.com:preservim/tagbar.git
+[submodule "vim/__tmp/vim-surround"]
+	path = vim/repos/vim-surround
+	url = git@github.com:tpope/vim-surround.git
