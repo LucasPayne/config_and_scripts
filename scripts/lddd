@@ -2,30 +2,72 @@
 #
 # List dynamic libraries and descriptions, if found.
 #
+# Notes: 
+#     It is assumed library paths have no spaces.
+#
 
-if [ "$#" -ne 1 ] ; then
+usage_and_exit () {
     echo "Usage:"
     echo "    lddd FILE"
+    echo "    lddd -p PID"
     exit 1
-fi
-path="$1"
+}
 
-library_paths="$(ldd "$path" | cut -d' ' -f 3 | sed '/^$/d ; s/^[[:space:]]*//')"
+if [ "$#" -eq 1 ] ; then
+    path="$1"
+    library_paths="$(ldd "$path" | grep '=>' | cut -d' ' -f 3 | sed '/^$/d ; s/^[[:space:]]*//')"
+elif [ "$#" -eq 2 ] ; then
+    if [[ "$1" != "-p" ]] ; then
+        usage_and_exit
+    fi
+    pid="$2"
+    library_paths="$(cat /proc/$pid/maps | grep '\.so' | awk '{ print $NF }' | sort | uniq)"
+else
+    usage_and_exit
+fi
+
+display_package_description () 
+{
+    local dpkg_package="$1"
+        # https://stackoverflow.com/questions/20943025/how-can-i-get-sed-to-quit-after-the-first-matching-address-range
+    local full_desc="$(apt-cache show "$dpkg_package")"
+
+    echo "$full_desc" | sed -n '/^Description-en/{p; :loop n; p; /^Description-md5/q; b loop}' \
+                      | tail -n+2 \
+                      | head -n-1 \
+                      | while read -r line ; do printf "    " ; echo "$line" ; done
+}
     
+declare -A pkg_to_libraries
+libraries_with_no_package=""
+
 for lib in $library_paths ; do
-    dpkg_package_line="$(dpkg -S "$lib")"
+    dpkg_package_line="$(dpkg -S "$lib" 2>/dev/null)"
     if [ "$?" -eq 0 ] ; then
         dpkg_package="$(echo "$dpkg_package_line" | cut -d':' -f 1)"
-        c16 blue ; printf "$lib" ; c16 red ; echo "  ($dpkg_package)" ; c16 --reset
-        # https://stackoverflow.com/questions/20943025/how-can-i-get-sed-to-quit-after-the-first-matching-address-range
-        full_desc="$(apt-cache show "$dpkg_package")"
-
-        echo "$full_desc" | sed -n '/^Description-en/{p; :loop n; p; /^Description-md5/q; b loop}' \
-                          | tail -n+2 \
-                          | head -n-1 \
-                          | while read -r line ; do printf "    " ; echo "$line" ; done
+        pkg_to_libraries[$dpkg_package]="${pkg_to_libraries[$dpkg_package]} $lib"
     else
-        c16 blue ; echo "$lib" ; c16 --reset
+        libraries_with_no_package="$libraries_with_no_package $lib"
     fi
 done
 
+for dpkg_package in "${!pkg_to_libraries[@]}" ; do
+    c16 red
+    echo "$dpkg_package"
+    c16 blue
+    for lib in ${pkg_to_libraries[$dpkg_package]} ; do
+        echo "  $lib"
+    done
+    c16 --reset
+    display_package_description "$dpkg_package"
+done
+
+if [[ ! -z "$libraries_with_no_package" ]] ; then
+    c16 red
+    echo "(no package source)"
+    c16 blue
+    for lib in $libraries_with_no_package ; do
+        echo "  $lib"
+    done
+    c16 --reset
+fi
