@@ -5,7 +5,12 @@ export CONFIG_DIR=~/config
 export PATH="$PATH:$(realpath ~/bin)"
 export PATH="$PATH:$CONFIG_DIR/scripts"
 export PATH="$PATH:$(realpath ~/.cargo/bin)"
-FZF_TOOLS=
+export PATH="$PATH:$(realpath ~/software/bin)"
+
+# Vulkan development
+export VULKAN_DEV_PATH="$(realpath ~/dev/vulkan)"
+export MANPATH="$MANPATH:$VULKAN_DEV_PATH/man"
+export PATH="$PATH:$VULKAN_DEV_PATH/scripts"
 
 setxkbmap us
 source ~/code/syncer/syncer-bash.sh
@@ -535,3 +540,23 @@ bind -m vi-command '"\ef": "\C-u\C-lfzf_find\n"'
 bind -m vi-insert '"\ef": "\C-u\C-lfzf_find\n"'
 
 #>>>
+
+
+export X86_DEV_PATH="$(realpath ~/dev/x86)"
+export MANPATH="$MANPATH:$X86_DEV_PATH/man"
+# Todo: move this
+ins () {
+    local names_cache="$X86_DEV_PATH/man/.names_cache"
+    if [ ! -f "$names_cache" ] ; then
+        ls "$X86_DEV_PATH/man/man7" | while read -r page ; do
+            echo "$page" | cut -d- -f 2 | cut -d'.' -f 1 >> "$names_cache"
+        done
+    fi
+
+    cat "$names_cache" |
+    fzf --preview='man x86-{}.7'\
+        --color=bw\
+        --bind "alt-p:execute(man x86-{}.7 | less -r > /dev/tty 2>&1)"\
+        --preview-window=right:80%
+}
+

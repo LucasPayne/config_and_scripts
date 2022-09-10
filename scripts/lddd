@@ -25,18 +25,6 @@ elif [ "$#" -eq 2 ] ; then
 else
     usage_and_exit
 fi
-
-display_package_description () 
-{
-    local dpkg_package="$1"
-        # https://stackoverflow.com/questions/20943025/how-can-i-get-sed-to-quit-after-the-first-matching-address-range
-    local full_desc="$(apt-cache show "$dpkg_package")"
-
-    echo "$full_desc" | sed -n '/^Description-en/{p; :loop n; p; /^Description-md5/q; b loop}' \
-                      | tail -n+2 \
-                      | head -n-1 \
-                      | while read -r line ; do printf "    " ; echo "$line" ; done
-}
     
 declare -A pkg_to_libraries
 libraries_with_no_package=""
@@ -59,7 +47,7 @@ for dpkg_package in "${!pkg_to_libraries[@]}" ; do
         echo "  $lib"
     done
     c16 --reset
-    display_package_description "$dpkg_package"
+    dpkgdesc "$dpkg_package"
 done
 
 if [[ ! -z "$libraries_with_no_package" ]] ; then

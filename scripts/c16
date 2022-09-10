@@ -97,7 +97,7 @@ do
     printf "$color \u001b[${bg_color_code}m\u001b[${fg_color_code}m____\u001b[0m  \u001b[${bg_color_code};1m\u001b[${fg_color_code};1m____\u001b[0m"
     echo
     let counter++
-done < <(echo "$colors") ) | column2
+done < <(echo "$colors") ) | column
 
 # printf "\u001b[30mBlack\u001b[0m  " ; printf "\u001b[40m    \u001b[0m" ; echo
 # printf "\u001b[31mRed\u001b[0m  " ; printf "\u001b[41m    \u001b[0m" ; echo

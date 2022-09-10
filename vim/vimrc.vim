@@ -104,6 +104,11 @@ autocmd VimLeave * :!echo "1" > /tmp/${VIM_SERVER_ID}_vim_server_closed
 ">>>
 
 
+packadd termdebug
+nnoremap .G :Termdebug<cr>
+hi debugPC ctermbg=white
+hi SignColumn ctermbg=blue
+
 
 " Source the syncer'd mappings.
 source ~/code/syncer/syncer-vim.vim
