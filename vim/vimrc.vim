@@ -126,15 +126,8 @@ function! GDBRelativeFrame(jump)
     call TermDebugSendCommand("frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0]+a:jump))
 endfunction
 
- " \| execute 'call TermDebugSendCommand("select-frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0] + 1))'<cr>
-
-" nnoremap [f :call TermDebugSendCommand("__vim_stack_down")<cr>
-" nnoremap ]f :call TermDebugSendCommand("__vim_stack_up")<cr>
-
-nnoremap [f :call GDBRelativeFrame(-1)<cr>
-nnoremap ]f :call GDBRelativeFrame(1)<cr>
-
- " \| execute 'call TermDebugSendCommand("select-frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0] - 1))'<cr>
+nnoremap [f :call GDBRelativeFrame(-1)<cr>zz
+nnoremap ]f :call GDBRelativeFrame(1)<cr>zz
 
 ">>>
 

@@ -28,6 +28,8 @@ set -o vi
 
 alias gdb='gdb -q'
 
+alias p=python3
+
 
 # Small utilities
 #    ...

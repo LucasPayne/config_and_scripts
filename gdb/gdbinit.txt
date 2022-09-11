@@ -31,7 +31,7 @@ end
 # Workaround. I think vim TermDebug might only update the source view if frame or select-frame is run (?)
 define __vim_write_selected_frame_number
     python
-
+#--------------------------------------------------------------------------------
 selected_identifier = str(gdb.selected_frame())
 cur = gdb.newest_frame()
 counter = 0
@@ -43,6 +43,48 @@ while True:
 f = open("/tmp/gdb__vim_write_selected_frame_number", "w+")
 f.write(str(counter))
 f.close()
+#--------------------------------------------------------------------------------
+    end
+end
 
+
+define __vim_serialize_stacktrace
+    python
+#--------------------------------------------------------------------------------
+
+import json
+import subprocess
+
+def serialize_frame(frame):
+    val = {}
+
+    symtab = frame.find_sal().symtab
+    exit_code = 1
+    if symtab:
+        exit_code, result = subprocess.getstatusoutput('realpath {}'.format(symtab.filename))
+    if exit_code == 0:
+        val["type"] = "Source"
+        val["binary"] = symtab.objfile.filename
+        val["filename"] = symtab.filename
+        val["function"] = str(frame.function())
+        val["line"] = frame.find_sal().line
+    else:
+        val["type"] = "Binary"
+        val["binary"] = gdb.solib_name(int(frame.pc()))
+    return val
+
+frames = []
+cur = gdb.newest_frame()
+while cur:
+    frames.append(serialize_frame(cur))
+    cur = cur.older()
+val = {
+    "frames" : frames
+}
+f = open("/tmp/gdb__vim_serialize_stacktrace", "w+")
+f.write(json.dumps(val, indent=2) + "\n")
+f.close()
+
+#--------------------------------------------------------------------------------
     end
 end
