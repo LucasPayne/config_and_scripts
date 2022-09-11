@@ -1,1 +1,18 @@
 set print asm-demangle
+
+# If break points are set up for every API call (for example every entry point into a shared library),
+# this command will step through a trace.
+# Anything useful to extract from the API call can be put in here.
+define apitrace
+    continue
+    python
+f = open("/tmp/gdb_apitrace_func", "w+")
+f.write(str(gdb.selected_frame().function()))
+f.close()
+    end
+    select-frame 1
+end
+
+# renderdoc
+add-auto-load-safe-path /home/lucas/dev/vulkan/renderdoc/build/lib/librenderdoc.so-gdb.py
+

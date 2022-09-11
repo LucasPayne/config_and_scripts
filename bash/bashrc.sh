@@ -11,6 +11,8 @@ export PATH="$PATH:$(realpath ~/software/bin)"
 export VULKAN_DEV_PATH="$(realpath ~/dev/vulkan)"
 export MANPATH="$MANPATH:$VULKAN_DEV_PATH/man"
 export PATH="$PATH:$VULKAN_DEV_PATH/scripts"
+export RENDERDOC_SOURCE_PATH="$VULKAN_DEV_PATH/renderdoc"
+export PATH="$PATH:$RENDERDOC_SOURCE_PATH/build/bin"
 
 setxkbmap us
 source ~/code/syncer/syncer-bash.sh
@@ -23,6 +25,8 @@ source "$CONFIG_DIR/scripts/fzf_tools/fzf_tools.sh"
 alias sudo='sudo env PATH=$PATH'
 
 set -o vi
+
+alias gdb='gdb -q'
 
 
 # Small utilities

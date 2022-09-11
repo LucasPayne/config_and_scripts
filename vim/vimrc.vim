@@ -104,10 +104,18 @@ autocmd VimLeave * :!echo "1" > /tmp/${VIM_SERVER_ID}_vim_server_closed
 ">>>
 
 
+" Debugging
+" ...
+"<<<
 packadd termdebug
-nnoremap .G :Termdebug<cr>
 hi debugPC ctermbg=white
 hi SignColumn ctermbg=blue
+nnoremap .G :Termdebug<cr>
+nnoremap .gg :Gdb<cr>
+nnoremap .ga :Asm<cr>
+nnoremap .gs :Source<cr>
+nnoremap .gp :Program<cr>
+">>>
 
 
 " Source the syncer'd mappings.
