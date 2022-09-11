@@ -16,3 +16,33 @@ end
 # renderdoc
 add-auto-load-safe-path /home/lucas/dev/vulkan/renderdoc/build/lib/librenderdoc.so-gdb.py
 
+# Navigate the stack
+define stack_up
+    python
+gdb.selected_frame().older().select()
+    end
+end
+define stack_down
+    python
+gdb.selected_frame().newer().select()
+    end
+end
+
+# Workaround. I think vim TermDebug might only update the source view if frame or select-frame is run (?)
+define __vim_write_selected_frame_number
+    python
+
+selected_identifier = str(gdb.selected_frame())
+cur = gdb.newest_frame()
+counter = 0
+while True:
+    if str(cur) == selected_identifier:
+        break
+    cur = cur.older()
+    counter += 1
+f = open("/tmp/gdb__vim_write_selected_frame_number", "w+")
+f.write(str(counter))
+f.close()
+
+    end
+end

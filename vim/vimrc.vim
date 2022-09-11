@@ -110,11 +110,32 @@ autocmd VimLeave * :!echo "1" > /tmp/${VIM_SERVER_ID}_vim_server_closed
 packadd termdebug
 hi debugPC ctermbg=white
 hi SignColumn ctermbg=blue
-nnoremap .G :Termdebug<cr>
-nnoremap .gg :Gdb<cr>
-nnoremap .ga :Asm<cr>
-nnoremap .gs :Source<cr>
-nnoremap .gp :Program<cr>
+nnoremap .F :Termdebug<cr>
+"todo: Should have alt keybindings which also work in the gdb prompt.
+" nnoremap .ff :Gdb<cr>
+" nnoremap .fa :Asm<cr>
+" nnoremap .fs :Source<cr>
+" nnoremap .fp :Program<cr>
+
+" help termdebug_shortcuts
+
+function! GDBRelativeFrame(jump)
+    call TermDebugSendCommand("__vim_write_selected_frame_number")
+    " Note: Apparently there is a race condition... (???)
+    sleep 50m
+    call TermDebugSendCommand("frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0]+a:jump))
+endfunction
+
+ " \| execute 'call TermDebugSendCommand("select-frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0] + 1))'<cr>
+
+" nnoremap [f :call TermDebugSendCommand("__vim_stack_down")<cr>
+" nnoremap ]f :call TermDebugSendCommand("__vim_stack_up")<cr>
+
+nnoremap [f :call GDBRelativeFrame(-1)<cr>
+nnoremap ]f :call GDBRelativeFrame(1)<cr>
+
+ " \| execute 'call TermDebugSendCommand("select-frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0] - 1))'<cr>
+
 ">>>
 
 
