@@ -178,11 +178,14 @@ function! QuickfixCallstackFromGDB()
 
     call setqflist([], ' ', {"items" : l:qflist, "quickfixtextfunc" : "QuickfixCallstackTextFunc"})
 
+    augroup filetype_qf
+        autocmd!
+        autocmd Filetype qf setlocal nonumber
+    augroup END
+
     cclose
     call ToggleQuickFix()
     copen
-    " Select the last ("latest") entry, and center the screen.
-    " execute "cc ".len(l:qflist)
 
 endfunction
 
@@ -200,9 +203,21 @@ function! QuickfixCallstackTextFunc(args)
         let l:binary_basename = l:binary_basename[:len(l:binary_basename)-2]
 
         if l:frame["type"] == "Source"
-            let l:line = l:frame["function"]."&".l:binary_basename
+
+            " If the file is in a git repo, display the path relative to that
+            " repo (including the repo name).
+            " Todo: This isn't very robust.
+            let l:git_root = system("git -C \"$(dirname ".l:frame["filename"]." 2>/dev/null)\" rev-parse --show-toplevel 2>/dev/null | tr -d '\n'")
+            if v:shell_error == 0
+                let l:git_root_up_one = system("realpath ".l:git_root."/..")
+                let l:relative_filename = l:frame["filename"][len(l:git_root_up_one):]
+            else
+                let l:relative_filename = l:frame["filename"]
+            endif
+
+            let l:line = l:index."&".l:frame["function"]."&".l:binary_basename."&".l:relative_filename.":".l:frame["line"]
         elseif l:frame["type"] == "Binary"
-            let l:line = "?&".l:binary_basename
+            let l:line = l:index."&?&".l:binary_basename."&?"
         else
             " Indicate an error.
             let l:line = "ERROR: Unknown frame type name \"".l:frame["type"]."\" in callstack json."
@@ -220,6 +235,7 @@ function! QuickfixCallstackTextFunc(args)
     return l:table
 
 endfunction
+
 
 nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
 
