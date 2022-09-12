@@ -141,6 +141,9 @@ function! ToggleQuickFix()
 endfunction
 nnoremap .f :call ToggleQuickFix()<cr>
 
+# Global variable for access by quickfixtextfunc.
+let g:quickfix_callstack_frame_dicts = []
+
 function! QuickfixCallstackFromGDB()
     let l:json_file_path = "/tmp/gdb__vim_serialize_stacktrace"
     try
@@ -150,6 +153,9 @@ function! QuickfixCallstackFromGDB()
         echoerr "Unable to decode json from file \"".l:json_file_path."\""
         return
     endtry
+
+    # Save globally so frame information can be accessed by the quickfixtextfunc.
+    let g:quickfix_callstack_frame_dicts = l:json_dict["frames"]
 
     let l:qflist = []
     for l:frame in l:json_dict["frames"]
@@ -169,19 +175,51 @@ function! QuickfixCallstackFromGDB()
         endif
     endfor
 
-    call setqflist(l:qflist)
+    call setqflist([], ' ', {"items" : l:qflist, "quickfixtextfunc" : "QuickfixCallstackTextFunc"})
 
     cclose
     call ToggleQuickFix()
-    " copen
+    copen
     " Select the last ("latest") entry, and center the screen.
     " execute "cc ".len(l:qflist)
 
 endfunction
 
+function! QuickfixCallstackTextFuncGetLine(args)
+    # args contains (help getqflist):
+    #     bufnr	number of buffer that has the file name, use
+    #             bufname() to get the name
+    #     module	module name
+    #     lnum	line number in the buffer (first line is 1)
+    #     end_lnum
+    #             end of line number if the item is multiline
+    #     col	column number (first column is 1)
+    #     end_col	end of column number if the item has range
+    #     vcol	|TRUE|: "col" is visual column
+    #             |FALSE|: "col" is byte index
+    #     nr	error number
+    #     pattern	search pattern used to locate the error
+    #     text	description of the error
+    #     type	type of the error, 'E', '1', etc.
+    #     valid	|TRUE|: recognized error message
+    return "HELLO"
+endfunction
+
+function! QuickfixCallstackTextFunc(args)
+    let l:start = a:args["start_idx"]
+    let l:end = a:args["end_idx"]
+    
+    let l:lines = []
+    let l:index = l:start - 1
+    while l:index != l:end
+        let l:frame = g:quickfix_callstack_frame_dicts[l:index]
+        call add(l:lines, l:frame["filename"])
+        let l:index = l:index + 1
+    endwhile
+    return l:lines
+endfunction
+
 nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
-
-
 
 
 ">>>
