@@ -118,16 +118,71 @@ nnoremap .F :Termdebug<cr>
 " nnoremap .fp :Program<cr>
 
 " help termdebug_shortcuts
-
 function! GDBRelativeFrame(jump)
     call TermDebugSendCommand("__vim_write_selected_frame_number")
-    " Note: Apparently there is a race condition... (???)
+    " Note: Apparently there is a race condition...
     sleep 50m
     call TermDebugSendCommand("frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0]+a:jump))
 endfunction
 
 nnoremap [f :call GDBRelativeFrame(-1)<cr>zz
 nnoremap ]f :call GDBRelativeFrame(1)<cr>zz
+
+function! ToggleQuickFix()
+    " https://stackoverflow.com/questions/11198382/how-to-create-a-key-map-to-open-and-close-the-quickfix-window-in-vim
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        copen
+        let l:quickfix_list_length = len(getqflist())
+        let l:quickfix_window_height = min([l:quickfix_list_length, 12])
+        execute "resize ".l:quickfix_window_height
+    else
+        cclose
+    endif
+endfunction
+nnoremap .f :call ToggleQuickFix()<cr>
+
+function! QuickfixCallstackFromGDB()
+    let l:json_file_path = "/tmp/gdb__vim_serialize_stacktrace"
+    try
+        let l:json_string = join(readfile(l:json_file_path), "\n")
+        let l:json_dict = json_decode(l:json_string)
+    catch /.*/
+        echoerr "Unable to decode json from file \"".l:json_file_path."\""
+        return
+    endtry
+
+    let l:qflist = []
+    for l:frame in l:json_dict["frames"]
+        if l:frame["type"] == "Source"
+            call add(l:qflist, {
+                \ "filename": l:frame["filename"],
+                \ "lnum": l:frame["line"]
+            \ })
+        elseif l:frame["type"] == "Binary"
+            call add(l:qflist, {
+                \ "filename": "__NO_FILENAME__",
+                \ "lnum": 0
+            \ })
+        else
+            echoerr "Unknown frame type name \"".l:frame["type"]."\" in callstack json."
+            return
+        endif
+    endfor
+
+    call setqflist(l:qflist)
+
+    cclose
+    call ToggleQuickFix()
+    " copen
+    " Select the last ("latest") entry, and center the screen.
+    " execute "cc ".len(l:qflist)
+
+endfunction
+
+nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
+
+
+
 
 ">>>
 
