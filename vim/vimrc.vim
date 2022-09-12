@@ -141,7 +141,7 @@ function! ToggleQuickFix()
 endfunction
 nnoremap .f :call ToggleQuickFix()<cr>
 
-# Global variable for access by quickfixtextfunc.
+" Global variable for access by quickfixtextfunc.
 let g:quickfix_callstack_frame_dicts = []
 
 function! QuickfixCallstackFromGDB()
@@ -154,7 +154,8 @@ function! QuickfixCallstackFromGDB()
         return
     endtry
 
-    # Save globally so frame information can be accessed by the quickfixtextfunc.
+    " Save globally so frame information can be accessed by the quickfixtextfunc,
+    " to display a custom
     let g:quickfix_callstack_frame_dicts = l:json_dict["frames"]
 
     let l:qflist = []
@@ -185,26 +186,6 @@ function! QuickfixCallstackFromGDB()
 
 endfunction
 
-function! QuickfixCallstackTextFuncGetLine(args)
-    # args contains (help getqflist):
-    #     bufnr	number of buffer that has the file name, use
-    #             bufname() to get the name
-    #     module	module name
-    #     lnum	line number in the buffer (first line is 1)
-    #     end_lnum
-    #             end of line number if the item is multiline
-    #     col	column number (first column is 1)
-    #     end_col	end of column number if the item has range
-    #     vcol	|TRUE|: "col" is visual column
-    #             |FALSE|: "col" is byte index
-    #     nr	error number
-    #     pattern	search pattern used to locate the error
-    #     text	description of the error
-    #     type	type of the error, 'E', '1', etc.
-    #     valid	|TRUE|: recognized error message
-    return "HELLO"
-endfunction
-
 function! QuickfixCallstackTextFunc(args)
     let l:start = a:args["start_idx"]
     let l:end = a:args["end_idx"]
@@ -213,10 +194,31 @@ function! QuickfixCallstackTextFunc(args)
     let l:index = l:start - 1
     while l:index != l:end
         let l:frame = g:quickfix_callstack_frame_dicts[l:index]
-        call add(l:lines, l:frame["filename"])
+
+        "Todo: Why is system() returning trailing character/s?
+        let l:binary_basename = system("basename -z \"".l:frame["binary"]."\"")
+        let l:binary_basename = l:binary_basename[:len(l:binary_basename)-2]
+
+        if l:frame["type"] == "Source"
+            let l:line = l:frame["function"]."&".l:binary_basename
+        elseif l:frame["type"] == "Binary"
+            let l:line = "?&".l:binary_basename
+        else
+            " Indicate an error.
+            let l:line = "ERROR: Unknown frame type name \"".l:frame["type"]."\" in callstack json."
+        endif
+        call add(l:lines, l:line)
         let l:index = l:index + 1
     endwhile
-    return l:lines
+
+    " Align as a table
+    let l:tmpfile = tempname()
+    call writefile(l:lines, l:tmpfile)
+    let l:table = systemlist("cat ".l:tmpfile." | column -t -s'&'")
+    call delete(l:tmpfile)
+
+    return l:table
+
 endfunction
 
 nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
