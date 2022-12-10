@@ -50,8 +50,11 @@ end
 
 define __vim_serialize_stacktrace
     python
-#--------------------------------------------------------------------------------
-
+#    ,---------------------------------------------------------------------------
+#   /
+#  /
+# /
+#/ 
 import json
 import subprocess
 
@@ -84,7 +87,70 @@ val = {
 f = open("/tmp/gdb__vim_serialize_stacktrace", "w+")
 f.write(json.dumps(val, indent=2) + "\n")
 f.close()
+#\ 
+# \
+#  \
+#   \
+#    '---------------------------------------------------------------------------
+    end
+end
 
 #--------------------------------------------------------------------------------
+# pwndbg
+# source /home/lucas/dev/gdb/repos/pwndbg/gdbinit.py
+# set context-clear-screen
+
+
+define json_serialize_breakpoints
+    python
+#    ,---------------------------------------------------------------------------
+#   /
+#  /
+# /
+#/ 
+lines = gdb.execute("maint info break", to_string=True).split("\n")
+
+import sys
+import os
+import re
+import json
+
+out = {}
+
+lines = [line.strip() for line in lines]
+pattern = re.compile(r"^(\d)\.(\d)[ ]+(y|n)[ ]+(0x[0-9a-f]+).*$")
+for line in lines:
+    result = pattern.match(line)
+    if result:
+        major = result.group(1)
+        minor = result.group(2)
+        address = result.group(4)
+        if major not in out:
+            out[major] = []
+
+        val = {}
+        val["minor"] = minor
+        val["address"] = address
+
+        out[major].append(val)
+
+prev_out = out
+out = { "breakpoints" : [] }
+for major in prev_out:
+    val = {}
+    val["major"] = major
+    val["locations"] = prev_out[major]
+    out["breakpoints"].append(val)
+
+dev = os.environ["GDB_DEV"]
+f = open(dev+"/state/breakpoints", "w+")
+json.dump(out, f, indent=4)
+f.close()
+
+#\ 
+# \
+#  \
+#   \
+#    '---------------------------------------------------------------------------
     end
 end

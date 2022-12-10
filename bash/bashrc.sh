@@ -9,8 +9,9 @@ export PATH="$PATH:$(realpath ~/software/bin)"
 
 # Vulkan development
 export VULKAN_DEV_PATH="$(realpath ~/dev/vulkan)"
-export MANPATH="$MANPATH:$VULKAN_DEV_PATH/man"
+export PATH="$PATH:$VULKAN_DEV_PATH/bin"
 export PATH="$PATH:$VULKAN_DEV_PATH/scripts"
+export MANPATH="$MANPATH:$VULKAN_DEV_PATH/man"
 export RENDERDOC_SOURCE_PATH="$VULKAN_DEV_PATH/renderdoc"
 export PATH="$PATH:$RENDERDOC_SOURCE_PATH/build/bin"
 
@@ -27,8 +28,10 @@ alias sudo='sudo env PATH=$PATH'
 set -o vi
 
 alias gdb='gdb -q'
+export GDB_DEV="$(realpath ~/dev/gdb)"
 
 alias p=python3
+alias python=python3
 
 
 # Small utilities

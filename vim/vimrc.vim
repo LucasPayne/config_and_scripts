@@ -43,6 +43,8 @@ onoremap L $
 nnoremap .ev :edit ~/.vimrc<cr>
 nnoremap .sv :source ~/.vimrc<cr>
 inoremap <tab> <space><space><space><space>
+nnoremap j gj
+nnoremap k gk
 nnoremap gj gT
 nnoremap gk gt
 ">>>
@@ -121,8 +123,20 @@ nnoremap .F :Termdebug<cr>
 function! GDBRelativeFrame(jump)
     call TermDebugSendCommand("__vim_write_selected_frame_number")
     " Note: Apparently there is a race condition...
-    sleep 50m
-    call TermDebugSendCommand("frame ".(readfile("/tmp/gdb__vim_write_selected_frame_number")[0]+a:jump))
+    sleep 25m
+    let l:frame_number = readfile("/tmp/gdb__vim_write_selected_frame_number")[0]
+    call TermDebugSendCommand("select-frame ".(l:frame_number+a:jump))
+
+    " Todo: Simplify this, don't require multiple calls.
+    " -- To do this, need to query max frame number.
+    call TermDebugSendCommand("__vim_write_selected_frame_number")
+    sleep 25m
+    let l:frame_number = readfile("/tmp/gdb__vim_write_selected_frame_number")[0]
+    execute "cc ".(l:frame_number+1)
+
+    "--------------------------------------------------------------------------------
+    " pwndbg
+    " call TermDebugSendCommand("context")
 endfunction
 
 nnoremap [f :call GDBRelativeFrame(-1)<cr>zz
@@ -181,6 +195,7 @@ function! QuickfixCallstackFromGDB()
     augroup filetype_qf
         autocmd!
         autocmd Filetype qf setlocal nonumber
+        autocmd Filetype qf setlocal statusline=%{QuickfixCallstackStatusLine()}
     augroup END
 
     cclose
@@ -233,9 +248,11 @@ function! QuickfixCallstackTextFunc(args)
     call delete(l:tmpfile)
 
     return l:table
-
 endfunction
 
+function! QuickfixCallstackStatusLine()
+    return "  Callstack quickfix"
+endfunction
 
 nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
 
