@@ -13,6 +13,10 @@ f.close()
     select-frame 1
 end
 
+define sg
+    source ~/.gdbinit
+end
+
 # renderdoc
 add-auto-load-safe-path /home/lucas/dev/vulkan/renderdoc/build/lib/librenderdoc.so-gdb.py
 
@@ -108,7 +112,7 @@ define json_serialize_breakpoints
 #  /
 # /
 #/ 
-lines = gdb.execute("maint info break", to_string=True).split("\n")
+lines = [line.strip() for line in gdb.execute("maint info break", to_string=True).split("\n")]
 
 import sys
 import os
@@ -117,8 +121,10 @@ import json
 
 out = {}
 
-lines = [line.strip() for line in lines]
-pattern = re.compile(r"^(\d)\.(\d)[ ]+(y|n)[ ]+(0x[0-9a-f]+).*$")
+# 
+# Extract non-pending breakpoints.
+#
+pattern = re.compile(r"^(\d+)\.(\d+)[ ]+(y|n)[ ]+(0x[0-9a-f]+)[ ]+([^ ]*).*$")
 for line in lines:
     result = pattern.match(line)
     if result:
@@ -128,25 +134,84 @@ for line in lines:
         if major not in out:
             out[major] = []
 
-        val = {}
-        val["minor"] = minor
-        val["address"] = address
+        location = {}
+        # location["minor"] = minor
+        location["address"] = address
+        
+        # Note: Any way to do this in just the python interface?
+        info_symbol_out = gdb.execute("info symbol {}".format(address), to_string=True)
+        # Note: The first group should catch the "name + offset in section..." case.
+        p = re.compile("(.*) in section ([^ ]*)(( of .*)?)")
+        r = p.match(info_symbol_out)
+        if not r:
+            p = re.compile("No symbol matches .*")
+            r = p.match(info_symbol_out)
+            assert(r)
+            # No symbol found, so assume this is a breakpoint for a stripped binary.
+            location["binary"] = solib
+            solib = gdb.solib_name(int(address, 16))
+            assert(solib)
+            location["symbol"] = None
+        else:
+            symbol = r.group(1)
+            section = r.group(2)
+            binary = r.group(3)
+            if len(binary.strip()) == 0:
+                # `info symbol` did not give a binary.
+                # One case where this happens is if the break is on a section not yet mapped
+                # into an active process address space.
+                binary = "<unknown>"
+            else:
+                binary = binary[3:] # remove "of "
+            location["binary"] = binary
+            location["symbol"] = {}
+            location["symbol"]["name"] = symbol
+            location["symbol"]["section"] = section
 
-        out[major].append(val)
+        plt = symbol.endswith("@plt")
+        location["plt"] = plt
+
+        symbol_obj = gdb.lookup_global_symbol(symbol)
+        if symbol_obj:
+            location["source"] = {}
+            location["source"]["file"] = symbol_obj.symtab.filename
+            location["source"]["line"] = symbol_obj.line
+            #-Maybe the python api gives a more accurate binary?
+            #location["binary"] = symbol_obj.symtab.objfile.filename
+        else:
+            location["source"] = None
+
+        out[major].append(location)
 
 prev_out = out
-out = { "breakpoints" : [] }
+out = []
 for major in prev_out:
+    bp = next((_bp for _bp in gdb.breakpoints() if int(_bp.number) == int(major)), None)
     val = {}
-    val["major"] = major
+    val["number"] = bp.number
     val["locations"] = prev_out[major]
-    out["breakpoints"].append(val)
+    val["expression"] = bp.location
+    val["condition"] = bp.condition
+    val["pending"] = False
+    out.append(val)
+
+# 
+# Extract pending breakpoints.
+#
+for bp in gdb.breakpoints():
+    if bp.pending:
+        val = {}
+        val["number"] = bp.number
+        val["locations"] = []
+        val["expression"] = bp.location
+        val["condition"] = bp.condition
+        val["pending"] = True
+        out.append(val)
 
 dev = os.environ["GDB_DEV"]
 f = open(dev+"/state/breakpoints", "w+")
 json.dump(out, f, indent=4)
 f.close()
-
 #\ 
 # \
 #  \

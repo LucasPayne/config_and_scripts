@@ -2,6 +2,136 @@
 "
 "
 "
+"
+
+function! ResolveIncludeFile(file_identifier)
+    " Given a file path, extracted from an include statement, search
+    " for the relevant installed file.
+    " If none is found, return the empty string.
+
+    " Try the -/weta/code metadata.
+    let l:cmd = g:STUFF."weta/code/bin/resolve_include \"".a:file_identifier."\" -f \"".expand('%')."\""
+    let l:resolved_include = system(l:cmd)
+    if !empty(l:resolved_include)
+        return l:resolved_include
+    endif
+    
+    return ''
+endfunction
+
+function! ExtractLink(line_number)
+    " Extract a link from the given line, if there is one.
+    " Returns a string of the form /path/to/file:line_number,
+    " or the empty string if there is no link.
+    let l:line = getline(a:line_number)
+
+    " Try to extract an include link.
+    if l:line =~# '^\s*#include <.*>'
+        let l:file_identifier = matchstr(l:line, '^\s*#include <\zs.*\ze>')
+        if !empty(l:file_identifier)
+            let l:resolved_file = ResolveIncludeFile(l:file_identifier)
+            if !empty(l:resolved_file)
+                " Return a link to the first line.
+                return l:resolved_file.":1"
+            endif
+        endif
+    endif
+
+    " Try to extract a file location from a line of the form
+    " /path/to/file line_number
+    let l:list = split(l:line)
+    if len(l:list) == 2
+        let l:path = get(l:list, 0, "")
+        let l:line_number_string = get(l:list, 1, "")
+        if l:line_number_string =~# '^\d\+$'
+            let l:line_number = str2nr(l:line_number_string)
+            return l:path.":".l:line_number
+        endif
+    endif
+
+    return ''
+endfunction
+
+function! FollowLinks(make_new_tab) range
+    " Try to interpret the current line as a link to a file location.
+    " let l:link = ExtractLink()
+    " if empty(l:link)
+    "     return
+    " endif
+    " let l:parts = split(l:link, ':')
+    " let l:path = get(l:parts, 0, "")
+    " let l:line_number = get(l:parts, 1, "")
+
+    " if a:make_new_tab == 1
+    "     execute "tabnew ".l:path
+    " else
+    "     execute "e ".l:path
+    " endif
+    " call cursor(l:line_number,1)
+
+    let l:line_index = a:firstline
+
+    let l:commands_to_run = []
+    while l:line_index != a:lastline + 1
+        
+        let l:link = ExtractLink(l:line_index)
+        if empty(l:link)
+            return
+        endif
+        let l:parts = split(l:link, ':')
+        let l:path = get(l:parts, 0, "")
+        let l:line_number = get(l:parts, 1, "")
+
+        if l:line_index > a:firstline || a:make_new_tab == 1
+            " Make a new tab for for each file after the first.
+            " If make_new_tab is 1, then a new tab is also created for the first.
+            call add(l:commands_to_run, "tabnew ".l:path)
+        else
+            call add(l:commands_to_run, "e ".l:path)
+        endif
+
+        call add(l:commands_to_run, "call cursor(".l:line_number.",1)")
+
+        let l:line_index += 1
+    endwhile
+
+    " Commands are deferred because something goes wrong with the range if the buffer is switched.
+    " (?)
+    for l:command in l:commands_to_run
+        execute l:command
+    endfor
+endfunction
+nnoremap <leader>/ :call FollowLinks(0)<cr>
+nnoremap <leader>? :call FollowLinks(1)<cr>
+vnoremap <leader>/ :.call FollowLinks(0)<cr>
+vnoremap <leader>? :.call FollowLinks(1)<cr>
+" Yank file path and line number.
+function! YankFilePath()
+    let @" = expand("%:p")." ".line(".")."\n"
+endfunction
+" Yank file path and line number to the system clipboard, in gdb breakpoint syntax.
+function! YankBreakPoint()
+    let l:bp = "break ".expand("%:p").":".line(".")."\n"
+    call system("echo ".shellescape(l:bp)." | xclip")
+endfunction
+" Also yank the word under the cursor, with the register formatted like
+" function
+"   /file/with/function.cpp 2033
+function! YankWordAndFilePath()
+    let l:tmp = @"
+    normal! yiw
+    let l:word = @"
+    let @" = l:tmp
+
+    let @" = "    ".l:word."\n".expand("%:p")." ".line(".")."\n"
+endfunction
+function! YankSelectionAndFilePath()
+    let @" = "    ".@*."\n".expand("%:p")." ".line(".")."\n"
+endfunction
+nnoremap <leader>cp :call YankFilePath()<cr>
+nnoremap <leader>CP :call YankWordAndFilePath()<cr>
+vnoremap <leader>cp :call YankSelectionAndFilePath()<cr>
+nnoremap <leader>cb :call YankBreakPoint()<cr>
 
 " Settings
 "    syntax on
@@ -251,13 +381,115 @@ function! QuickfixCallstackTextFunc(args)
 endfunction
 
 function! QuickfixCallstackStatusLine()
-    return "  Callstack quickfix"
+    return "  Callstack"
 endfunction
 
 nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
 
 
+let g:gdb_breakpoint_jsons = []
+function! BreakpointsQuickfixTextFunc(args)
+    let l:start = a:args["start_idx"]
+    let l:end = a:args["end_idx"]
+    
+    let l:lines = []
+    let l:index = l:start - 1
+    while l:index != l:end
+        let l:bp = g:gdb_breakpoint_jsons[l:index]
+        let l:line = ""
+
+        let l:source_cols = ""
+        if l:bp["source"] != v:null
+            let l:source_cols = l:bp["source"]["file"].":".l:bp["source"]["line"]
+        else
+            let l:source_cols = "<unknown>"
+        endif
+        let l:line = l:bp["number"]."&".l:bp["expression"]."&".l:bp["symbol"]["name"]."&".l:source_cols
+
+        call add(l:lines, l:line)
+        let l:index = l:index + 1
+    endwhile
+
+    " Align as a table
+    let l:tmpfile = tempname()
+    call writefile(l:lines, l:tmpfile)
+    let l:table = systemlist("cat ".l:tmpfile." | column -t -s'&'")
+    call delete(l:tmpfile)
+
+    return l:table
+endfunction
+
+function! BreakpointsQuickfix()
+    let l:json_file_path = $GDB_DEV."/state/breakpoints"
+    try
+        let l:json_string = join(readfile(l:json_file_path), "\n")
+        let l:breakpoints = json_decode(l:json_string)
+    catch /.*/
+        echoerr "Unable to decode json from file \"".l:json_file_path."\""
+        return
+    endtry
+
+    " Save this globally so it can referenced in the text func (for
+    " determining displays for ranges of locations).
+    let g:gdb_breakpoint_jsons = []
+
+    let l:qflist = []
+    for l:bp in l:breakpoints
+        for l:loc in l:bp["locations"]
+            " Make overall breakpoint info available in the sub-breakpoints info.
+            let l:loc["number"] = l:bp["number"]
+            let l:loc["expression"] = l:bp["expression"]
+
+            call add(g:gdb_breakpoint_jsons, l:loc)
+            if l:loc["source"] != v:null
+                call add(l:qflist, {
+                    \ "filename": l:loc["source"]["file"],
+                    \ "lnum": l:loc["source"]["line"]
+                \ })
+            endif
+        endfor
+    endfor
+
+    call setqflist([], ' ', {"items" : l:qflist, "quickfixtextfunc" : "BreakpointsQuickfixTextFunc"})
+
+    augroup filetype_qf
+        autocmd!
+        autocmd Filetype qf setlocal nonumber
+        autocmd Filetype qf setlocal statusline=%{BreakpointsQuickfixStatusLine()}
+    augroup END
+
+    cclose
+    call ToggleQuickFix()
+    copen
+endfunction
+
+function! BreakpointsQuickfixStatusLine()
+    return "  Breakpoints"
+endfunction
+
+function! BreakpointsQuickfixSyncGdb()
+    call TermDebugSendCommand("json_serialize_breakpoints")
+    sleep 150m
+    call BreakpointsQuickfix()
+endfunction
+
+nnoremap .2 :call BreakpointsQuickfixSyncGdb()<cr>
+
+
 ">>>
+
+
+" Enable syntax highlighting for LLVM files. To use, copy
+" utils/vim/syntax/llvm.vim to ~/.vim/syntax .
+augroup filetype
+  autocmd! BufRead,BufNewFile *.ll set filetype=llvm
+augroup END
+
+" Enable syntax highlighting for tablegen files. To use, copy
+" utils/vim/syntax/tablegen.vim to ~/.vim/syntax .
+augroup filetype
+    autocmd! BufRead,BufNewFile *.td set filetype=tablegen
+augroup END
 
 
 " Source the syncer'd mappings.

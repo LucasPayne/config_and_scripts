@@ -30,7 +30,7 @@ URxvt.matcher.button: 1
 ! https://en.wikipedia.org/wiki/Fixed_(typeface)
 
 ! 9x15
-! URxvt.font: -Misc-Fixed-Medium-R-Normal--15-140-75-75-C-90-ISO10646-1
+URxvt.font: -Misc-Fixed-Medium-R-Normal--15-140-75-75-C-90-ISO10646-1
 ! 7x14
 ! URxvt.font: -Misc-Fixed-Medium-R-Normal--14-130-75-75-C-70-ISO10646-1
 
@@ -39,7 +39,7 @@ URxvt.matcher.button: 1
 
 
 ! 7x13 <--- good
-URxvt.font: -Misc-Fixed-Medium-R-Normal--13-120-75-75-C-70-ISO10646-1
+!URxvt.font: -Misc-Fixed-Medium-R-Normal--13-120-75-75-C-70-ISO10646-1
 
 
 

@@ -33,6 +33,8 @@ export GDB_DEV="$(realpath ~/dev/gdb)"
 alias p=python3
 alias python=python3
 
+export LESS="--mouse --wheel-lines=3"
+
 
 # Small utilities
 #    ...
@@ -569,3 +571,7 @@ ins () {
         --preview-window=right:80%
 }
 
+x () {
+    xrandr --output DP-0 --mode 3840x2160 --pos 1920x0
+    xrandr --output HDMI-1 --mode 1920x1080 --pos 0x0 --scale 1x1 --rotate left
+}
