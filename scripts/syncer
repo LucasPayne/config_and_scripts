@@ -1,0 +1,2 @@
+#!/bin/bash
+( cd $CONFIG_DIR/scripts/syncer_files ; python3 syncer.py )

@@ -1,0 +1,29 @@
+# Mappings file for the syncer utility.
+
+directories
+-----------
+c ~/code
+n ~/notes
+
+files
+-----
+v ~/.vimrc
+Xr ~/.Xresources
+n ~/notes/notes.txt
+Nc ~/notes/programming.txt
+
+maps
+----
+vim: ~/scripts/syncer/vim
+files
+nnoremap .e{0} :tabnew {1}<cr>
+directories
+nnoremap .g{0} :Tex {1}<cr>
+
+bash: ~/scripts/syncer/bash.sh
+files
+alias .e{0}='vim {1}'
+directories
+alias .g{0}='cd {1}'
+
+ranger: ~/scripts/syncer/ranger
