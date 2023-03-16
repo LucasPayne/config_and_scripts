@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ $# -ne 1 ] ; then
+    echo "Usage: wp [image filename]"
+else
+    if [ "$(realpath $1)" == "/home/lucas/images/wallpaper/wallpaper" ] ; then
+        echo "Resetting wallpaper"
+    else
+        cp "$1" /home/lucas/images/wallpaper/wallpaper
+    fi
+    feh --bg-fill "$1"
+fi
+

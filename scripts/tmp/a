@@ -1,0 +1,10 @@
+
+( find . -type f -exec grep -Iq . {} \; -print ) |
+while read f ; do
+    if [ -f "$f" ] && [ -f "../maya_modified/qt5.12.5/$f" ] ; then
+        if ! cmp "$f" "../maya_modified/qt5.12.5/$f" ; then
+            echo "$f"
+            diff "$f" "../maya_modified/qt5.12.5/$f"
+        fi
+    fi
+done
