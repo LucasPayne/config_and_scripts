@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ] ; then
+    echo "Usage:"
+    echo "    maps PID"
+    exit 1
+fi
+
+pid=$1
+
+less /proc/$pid/maps

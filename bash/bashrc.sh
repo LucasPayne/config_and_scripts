@@ -576,3 +576,30 @@ ins () {
         --bind "alt-p:execute(man x86-{}.7 | less -r > /dev/tty 2>&1)"\
         --preview-window=right:80%
 }
+
+
+git_prompt () {
+    local branch=$(git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/') 
+    if [ ! -z "$branch" ] ; then
+        local branch="($branch)"
+    fi
+    echo -e "$branch"
+}
+
+dir_prompt () {
+    local dir="$(realpath .)"
+    local home_prefix="$(realpath ~)"
+    local drive_prefix="$(realpath ~/drive)"
+    if ( echo "$dir" | grep -q "^$drive_prefix" ) ; then
+        local dir="--$(echo "$dir" | cut -c $((${#drive_prefix}+1))-)"
+    elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
+        local dir="~$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
+    fi
+    echo -e "$dir"
+}
+
+PS1=''
+#PS1=$PS1'$(c16 grey)\u@\h$(c16 --reset)'
+PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]:'
+PS1=$PS1'$(c16 white)$(dir_prompt)$(c16 --reset):'
+PS1=$PS1'$(c16 blue)$(git_prompt)$(c16 --reset)\n\$ '
