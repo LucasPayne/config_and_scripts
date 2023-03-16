@@ -1,6 +1,6 @@
 
-# If config moves, update this.
 export CONFIG_DIR=~/config
+export DRIVE_DIR=~/drive
 
 export PATH="$PATH:$(realpath ~/bin)"
 export PATH="$PATH:$CONFIG_DIR/scripts"
@@ -16,7 +16,7 @@ export RENDERDOC_SOURCE_PATH="$VULKAN_DEV_PATH/renderdoc"
 export PATH="$PATH:$RENDERDOC_SOURCE_PATH/build/bin"
 
 setxkbmap us
-source ~/code/syncer/syncer-bash.sh
+source $CONFIG_DIR/scripts/syncer_files/syncer-bash.sh
 alias man='COLUMNS=120 man'
 alias .sb="source ~/.bashrc"
 
@@ -84,7 +84,6 @@ cursor_row () {
 
 
 #>>>
-
 
 # Vim server
 #    ...
@@ -534,7 +533,6 @@ rg_double () {
 
 #>>>
 
-
 # Readline bindings
 #    ...
 #<<<
@@ -558,7 +556,44 @@ bind -m vi-insert '"\ef": "\C-u\C-lfzf_find\n"'
 
 #>>>
 
+# Prompt
+#    ...
+#<<<
+git_prompt () {
+    local branch=$(git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/') 
+    if [ ! -z "$branch" ] ; then
+        local branch="($branch)"
+    fi
+    echo -e "$branch"
+}
 
+dir_prompt () {
+    local drive_prefix_string="="
+    local home_prefix_string="~"
+
+    local dir="$(realpath .)"
+    local home_prefix="$(realpath ~)"
+    local drive_prefix="$(realpath ~/drive)"
+    if ( echo "$dir" | grep -q "^$drive_prefix" ) ; then
+        local dir="$drive_prefix_string$(echo "$dir" | cut -c $((${#drive_prefix}+1))-)"
+    elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
+        local dir="$home_prefix_string$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
+    fi
+    echo -e "$dir"
+}
+
+PS1=''
+#PS1=$PS1'$(c16 grey)\u@\h$(c16 --reset)'
+PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]:'
+PS1=$PS1'$(c16 white)$(dir_prompt)$(c16 --reset):'
+PS1=$PS1'$(c16 blue)$(git_prompt)$(c16 --reset)\n\$ '
+#>>>
+
+
+# MISC
+#--------------------------------------------------------------------------------
+# learning x86
+#<<<
 export X86_DEV_PATH="$(realpath ~/dev/x86)"
 export MANPATH="$MANPATH:$X86_DEV_PATH/man"
 # Todo: move this
@@ -576,30 +611,4 @@ ins () {
         --bind "alt-p:execute(man x86-{}.7 | less -r > /dev/tty 2>&1)"\
         --preview-window=right:80%
 }
-
-
-git_prompt () {
-    local branch=$(git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/') 
-    if [ ! -z "$branch" ] ; then
-        local branch="($branch)"
-    fi
-    echo -e "$branch"
-}
-
-dir_prompt () {
-    local dir="$(realpath .)"
-    local home_prefix="$(realpath ~)"
-    local drive_prefix="$(realpath ~/drive)"
-    if ( echo "$dir" | grep -q "^$drive_prefix" ) ; then
-        local dir="--$(echo "$dir" | cut -c $((${#drive_prefix}+1))-)"
-    elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
-        local dir="~$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
-    fi
-    echo -e "$dir"
-}
-
-PS1=''
-#PS1=$PS1'$(c16 grey)\u@\h$(c16 --reset)'
-PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]:'
-PS1=$PS1'$(c16 white)$(dir_prompt)$(c16 --reset):'
-PS1=$PS1'$(c16 blue)$(git_prompt)$(c16 --reset)\n\$ '
+#>>>

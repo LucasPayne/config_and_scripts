@@ -493,4 +493,4 @@ augroup END
 
 
 " Source the syncer'd mappings.
-source ~/code/syncer/syncer-vim.vim
+source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
