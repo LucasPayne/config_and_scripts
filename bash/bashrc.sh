@@ -570,8 +570,3 @@ ins () {
         --bind "alt-p:execute(man x86-{}.7 | less -r > /dev/tty 2>&1)"\
         --preview-window=right:80%
 }
-
-x () {
-    xrandr --output DP-0 --mode 3840x2160 --pos 1920x0
-    xrandr --output HDMI-1 --mode 1920x1080 --pos 0x0 --scale 1x1 --rotate left
-}

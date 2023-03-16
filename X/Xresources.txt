@@ -52,9 +52,10 @@ URxvt.pointerBlank:         true
 !!Source http://github.com/altercation/solarized
 
 ! Shell background and foreground
-! *background: #002b36
-! *foreground: #657b83
+!*background: #002b36
+!*foreground: #657b83
 *background: #000000
+!URxvt*background: rgba:0000/0000/0000/cccc
 *foreground: #ffffff
 
 ! Solarized
