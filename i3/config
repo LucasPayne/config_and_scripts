@@ -192,12 +192,12 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 bar {
     output DP-0
-    status_command i3status --config ~/.i3/i3bar_primary
+    status_command i3status --config ~/.i3/i3status_primary
     mode dock
 }
 bar {
     output HDMI-1
-    status_command i3status --config ~/.i3/i3bar_secondary_upright
+    status_command i3status --config ~/.i3/i3status_secondary_upright
     mode dock
 }
 

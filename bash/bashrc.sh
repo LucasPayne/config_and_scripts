@@ -251,7 +251,7 @@ __fzf_navigate () {
         --bind 'enter:execute(echo "FILE_EDIT")+accept' \
         --bind 'alt-enter:execute(echo "FILE_EDIT_TAB")+accept' \
         --bind "alt-p:execute($preview_command_string  | less -r > /dev/tty 2>&1)" \
-        --bind 'alt-o:execute(echo "FILE_EDIT_TAB__DONT_FOLLOW_LINKS")+accept' \
+        --bind 'alt-o:execute(echo "XDG_OPEN")+accept' \
         --bind 'alt-r:execute(echo "SWITCH_MODE_RECURSIVE")+accept' \
         --bind 'ctrl-w:backward-kill-word' \
         --bind 'alt-e:execute(echo "DIRECTORY_QUERY")+print-query+execute("echo")+abort' \
@@ -473,6 +473,12 @@ EOF
                 # Go into the vim session from the navigator. Exiting the vim session will then
                 # come back to the navigator.
                 v
+                continue
+                ;;
+            XDG_OPEN )
+                # Go into the vim session from the navigator. Exiting the vim session will then
+                # come back to the navigator.
+                xdg-open "$selected" &
                 continue
                 ;;
         esac
