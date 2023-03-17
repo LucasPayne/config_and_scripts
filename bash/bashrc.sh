@@ -186,7 +186,6 @@ vimattachserver () {
 
 #>>>
 
-
 # Navigation
 #    ...
 #<<<
@@ -529,11 +528,12 @@ rg_double () {
     # | ack_oneline_to_heading
 }
 
-# Jump to repo in ~/code.
-fzf_code_checkout () {
+# Jump to a directory, displaying readme files.
+fzf_checkout () {
+    local dir="$1"
     local preview_string=$(cat <<- 'EOT'
 	# Look for readme files.
-	found="$(find ~/code/{} -mindepth 1 -maxdepth 1 -iname readme\* | sort)"
+	found="$(find DIR_STRING/{} -mindepth 1 -maxdepth 1 -iname readme\* | sort)"
 	# Prefer a markdown readme if possible.
 	declare -a mds
 	mds=($(echo "$found" | grep -e '\.md$'))
@@ -547,7 +547,9 @@ fzf_code_checkout () {
 	bat --color=always --style=plain $readme
 	EOT
     )
-    local list="$(find ~/code -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename)"
+    # A bit of a hack to expand just the dir variable in the preview string.
+    local preview_string=$(echo "$preview_string" | sed "s@DIR_STRING@$dir@g")
+    local list="$(find $dir -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename)"
     local preview_percent=$(echo "$list" | get_fzf_right_box_percent)
     if [ "$preview_percent" -ge 85 ] ; then
         local preview_percent=85
@@ -556,11 +558,60 @@ fzf_code_checkout () {
         fzf --preview="$preview_string" \
             --preview-window=right:$preview_percent% \
             --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
+            --bind='alt-l:accept' \
             --ansi \
             --layout=reverse \
             --border=none
     )
-    cd ~/code/$selected
+    if [ ! -z "$selected" ] ; then
+        cd $dir/$selected
+    fi
+}
+fzf_code_checkout () {
+    fzf_checkout ~/code
+}
+fzf_dev_checkout () {
+    fzf_checkout ~/drive/dev
+}
+
+#>>>
+
+# Git
+#    ...
+#<<<
+# View and checkout branches.
+
+# Pretty display
+GIT_LOG_FORMAT_PRETTY_DISPLAY="$(c16 blue)%h $(c16 cyan)%an $(c16 red)%ar$(c16 --reset)%n    %s%n"
+
+gcb () {
+    local branches=$(git branch | while read -r branch ; do
+                        branch=${branch#* }
+                        echo $branch
+                    done)
+    local num_branches=$(echo "$branches" | wc -l)
+    local prompt_height=$((num_branches < 14 ? 14 : num_branches))
+    local preview_string='bat --color=always --style=grid <(echo {}) ; git log --oneline --format="'"$GIT_LOG_FORMAT_PRETTY_DISPLAY"'" {} | '"head -$((prompt_height-3))"
+    chosen=$( echo "$branches" | fzf --preview="$preview_string" \
+                --height=$((prompt_height + 2)) \
+                --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
+                --bind='alt-l:accept' \
+                --preview-window=right:80% \
+                --layout=reverse
+            )
+    if [ ! -z "$chosen" ] ; then
+        git checkout "$chosen"
+    fi
+}
+
+preview_git_log () {
+    local ref="$1"
+
+    local current_branch="$(git rev-parse --abbrev-ref HEAD)"
+    (
+        bat --color=always --style=grid <(echo "$(realpath . | xargs basename):($current_branch)")
+        git log $ref --oneline --format="$GIT_LOG_FORMAT_PRETTY_DISPLAY" | cat
+    ) | less -r
 }
 
 
@@ -587,8 +638,21 @@ bind -m vi-insert '"\eh": "\C-ucd ..\n"'
 bind -m vi-command '"\ef": "\C-u\C-lfzf_find\n"'
 bind -m vi-insert '"\ef": "\C-u\C-lfzf_find\n"'
 
+# fzf_code_checkout
 bind -m vi-command '"\eq": "\C-u\C-lfzf_code_checkout\n"'
 bind -m vi-insert '"\eq": "\C-u\C-lfzf_code_checkout\n"'
+
+# fzf_dev_checkout
+bind -m vi-command '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
+bind -m vi-insert '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
+
+# checkout branch
+bind -m vi-command '"\eo": "\C-ugcb\n"'
+bind -m vi-insert '"\eo": "\C-ugcb\n"'
+
+# preview git log
+bind -m vi-command '"\ep": "\C-upreview_git_log HEAD\n"'
+bind -m vi-insert '"\ep": "\C-upreview_git_log HEAD\n"'
 
 #>>>
 
@@ -603,32 +667,44 @@ git_prompt () {
     echo -e "$branch"
 }
 
-dir_prompt () {
-    local drive_prefix_string="="
-    local storage_prefix_string="---"
-    local home_prefix_string="~"
+project_prompt () {
+    local dir="$(pwd)"
+    local prefix="$(realpath -s ~/drive/dev)"
+    if [ "$(pwd)" != "$prefix" ] && ( echo "$dir" | grep -q "^$prefix" ) ; then
+        local tmp="$(echo "$dir" | cut -c $((${#prefix}+1))-)"
+        local project="$(echo $tmp | cut -d/ -f 2)"
+        local rest="$(echo $tmp | cut -d/ -f 3-)"
+        local desc_file=~/drive/dev/.desc
+        local desc=$(cat $desc_file | grep "^$project desc/" | cut -d/ -f 2-)
+        local color=$(cat $desc_file | grep "^$project color/" | cut -d/ -f 2-)
+        printf ":$(c16 $color)$desc$(c16 --reset)/$(c16 white)$rest$(c16 --reset)"
+    else
+        local drive_prefix_string="="
+        local storage_prefix_string="---"
+        local home_prefix_string="~"
 
-    local dir="$(realpath .)"
-    local drive_prefix="$(realpath ~/drive)"
-    local storage_prefix="$(realpath ~/storage)"
-    local home_prefix="$(realpath ~)"
-    if ( echo "$dir" | grep -q "^$drive_prefix" ) ; then
-        local dir="$drive_prefix_string$(echo "$dir" | cut -c $((${#drive_prefix}+1))-)"
-    elif ( echo "$dir" | grep -q "^$storage_prefix" ) ; then
-        local dir="$storage_prefix_string$(echo "$dir" | cut -c $((${#storage_prefix}+1))-)"
-    elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
-        local dir="$home_prefix_string$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
+        local dir="$(pwd)"
+        local drive_prefix="$(realpath -s ~/drive)"
+        local storage_prefix="$(realpath -s ~/storage)"
+        local home_prefix="$(realpath -s ~)"
+        if ( echo "$dir" | grep -q "^$drive_prefix" ) ; then
+            local dir="$drive_prefix_string$(echo "$dir" | cut -c $((${#drive_prefix}+1))-)"
+        elif ( echo "$dir" | grep -q "^$storage_prefix" ) ; then
+            local dir="$storage_prefix_string$(echo "$dir" | cut -c $((${#storage_prefix}+1))-)"
+        elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
+            local dir="$home_prefix_string$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
+        fi
+        c16 white
+        printf "$dir"
+        c16 --reset
     fi
-    echo -e "$dir"
 }
 
+
 PS1=''
-#PS1=$PS1'$(c16 grey)\u@\h$(c16 --reset)'
-PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]:'
-PS1=$PS1'$(c16 white)$(dir_prompt)$(c16 --reset):'
+PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]$(project_prompt):'
 PS1=$PS1'$(c16 blue)$(git_prompt)$(c16 --reset)\n\$ '
 #>>>
-
 
 # MISC
 #--------------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 #command
 \ep quit
+\eq quit
 \eF forw-search (\^\\s\+-|, -)-?
 \ef noaction g\eF
