@@ -5,6 +5,6 @@ if [ -f ~/.wallpaper ] ; then
 fi
 compton &
 setxkbmap us
-t
 xrandr_setup_gaming
+t
 

@@ -529,6 +529,40 @@ rg_double () {
     # | ack_oneline_to_heading
 }
 
+# Jump to repo in ~/code.
+fzf_code_checkout () {
+    local preview_string=$(cat <<- 'EOT'
+	# Look for readme files.
+	found="$(find ~/code/{} -mindepth 1 -maxdepth 1 -iname readme\* | sort)"
+	# Prefer a markdown readme if possible.
+	declare -a mds
+	mds=($(echo "$found" | grep -e '\.md$'))
+	if (( ${#mds[@]} > 0 )) ; then
+	    readme=${mds[0]}
+	else
+	    readme=$(echo "$found" | head -1)
+	fi
+	# bat --color=always --style=grid <(echo $readme)
+        bat --color=always --style=grid <(echo {})
+	bat --color=always --style=plain $readme
+	EOT
+    )
+    local list="$(find ~/code -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename)"
+    local preview_percent=$(echo "$list" | get_fzf_right_box_percent)
+    if [ "$preview_percent" -ge 85 ] ; then
+        local preview_percent=85
+    fi
+    local selected=$(echo "$list" |
+        fzf --preview="$preview_string" \
+            --preview-window=right:$preview_percent% \
+            --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
+            --ansi \
+            --layout=reverse \
+            --border=none
+    )
+    cd ~/code/$selected
+}
+
 
 #>>>
 
@@ -552,6 +586,9 @@ bind -m vi-insert '"\eh": "\C-ucd ..\n"'
 
 bind -m vi-command '"\ef": "\C-u\C-lfzf_find\n"'
 bind -m vi-insert '"\ef": "\C-u\C-lfzf_find\n"'
+
+bind -m vi-command '"\eq": "\C-u\C-lfzf_code_checkout\n"'
+bind -m vi-insert '"\eq": "\C-u\C-lfzf_code_checkout\n"'
 
 #>>>
 

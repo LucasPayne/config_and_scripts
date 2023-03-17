@@ -1,4 +1,18 @@
 set editing-mode vi
+
+# Change cursor styles.
+set show-mode-in-prompt on
+$if term=screen
+    # Send to driven terminal in screen, the escape code for this
+    # is \033P...\033\\.
+    # See https://www.gnu.org/software/screen/manual/html_node/Control-Sequences.html
+    set vi-ins-mode-string \1\033P\033[6 q\033\\\2
+    set vi-cmd-mode-string \1\033P\033[2 q\033\\\2
+$else
+    set vi-ins-mode-string \1\e[5 q\2
+    set vi-cmd-mode-string \1\e[2 q\2
+$endif
+
 $if mode=vi
     set keymap vi-command
     Control-l: clear-screen
