@@ -54,8 +54,8 @@ URxvt.pointerBlank:         true
 ! Shell background and foreground
 !*background: #002b36
 !*foreground: #657b83
-*background: #000000
-!URxvt*background: rgba:0000/0000/0000/cccc
+!*background: #000000
+URxvt*background: rgba:0000/0000/0000/eeff
 *foreground: #ffffff
 
 ! Solarized

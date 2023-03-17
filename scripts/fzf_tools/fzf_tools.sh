@@ -50,12 +50,14 @@ fzf_file_preview () {
     elif [ -d "$filename" ] ; then
         (
             cd "$filename"
-            find -L . -mindepth 1 -maxdepth 1 -type d -not -path '/.' -printf "%P\n" | while read -r dir ; do
-                tree --noreport "$dir"
-            done
-            find -L . -mindepth 1 -maxdepth 1 -type f -not -path '/.' -printf "%P\n" | while read -r f ; do
-                echo "$f"
-            done
+            #Actually, a tree can be too noisy.
+            #find -L . -mindepth 1 -maxdepth 1 -type d -not -path '/.' -printf "%P\n" | while read -r dir ; do
+            #    tree --noreport "$dir"
+            #done
+            #find -L . -mindepth 1 -maxdepth 1 -type f -not -path '/.' -printf "%P\n" | while read -r f ; do
+            #    echo "$f"
+            #done
+            ls
         )
     fi
 }

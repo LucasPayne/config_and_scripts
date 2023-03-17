@@ -1,6 +1,8 @@
 #!/bin/bash
 
-wp ~/images/wallpaper/wallpaper
+if [ -f ~/.wallpaper ] ; then
+    wp ~/.wallpaper
+fi
 compton &
 setxkbmap us
 t

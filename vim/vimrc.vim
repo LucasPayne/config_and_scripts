@@ -204,6 +204,9 @@ endif
 "<<<
 colorscheme solarized
 set background=dark
+hi LineNr ctermbg=None
+hi Normal ctermbg=None
+set fillchars=eob:\ 
 ">>>
 
 

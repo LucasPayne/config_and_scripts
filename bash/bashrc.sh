@@ -5,10 +5,9 @@ export DRIVE_DIR=~/drive
 export PATH="$PATH:$(realpath ~/bin)"
 export PATH="$PATH:$CONFIG_DIR/scripts"
 export PATH="$PATH:$(realpath ~/.cargo/bin)"
-export PATH="$PATH:$(realpath ~/software/bin)"
 
 # Vulkan development
-export VULKAN_DEV_PATH="$(realpath ~/dev/vulkan)"
+export VULKAN_DEV_PATH="$(realpath ~/drive/dev/vulkan)"
 export PATH="$PATH:$VULKAN_DEV_PATH/bin"
 export PATH="$PATH:$VULKAN_DEV_PATH/scripts"
 export MANPATH="$MANPATH:$VULKAN_DEV_PATH/man"
@@ -28,7 +27,7 @@ alias sudo='sudo env PATH=$PATH'
 set -o vi
 
 alias gdb='gdb -q'
-export GDB_DEV="$(realpath ~/dev/gdb)"
+export GDB_DEV="$(realpath ~/drive/dev/gdb)"
 
 alias p=python3
 alias python=python3
@@ -569,13 +568,17 @@ git_prompt () {
 
 dir_prompt () {
     local drive_prefix_string="="
+    local storage_prefix_string="---"
     local home_prefix_string="~"
 
     local dir="$(realpath .)"
-    local home_prefix="$(realpath ~)"
     local drive_prefix="$(realpath ~/drive)"
+    local storage_prefix="$(realpath ~/storage)"
+    local home_prefix="$(realpath ~)"
     if ( echo "$dir" | grep -q "^$drive_prefix" ) ; then
         local dir="$drive_prefix_string$(echo "$dir" | cut -c $((${#drive_prefix}+1))-)"
+    elif ( echo "$dir" | grep -q "^$storage_prefix" ) ; then
+        local dir="$storage_prefix_string$(echo "$dir" | cut -c $((${#storage_prefix}+1))-)"
     elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
         local dir="$home_prefix_string$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
     fi
@@ -594,7 +597,7 @@ PS1=$PS1'$(c16 blue)$(git_prompt)$(c16 --reset)\n\$ '
 #--------------------------------------------------------------------------------
 # learning x86
 #<<<
-export X86_DEV_PATH="$(realpath ~/dev/x86)"
+export X86_DEV_PATH="$(realpath ~/drive/dev/x86)"
 export MANPATH="$MANPATH:$X86_DEV_PATH/man"
 # Todo: move this
 ins () {
