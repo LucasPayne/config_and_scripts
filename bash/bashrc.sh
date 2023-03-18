@@ -6,6 +6,8 @@ export PATH="$PATH:$(realpath ~/bin)"
 export PATH="$PATH:$CONFIG_DIR/scripts"
 export PATH="$PATH:$(realpath ~/.cargo/bin)"
 
+export MANPATH="$MANPATH:$(realpath ~/man)"
+
 # Vulkan development
 export VULKAN_DEV_PATH="$(realpath ~/drive/dev/vulkan)"
 export PATH="$PATH:$VULKAN_DEV_PATH/bin"
@@ -32,7 +34,7 @@ export GDB_DEV="$(realpath ~/.gdb)"
 alias p=python3
 alias python=python3
 
-export LESS="--mouse --wheel-lines=3"
+export LESS="-R -J --mouse --wheel-lines=3"
 
 
 # Small utilities
@@ -591,7 +593,7 @@ gcb () {
                     done)
     local num_branches=$(echo "$branches" | wc -l)
     local prompt_height=$((num_branches < 14 ? 14 : num_branches))
-    local preview_string='bat --color=always --style=grid <(echo {}) ; git log --oneline --format="'"$GIT_LOG_FORMAT_PRETTY_DISPLAY"'" {} | '"head -$((prompt_height-3))"
+    local preview_string='bat --color=always --style=grid <(echo {}) ; git log --oneline --format="'"$GIT_LOG_FORMAT_PRETTY_DISPLAY"'" {} -- | '"head -$((prompt_height-3))"
     chosen=$( echo "$branches" | fzf --preview="$preview_string" \
                 --height=$((prompt_height + 2)) \
                 --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
