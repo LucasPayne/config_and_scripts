@@ -27,7 +27,7 @@ alias sudo='sudo env PATH=$PATH'
 set -o vi
 
 alias gdb='gdb -q'
-export GDB_DEV="$(realpath ~/drive/dev/gdb)"
+export GDB_DEV="$(realpath ~/.gdb)"
 
 alias p=python3
 alias python=python3
@@ -659,15 +659,7 @@ bind -m vi-insert '"\ep": "\C-upreview_git_log HEAD\n"'
 # Prompt
 #    ...
 #<<<
-git_prompt () {
-    local branch=$(git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/') 
-    if [ ! -z "$branch" ] ; then
-        local branch="($branch)"
-    fi
-    echo -e "$branch"
-}
-
-project_prompt () {
+prompt () {
     local dir="$(pwd)"
     local prefix="$(realpath -s ~/drive/dev)"
     if [ "$(pwd)" != "$prefix" ] && ( echo "$dir" | grep -q "^$prefix" ) ; then
@@ -677,7 +669,11 @@ project_prompt () {
         local desc_file=~/drive/dev/.desc
         local desc=$(cat $desc_file | grep "^$project desc/" | cut -d/ -f 2-)
         local color=$(cat $desc_file | grep "^$project color/" | cut -d/ -f 2-)
-        printf ":$(c16 $color)$desc$(c16 --reset)/$(c16 white)$rest$(c16 --reset)"
+        printf ":$(c16 $color)$desc$(c16 --reset)"
+        if [ ! -z "$rest" ] ; then
+            printf "/"
+        fi
+        local dir="$rest"
     else
         local drive_prefix_string="="
         local storage_prefix_string="---"
@@ -694,16 +690,20 @@ project_prompt () {
         elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
             local dir="$home_prefix_string$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
         fi
-        c16 white
-        printf "$dir"
-        c16 --reset
+    fi
+    local branch=$(git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/') 
+
+    c16 white
+    printf "$dir"
+    c16 --reset
+
+    if [ ! -z "$branch" ] ; then
+        printf ":$(c16 blue)($branch)$(c16 --reset)"
     fi
 }
 
-
 PS1=''
-PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]$(project_prompt):'
-PS1=$PS1'$(c16 blue)$(git_prompt)$(c16 --reset)\n\$ '
+PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]$(prompt)\n\$ '
 #>>>
 
 # MISC
