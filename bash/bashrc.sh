@@ -34,7 +34,11 @@ export GDB_DEV="$(realpath ~/.gdb)"
 alias p=python3
 alias python=python3
 
-export LESS="-R -J --mouse --wheel-lines=3"
+export LESS="-R --mouse --wheel-lines=3"
+#https://www.gnu.org/software/src-highlite/source-highlight.html#Introduction
+export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
+
+alias vless="~/.vim/macros/less.sh"
 
 
 # Small utilities
@@ -544,7 +548,6 @@ fzf_checkout () {
 	else
 	    readme=$(echo "$found" | head -1)
 	fi
-	# bat --color=always --style=grid <(echo $readme)
         bat --color=always --style=grid <(echo {})
 	bat --color=always --style=plain $readme
 	EOT
