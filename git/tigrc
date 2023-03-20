@@ -5,4 +5,9 @@
 # color area fgcolor bgcolor [attributes]
 # source path
 
-bind generic 1 @sh -c "echo -n %(commit) | xclip -selection c"
+set vertical-split = horizontal
+set split-view-height = 75%
+set line-graphics = utf-8
+set diff-highlight = true
+
+bind generic 9 @sh -c "echo -n %(commit) | xclip -selection c"

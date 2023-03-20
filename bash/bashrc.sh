@@ -47,6 +47,8 @@ alias ls="ls --color=auto"
 
 alias vless="~/.vim/macros/less.sh"
 
+export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
+
 
 # Small utilities
 #    ...

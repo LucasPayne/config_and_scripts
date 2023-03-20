@@ -3,7 +3,10 @@
     name = lucaspayne
 [core]
     editor = vim
+    pager = perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | less
 [alias]
     go = !firefox "https://github.com/$(git remote show origin | sed -n '2,2 s/  Fetch URL: //p' | cut -d: -f 2 | cut -d. -f 1)" &
 [credential]
-	helper = store
+    helper = store
+[interactive]
+    difffilter = perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight
