@@ -8,6 +8,8 @@ export PATH="$PATH:$(realpath ~/.cargo/bin)"
 
 export MANPATH="$MANPATH:$(realpath ~/man)"
 
+alias fd=fdfind
+
 # Vulkan development
 export VULKAN_DEV_PATH="$(realpath ~/drive/dev/vulkan)"
 export PATH="$PATH:$VULKAN_DEV_PATH/bin"
@@ -219,10 +221,10 @@ __fzf_navigate () {
 
         # Note: Using fd instead of find (faster?).
         #TODO: Show symlinks which are files but not directories
-        # fd -L --search-path "$dir" $depth_flags -tf | cut -c 3-
+        #fd -L --search-path "$dir" $depth_flags -tf | cut -c 3-
         find -L "$dir" $find_depth_flags -type f -not -name '*.link' -a -not -path '*.git/*' | cut -c 3-
         find -L "$dir" $find_depth_flags -type f -name '*.link' -a -not -path '*.git/*' | cut -c 3- | awk '{print "\033[35m" $0  "\033[0m"}'
-        fd -L --search-path "$dir" $fd_depth_flags -td | cut -c 3-  | rev | cut -c 2- | rev | awk '{print "\033[34m" $0  "\033[0m"}'
+        fd -L --search-path "$dir" $fd_depth_flags -td | cut -c 3- | awk '{print "\033[34m" $0  "\033[0m"}'
     ) | tac)"
 
 

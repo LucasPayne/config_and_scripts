@@ -5,3 +5,5 @@
     editor = vim
 [alias]
     go = !firefox "https://github.com/$(git remote show origin | sed -n '2,2 s/  Fetch URL: //p' | cut -d: -f 2 | cut -d. -f 1)" &
+[credential]
+	helper = store
