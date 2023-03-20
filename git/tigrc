@@ -1,0 +1,8 @@
+# https://jonas.github.io/tig/doc/tigrc.5.html
+# 
+# set   variable = value
+# bind  keymap key action
+# color area fgcolor bgcolor [attributes]
+# source path
+
+bind generic 1 @sh -c "echo -n %(commit) | xclip -selection c"
