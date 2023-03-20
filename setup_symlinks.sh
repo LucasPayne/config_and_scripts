@@ -14,6 +14,7 @@ ln -s -f "$(realpath screen/screenrc.txt)" ~/.screenrc
 ln -s -f "$(realpath readline/inputrc.txt)" ~/.inputrc
 ln -s -f "$(realpath pager/lesskey.txt)" ~/.lesskey
 ln -s -f "$(realpath git/gitconfig)" ~/.gitconfig
+ln -s -f "$(realpath git/tigrc)" ~/.tigrc
 ln -s -f "$(realpath i3)" ~/.i3
 ln -s -f "$(realpath scripts)" ~/scripts
 ln -s -f "$(realpath source-highlight)" ~/.source-highlight

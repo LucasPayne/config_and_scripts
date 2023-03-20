@@ -31,12 +31,17 @@ set -o vi
 alias gdb='gdb -q'
 export GDB_DEV="$(realpath ~/.gdb)"
 
+# Explicit terminfo needed for some reason, when using built-from-source ncurses.
+export TERMINFO=/lib/terminfo
+
 alias p=python3
 alias python=python3
 
 export LESS="-R --mouse --wheel-lines=3"
 #https://www.gnu.org/software/src-highlite/source-highlight.html#Introduction
 export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
+
+alias ls="ls --color=auto"
 
 alias vless="~/.vim/macros/less.sh"
 
@@ -590,6 +595,10 @@ fzf_dev_checkout () {
 GIT_LOG_FORMAT_PRETTY_DISPLAY="$(c16 blue)%h $(c16 cyan)%an $(c16 red)%ar$(c16 --reset)%n    %s%n"
 
 gcb () {
+    if ! git status >/dev/null 2>&1 ; then
+        echo "Not in a git repo."
+        return
+    fi
     local branches=$(git branch | while read -r branch ; do
                         branch=${branch#* }
                         echo $branch
@@ -610,6 +619,10 @@ gcb () {
 }
 
 preview_git_log () {
+    if ! git status >/dev/null 2>&1 ; then
+        echo "Not in a git repo."
+        return
+    fi
     local ref="$1"
 
     local current_branch="$(git rev-parse --abbrev-ref HEAD)"

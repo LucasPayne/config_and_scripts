@@ -2,13 +2,13 @@ keyword blue ;
 type, classname green ;
 string red ;
 regexp orange ;
-specialchar pink ;
+specialchar white ;
 comment cyan ;
 number purple ;
 preproc blue ;
 symbol red ;
 function gray ;
-cbracket red ;
+cbracket white ;
 variable green ;
 
 // line numbers
@@ -16,23 +16,23 @@ linenum yellow;
 
 // other elements for ChangeLog and Log files
 date blue ;
-time darkblue ;
-ip darkgreen ;
-file darkblue ;
-name darkgreen ;
+time blue ;
+ip green ;
+file blue ;
+name green ;
 
 // Internet related
 url blue u;
 
 // for diffs
 oldfile orange;
-newfile darkgreen;
+newfile green;
 difflines blue; 
 
 // for css
 selector purple;
 property blue;
-value darkgreen i;
+value green;
 
 // for feature (Cucumber) files
 cuketag green ;

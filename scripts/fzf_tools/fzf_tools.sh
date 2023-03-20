@@ -43,7 +43,6 @@ fzf_file_preview () {
     if [ -f "$filename" ] ; then
         if ( file -b "$filename" | grep -q -i "ascii text" ) || ( file -b "$filename" | grep -q -i "unicode" ) ; then
             if ! source-highlight -q -f esc --style-file ~/.source-highlight/datadir/esc.style -i "$filename" -o STDOUT 2>/dev/null ; then
-            # if ! pygmentize "$filename" 2>/dev/null ; then
                 cat "$filename"
             fi
         else

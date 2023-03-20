@@ -177,6 +177,8 @@ nnoremap j gj
 nnoremap k gk
 nnoremap gj gT
 nnoremap gk gt
+" Source selection
+vnoremap <leader>S :<C-u>@*<cr>
 ">>>
 
 " Plugins
