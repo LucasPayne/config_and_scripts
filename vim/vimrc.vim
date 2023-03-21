@@ -198,6 +198,22 @@ endif
 if PluginEnabled("tagbar") == 1
     nnoremap <leader>T :Tagbar<cr>
 endif
+
+if PluginEnabled("tig-explorer.vim") == 1
+    execute "set <M-p>=\ep"
+    nnoremap <M-p> :Tig<cr>
+    let g:tig_explorer_keymap_edit_e  = 'e'
+    let g:tig_explorer_keymap_edit    = '<C-o>'
+    let g:tig_explorer_keymap_tabedit = 'E'
+    let g:tig_explorer_keymap_split   = '<C-s>'
+    let g:tig_explorer_keymap_vsplit  = '<C-v>'
+    
+    let g:tig_explorer_keymap_commit_edit    = '<ESC>o'
+    let g:tig_explorer_keymap_commit_tabedit = '<ESC>t'
+    let g:tig_explorer_keymap_commit_split   = '<ESC>s'
+    let g:tig_explorer_keymap_commit_vsplit  = '<ESC>v'
+endif
+
 ">>>
 
 " Colors and syntax highlighting

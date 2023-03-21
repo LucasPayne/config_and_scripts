@@ -10,3 +10,6 @@
 [submodule "vim/__tmp/AnsiEsc.vim"]
 	path = vim/repos/AnsiEsc.vim
 	url = git@github.com:vim-scripts/AnsiEsc.vim.git
+[submodule "vim/repos/tig-explorer.vim"]
+	path = vim/repos/tig-explorer.vim
+	url = git@github.com:LucasPayne/tig-explorer.vim.git

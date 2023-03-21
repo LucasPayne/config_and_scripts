@@ -6,13 +6,14 @@
 # source path
 
 set vertical-split = horizontal
-set split-view-height = 75%
+set split-view-height = 70%
 set line-graphics = utf-8
 set diff-highlight = true
 color diff-del-highlight black white
 color diff-add-highlight black white
 set focus-child = false
 set send-child-enter = false
+# set diff-options = 
 
 bind generic 9 @sh -c "echo -n %(commit) | xclip -selection c"
 
@@ -49,3 +50,6 @@ addbind main zz :move-cursor-center
 bind diff z none
 bind diff zz :scroll-cursor-center
 addbind diff zz :move-cursor-center
+
+# bind diff e !>bash -c "set -m ; source ~/.bashrc ; v --tabnew %(file)"
+# bind diff e !>bash -c "set -m ; source ~/.bashrc ; v --tabnew %(file)"
