@@ -202,6 +202,7 @@ endif
 if PluginEnabled("tig-explorer.vim") == 1
     execute "set <M-p>=\ep"
     nnoremap <M-p> :Tig<cr>
+    nnoremap .bl :TigBlame<cr>
     let g:tig_explorer_keymap_edit_e  = 'e'
     let g:tig_explorer_keymap_edit    = '<C-o>'
     let g:tig_explorer_keymap_tabedit = 'E'
@@ -212,7 +213,9 @@ if PluginEnabled("tig-explorer.vim") == 1
     let g:tig_explorer_keymap_commit_tabedit = '<ESC>t'
     let g:tig_explorer_keymap_commit_split   = '<ESC>s'
     let g:tig_explorer_keymap_commit_vsplit  = '<ESC>v'
+endif
 
+if PluginEnabled("vim-gitgutter") == 1
     let g:gitgutter_enabled = 0
     let g:gitgutter_preview_win_floating = 0
 

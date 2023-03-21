@@ -14,6 +14,7 @@ color diff-add-highlight black white
 set focus-child = false
 set send-child-enter = false
 # set diff-options = 
+set blame-options = --relative-date
 
 bind generic 9 @sh -c "echo -n %(commit) | xclip -selection c"
 
