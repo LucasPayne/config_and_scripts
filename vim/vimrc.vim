@@ -144,7 +144,7 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 set foldmethod=marker
 set foldmarker=<<<,>>>
 " set cursorline
-set number
+set nonumber
 set nuw=5
 set noswapfile
 set mouse=a
@@ -205,13 +205,29 @@ if PluginEnabled("tig-explorer.vim") == 1
     let g:tig_explorer_keymap_edit_e  = 'e'
     let g:tig_explorer_keymap_edit    = '<C-o>'
     let g:tig_explorer_keymap_tabedit = 'E'
-    let g:tig_explorer_keymap_split   = '<C-s>'
-    let g:tig_explorer_keymap_vsplit  = '<C-v>'
+    let g:tig_explorer_keymap_split   = '_'
+    let g:tig_explorer_keymap_vsplit  = '|'
     
     let g:tig_explorer_keymap_commit_edit    = '<ESC>o'
     let g:tig_explorer_keymap_commit_tabedit = '<ESC>t'
     let g:tig_explorer_keymap_commit_split   = '<ESC>s'
     let g:tig_explorer_keymap_commit_vsplit  = '<ESC>v'
+
+    let g:gitgutter_enabled = 0
+    let g:gitgutter_preview_win_floating = 0
+
+    nnoremap <space>p :GitGutterToggle<cr>
+    nnoremap <space>P :GitGutterPreviewHunk<cr>
+
+    function! RefreshGitGutter()
+        if g:gitgutter_enabled == 1
+            GitGutterAll
+        endif
+    endfunction
+    augroup GitGutterAuGroup
+        autocmd!
+        autocmd BufWritePost * :call RefreshGitGutter()
+    augroup END
 endif
 
 ">>>
@@ -227,6 +243,8 @@ hi Normal ctermbg=None
 "hi Normal ctermfg=White
 "hi Comment ctermfg=Blue
 set fillchars=eob:\ 
+set signcolumn=auto
+hi SignColumn ctermbg=none
 ">>>
 
 " Cursor styles
@@ -283,7 +301,7 @@ endif
 "<<<
 packadd termdebug
 hi debugPC ctermbg=white
-hi SignColumn ctermbg=blue
+"hi SignColumn ctermbg=blue
 nnoremap .F :Termdebug<cr>
 "todo: Should have alt keybindings which also work in the gdb prompt.
 " nnoremap .ff :Gdb<cr>
@@ -532,7 +550,6 @@ augroup END
 augroup filetype
     autocmd! BufRead,BufNewFile *.td set filetype=tablegen
 augroup END
-
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
