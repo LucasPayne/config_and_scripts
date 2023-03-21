@@ -18,6 +18,9 @@ bind generic 9 @sh -c "echo -n %(commit) | xclip -selection c"
 
 #-Why isn't bind generic working?
 #    Does it not take priority over built-in keybindings for views?
+#    -Yes, this is true.
+#    From source: /* Looks for a key binding first in the given map, then in the generic map, and
+#                  * lastly in the default keybindings. */
 bind main g none
 bind main gg :move-first-line
 bind main G :move-last-line
@@ -33,13 +36,16 @@ bind diff G :move-last-line
 # bind main z none
 # bind main zz ...Center the line.
 
-# bind main <Enter> :enter
-# addbind main <Enter> :view-next
-# bind main J :move-down
-# addbind main J :enter
-# bind main K :move-up
-# addbind main K :enter
-
+bind main <Enter> :enter
+addbind main <Enter> :view-next
 bind main J :move-down
-bind main K :enter
-bind main <Enter> :view-next
+addbind main J :enter
+bind main K :move-up
+addbind main K :enter
+
+bind main z none
+bind main zz :scroll-cursor-center
+addbind main zz :move-cursor-center
+bind diff z none
+bind diff zz :scroll-cursor-center
+addbind diff zz :move-cursor-center
