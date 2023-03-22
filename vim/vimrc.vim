@@ -182,6 +182,7 @@ vnoremap <leader>S :<C-u>@*<cr>
 " Quick write
 execute "set <M-w>=\ew"
 nnoremap <M-w> :w<cr>
+inoremap <M-w> <Esc>:w<cr>
 " Quick move window
 execute "set <M-h>=\eh"
 nnoremap <M-h> <C-w>h

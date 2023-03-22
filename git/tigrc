@@ -74,4 +74,9 @@ bind generic L :move-cursor-bottom
 bind main b @git branchfrom %(commit)
 
 # branchfrom diff
-bind main D !>sh -c "git diff branchfrom | tig"
+#bind main D !>sh -c "git diff branchfrom | tig"
+bind main D :view-diff-branchfrom
+addbind main D :view-next
+#addbind main D :maximize
+bind main B :view-diff-branchfrom
+addbind main B @git branchfrom %(commit)
