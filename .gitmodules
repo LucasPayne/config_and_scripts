@@ -16,3 +16,6 @@
 [submodule "vim/__tmp/vim-gitgutter"]
 	path = vim/repos/vim-gitgutter
 	url = git@github.com:airblade/vim-gitgutter.git
+[submodule "vim/__tmp/vim-lsp"]
+	path = vim/repos/vim-lsp
+	url = git@github.com:prabirshrestha/vim-lsp.git

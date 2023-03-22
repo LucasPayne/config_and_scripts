@@ -186,6 +186,7 @@ vnoremap <leader>S :<C-u>@*<cr>
 "    ...
 "<<<
 execute pathogen#infect()
+execute pathogen#helptags()
 function! PluginEnabled(plugin_name)
     let l:path = expand("~")."/.vim/bundle/".a:plugin_name
     return filereadable(l:path) || isdirectory(l:path)
@@ -231,6 +232,21 @@ if PluginEnabled("vim-gitgutter") == 1
         autocmd!
         autocmd BufWritePost * :call RefreshGitGutter()
     augroup END
+endif
+
+if PluginEnabled("vim-lsp") == 1
+    if executable('ccls')
+        " Register ccls C++ lanuage server.
+        if executable('ccls')
+           au User lsp_setup call lsp#register_server({
+              \ 'name': 'ccls',
+              \ 'cmd': {server_info->['ccls']},
+              \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
+              \ 'initialization_options': {'cache': {'directory': expand('~/.cache/ccls') }},
+              \ 'allowlist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
+              \ })
+        endif
+    endif
 endif
 
 ">>>
