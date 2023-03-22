@@ -55,8 +55,8 @@ URxvt.pointerBlank:         true
 !*background: #002b36
 !*foreground: #657b83
 !*background: #000000
-URxvt*background: rgba:0000/0000/0000/eeff
-!URxvt*background: rgba:0000/0000/0000/e0ff
+!URxvt*background: rgba:0000/0000/0000/eeff
+URxvt*background: rgba:0000/0000/0000/ffff
 *foreground: #ffffff
 
 ! Solarized

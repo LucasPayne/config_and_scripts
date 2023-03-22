@@ -4,6 +4,25 @@
 # bind  keymap key action
 # color area fgcolor bgcolor [attributes]
 # source path
+#
+
+set blame-view	= id:yes,color file-name:auto author:full date:default,format="%Y-%m-%d" line-number:yes,interval=1 text
+set grep-view	= file-name:no line-number:yes,interval=1 text
+set main-view	= line-number:no,interval=5 id:no date:default,format="%Y-%m-%d" author:full commit-title:yes,graph,refs,overflow=no
+set reflog-view	= line-number:no,interval=5 id:yes date:no,format="%Y-%m-%d" author:no commit-title:yes,refs,overflow=no
+set refs-view	= line-number:no id:no date:default,format="%Y-%m-%d" author:full ref commit-title
+set stash-view	= line-number:no,interval=5 id:no date:default,format="%Y-%m-%d" author:full commit-title
+set status-view	= line-number:no,interval=5 status:short file-name
+set tree-view	= line-number:no,interval=5 mode author:full file-size date:default,format="%Y-%m-%d" id:no file-name
+
+# Pager based views
+set pager-view	= line-number:no,interval=5 text
+set stage-view	= line-number:no,interval=5 text
+set log-view	= line-number:no,interval=5 text
+set blob-view	= line-number:no,interval=5 text
+#set diff-view	= line-number:yes,interval=1,width=10 text:yes,commit-title-overflow=no
+set diff-view	= line-number:no text:yes,commit-title-overflow=no
+
 
 set vertical-split = horizontal
 set split-view-height = 70%
@@ -43,6 +62,11 @@ bind main J :move-down
 addbind main J :enter
 bind main K :move-up
 addbind main K :enter
+
+bind diff J :move-down
+#addbind diff J :preview-file-diff
+bind diff K :move-up
+#addbind diff K :preview-file-diff
 
 bind main z none
 bind main zz :scroll-cursor-center

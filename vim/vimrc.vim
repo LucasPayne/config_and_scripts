@@ -217,18 +217,20 @@ if PluginEnabled("tig-explorer.vim") == 1
     let g:tig_explorer_use_builtin_term = 0
 
     let g:tig_explorer_keymap_edit_e  = 'e'
-    let g:tig_explorer_keymap_edit    = '<C-o>'
+    let g:tig_explorer_keymap_edit    = '<C-e>'
     let g:tig_explorer_keymap_tabedit = 'E'
     let g:tig_explorer_keymap_split   = '_'
     let g:tig_explorer_keymap_vsplit  = '|'
     
-    let g:tig_explorer_keymap_commit_edit    = '<ESC>o'
-    let g:tig_explorer_keymap_commit_tabedit = '<ESC>t'
-    let g:tig_explorer_keymap_commit_split   = '<ESC>s'
-    let g:tig_explorer_keymap_commit_vsplit  = '<ESC>v'
+    let g:tig_explorer_keymap_commit_edit    = 'o'
+    let g:tig_explorer_keymap_commit_tabedit = 'O'
+    let g:tig_explorer_keymap_commit_split   = '<C-_>'
+    let g:tig_explorer_keymap_commit_vsplit  = '<C-o>'
 
     execute "set <M-p>=\ep"
     nnoremap <M-p> :Tig<cr>
+    execute "set <M-o>=\eo"
+    nnoremap <M-o> :TigOpenCurrentFile<cr>
     nnoremap .bl :TigBlame<cr>
 endif
 
