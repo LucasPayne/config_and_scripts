@@ -30,13 +30,12 @@ bind main G :move-last-line
 bind diff g none
 bind diff gg :move-first-line
 bind diff G :move-last-line
+bind generic g none
+bind generic gg :move-first-line
+bind generic G :move-last-line
 bind generic <C-f> :scroll-page-down
 bind generic <C-b> :scroll-page-up
 bind generic <Space> none
-
-# Want something like
-# bind main z none
-# bind main zz ...Center the line.
 
 bind main <Enter> :enter
 addbind main <Enter> :view-next
@@ -51,6 +50,22 @@ addbind main zz :move-cursor-center
 bind diff z none
 bind diff zz :scroll-cursor-center
 addbind diff zz :move-cursor-center
+bind generic z none
+bind generic zz :scroll-cursor-center
+addbind generic zz :move-cursor-center
+
+bind main M :move-cursor-center
+bind main H :move-cursor-top
+bind main L :move-cursor-bottom
+bind diff M :move-cursor-center
+bind diff H :move-cursor-top
+bind diff L :move-cursor-bottom
+bind pager M :move-cursor-center
+bind pager H :move-cursor-top
+bind pager L :move-cursor-bottom
+bind generic M :move-cursor-center
+bind generic H :move-cursor-top
+bind generic L :move-cursor-bottom
 
 # bind diff e !>bash -c "set -m ; source ~/.bashrc ; v --tabnew %(file)"
 # bind diff e !>bash -c "set -m ; source ~/.bashrc ; v --tabnew %(file)"

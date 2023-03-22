@@ -179,6 +179,18 @@ nnoremap gj gT
 nnoremap gk gt
 " Source selection
 vnoremap <leader>S :<C-u>@*<cr>
+" Quick write
+execute "set <M-w>=\ew"
+nnoremap <M-w> :w<cr>
+" Quick move window
+execute "set <M-h>=\eh"
+nnoremap <M-h> <C-w>h
+execute "set <M-j>=\ej"
+nnoremap <M-j> <C-w>j
+execute "set <M-k>=\ek"
+nnoremap <M-k> <C-w>k
+execute "set <M-l>=\el"
+nnoremap <M-l> <C-w>l
 ">>>
 
 " Plugins
@@ -201,9 +213,8 @@ if PluginEnabled("tagbar") == 1
 endif
 
 if PluginEnabled("tig-explorer.vim") == 1
-    execute "set <M-p>=\ep"
-    nnoremap <M-p> :Tig<cr>
-    nnoremap .bl :TigBlame<cr>
+    let g:tig_explorer_use_builtin_term = 0
+
     let g:tig_explorer_keymap_edit_e  = 'e'
     let g:tig_explorer_keymap_edit    = '<C-o>'
     let g:tig_explorer_keymap_tabedit = 'E'
@@ -214,6 +225,10 @@ if PluginEnabled("tig-explorer.vim") == 1
     let g:tig_explorer_keymap_commit_tabedit = '<ESC>t'
     let g:tig_explorer_keymap_commit_split   = '<ESC>s'
     let g:tig_explorer_keymap_commit_vsplit  = '<ESC>v'
+
+    execute "set <M-p>=\ep"
+    nnoremap <M-p> :Tig<cr>
+    nnoremap .bl :TigBlame<cr>
 endif
 
 if PluginEnabled("vim-gitgutter") == 1
@@ -235,18 +250,24 @@ if PluginEnabled("vim-gitgutter") == 1
 endif
 
 if PluginEnabled("vim-lsp") == 1
+    let g:lsp_diagnostics_enabled = 0
+    let g:lsp_document_highlight_enabled = 0
+
     if executable('ccls')
         " Register ccls C++ lanuage server.
-        if executable('ccls')
-           au User lsp_setup call lsp#register_server({
-              \ 'name': 'ccls',
-              \ 'cmd': {server_info->['ccls']},
-              \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
-              \ 'initialization_options': {'cache': {'directory': expand('~/.cache/ccls') }},
-              \ 'allowlist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
-              \ })
-        endif
+       au User lsp_setup call lsp#register_server({
+          \ 'name': 'ccls',
+          \ 'cmd': {server_info->['ccls']},
+          \ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
+          \ 'initialization_options': {'cache': {'directory': expand('~/.cache/ccls') }},
+          \ 'allowlist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
+          \ })
     endif
+
+    nnoremap <space>d :LspDefinition<cr>
+    nnoremap <space>D :LspDeclaration<cr>
+    nnoremap <space>r :LspReferences<cr>
+    nnoremap <space>t :LspTypeDefinition<cr>
 endif
 
 ">>>
@@ -282,6 +303,18 @@ else
     let &t_EI.="\<Esc>[1 q"
     let &t_te.="\<Esc>[0 q"
 endif
+" TODO: Reset the cursor for the correct mode when switching to vim.
+" :help terminal-info
+" function! ResetCursor()
+"     "--- Doesn't work...
+"     let l:mode = mode()
+"     if l:mode == "n"
+"         echo &t_EI
+"     elseif l:mode == "i"
+"         echo &t_SI
+"     endif
+" endfunction
+" autocmd FocusGained * :call ResetCursor()
 ">>>
 
 " Vim server
