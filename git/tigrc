@@ -8,7 +8,7 @@
 
 set blame-view	= id:yes,color file-name:auto author:full date:default,format="%Y-%m-%d" line-number:yes,interval=1 text
 set grep-view	= file-name:no line-number:yes,interval=1 text
-set main-view	= line-number:no,interval=5 id:no date:default,format="%Y-%m-%d" author:full commit-title:yes,graph,refs,overflow=no
+set main-view	= line-number:no,interval=5 id:no date:display=relative-compact author:full commit-title:yes,graph,refs,overflow=no
 set reflog-view	= line-number:no,interval=5 id:yes date:no,format="%Y-%m-%d" author:no commit-title:yes,refs,overflow=no
 set refs-view	= line-number:no id:no date:default,format="%Y-%m-%d" author:full ref commit-title
 set stash-view	= line-number:no,interval=5 id:no date:default,format="%Y-%m-%d" author:full commit-title
@@ -20,10 +20,9 @@ set pager-view	= line-number:no,interval=5 text
 set stage-view	= line-number:no,interval=5 text
 set log-view	= line-number:no,interval=5 text
 set blob-view	= line-number:no,interval=5 text
-#set diff-view	= line-number:yes,interval=1,width=10 text:yes,commit-title-overflow=no
 set diff-view	= line-number:no text:yes,commit-title-overflow=no
 
-
+set wrap-lines = false
 set vertical-split = horizontal
 set split-view-height = 70%
 set line-graphics = utf-8
@@ -32,10 +31,12 @@ color diff-del-highlight black white
 color diff-add-highlight black white
 set focus-child = false
 set send-child-enter = false
-# set diff-options = 
 set blame-options = --relative-date
 set ignore-case = smart-case
 
+# Toggle date display
+bind generic 1 :toggle date-display
+# Copy commit hash
 bind generic 9 @sh -c "echo -n %(commit) | xclip -selection c"
 
 #-Why isn't bind generic working?
@@ -63,11 +64,6 @@ addbind main J :enter
 bind main K :move-up
 addbind main K :enter
 
-bind diff J :move-down
-#addbind diff J :preview-file-diff
-bind diff K :move-up
-#addbind diff K :preview-file-diff
-
 bind main z none
 bind main zz :scroll-cursor-center
 addbind main zz :move-cursor-center
@@ -91,16 +87,14 @@ bind generic M :move-cursor-center
 bind generic H :move-cursor-top
 bind generic L :move-cursor-bottom
 
-# bind diff e !>bash -c "set -m ; source ~/.bashrc ; v --tabnew %(file)"
-# bind diff e !>bash -c "set -m ; source ~/.bashrc ; v --tabnew %(file)"
-#
-
 bind main b @git branchfrom %(commit)
 
-# branchfrom diff
-#bind main D !>sh -c "git diff branchfrom | tig"
 bind main D :view-diff-branchfrom
 addbind main D :view-next
-#addbind main D :maximize
+bind diff D :view-close
+bind main d :enter
 bind main B :view-diff-branchfrom
 addbind main B @git branchfrom %(commit)
+
+bind diff <Enter> :enter
+addbind diff <Enter> :move-half-page-down
