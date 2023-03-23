@@ -19,3 +19,6 @@
 [submodule "vim/__tmp/vim-lsp"]
 	path = vim/repos/vim-lsp
 	url = git@github.com:prabirshrestha/vim-lsp.git
+[submodule "vim/__tmp/vim-fugitive"]
+	path = vim/repos/vim-fugitive
+	url = git@github.com:tpope/vim-fugitive.git
