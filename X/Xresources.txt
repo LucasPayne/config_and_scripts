@@ -141,6 +141,7 @@ URxvt.keysym.S-Return:     \033[13;2u
 !URxvt.font: -xos4-terminus-medium-r-normal--24-240-72-72-c-120-koi8-r
 !
 !URxvt.font:     xft:DejavuSansMono:pixelsize=19
-URxvt.font:     xft:FiraCodeLight:pixelsize=17
+!URxvt.font:     xft:FiraCodeLight:pixelsize=17
+URxvt.font:     xft:FiraCodeLight:pixelsize=15
 
 

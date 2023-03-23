@@ -96,5 +96,18 @@ bind main d :enter
 bind main B :view-diff-branchfrom
 addbind main B @git branchfrom %(commit)
 
+#bind diff <Enter> :enter
+#addbind diff <Enter> :move-half-page-down
+
+color diff-header black white
+
 bind diff <Enter> :enter
-addbind diff <Enter> :move-half-page-down
+addbind diff <Enter> :move-down
+addbind diff <Enter> :move-down
+addbind diff <Enter> :move-down
+addbind diff <Enter> :move-down
+addbind diff <Enter> :scroll-cursor-top
+addbind diff <Enter> :move-cursor-top
+
+# bind main p :toggle diff-preview
+# bind diff p :toggle diff-preview
