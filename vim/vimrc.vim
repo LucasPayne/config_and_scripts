@@ -3,6 +3,9 @@
 "
 "
 "
+"
+"
+"
 
 function! ResolveIncludeFile(file_identifier)
     " Given a file path, extracted from an include statement, search
@@ -155,6 +158,8 @@ set smartcase
 " set showtabline=2
 set showtabline=1
 set splitright
+" Don't resize splits when closing a window.
+set noequalalways
 ">>>
 
 " Basic mappings
@@ -222,10 +227,10 @@ if PluginEnabled("tig-explorer.vim") == 1
     let g:tig_explorer_keymap_split   = '_'
     let g:tig_explorer_keymap_vsplit  = '|'
     
-    let g:tig_explorer_keymap_commit_edit    = 'o'
-    let g:tig_explorer_keymap_commit_tabedit = 'O'
-    let g:tig_explorer_keymap_commit_split   = '<C-_>'
-    let g:tig_explorer_keymap_commit_vsplit  = '<C-o>'
+    "let g:tig_explorer_keymap_commit_edit    = 'o'
+    "let g:tig_explorer_keymap_commit_tabedit = 'O'
+    "let g:tig_explorer_keymap_commit_split   = '<C-_>'
+    "let g:tig_explorer_keymap_commit_vsplit  = '<C-o>'
 
     execute "set <M-p>=\ep"
     nnoremap <M-p> :Tig<cr>
@@ -355,14 +360,49 @@ endif
 " ...
 "<<<
 packadd termdebug
+
+let g:termdebug_config = {
+            \ 'winbar' : 0,
+            \ 'disasm_window' : 0,
+            \ 'disasm_window_height' : 16,
+            \ 'wide' : 32
+            \ }
+
 hi debugPC ctermbg=white
 "hi SignColumn ctermbg=blue
-nnoremap .F :Termdebug<cr>
-"todo: Should have alt keybindings which also work in the gdb prompt.
-" nnoremap .ff :Gdb<cr>
-" nnoremap .fa :Asm<cr>
-" nnoremap .fs :Source<cr>
-" nnoremap .fp :Program<cr>
+nnoremap .T :Termdebug<cr><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>25<<C-w>k
+function! DoTermdebugBreakpointModify(cmd)
+    execute a:cmd
+    sleep 50m
+    "call TermDebugSendCommand("json_serialize_breakpoints")
+    TermdebugSendCommand json_serialize_breakpoints
+    sleep 50m
+    call BreakpointsQuickfix()
+    Source
+endfunction
+function! DoTermdebugCodeMove(cmd)
+    execute a:cmd
+    sleep 50m
+    "call TermDebugSendCommand("json_serialize_stacktrace")
+    TermdebugSendCommand json_serialize_stacktrace
+    sleep 50m
+    call QuickfixCallstackFromGDB()
+    Source
+endfunction
+nnoremap <space>b :call DoTermdebugBreakpointModify("Break")<cr>
+nnoremap <space>B :call DoTermdebugBreakpointModify("Clear")<cr>
+nnoremap <space>u :call DoTermdebugCodeMove("Until")<cr>
+nnoremap <space>n :call DoTermdebugCodeMove("Over")<cr>
+nnoremap <space>s :call DoTermdebugCodeMove("Step")<cr>
+nnoremap <space>f :call DoTermdebugCodeMove("Finish")<cr>
+function! ToggleTermdebugAsm()
+    if bufnr('Termdebug-asm-listing') == bufnr()
+        close
+    else
+        Asm
+    endif
+endfunction
+nnoremap <space>a :call ToggleTermdebugAsm()<cr>
 
 " help termdebug_shortcuts
 function! GDBRelativeFrame(jump)
@@ -404,7 +444,7 @@ nnoremap .f :call ToggleQuickFix()<cr>
 let g:quickfix_callstack_frame_dicts = []
 
 function! QuickfixCallstackFromGDB()
-    let l:json_file_path = "/tmp/gdb__vim_serialize_stacktrace"
+    let l:json_file_path = $GDB_DEV."/state/stacktrace"
     try
         let l:json_string = join(readfile(l:json_file_path), "\n")
         let l:json_dict = json_decode(l:json_string)

@@ -8,6 +8,8 @@
 ln -s -f "$(realpath vim/vimdir/)" ~/.vim
 ln -s -f "$(realpath vim/vimrc.vim)" ~/.vimrc
 ln -s -f "$(realpath bash/bashrc.sh)" ~/.bashrc
+ln -s -f "$(realpath gdb/gdbinit.txt)" ~/.gdbinit
+ln -s -f "$(realpath gdb/)" ~/.gdb
 ln -s -f "$(realpath X/Xresources.txt)" ~/.Xresources
 ln -s -f "$(realpath X/xinitrc)" ~/.xinitrc
 ln -s -f "$(realpath screen/screenrc.txt)" ~/.screenrc

@@ -64,6 +64,7 @@ set cpo&vim
 " To end type "quit" in the gdb window.
 command -nargs=* -complete=file -bang Termdebug call s:StartDebug(<bang>0, <f-args>)
 command -nargs=+ -complete=file -bang TermdebugCommand call s:StartDebugCommand(<bang>0, <f-args>)
+command -nargs=* TermdebugSendCommand call s:SendCommand(<f-args>)
 
 let s:pc_id = 12
 let s:asm_id = 13

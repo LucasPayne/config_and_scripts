@@ -52,7 +52,7 @@ f.close()
 end
 
 
-define __vim_serialize_stacktrace
+define json_serialize_stacktrace
     python
 #    ,---------------------------------------------------------------------------
 #   /
@@ -61,6 +61,7 @@ define __vim_serialize_stacktrace
 #/ 
 import json
 import subprocess
+import os
 
 def serialize_frame(frame):
     val = {}
@@ -88,7 +89,8 @@ while cur:
 val = {
     "frames" : frames
 }
-f = open("/tmp/gdb__vim_serialize_stacktrace", "w+")
+dev = os.environ["GDB_DEV"]
+f = open(dev+"/state/stacktrace", "w+")
 f.write(json.dumps(val, indent=2) + "\n")
 f.close()
 #\ 
@@ -218,4 +220,9 @@ f.close()
 #   \
 #    '---------------------------------------------------------------------------
     end
+end
+
+define json
+    json_serialize_stacktrace
+    json_serialize_breakpoints
 end

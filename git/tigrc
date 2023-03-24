@@ -44,15 +44,18 @@ bind generic 9 @sh -c "echo -n %(commit) | xclip -selection c"
 #    -Yes, this is true.
 #    From source: /* Looks for a key binding first in the given map, then in the generic map, and
 #                  * lastly in the default keybindings. */
-bind main g none
-bind main gg :move-first-line
 bind main G :move-last-line
-bind diff g none
-bind diff gg :move-first-line
 bind diff G :move-last-line
-bind generic g none
-bind generic gg :move-first-line
 bind generic G :move-last-line
+#bind main g none
+#bind main gg :move-first-line
+#bind diff g none
+#bind diff gg :move-first-line
+#bind generic g none
+#bind generic gg :move-first-line
+bind main g :move-first-line
+bind diff g :move-first-line
+bind generic g :move-first-line
 bind generic <C-f> :scroll-page-down
 bind generic <C-b> :scroll-page-up
 bind generic <Space> none
@@ -64,15 +67,21 @@ addbind main J :enter
 bind main K :move-up
 addbind main K :enter
 
-bind main z none
-bind main zz :scroll-cursor-center
-addbind main zz :move-cursor-center
-bind diff z none
-bind diff zz :scroll-cursor-center
-addbind diff zz :move-cursor-center
-bind generic z none
-bind generic zz :scroll-cursor-center
-addbind generic zz :move-cursor-center
+#bind main z none
+#bind main zz :scroll-cursor-center
+#addbind main zz :move-cursor-center
+#bind diff z none
+#bind diff zz :scroll-cursor-center
+#addbind diff zz :move-cursor-center
+#bind generic z none
+#bind generic zz :scroll-cursor-center
+#addbind generic zz :move-cursor-center
+bind main z :scroll-cursor-center
+addbind main z :move-cursor-center
+bind diff z :scroll-cursor-center
+addbind diff z :move-cursor-center
+bind generic z :scroll-cursor-center
+addbind generic z :move-cursor-center
 
 bind main M :move-cursor-center
 bind main H :move-cursor-top
