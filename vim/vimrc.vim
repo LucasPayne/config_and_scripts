@@ -370,7 +370,7 @@ let g:termdebug_config = {
 
 hi debugPC ctermbg=white
 "hi SignColumn ctermbg=blue
-nnoremap .T :Termdebug<cr><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>25<<C-w>k
+nnoremap .T :Termdebug<cr><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>1000<<C-w>58><C-w>k
 function! DoTermdebugBreakpointModify(cmd)
     execute a:cmd
     sleep 50m
@@ -438,7 +438,7 @@ function! ToggleQuickFix()
         cclose
     endif
 endfunction
-nnoremap .f :call ToggleQuickFix()<cr>
+nnoremap <space>w :call ToggleQuickFix()<cr>
 
 " Global variable for access by quickfixtextfunc.
 let g:quickfix_callstack_frame_dicts = []

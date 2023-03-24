@@ -75,6 +75,9 @@ def serialize_frame(frame):
         val["binary"] = symtab.objfile.filename
         val["filename"] = symtab.filename
         val["function"] = str(frame.function())
+        left_paren_index = val["function"].find("(")
+        if left_paren_index >= 0:
+            val["function"] = val["function"][:left_paren_index]
         val["line"] = frame.find_sal().line
     else:
         val["type"] = "Binary"
