@@ -66,6 +66,10 @@ bind main J :move-down
 addbind main J :enter
 bind main K :move-up
 addbind main K :enter
+#bind main j :move-down
+#addbind main j :enter
+#bind main k :move-up
+#addbind main k :enter
 
 #bind main z none
 #bind main zz :scroll-cursor-center

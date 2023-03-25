@@ -1,0 +1,12 @@
+set shell bash
+
+cmd open &{{
+    case $(file --mime-type -Lb $f) in
+        text/*)
+            #lf -remote "send $id \$$EDITOR \$fx"
+            v $f
+            ;;
+        *)
+            ;;
+    esac
+}}

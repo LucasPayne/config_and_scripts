@@ -213,11 +213,13 @@ vnoremap <leader>S :<C-u>@*<cr>
 " Quick write
 nnoremap <M-w> :w<cr>
 inoremap <M-w> <Esc>:w<cr>
-" Quick move window
+" Quick navigate windows
 nnoremap <M-h> <C-w>h
 nnoremap <M-j> <C-w>j
 nnoremap <M-k> <C-w>k
 nnoremap <M-l> <C-w>l
+" Quick close window
+nnoremap <M-x> :q<cr>
 ">>>
 
 " Plugins
@@ -693,14 +695,15 @@ function! CtrlCHandler()
     endif
 endfunction
 
-tnoremap JK <C-\><C-n>
+"tnoremap JK <C-\><C-n>
+tnoremap <C-j><C-k> <C-\><C-n>
 nnoremap <C-c> :call CtrlCHandler()<cr>
 tnoremap <C-w><C-j> <C-w>gT
 tnoremap <C-w><C-k> <C-w>gt
 nnoremap <C-w><C-j> gT
 nnoremap <C-w><C-k> gt
-nnoremap <space>c :term ++curwin ++noclose<cr>
-nnoremap <space>C :tabnew<cr>:term ++curwin ++noclose<cr>
+nnoremap <space>c :term ++curwin<cr>
+nnoremap <space>C :tabnew<cr>:term ++curwin<cr>
 nnoremap <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 

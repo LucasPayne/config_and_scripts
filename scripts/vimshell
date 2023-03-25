@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Uncomment if set as login shell.
-#export DISPLAY=:0
-#source ~/.bashrc
+export DISPLAY=:0
+source ~/.bashrc
 
 if [ ! -z "$VIMSHELL_ID" ] ; then
     echo "Already in a vimshell."

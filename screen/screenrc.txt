@@ -4,13 +4,15 @@
 # (So vim can restore screen contents.)
 altscreen on
 
+shell /home/lucas/config/scripts/shell
+
 # Set TERM variable.
 term "screen-256color"
 
 # Change command key.
 #escape ^Jj
 escape ^Aa
-#escape ^Bb
+##escape ^Bb
 # Navigate windows
 bind j prev
 bind k next
@@ -22,6 +24,8 @@ bind ^k next
 # bindkey -t ^@ windowlist
 # bindkey ^m windowlist
 # bind "^'" windowlist
+
+bind ^l windowlist
 
 bind ^r source ~/.screenrc
 
