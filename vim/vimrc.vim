@@ -222,7 +222,7 @@ if PluginEnabled("tig-explorer.vim") == 1
     let g:tig_explorer_use_builtin_term = 0
 
     let g:tig_explorer_keymap_edit_e  = 'e'
-    let g:tig_explorer_keymap_edit    = '<C-e>'
+    let g:tig_explorer_keymap_edit    = 'e'
     let g:tig_explorer_keymap_tabedit = 'E'
     let g:tig_explorer_keymap_split   = '_'
     let g:tig_explorer_keymap_vsplit  = '|'
@@ -355,7 +355,6 @@ if $NO_VIM_SERVER != "1"
 endif
 ">>>
 
-
 " Debugging
 " ...
 "<<<
@@ -365,12 +364,13 @@ let g:termdebug_config = {
             \ 'winbar' : 0,
             \ 'disasm_window' : 0,
             \ 'disasm_window_height' : 16,
-            \ 'wide' : 32
+            \ 'wide' : 32,
+            \ 'use_prompt' : 0
             \ }
 
 hi debugPC ctermbg=white
 "hi SignColumn ctermbg=blue
-nnoremap .T :Termdebug<cr><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>1000<<C-w>58><C-w>k
+nnoremap .T :Termdebug<cr><Esc><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>1000<<C-w>58><C-w>k
 function! DoTermdebugBreakpointModify(cmd)
     execute a:cmd
     sleep 50m
@@ -403,6 +403,21 @@ function! ToggleTermdebugAsm()
     endif
 endfunction
 nnoremap <space>a :call ToggleTermdebugAsm()<cr>
+function! ToggleTermdebugAsm()
+    if bufnr('Termdebug-asm-listing') == bufnr()
+        close
+    else
+        Asm
+    endif
+endfunction
+function! SwapBetweenSourceAndGdb()
+    if bufnr() == bufnr("gdb")
+        Source
+    else
+        Gdb
+    endif
+endfunction
+nnoremap <space>e :call SwapBetweenSourceAndGdb()<cr>
 
 " help termdebug_shortcuts
 function! GDBRelativeFrame(jump)
@@ -631,6 +646,27 @@ endfunction
 nnoremap .2 :call BreakpointsQuickfixSyncGdb()<cr>
 
 
+">>>
+
+" Terminal
+" ...
+"<<<
+tnoremap JK <C-\><C-n>
+function! CtrlCHandler()
+    if &buftype == "terminal"
+        " Note: startinsert is ineffective in terminal mode.
+        execute "normal! i"
+    else
+        execute "normal! <C-c>"
+    endif
+endfunction
+nnoremap <C-c> :call CtrlCHandler()<cr>
+tnoremap <C-w><C-j> <C-w>gT
+tnoremap <C-w><C-k> <C-w>gt
+nnoremap <C-w><C-j> gT
+nnoremap <C-w><C-k> gt
+nnoremap <space>c :term ++curwin ++noclose<cr>
+nnoremap <space>C :tabnew<cr>:term ++curwin ++noclose<cr>
 ">>>
 
 

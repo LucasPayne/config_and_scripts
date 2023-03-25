@@ -8,8 +8,9 @@ altscreen on
 term "screen-256color"
 
 # Change command key.
-escape ^Jj
-# escape ^Aa
+#escape ^Jj
+escape ^Aa
+#escape ^Bb
 # Navigate windows
 bind j prev
 bind k next

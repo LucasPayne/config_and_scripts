@@ -25,3 +25,9 @@
 [submodule "vim/__tmp/zoomwintab.vim"]
 	path = vim/repos/zoomwintab.vim
 	url = git@github.com:troydm/zoomwintab.vim.git
+[submodule "vim/__tmp/vim-colors-solarized"]
+	path = vim/__tmp/vim-colors-solarized
+	url = git@github.com:LucasPayne/vim-colors-solarized.git
+[submodule "vim/repos/vim-colors-solarized"]
+	path = vim/repos/vim-colors-solarized
+	url = git@github.com:LucasPayne/vim-colors-solarized.git

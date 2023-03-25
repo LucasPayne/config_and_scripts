@@ -21,7 +21,7 @@ mkdir __tmp
 
 (
     cd __tmp
-    git submodule add "$1"
+    git submodule add --force "$1"
 )
 
 name="$(ls __tmp)"
