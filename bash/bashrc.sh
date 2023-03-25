@@ -103,103 +103,144 @@ cursor_row () {
 #    ...
 #<<<
 
-# Globals
-export VIM_SESSION_BASH_SOURCE_FILE="/tmp/vim_session_bash_source.sh"
+# # Globals
+# export VIM_SESSION_BASH_SOURCE_FILE="/tmp/vim_session_bash_source.sh"
+# 
+# # vimreset is called when the vim server is quit.
+# # todo: Think of a better way to let the server communicate the server is closed
+# # when vim is quit. Using the temp files is unwieldy.
+# vimreset () {
+#     unset VIM_SERVER_ID
+#     unset VIM_SERVER_PID
+#     unset VIM_SERVER_JOB_SPEC
+# }
+# 
+# # v [FILE] [LINE]
+# # Open the vim server (optionally with a file, and optionally a certain line).
+# # If the vim server for this environment is active, then this is in a new tab.
+# v () {
+#     local vim_session_bash_source_file="$VIM_SESSION_BASH_SOURCE_FILE"
+# 
+#     if [ -f /tmp/vimdir ] ; then rm /tmp/vimdir ; fi
+# 
+#     local open_cmd
+#     # Note: Having a file named --tabnew breaks the argument processing.
+#     if [ "$#" -ge 1 ] && [ "$1" = "--tabnew" ] ; then
+#         open_cmd="tabnew"
+#         shift
+#     else
+#         open_cmd="edit!"
+#     fi
+# 
+#     {
+#     # To-do: Better argument and flag handling.
+#     if [ "$#" -eq 1 ] ; then
+#         local filename=$(realpath "$1")
+#         vimattachserver ":$open_cmd $filename<CR>" "edit $filename"
+#     elif [ "$#" -eq 2 ] ; then
+#         local filename=$(realpath "$1")
+#         local linenumber=$2
+#         vimattachserver ":$open_cmd $filename<CR>:normal! ${linenumber}gg<CR>" "edit $filename | normal! ${linenumber}gg"
+#     elif [ "$#" -eq 3 ] && [ "$2" == "-S" ] ; then
+#         local filename=$(realpath "$1")
+#         local source_file=$(realpath "$3")
+#         vimattachserver ":$open_cmd $filename | source $source_file<CR>" "edit $filename | source $source_file"
+#     else
+#         vimattachserver "" ""
+#     fi ;
+#     } && fg "$VIM_SERVER_JOB_SPEC" > /dev/null;
+#     {
+#         if [ -f /tmp/vimdir ] ; then
+#             cd $(cat /tmp/vimdir)
+#         fi
+# 
+#         if [ -f /tmp/${VIM_SERVER_ID}_vim_server_closed ] ; then
+#             local val=$(cat /tmp/${VIM_SERVER_ID}_vim_server_closed)
+#             # When back to the terminal, if the vim server was quit, then clear the vim server data.
+#             if [[ ( "$val" == 1 ) ]] ; then
+#                 vimreset
+#             fi
+#         fi
+#     }
+# 
+#     # Source custom tmp file. This allows the vim server to write out commands the host bash should run after vim suspends.
+#     # One use is to have vim invoke bash-level vim-server commands, such as to open a new file in the same session.
+#     # Note: Sourcing a tmp file is pretty dangerous...
+# 
+#     # As the source could open the vim-server again, the file needs to be removed _before_ the source. So it needs a local copy
+#     # for this shell.
+#     if [ -f "$vim_session_bash_source_file" ] ; then
+#         local local_source_file="$(cat "$vim_session_bash_source_file")"
+#         rm "$vim_session_bash_source_file"
+#         source <(echo "$local_source_file")
+#     fi
+# }
+# 
+# # Helper function to find or create the vim server.
+# vimattachserver () {
+#     servercmd=$1
+#     newcmd=$2
+# 
+#     if [ -z "$VIM_SERVER_ID" ] ; then
+#         export VIM_SERVER_ID="$RANDOM"
+#         { vim --servername $VIM_SERVER_ID -c "$newcmd" & } 2>/dev/null
+#         # Indicate that the vim server is open.
+#         echo "0" > /tmp/${VIM_SERVER_ID}_vim_server_closed
+# 
+#         export VIM_SERVER_PID="$!"
+#         VIM_SERVER_JOB_SPEC=$( jobs -l | sel $(jobs -l -p | grep -n $VIM_SERVER_PID | cclean | awk -F ':' '{ print $1 }') | awk '{ print $1 }' )
+#         export VIM_SERVER_JOB_SPEC=${VIM_SERVER_JOB_SPEC:1:-2}
+# 
+#         # echo "vim server id: " $VIM_SERVER_ID
+#         # echo "vim server pid: " $VIM_SERVER_PID
+#         # echo "vim server job_spec: " $VIM_SERVER_JOB_SPEC
+#     else
+#         vim --servername "$VIM_SERVER_ID" --remote-send "$servercmd"
+#     fi
+# }
+# 
+# #>>>
 
-# vimreset is called when the vim server is quit.
-# todo: Think of a better way to let the server communicate the server is closed
-# when vim is quit. Using the temp files is unwieldy.
-vimreset () {
-    unset VIM_SERVER_ID
-    unset VIM_SERVER_PID
-    unset VIM_SERVER_JOB_SPEC
-}
+vimshell ()
+(
+    if [ ! -z "$VIMSHELL_ID" ] ; then
+        echo "Already in a vimshell."
+        return 1
+    fi
+    tempfile="$(tempfile 2>/dev/null)"
+    export VIMSHELL_ID="$tempfile"
+    vim --servername "$VIMSHELL_ID" -c "call VimTerminalHostStart()"
+)
 
-# v [FILE] [LINE]
-# Open the vim server (optionally with a file, and optionally a certain line).
-# If the vim server for this environment is active, then this is in a new tab.
-v () {
-    local vim_session_bash_source_file="$VIM_SESSION_BASH_SOURCE_FILE"
+v ()
+{
+    if [ -z "$VIMSHELL_ID" ] ; then
+        echo "Not in a vimshell."
+        return 1
+    fi
 
-    if [ -f /tmp/vimdir ] ; then rm /tmp/vimdir ; fi
+    local files=""
 
-    local open_cmd
-    # Note: Having a file named --tabnew breaks the argument processing.
-    if [ "$#" -ge 1 ] && [ "$1" = "--tabnew" ] ; then
-        open_cmd="tabnew"
+    # Open a temporary file from stdin.
+    if [ ! -t 0 ] ; then
+        local temporary_filename=$(tempfile)
+        cat > $temporary_filename
+        files="$files $temporary_filename"
+    fi
+    
+    # Open the files passed as arguments.
+    while [ "$#" -gt 0 ] ; do
+        local file="$1"
         shift
-    else
-        open_cmd="edit!"
-    fi
+        files="$files $file"
+    done
 
-    {
-    # To-do: Better argument and flag handling.
-    if [ "$#" -eq 1 ] ; then
-        local filename=$(realpath "$1")
-        vimattachserver ":$open_cmd $filename<CR>" "edit $filename"
-    elif [ "$#" -eq 2 ] ; then
-        local filename=$(realpath "$1")
-        local linenumber=$2
-        vimattachserver ":$open_cmd $filename<CR>:normal! ${linenumber}gg<CR>" "edit $filename | normal! ${linenumber}gg"
-    elif [ "$#" -eq 3 ] && [ "$2" == "-S" ] ; then
-        local filename=$(realpath "$1")
-        local source_file=$(realpath "$3")
-        vimattachserver ":$open_cmd $filename | source $source_file<CR>" "edit $filename | source $source_file"
-    else
-        vimattachserver "" ""
-    fi ;
-    } && fg "$VIM_SERVER_JOB_SPEC" > /dev/null;
-    {
-        if [ -f /tmp/vimdir ] ; then
-            cd $(cat /tmp/vimdir)
-        fi
-
-        if [ -f /tmp/${VIM_SERVER_ID}_vim_server_closed ] ; then
-            local val=$(cat /tmp/${VIM_SERVER_ID}_vim_server_closed)
-            # When back to the terminal, if the vim server was quit, then clear the vim server data.
-            if [[ ( "$val" == 1 ) ]] ; then
-                vimreset
-            fi
-        fi
-    }
-
-    # Source custom tmp file. This allows the vim server to write out commands the host bash should run after vim suspends.
-    # One use is to have vim invoke bash-level vim-server commands, such as to open a new file in the same session.
-    # Note: Sourcing a tmp file is pretty dangerous...
-
-    # As the source could open the vim-server again, the file needs to be removed _before_ the source. So it needs a local copy
-    # for this shell.
-    if [ -f "$vim_session_bash_source_file" ] ; then
-        local local_source_file="$(cat "$vim_session_bash_source_file")"
-        rm "$vim_session_bash_source_file"
-        source <(echo "$local_source_file")
-    fi
+    # Send the necessary commands to the vimshell.
+    for file in $files ; do
+        vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:tabnew '"$file"'<cr>'
+    done
 }
 
-# Helper function to find or create the vim server.
-vimattachserver () {
-    servercmd=$1
-    newcmd=$2
-
-    if [ -z "$VIM_SERVER_ID" ] ; then
-        export VIM_SERVER_ID="$RANDOM"
-        { vim --servername $VIM_SERVER_ID -c "$newcmd" & } 2>/dev/null
-        # Indicate that the vim server is open.
-        echo "0" > /tmp/${VIM_SERVER_ID}_vim_server_closed
-
-        export VIM_SERVER_PID="$!"
-        VIM_SERVER_JOB_SPEC=$( jobs -l | sel $(jobs -l -p | grep -n $VIM_SERVER_PID | cclean | awk -F ':' '{ print $1 }') | awk '{ print $1 }' )
-        export VIM_SERVER_JOB_SPEC=${VIM_SERVER_JOB_SPEC:1:-2}
-
-        # echo "vim server id: " $VIM_SERVER_ID
-        # echo "vim server pid: " $VIM_SERVER_PID
-        # echo "vim server job_spec: " $VIM_SERVER_JOB_SPEC
-    else
-        vim --servername "$VIM_SERVER_ID" --remote-send "$servercmd"
-    fi
-}
-
-#>>>
 
 # Navigation
 #    ...
