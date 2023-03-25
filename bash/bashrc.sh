@@ -30,6 +30,8 @@ alias sudo='sudo env PATH=$PATH'
 
 set -o vi
 
+alias vs=vimshell
+
 alias gdb='gdb -q'
 export GDB_DEV="$(realpath ~/.gdb)"
 
@@ -201,16 +203,16 @@ cursor_row () {
 # 
 # #>>>
 
-vimshell ()
-(
-    if [ ! -z "$VIMSHELL_ID" ] ; then
-        echo "Already in a vimshell."
-        return 1
-    fi
-    tempfile="$(tempfile 2>/dev/null)"
-    export VIMSHELL_ID="$tempfile"
-    vim --servername "$VIMSHELL_ID" -c "call VimTerminalHostStart()"
-)
+# vimshell ()
+# (
+#     if [ ! -z "$VIMSHELL_ID" ] ; then
+#         echo "Already in a vimshell."
+#         return 1
+#     fi
+#     tempfile="$(tempfile 2>/dev/null)"
+#     export VIMSHELL_ID="$tempfile"
+#     vim --servername "$VIMSHELL_ID" -c "call VimTerminalHostStart()"
+# )
 
 v ()
 {
@@ -239,6 +241,14 @@ v ()
     for file in $files ; do
         vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:tabnew '"$file"'<cr>'
     done
+}
+
+cd ()
+{
+    builtin cd "$@"
+    if [ ! -z "$VIMSHELL_ID" ] ; then
+        vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$@"'<cr>A'
+    fi
 }
 
 
@@ -435,8 +445,6 @@ EOF
                 if [ -d "$selected" ] ; then
                     # Open the directory in Ex.
                     # Put special case here if needed.
-                    # v --tabnew "$selected"
-
                     # Alternatively, follow the directory.
                     dir="./$selected"
                     start_query_string="$selected/ "
@@ -447,7 +455,7 @@ EOF
                         firefox /tmp/link.html > /dev/null 2>&1 &
                         continue
                     else
-                        v --tabnew "$selected"
+                        v "$selected"
                         continue
                     fi
                 fi

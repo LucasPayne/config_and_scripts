@@ -160,6 +160,30 @@ set showtabline=1
 set splitright
 " Don't resize splits when closing a window.
 set noequalalways
+" Alt key mappings
+" If terminal is sending modifiers as esc-key.
+" For some reason, the below works!
+" TODO: Do this without autocmds, setlocal not working?
+let g:alphabet = "abcdefghijklmnopqrstuvwxyz"
+function! ResetAltKeyMappings()
+    if &buftype != "terminal"
+        for char in g:alphabet
+            execute "setlocal <M-".char.">=\e".char
+        endfor
+    else
+        for char in g:alphabet
+            execute "setlocal <M-".char.">="
+        endfor
+    endif
+endfunction
+function! UnsetAltKeyMappings()
+    for char in g:alphabet
+        execute "setlocal <M-".char.">="
+    endfor
+endfunction
+autocmd TerminalOpen * silent! call UnsetAltKeyMappings()
+autocmd WinEnter * silent! call ResetAltKeyMappings()
+
 ">>>
 
 " Basic mappings
@@ -185,17 +209,12 @@ nnoremap gk gt
 " Source selection
 vnoremap <leader>S :<C-u>@*<cr>
 " Quick write
-execute "set <M-w>=\ew"
 nnoremap <M-w> :w<cr>
 inoremap <M-w> <Esc>:w<cr>
 " Quick move window
-execute "set <M-h>=\eh"
 nnoremap <M-h> <C-w>h
-execute "set <M-j>=\ej"
 nnoremap <M-j> <C-w>j
-execute "set <M-k>=\ek"
 nnoremap <M-k> <C-w>k
-execute "set <M-l>=\el"
 nnoremap <M-l> <C-w>l
 ">>>
 
@@ -232,9 +251,7 @@ if PluginEnabled("tig-explorer.vim") == 1
     "let g:tig_explorer_keymap_commit_split   = '<C-_>'
     "let g:tig_explorer_keymap_commit_vsplit  = '<C-o>'
 
-    execute "set <M-p>=\ep"
     nnoremap <M-p> :Tig<cr>
-    execute "set <M-o>=\eo"
     nnoremap <M-o> :TigOpenCurrentFile<cr>
     nnoremap .bl :TigBlame<cr>
 endif
@@ -665,7 +682,6 @@ function! GoToPrimaryShell()
     normal! A
 endfunction
 
-tnoremap JK <C-\><C-n>
 function! CtrlCHandler()
     if &buftype == "terminal"
         " Note: startinsert is ineffective in terminal mode.
@@ -674,6 +690,8 @@ function! CtrlCHandler()
         execute "normal! <C-c>"
     endif
 endfunction
+
+tnoremap JK <C-\><C-n>
 nnoremap <C-c> :call CtrlCHandler()<cr>
 tnoremap <C-w><C-j> <C-w>gT
 tnoremap <C-w><C-k> <C-w>gt
@@ -681,7 +699,6 @@ nnoremap <C-w><C-j> gT
 nnoremap <C-w><C-k> gt
 nnoremap <space>c :term ++curwin ++noclose<cr>
 nnoremap <space>C :tabnew<cr>:term ++curwin ++noclose<cr>
-execute "set <M-q>=\eq"
 nnoremap <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 
