@@ -214,35 +214,6 @@ cursor_row () {
 #     vim --servername "$VIMSHELL_ID" -c "call VimTerminalHostStart()"
 # )
 
-v ()
-{
-    if [ -z "$VIMSHELL_ID" ] ; then
-        echo "Not in a vimshell."
-        return 1
-    fi
-
-    local files=""
-
-    # Open a temporary file from stdin.
-    if [ ! -t 0 ] ; then
-        local temporary_filename=$(tempfile)
-        cat > $temporary_filename
-        files="$files $temporary_filename"
-    fi
-    
-    # Open the files passed as arguments.
-    while [ "$#" -gt 0 ] ; do
-        local file="$1"
-        shift
-        files="$files $file"
-    done
-
-    # Send the necessary commands to the vimshell.
-    for file in $files ; do
-        vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:tabnew '"$file"'<cr>'
-    done
-}
-
 cd ()
 {
     builtin cd "$@"
@@ -722,8 +693,11 @@ bind -m vi-command '"\eo": "\C-ugcb\n"'
 bind -m vi-insert '"\eo": "\C-ugcb\n"'
 
 # preview git log
-bind -m vi-command '"\ep": "\C-upreview_git_log HEAD\n"'
-bind -m vi-insert '"\ep": "\C-upreview_git_log HEAD\n"'
+#bind -m vi-command '"\ep": "\C-upreview_git_log HEAD\n"'
+#bind -m vi-insert '"\ep": "\C-upreview_git_log HEAD\n"'
+# tig
+bind -m vi-command '"\ep": "\C-utig\n"'
+bind -m vi-insert '"\ep": "\C-utig\n"'
 
 #>>>
 

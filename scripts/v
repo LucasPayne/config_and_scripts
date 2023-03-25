@@ -1,0 +1,61 @@
+#!/bin/bash
+
+if [ -z "$VIMSHELL_ID" ] ; then
+    echo "Not in a vimshell."
+    exit 1
+fi
+
+# option: Suppress reading stdin into a temporary file to open.
+opt_nostdin=0
+# option: Tell the vimshell to cd to the current working directory.
+opt_cd=0
+# option: Go to line in each file (most useful with just one file).
+opt_line=0
+files=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+    --nostdin)
+        opt_nostdin=1
+        shift
+        ;;
+    -c|--cd)
+        opt_cd=1
+        shift
+        ;;
+    -l|--line)
+        shift
+        opt_line="$1"
+        shift
+        ;;
+    *)
+        files+=("$1")
+        shift
+        ;;
+    esac
+done
+
+unsigned_integer_regex='^[0-9]+$'
+if ! [[ $opt_line =~ $unsigned_integer_regex ]] ; then
+    echo "error: Line number given is not valid" >&2
+    exit 1
+fi
+
+
+# Open a temporary file from stdin.
+if [[ $opt_nostdin -ne 1 ]] ; then
+    if [ ! -t 0 ] ; then
+        temporary_filename=$(tempfile)
+        cat > $temporary_filename
+        files+=("$temporary_filename")
+    fi
+fi
+
+# Optionally tell the vimshell to cd to the current working directory.
+if [[ $opt_cd -eq 1 ]] ; then
+    vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
+fi
+
+# Send the necessary commands to the vimshell.
+for file in $files ; do
+    vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:tabnew '"$file"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+done

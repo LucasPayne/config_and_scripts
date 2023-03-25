@@ -183,6 +183,8 @@ function! UnsetAltKeyMappings()
 endfunction
 autocmd TerminalOpen * silent! call UnsetAltKeyMappings()
 autocmd WinEnter * silent! call ResetAltKeyMappings()
+autocmd TabEnter * silent! call ResetAltKeyMappings()
+autocmd BufEnter * silent! call ResetAltKeyMappings()
 
 ">>>
 
