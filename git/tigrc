@@ -125,5 +125,5 @@ addbind diff <Enter> :move-cursor-top
 # bind main p :toggle diff-preview
 # bind diff p :toggle diff-preview
 
-bind diff e @v --nostdin %(file) --line %(lineno)
-bind stage e @v --nostdin %(file) --line %(lineno)
+bind diff e @v --nostdin ./%(repo:cdup)/%(file) --line %(lineno)
+bind stage e @v --nostdin ./%(repo:cdup)/%(file) --line %(lineno)

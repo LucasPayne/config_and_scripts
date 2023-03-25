@@ -241,24 +241,24 @@ if PluginEnabled("tagbar") == 1
     nnoremap <leader>T :Tagbar<cr>
 endif
 
-if PluginEnabled("tig-explorer.vim") == 1
-    let g:tig_explorer_use_builtin_term = 0
-
-    let g:tig_explorer_keymap_edit_e  = 'e'
-    let g:tig_explorer_keymap_edit    = 'e'
-    let g:tig_explorer_keymap_tabedit = 'E'
-    let g:tig_explorer_keymap_split   = '_'
-    let g:tig_explorer_keymap_vsplit  = '|'
-    
-    "let g:tig_explorer_keymap_commit_edit    = 'o'
-    "let g:tig_explorer_keymap_commit_tabedit = 'O'
-    "let g:tig_explorer_keymap_commit_split   = '<C-_>'
-    "let g:tig_explorer_keymap_commit_vsplit  = '<C-o>'
-
-    nnoremap <M-p> :Tig<cr>
-    nnoremap <M-o> :TigOpenCurrentFile<cr>
-    nnoremap .bl :TigBlame<cr>
-endif
+"if PluginEnabled("tig-explorer.vim") == 1
+"    let g:tig_explorer_use_builtin_term = 0
+"
+"    let g:tig_explorer_keymap_edit_e  = 'e'
+"    let g:tig_explorer_keymap_edit    = 'e'
+"    let g:tig_explorer_keymap_tabedit = 'E'
+"    let g:tig_explorer_keymap_split   = '_'
+"    let g:tig_explorer_keymap_vsplit  = '|'
+"    
+"    "let g:tig_explorer_keymap_commit_edit    = 'o'
+"    "let g:tig_explorer_keymap_commit_tabedit = 'O'
+"    "let g:tig_explorer_keymap_commit_split   = '<C-_>'
+"    "let g:tig_explorer_keymap_commit_vsplit  = '<C-o>'
+"
+"    nnoremap <M-p> :Tig<cr>
+"    nnoremap <M-o> :TigOpenCurrentFile<cr>
+"    nnoremap .bl :TigBlame<cr>
+"endif
 
 if PluginEnabled("vim-gitgutter") == 1
     let g:gitgutter_enabled = 0

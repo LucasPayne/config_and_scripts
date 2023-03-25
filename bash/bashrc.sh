@@ -54,6 +54,15 @@ alias vless="~/.vim/macros/less.sh"
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
+xdg-mime-set ()
+{
+    xdg-mime default feh.desktop image/jpeg
+    xdg-mime default feh.desktop image/png
+    xdg-mime default feh.desktop image/gif
+    xdg-mime default feh.desktop image/gif
+    xdg-mime default org.pwmt.zathura.desktop application/pdf
+}
+
 
 # Small utilities
 #    ...

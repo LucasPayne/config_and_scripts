@@ -52,10 +52,10 @@ fi
 
 # Optionally tell the vimshell to cd to the current working directory.
 if [[ $opt_cd -eq 1 ]] ; then
-    vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
+    vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:cd '"$(pwd)"'<cr>'
 fi
 
 # Send the necessary commands to the vimshell.
 for file in $files ; do
-    vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:tabnew '"$file"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+    vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:tabnew '"$file"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
 done

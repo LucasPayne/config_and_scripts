@@ -1,22 +1,47 @@
 set shell bash
-
+set ifs " "
 set drawbox false
 set icons false
 set ignorecase true
+set mouse true
 
 cmd open &{{
+
+    # Open all images in the directory into the gallery view.
+    # The first image will be the selected one.
     case $(file --mime-type -Lb $f) in
-        text/*)
-            #lf -remote "send $id \$$EDITOR \$fx"
-            v $f
-            ;;
-        video/*|image/*|application/pdf)
-            xdg-open "$f" & disown
-            ;;
-        *)
-            xdg-open "$f"
+        image/jpeg|image/png)
+            #NOTE: Code here depends on no spaces in filenames.
+            files=$(
+                printf "$f "
+                find . -mindepth 1 -maxdepth 1 | cut -d/ -f2- | while read -r file ; do
+                    mime=$(file --mime-type -Lb $file)
+                    if [[ "$file" != "$(basename $f)" ]] && ( [[ "$mime" == "image/jpeg" ]] || [[ "$mime" == "image/png" ]] ) ; then
+                        printf "$file "
+                    fi
+                done
+            )
+            feh $files & disown
+            exit
             ;;
     esac
+
+    for file in $fx ; do
+        case $(file --mime-type -Lb $file) in
+            text/*)
+                v $file
+                ;;
+            video/*|application/pdf)
+                xdg-open "$file" & disown
+                ;;
+            application/zip)
+                v $file
+                ;;
+            *)
+                # Don't try to open it.
+                ;;
+        esac
+    done
 }}
 
 # :-command versions of utilities.
@@ -45,7 +70,7 @@ cmd fzf_jump ${{
     if [ "$is_recursive" -eq 1 ] ; then
         find_args=""
     else
-        find_args="-maxdepth 1"
+        find_args="-mindepth 1 -maxdepth 1"
     fi
     res="$(find . $find_args | fzf --ansi --border=none --reverse --color=no | sed 's/\\/\\\\/g;s/"/\\"/g')"
     if [ -d "$res" ] ; then
@@ -57,5 +82,62 @@ cmd fzf_jump ${{
     fi
     lf -remote "send $id $cmd \"$res\""
 }}
+
+cmd unarchive ${{
+    case $f in
+        *.zip)
+            unzip "$f"
+            ;;
+        *.tar.gz)
+            tar xzvf "$f"
+            ;;
+        *.tar.bz2)
+            echo "zip"
+            tar xjvf "$f"
+            ;;
+        *.tar)
+            echo "tar"
+            tar xvf "$f"
+            ;;
+        *)
+            echo "Unhandled format"
+            ;;
+    esac
+}}
+
+cmd yank-dirname ${{
+    dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
+}}
+cmd yank-path ${{
+    printf '%s' "$f" | xclip -i -selection clipboard
+}}
+
+# Set wallpaper
+cmd wp ${{
+    wp $f
+}}
+
+
 map f :fzf_jump 0
 map F :fzf_jump 1
+map x :unarchive
+map g :top
+map <enter> :open
+map w
+# Just open a text file.
+map e &{{
+    for file in $fx ; do
+        case $(file --mime-type -Lb $file) in
+            text/*)
+                v $file
+            ;;
+        esac
+    done
+}}
+map .cp :yank-path
+map <a-j> :down
+map <a-k> :up
+
+
+source ~/config/scripts/syncer_files/syncer-lf
+
