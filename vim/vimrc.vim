@@ -746,7 +746,7 @@ function! PopupTextLink(filename, line)
     call win_execute(popup_winid, "normal! ".a:line."ggzz")
     call win_execute(popup_winid, "set number")
     call win_execute(popup_winid, "set relativenumber")
-    call win_execute(popup_winid, "set filetype=none")
+    "call win_execute(popup_winid, "setlocal filetype=none")
 endfunction
 
 function! RefreshNotesTextLink()
@@ -766,8 +766,30 @@ function! RefreshNotesTextLink()
     call PopupTextLink(filename, line)
 endfunction
 
+function! NotesFollowLinkUnderCursor(tabnew)
+    let line = getline('.')
+    let parts = split(line)
+    if len(parts) != 2
+        return
+    endif
+    if parts[1] !~# '^\d\+$'
+        return
+    endif
+    let filename = parts[0]
+    let line = parts[1]
+    if a:tabnew
+        let cmd = "tabnew "
+    else
+        let cmd = "edit "
+    endif
+    execute cmd." ".filename
+    silent! execute "normal! ".line."ggzOzz"
+endfunction
+
 augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
-    autocmd Filetype ns nnoremap 
+    autocmd Filetype notes nnoremap ./ :call NotesFollowLinkUnderCursor(0)<cr>
+    autocmd Filetype notes nnoremap .? :call NotesFollowLinkUnderCursor(1)<cr>
+    autocmd Filetype notes nnoremap >? :call NotesFollowLinkUnderCursor(1)<cr>
 augroup END
