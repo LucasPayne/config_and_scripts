@@ -31,3 +31,6 @@
 [submodule "vim/repos/vim-colors-solarized"]
 	path = vim/repos/vim-colors-solarized
 	url = git@github.com:LucasPayne/vim-colors-solarized.git
+[submodule "vim/__tmp/quickpeek.vim"]
+	path = vim/repos/quickpeek.vim
+	url = git@github.com:AndrewRadev/quickpeek.vim.git

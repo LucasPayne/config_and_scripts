@@ -729,17 +729,24 @@ function! PopupTextLink(filename, line)
     let screen_height = &lines
     let screen_width = &columns
     let options = {
-        \ 'line' : (1*screen_height)/7,
-        \ 'col'  : (2*screen_width)/5,
-        \ 'minheight' : (5*screen_height)/7,
-        \ 'maxheight' : (5*screen_height)/7,
-        \ 'minwidth' : (3*screen_width)/5 - 2,
-        \ 'maxwidth' : (3*screen_width)/5 - 2,
+        \ 'line' : "cursor+1",
+        \ 'col'  : (1*screen_width)/5,
+        \ 'minheight' : 1,
+        \ 'maxheight' : 15,
+        \ 'minwidth' : (4*screen_width)/5 - 2,
+        \ 'maxwidth' : (4*screen_width)/5 - 2,
         \ 'border' : [1,1,1,1],
         \ 'scrollbar' : 0,
         \ 'moved' : [line('.'), 0, 1000],
+        \ 'title' : a:filename.", line ".a:line,
+        \ 'cursorline' : 1,
+        \ 'wrap' : 0,
         \ }
     let popup_winid = popup_create(buffer, options)
+    call win_execute(popup_winid, "normal! ".a:line."ggzz")
+    call win_execute(popup_winid, "set number")
+    call win_execute(popup_winid, "set relativenumber")
+    call win_execute(popup_winid, "set filetype=none")
 endfunction
 
 function! RefreshNotesTextLink()
@@ -749,7 +756,6 @@ function! RefreshNotesTextLink()
         return
     endif
     "if !filereadable(parts[0])
-    "    echo "nah"
     "    return
     "endif
     if parts[1] !~# '^\d\+$'
@@ -763,4 +769,5 @@ endfunction
 augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
+    autocmd Filetype ns nnoremap 
 augroup END
