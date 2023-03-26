@@ -707,34 +707,35 @@ nnoremap <space>C :tabnew<cr>:term ++curwin<cr>
 nnoremap <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 
-
-" Enable syntax highlighting for LLVM files. To use, copy
-" utils/vim/syntax/llvm.vim to ~/.vim/syntax .
-augroup filetype
-  autocmd! BufRead,BufNewFile *.ll set filetype=llvm
-augroup END
-
-" Enable syntax highlighting for tablegen files. To use, copy
-" utils/vim/syntax/tablegen.vim to ~/.vim/syntax .
-augroup filetype
-    autocmd! BufRead,BufNewFile *.td set filetype=tablegen
-augroup END
-
-" Source the syncer'd mappings.
-source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
-
+" Notes system
+" ...
+"<<<
 function! PopupTextLink(filename, line)
     execute "badd ".a:filename
     let buffer = bufnr(a:filename, 1)
     let screen_height = &lines
     let screen_width = &columns
-    let options = {
-        \ 'line' : "cursor+1",
-        \ 'col'  : (1*screen_width)/5,
-        \ 'minheight' : 1,
-        \ 'maxheight' : 15,
-        \ 'minwidth' : (4*screen_width)/5 - 2,
-        \ 'maxwidth' : (4*screen_width)/5 - 2,
+
+    let follow = 0
+    if follow
+        let options = {
+            \ 'line' : "cursor+1",
+            \ 'col'  : (1*screen_width)/5,
+            \ 'minheight' : 1,
+            \ 'maxheight' : 15,
+            \ 'minwidth' : (4*screen_width)/5 - 2,
+            \ 'maxwidth' : (4*screen_width)/5 - 2,
+            \ }
+    else
+        let options = {
+            \ 'col'  : (2*screen_width)/5,
+            \ 'minheight' : (5*screen_height)/7,
+            \ 'maxheight' : (5*screen_height)/7,
+            \ 'minwidth' : (3*screen_width)/5 - 2,
+            \ 'maxwidth' : (3*screen_width)/5 - 2,
+            \ }
+    endif
+    call extend(options, {
         \ 'scrollbar' : 0,
         \ 'moved' : [line('.'), 0, 1000],
         \ 'title' : a:filename.", line ".a:line,
@@ -742,7 +743,7 @@ function! PopupTextLink(filename, line)
         \ 'wrap' : 0,
         \ 'highlight' : 'hl-Normal',
         \ 'border' : [1,1,1,1],
-        \ }
+        \ })
     " Copied logic from quickpeek.vim.
     " -Apparently necessary for filetype detection, not sure why.
     call timer_start(1, {-> DelayPopupTextLink(buffer, a:filename, a:line, options)})
@@ -790,13 +791,71 @@ function! NotesFollowLinkUnderCursor(tabnew)
         let cmd = "edit "
     endif
     execute cmd." ".filename
-    silent! execute "normal! ".line."ggzOzz"
+    call cursor(line, 1)
 endfunction
 
 augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
+    autocmd WinScrolled *.ns :call RefreshNotesTextLink()
     autocmd Filetype notes nnoremap ./ :call NotesFollowLinkUnderCursor(0)<cr>
+    autocmd Filetype notes nnoremap <enter> :call NotesFollowLinkUnderCursor(0)<cr>
     autocmd Filetype notes nnoremap .? :call NotesFollowLinkUnderCursor(1)<cr>
     autocmd Filetype notes nnoremap >? :call NotesFollowLinkUnderCursor(1)<cr>
 augroup END
+
+function! YankNotesTextLink()
+    let @" = expand("%")." ".line(".")."\n"
+endfunction
+
+function!  CycleNotesFiles(tabnew=0)
+    let directory = getcwd()
+    let parts = split(directory, "/")
+    let notes_files = []
+    for i in range(len(parts))
+        let filename = "/".join(parts[:i], "/")."/notes.ns"
+        if filereadable(filename)
+            call add(notes_files, filename)
+        endif
+    endfor
+    let global_notes_file = "/home/lucas/drive/notes/notes.ns"
+    if index(notes_files, global_notes_file) < 0
+        call add(notes_files, global_notes_file)
+    endif
+
+    let current_file = expand("%:p")
+    let current_file_index = index(notes_files, current_file)
+    if current_file_index >= 0
+        let notes_file = notes_files[(current_file_index + 1) % len(notes_files)]
+    else
+        let notes_file = notes_files[-1]
+    endif
+
+    if a:tabnew
+        let cmd = "tabnew"
+    else
+        let cmd = "edit"
+    endif
+    execute cmd." ".notes_file
+
+endfunction
+
+nnoremap .cp :call YankNotesTextLink()<cr>
+nnoremap .. :call YankNotesTextLink()<cr>:call CycleNotesFiles()<cr>
+nnoremap .> :call YankNotesTextLink()<cr>:call CycleNotesFiles(1)<cr>
+">>>
+
+" Enable syntax highlighting for LLVM files. To use, copy
+" utils/vim/syntax/llvm.vim to ~/.vim/syntax .
+augroup filetype
+  autocmd! BufRead,BufNewFile *.ll set filetype=llvm
+augroup END
+
+" Enable syntax highlighting for tablegen files. To use, copy
+" utils/vim/syntax/tablegen.vim to ~/.vim/syntax .
+augroup filetype
+    autocmd! BufRead,BufNewFile *.td set filetype=tablegen
+augroup END
+
+" Source the syncer'd mappings.
+source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
