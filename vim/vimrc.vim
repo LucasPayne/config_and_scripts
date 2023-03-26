@@ -683,7 +683,6 @@ endfunction
 
 function! GoToPrimaryShell()
     call win_gotoid(g:terminal_host_primary_shell_winid)
-    normal! A
 endfunction
 
 function! CtrlCHandler()
@@ -722,3 +721,46 @@ augroup END
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
+
+
+function! PopupTextLink(filename, line)
+    execute "badd ".a:filename
+    let buffer = bufnr(a:filename, 1)
+    let screen_height = &lines
+    let screen_width = &columns
+    let options = {
+        \ 'line' : (1*screen_height)/7,
+        \ 'col'  : (2*screen_width)/5,
+        \ 'minheight' : (5*screen_height)/7,
+        \ 'maxheight' : (5*screen_height)/7,
+        \ 'minwidth' : (3*screen_width)/5 - 2,
+        \ 'maxwidth' : (3*screen_width)/5 - 2,
+        \ 'border' : [1,1,1,1],
+        \ 'scrollbar' : 0,
+        \ 'moved' : [line('.'), 0, 1000],
+        \ }
+    let popup_winid = popup_create(buffer, options)
+endfunction
+
+function! RefreshNotesTextLink()
+    let line = getline('.')
+    let parts = split(line)
+    if len(parts) != 2
+        return
+    endif
+    "if !filereadable(parts[0])
+    "    echo "nah"
+    "    return
+    "endif
+    if parts[1] !~# '^\d\+$'
+        return
+    endif
+    let filename = parts[0]
+    let line = parts[1]
+    call PopupTextLink(filename, line)
+endfunction
+
+augroup Notes
+    autocmd!
+    autocmd CursorMoved *.ns :call RefreshNotesTextLink()
+augroup END
