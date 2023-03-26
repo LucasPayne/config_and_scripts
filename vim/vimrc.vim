@@ -221,6 +221,10 @@ nnoremap <M-k> <C-w>k
 nnoremap <M-l> <C-w>l
 " Quick close window
 nnoremap <M-x> :q<cr>
+" Copy file path
+nnoremap .cp :let @" = expand("%:p")<cr>
+" Copy file directory
+nnoremap .cd :let @" = expand("%:p:h")<cr>
 ">>>
 
 " Plugins
@@ -786,6 +790,30 @@ function! NotesFollowLinkUnderCursor(tabnew)
     endif
     let filename = parts[0]
     let line = parts[1]
+
+    if filename =~# "^(.*)$"
+        let parts = split(filename[1:-1], ":")
+        if len(parts) < 2
+            let dir_parts = split(expand("%:p:h"), "/")
+            let notes_dir = ""
+            for i in range(len(dir_parts))
+                if dir_parts[len(dir_parts)-1-i] == "notes.d"
+                    let notes_dir = join(dir_parts[:len(dir_parts)-i], "/")
+                    break
+                endif
+            endfor
+            if empty(notes_dir)
+                echoerr "notes.d not found"
+                return
+            endif
+            let note_name = parts[0]
+        else
+            let notes_dir = parts[0]."/notes.d"
+            let note_name = parts[1]
+        endif
+        let filename = notes_dir."/".note_name.".ns"
+    endif
+
     if a:tabnew
         let cmd = "tabnew "
     else
@@ -806,10 +834,15 @@ augroup Notes
 augroup END
 
 function! YankNotesTextLink()
-    let @" = expand("%")." ".line(".")."\n"
+    let ext = expand("%:p:t:e")
+    if ext == "ns"
+        let @" = "(".expand("%:p:t:r").") ".line(".")."\n"
+    else
+        let @" = expand("%")." ".line(".")."\n"
+    endif
 endfunction
 
-function!  CycleNotesFiles(tabnew=0)
+function! CycleNotesFiles(yank_from_non_notes_file=0, tabnew=0)
     let directory = getcwd()
     let parts = split(directory, "/")
     let notes_files = []
@@ -829,6 +862,9 @@ function!  CycleNotesFiles(tabnew=0)
     if current_file_index >= 0
         let notes_file = notes_files[(current_file_index + 1) % len(notes_files)]
     else
+        if a:yank_from_non_notes_file
+            call YankNotesTextLink()
+        endif
         let notes_file = notes_files[-1]
     endif
 
@@ -838,12 +874,13 @@ function!  CycleNotesFiles(tabnew=0)
         let cmd = "edit"
     endif
     execute cmd." ".notes_file
-
+    call cursor(line('$'), 1)
+    normal! zz
 endfunction
 
-nnoremap .cp :call YankNotesTextLink()<cr>
-nnoremap .. :call YankNotesTextLink()<cr>:call CycleNotesFiles()<cr>
-nnoremap .> :call YankNotesTextLink()<cr>:call CycleNotesFiles(1)<cr>
+nnoremap .. :call CycleNotesFiles(1)<cr>
+nnoremap .> :call CycleNotesFiles(1, 1)<cr>
+nnoremap ., :call YankNotesTextLink()<cr>
 ">>>
 
 " Enable syntax highlighting for LLVM files. To use, copy

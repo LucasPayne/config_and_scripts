@@ -30,7 +30,7 @@ cmd open &{{
 
     for file in $fx ; do
         case $(file --mime-type -Lb $file) in
-            text/*)
+            text/*|inode/x-empty)
                 v $file
                 ;;
             video/*|application/pdf)
@@ -122,6 +122,8 @@ cmd wp ${{
 
 map f :fzf_jump 0
 map F :fzf_jump 1
+map <a-f> :fzf_jump 0
+map <a-r> :fzf_jump 1
 map x :unarchive
 map g :top
 map <enter> :open
