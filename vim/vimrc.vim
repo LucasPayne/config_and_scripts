@@ -141,7 +141,8 @@ nnoremap <leader>cb :call YankBreakPoint()<cr>
 "    ...
 "<<<
 syntax on
-filetype plugin indent on
+filetype indent on
+filetype plugin on
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " set autochdir
 set foldmethod=marker
@@ -722,7 +723,6 @@ augroup END
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
 
-
 function! PopupTextLink(filename, line)
     execute "badd ".a:filename
     let buffer = bufnr(a:filename, 1)
@@ -735,18 +735,25 @@ function! PopupTextLink(filename, line)
         \ 'maxheight' : 15,
         \ 'minwidth' : (4*screen_width)/5 - 2,
         \ 'maxwidth' : (4*screen_width)/5 - 2,
-        \ 'border' : [1,1,1,1],
         \ 'scrollbar' : 0,
         \ 'moved' : [line('.'), 0, 1000],
         \ 'title' : a:filename.", line ".a:line,
         \ 'cursorline' : 1,
         \ 'wrap' : 0,
+        \ 'highlight' : 'hl-Normal',
+        \ 'border' : [1,1,1,1],
         \ }
-    let popup_winid = popup_create(buffer, options)
+    " Copied logic from quickpeek.vim.
+    " -Apparently necessary for filetype detection, not sure why.
+    call timer_start(1, {-> DelayPopupTextLink(buffer, a:filename, a:line, options)})
+endfunction
+
+function! DelayPopupTextLink(buffer, filename, line, options)
+    let popup_winid = popup_create(a:buffer, a:options)
     call win_execute(popup_winid, "normal! ".a:line."ggzz")
     call win_execute(popup_winid, "set number")
     call win_execute(popup_winid, "set relativenumber")
-    "call win_execute(popup_winid, "setlocal filetype=none")
+    "call win_execute(popup_winid, "set wincolor=hl-Normal")
 endfunction
 
 function! RefreshNotesTextLink()
