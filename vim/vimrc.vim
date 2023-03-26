@@ -677,7 +677,8 @@ nnoremap .2 :call BreakpointsQuickfixSyncGdb()<cr>
 function! VimTerminalHostStart()
     let g:terminal_host_primary_shell_buffer = term_start('bash', {
         \ 'term_name' : 'shell',
-        \ 'curwin' : 1
+        \ 'curwin' : 1,
+        \ 'env' : { 'VIMSHELL_PRIMARY_SHELL' : '1' }
         \ })
     let g:terminal_host_primary_shell_winid = win_getid(winnr())
 endfunction

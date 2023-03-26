@@ -119,7 +119,7 @@ cursor_row () {
 cd ()
 {
     builtin cd "$@"
-    if [ ! -z "$VIMSHELL_ID" ] ; then
+    if [ ! -z "$VIMSHELL_ID" ] && [ ! -z "$VIMSHELL_PRIMARY_SHELL" ] ; then
         vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$@"'<cr>A'
     fi
 }

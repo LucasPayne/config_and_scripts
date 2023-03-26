@@ -4,7 +4,7 @@
 # (So vim can restore screen contents.)
 altscreen on
 
-shell /home/lucas/config/scripts/shell
+#shell /home/lucas/config/scripts/shell
 
 # Set TERM variable.
 term "screen-256color"
