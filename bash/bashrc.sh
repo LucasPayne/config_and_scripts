@@ -1,9 +1,11 @@
 
 export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive
+export NOTES_REPO_DIR=~/drive/notes
 
 export PATH="$PATH:$(realpath ~/bin)"
 export PATH="$PATH:$CONFIG_DIR/scripts"
+export PATH="$PATH:$NOTES_REPO_DIR:$PATH"
 # Rust packages
 export PATH="$PATH:$(realpath ~/.cargo/bin)"
 # Go packages
