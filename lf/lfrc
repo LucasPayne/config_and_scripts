@@ -1,9 +1,9 @@
 set shell bash
 set ifs " "
-set drawbox false
-set icons false
-set ignorecase true
-set mouse true
+#set drawbox
+#set icons
+set ignorecase
+set mouse
 set previewer ~/.config/lf/previewer.sh
 map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' less -R $f
 
