@@ -7,107 +7,107 @@
 "
 "
 
-function! ResolveIncludeFile(file_identifier)
-    " Given a file path, extracted from an include statement, search
-    " for the relevant installed file.
-    " If none is found, return the empty string.
-
-    " Try the -/weta/code metadata.
-    let l:cmd = g:STUFF."weta/code/bin/resolve_include \"".a:file_identifier."\" -f \"".expand('%')."\""
-    let l:resolved_include = system(l:cmd)
-    if !empty(l:resolved_include)
-        return l:resolved_include
-    endif
-    
-    return ''
-endfunction
-
-function! ExtractLink(line_number)
-    " Extract a link from the given line, if there is one.
-    " Returns a string of the form /path/to/file:line_number,
-    " or the empty string if there is no link.
-    let l:line = getline(a:line_number)
-
-    " Try to extract an include link.
-    if l:line =~# '^\s*#include <.*>'
-        let l:file_identifier = matchstr(l:line, '^\s*#include <\zs.*\ze>')
-        if !empty(l:file_identifier)
-            let l:resolved_file = ResolveIncludeFile(l:file_identifier)
-            if !empty(l:resolved_file)
-                " Return a link to the first line.
-                return l:resolved_file.":1"
-            endif
-        endif
-    endif
-
-    " Try to extract a file location from a line of the form
-    " /path/to/file line_number
-    let l:list = split(l:line)
-    if len(l:list) == 2
-        let l:path = get(l:list, 0, "")
-        let l:line_number_string = get(l:list, 1, "")
-        if l:line_number_string =~# '^\d\+$'
-            let l:line_number = str2nr(l:line_number_string)
-            return l:path.":".l:line_number
-        endif
-    endif
-
-    return ''
-endfunction
-
-function! FollowLinks(make_new_tab) range
-    " Try to interpret the current line as a link to a file location.
-    " let l:link = ExtractLink()
-    " if empty(l:link)
-    "     return
-    " endif
-    " let l:parts = split(l:link, ':')
-    " let l:path = get(l:parts, 0, "")
-    " let l:line_number = get(l:parts, 1, "")
-
-    " if a:make_new_tab == 1
-    "     execute "tabnew ".l:path
-    " else
-    "     execute "e ".l:path
-    " endif
-    " call cursor(l:line_number,1)
-
-    let l:line_index = a:firstline
-
-    let l:commands_to_run = []
-    while l:line_index != a:lastline + 1
-        
-        let l:link = ExtractLink(l:line_index)
-        if empty(l:link)
-            return
-        endif
-        let l:parts = split(l:link, ':')
-        let l:path = get(l:parts, 0, "")
-        let l:line_number = get(l:parts, 1, "")
-
-        if l:line_index > a:firstline || a:make_new_tab == 1
-            " Make a new tab for for each file after the first.
-            " If make_new_tab is 1, then a new tab is also created for the first.
-            call add(l:commands_to_run, "tabnew ".l:path)
-        else
-            call add(l:commands_to_run, "e ".l:path)
-        endif
-
-        call add(l:commands_to_run, "call cursor(".l:line_number.",1)")
-
-        let l:line_index += 1
-    endwhile
-
-    " Commands are deferred because something goes wrong with the range if the buffer is switched.
-    " (?)
-    for l:command in l:commands_to_run
-        execute l:command
-    endfor
-endfunction
-nnoremap <leader>/ :call FollowLinks(0)<cr>
-nnoremap <leader>? :call FollowLinks(1)<cr>
-vnoremap <leader>/ :.call FollowLinks(0)<cr>
-vnoremap <leader>? :.call FollowLinks(1)<cr>
+"function! ResolveIncludeFile(file_identifier)
+"    " Given a file path, extracted from an include statement, search
+"    " for the relevant installed file.
+"    " If none is found, return the empty string.
+"
+"    " Try the -/weta/code metadata.
+"    let l:cmd = g:STUFF."weta/code/bin/resolve_include \"".a:file_identifier."\" -f \"".expand('%')."\""
+"    let l:resolved_include = system(l:cmd)
+"    if !empty(l:resolved_include)
+"        return l:resolved_include
+"    endif
+"    
+"    return ''
+"endfunction
+"
+"function! ExtractLink(line_number)
+"    " Extract a link from the given line, if there is one.
+"    " Returns a string of the form /path/to/file:line_number,
+"    " or the empty string if there is no link.
+"    let l:line = getline(a:line_number)
+"
+"    " Try to extract an include link.
+"    if l:line =~# '^\s*#include <.*>'
+"        let l:file_identifier = matchstr(l:line, '^\s*#include <\zs.*\ze>')
+"        if !empty(l:file_identifier)
+"            let l:resolved_file = ResolveIncludeFile(l:file_identifier)
+"            if !empty(l:resolved_file)
+"                " Return a link to the first line.
+"                return l:resolved_file.":1"
+"            endif
+"        endif
+"    endif
+"
+"    " Try to extract a file location from a line of the form
+"    " /path/to/file line_number
+"    let l:list = split(l:line)
+"    if len(l:list) == 2
+"        let l:path = get(l:list, 0, "")
+"        let l:line_number_string = get(l:list, 1, "")
+"        if l:line_number_string =~# '^\d\+$'
+"            let l:line_number = str2nr(l:line_number_string)
+"            return l:path.":".l:line_number
+"        endif
+"    endif
+"
+"    return ''
+"endfunction
+"
+"function! FollowLinks(make_new_tab) range
+"    " Try to interpret the current line as a link to a file location.
+"    " let l:link = ExtractLink()
+"    " if empty(l:link)
+"    "     return
+"    " endif
+"    " let l:parts = split(l:link, ':')
+"    " let l:path = get(l:parts, 0, "")
+"    " let l:line_number = get(l:parts, 1, "")
+"
+"    " if a:make_new_tab == 1
+"    "     execute "tabnew ".l:path
+"    " else
+"    "     execute "e ".l:path
+"    " endif
+"    " call cursor(l:line_number,1)
+"
+"    let l:line_index = a:firstline
+"
+"    let l:commands_to_run = []
+"    while l:line_index != a:lastline + 1
+"        
+"        let l:link = ExtractLink(l:line_index)
+"        if empty(l:link)
+"            return
+"        endif
+"        let l:parts = split(l:link, ':')
+"        let l:path = get(l:parts, 0, "")
+"        let l:line_number = get(l:parts, 1, "")
+"
+"        if l:line_index > a:firstline || a:make_new_tab == 1
+"            " Make a new tab for for each file after the first.
+"            " If make_new_tab is 1, then a new tab is also created for the first.
+"            call add(l:commands_to_run, "tabnew ".l:path)
+"        else
+"            call add(l:commands_to_run, "e ".l:path)
+"        endif
+"
+"        call add(l:commands_to_run, "call cursor(".l:line_number.",1)")
+"
+"        let l:line_index += 1
+"    endwhile
+"
+"    " Commands are deferred because something goes wrong with the range if the buffer is switched.
+"    " (?)
+"    for l:command in l:commands_to_run
+"        execute l:command
+"    endfor
+"endfunction
+"nnoremap <leader>/ :call FollowLinks(0)<cr>
+"nnoremap <leader>? :call FollowLinks(1)<cr>
+"vnoremap <leader>/ :.call FollowLinks(0)<cr>
+"vnoremap <leader>? :.call FollowLinks(1)<cr>
 " Yank file path and line number.
 function! YankFilePath()
     let @" = expand("%:p")." ".line(".")."\n"
@@ -716,7 +716,9 @@ nnoremap <M-q> :call GoToPrimaryShell()<cr>
 " ...
 "<<<
 function! PopupTextLink(filename, line)
-    execute "badd ".a:filename
+    if bufname() != a:filename
+        execute "badd ".a:filename
+    endif
     let buffer = bufnr(a:filename, 1)
     let screen_height = &lines
     let screen_width = &columns
@@ -762,16 +764,37 @@ function! DelayPopupTextLink(buffer, filename, line, options)
     "call win_execute(popup_winid, "set wincolor=hl-Normal")
 endfunction
 
-function! RefreshNotesTextLink()
+function! GetNotesTextLinkUnderCursor()
     let line = getline('.')
     let parts = split(line)
     if len(parts) != 2
+        return []
+    endif
+    if parts[1] !~# '^\d\+$'
+        return []
+    endif
+    let filename = parts[0]
+    let line = parts[1]
+
+    if filename =~# "^(.*)$"
+        let cmd = "ns resolve ".filename[1:-2]." ".expand("%:p")
+        let filename = systemlist(cmd)[0]
+        if v:shell_error
+            echoerr "ns resolve failed"
+            return []
+        endif
+    endif
+    return [filename, line]
+endfunction
+
+function! RefreshNotesTextLink()
+    " Only do this in normal mode.
+    if mode() != "n"
         return
     endif
-    "if !filereadable(parts[0])
-    "    return
-    "endif
-    if parts[1] !~# '^\d\+$'
+
+    let parts = GetNotesTextLinkUnderCursor()
+    if empty(parts)
         return
     endif
     let filename = parts[0]
@@ -780,38 +803,16 @@ function! RefreshNotesTextLink()
 endfunction
 
 function! NotesFollowLinkUnderCursor(tabnew)
-    let line = getline('.')
-    let parts = split(line)
-    if len(parts) != 2
-        return
-    endif
-    if parts[1] !~# '^\d\+$'
+    let parts = GetNotesTextLinkUnderCursor()
+    if empty(parts)
         return
     endif
     let filename = parts[0]
     let line = parts[1]
-
-    if filename =~# "^(.*)$"
-        let parts = split(filename[1:-1], ":")
-        if len(parts) < 2
-            let dir_parts = split(expand("%:p:h"), "/")
-            let notes_dir = ""
-            for i in range(len(dir_parts))
-                if dir_parts[len(dir_parts)-1-i] == "notes.d"
-                    let notes_dir = join(dir_parts[:len(dir_parts)-i], "/")
-                    break
-                endif
-            endfor
-            if empty(notes_dir)
-                echoerr "notes.d not found"
-                return
-            endif
-            let note_name = parts[0]
-        else
-            let notes_dir = parts[0]."/notes.d"
-            let note_name = parts[1]
-        endif
-        let filename = notes_dir."/".note_name.".ns"
+    call system("mkdir -p $(dirname \"".filename."\")")
+    if v:shell_error
+        echoerr "Couldn't make a directory for the notes file."
+        return
     endif
 
     if a:tabnew
@@ -836,7 +837,11 @@ augroup END
 function! YankNotesTextLink()
     let ext = expand("%:p:t:e")
     if ext == "ns"
-        let @" = "(".expand("%:p:t:r").") ".line(".")."\n"
+        let link = systemlist("ns link ".expand("%:p"))[0]
+        if v:shell_error
+            return
+        endif
+        let @" = "(".link.") ".line(".")."\n"
     else
         let @" = expand("%")." ".line(".")."\n"
     endif
@@ -847,12 +852,12 @@ function! CycleNotesFiles(yank_from_non_notes_file=0, tabnew=0)
     let parts = split(directory, "/")
     let notes_files = []
     for i in range(len(parts))
-        let filename = "/".join(parts[:i], "/")."/notes.ns"
+        let filename = "/".join(parts[:i], "/")."/notes.d/notes.ns"
         if filereadable(filename)
             call add(notes_files, filename)
         endif
     endfor
-    let global_notes_file = "/home/lucas/drive/notes/notes.ns"
+    let global_notes_file = "/home/lucas/drive/notes.d/notes.ns"
     if index(notes_files, global_notes_file) < 0
         call add(notes_files, global_notes_file)
     endif
