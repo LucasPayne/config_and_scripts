@@ -735,11 +735,12 @@ function! PopupTextLink(filename, line)
             \ }
     else
         let options = {
-            \ 'col'  : (2*screen_width)/5,
-            \ 'minheight' : (5*screen_height)/7,
-            \ 'maxheight' : (5*screen_height)/7,
-            \ 'minwidth' : (3*screen_width)/5 - 2,
-            \ 'maxwidth' : (3*screen_width)/5 - 2,
+            \ 'line'  : (1*screen_height)/10,
+            \ 'col'  : (3*screen_width)/10,
+            \ 'minheight' : (8*screen_height)/10,
+            \ 'maxheight' : (8*screen_height)/10,
+            \ 'minwidth' : (7*screen_width)/10 - 2,
+            \ 'maxwidth' : (7*screen_width)/10 - 2,
             \ }
     endif
     call extend(options, {
@@ -756,9 +757,13 @@ function! PopupTextLink(filename, line)
     call timer_start(1, {-> DelayPopupTextLink(buffer, a:filename, a:line, options)})
 endfunction
 
-function! DelayPopupTextLink(buffer, filename, line, options)
+function! DelayPopupTextLink(buffer, filename, line_identifier, options)
     let popup_winid = popup_create(a:buffer, a:options)
-    call win_execute(popup_winid, "normal! ".a:line."ggzz")
+    if a:line_identifier == "$"
+        call win_execute(popup_winid, "normal! Gzz")
+    else
+        call win_execute(popup_winid, "normal! ".a:line_identifier."ggzz")
+    endif
     call win_execute(popup_winid, "set number")
     call win_execute(popup_winid, "set relativenumber")
     "call win_execute(popup_winid, "set wincolor=hl-Normal")
@@ -770,7 +775,7 @@ function! GetNotesTextLinkUnderCursor()
     if len(parts) != 2
         return []
     endif
-    if parts[1] !~# '^\d\+$'
+    if parts[1] !~# '^\d\+$' && parts[1] != "$"
         return []
     endif
     let filename = parts[0]
@@ -778,6 +783,7 @@ function! GetNotesTextLinkUnderCursor()
 
     if filename =~# "^(.*)$"
         let cmd = "ns resolve ".filename[1:-2]." ".expand("%:p")
+        echo cmd
         let filename = systemlist(cmd)[0]
         if v:shell_error
             echoerr "ns resolve failed"
@@ -808,7 +814,7 @@ function! NotesFollowLinkUnderCursor(tabnew)
         return
     endif
     let filename = parts[0]
-    let line = parts[1]
+    let line_identifier = parts[1]
     call system("mkdir -p $(dirname \"".filename."\")")
     if v:shell_error
         echoerr "Couldn't make a directory for the notes file."
@@ -821,7 +827,11 @@ function! NotesFollowLinkUnderCursor(tabnew)
         let cmd = "edit "
     endif
     execute cmd." ".filename
-    call cursor(line, 1)
+    if line_identifier == "$"
+        call cursor(line("$"), 1)
+    else
+        call cursor(line_identifier, 1)
+    endif
 endfunction
 
 augroup Notes
@@ -857,7 +867,7 @@ function! CycleNotesFiles(yank_from_non_notes_file=0, tabnew=0)
             call add(notes_files, filename)
         endif
     endfor
-    let global_notes_file = "/home/lucas/drive/notes.d/notes.ns"
+    let global_notes_file = "/home/lucas/notes.d/notes.ns"
     if index(notes_files, global_notes_file) < 0
         call add(notes_files, global_notes_file)
     endif
