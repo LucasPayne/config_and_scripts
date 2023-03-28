@@ -122,7 +122,7 @@ cd ()
 {
     builtin cd "$@"
     if [ ! -z "$VIMSHELL_ID" ] && [ ! -z "$VIMSHELL_PRIMARY_SHELL" ] ; then
-        vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$@"'<cr>A'
+        vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
     fi
 }
 #>>>

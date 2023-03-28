@@ -764,8 +764,8 @@ function! DelayPopupTextLink(buffer, filename, line_identifier, options)
     else
         call win_execute(popup_winid, "normal! ".a:line_identifier."ggzz")
     endif
-    call win_execute(popup_winid, "set number")
-    call win_execute(popup_winid, "set relativenumber")
+    "call win_execute(popup_winid, "set number")
+    "call win_execute(popup_winid, "set relativenumber")
     "call win_execute(popup_winid, "set wincolor=hl-Normal")
 endfunction
 
