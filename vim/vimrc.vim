@@ -243,7 +243,7 @@ if PluginEnabled("vim-surround") == 1
 endif
 
 if PluginEnabled("tagbar") == 1
-    nnoremap <leader>T :Tagbar<cr>
+    nnoremap <leader>t :Tagbar<cr>
 endif
 
 "if PluginEnabled("tig-explorer.vim") == 1
