@@ -124,6 +124,11 @@ cd ()
     if [ ! -z "$VIMSHELL_ID" ] && [ ! -z "$VIMSHELL_PRIMARY_SHELL" ] ; then
         vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
     fi
+    # Store the directory in the id temporary file.
+    # This is used in vim, which otherwise can't access non-symlink-resolved paths.
+    if [ ! -z "$VIMSHELL_ID" ] ; then
+        pwd > $VIMSHELL_ID
+    fi
 }
 #>>>
 

@@ -858,7 +858,8 @@ function! YankNotesTextLink()
 endfunction
 
 function! CycleNotesFiles(yank_from_non_notes_file=0, tabnew=0)
-    let directory = getcwd()
+    "let directory = getcwd()
+    let directory = readfile($VIMSHELL_ID)[0]
     let parts = split(directory, "/")
     let notes_files = []
     for i in range(len(parts))

@@ -10,4 +10,5 @@ if [ ! -z "$VIMSHELL_ID" ] ; then
 fi
 tempfile="$(tempfile 2>/dev/null)"
 export VIMSHELL_ID="$tempfile"
+pwd > $VIMSHELL_ID
 vim --servername "$VIMSHELL_ID" -c "call VimTerminalHostStart()"
