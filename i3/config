@@ -206,7 +206,8 @@ bar {
 #default_border pixel 3
 #smart_borders on
 default_border pixel 1
-smart_borders on
+#TODO: Compile i3 from source and use latest version.
+#smart_borders on
 
 # Defaults
 # class                 border  backgr. text    indicator child_border
@@ -223,3 +224,4 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 
 #------------------------------------------------------------
 for_window [class="graphics"] floating enable
+for_window [class="feh"] floating enable

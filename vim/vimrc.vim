@@ -834,6 +834,83 @@ function! NotesFollowLinkUnderCursor(tabnew)
     endif
 endfunction
 
+let g:magic_card_was_hovering = 0
+function! RefreshMagicCardPreview()
+    if g:magic_card_was_hovering
+        let g:magic_card_was_hovering = 0
+        call system("pgrep feh | xargs kill -9")
+    endif
+    if mode() == "v"
+        let startline = getpos("'<")[1]
+        let endline = getpos("'>")[1]
+        if startline > endline
+            let tmp = startline
+            let endline = startline
+            let startline = tmp
+        endif
+        let i = startline
+        let card_names = []
+        while i <= endline
+            let curline = getline(i)
+            if len(curline) > 2 && curline[0] == "=" && curline[1] == " "
+                call add(card_names, curline[2:])
+            endif
+            let i += 1
+        endwhile
+        if len(card_names) > 0
+            call MultipleMagicCardPreview(card_names)
+        endif
+        return
+    elseif mode() != "n"
+        return
+    endif
+    let curline = getline(".")
+    if len(curline) > 2 && curline[0] == "=" && curline[1] == " "
+        let card_name = curline[2:]
+        let card_filename = "/home/lucas/drive/magic/images/".card_name.".jpg"
+        if !filereadable(card_filename)
+            echo "Magic card image not found: ".card_name
+        else
+            let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g 550x766+805+292 \"".card_filename."\" > /dev/null 2>&1 & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
+            "echo cmd
+            let g:magic_card_was_hovering = 1
+            silent! call system(cmd)
+        endif
+    endif
+endfunction
+function! MultipleMagicCardPreview(card_names)
+    let card_filenames = []
+    let card_filenames_argument = ""
+    for card_name in a:card_names
+        let card_filename = "/home/lucas/drive/magic/images/".card_name.".jpg"
+        if !filereadable(card_filename)
+            echo "Magic card image not found: ".card_name
+            return
+        endif
+        call add(card_filenames, card_filename)
+        let card_filenames_argument .= " \"".card_filename."\""
+    endfor
+    let tile_width = len(card_filenames)
+    let cmd = "montage -geometry +0+0 -tile ".tile_width."x ".card_filenames_argument." /tmp/gallery.jpg"
+    silent! call system(cmd)
+
+    " todo: Actually use monitor dimensions
+    let screen_width = 2160
+    let screen_height = 1350
+    let max_width = 1000
+    let width = tile_width * 550
+    let height = 766
+    if width > max_width
+        let height = float2nr(floor(height * ((1.0 * max_width) / width)))
+        let width = max_width
+    endif
+    let start_x = float2nr(floor(screen_width/2.0 - width/2.0))
+    let start_y = float2nr(floor(screen_height/2.0 - height/2.0))
+    let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." /tmp/gallery.jpg & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
+    silent! call system(cmd)
+    "echo cmd
+endfunction
+
 augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
@@ -842,6 +919,10 @@ augroup Notes
     autocmd Filetype notes nnoremap <enter> :call NotesFollowLinkUnderCursor(0)<cr>
     autocmd Filetype notes nnoremap .? :call NotesFollowLinkUnderCursor(1)<cr>
     autocmd Filetype notes nnoremap >? :call NotesFollowLinkUnderCursor(1)<cr>
+
+    autocmd CursorMoved *.ns :call RefreshMagicCardPreview()
+    autocmd WinScrolled *.ns :call RefreshMagicCardPreview()
+    autocmd ModeChanged *.ns :call RefreshMagicCardPreview()
 augroup END
 
 function! YankNotesTextLink()
