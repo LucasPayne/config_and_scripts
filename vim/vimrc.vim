@@ -835,33 +835,17 @@ function! NotesFollowLinkUnderCursor(tabnew)
 endfunction
 
 let g:magic_card_was_hovering = 0
+let g:is_viewing_magic_card_gallery = 0
 function! RefreshMagicCardPreview()
+    if g:is_viewing_magic_card_gallery
+        let g:is_viewing_magic_card_gallery = 0
+        return
+    endif
     if g:magic_card_was_hovering
         let g:magic_card_was_hovering = 0
         call system("pgrep feh | xargs kill -9")
     endif
-    if mode() == "v"
-        let startline = getpos("'<")[1]
-        let endline = getpos("'>")[1]
-        if startline > endline
-            let tmp = startline
-            let endline = startline
-            let startline = tmp
-        endif
-        let i = startline
-        let card_names = []
-        while i <= endline
-            let curline = getline(i)
-            if len(curline) > 2 && curline[0] == "=" && curline[1] == " "
-                call add(card_names, curline[2:])
-            endif
-            let i += 1
-        endwhile
-        if len(card_names) > 0
-            call MultipleMagicCardPreview(card_names)
-        endif
-        return
-    elseif mode() != "n"
+    if mode() != "n"
         return
     endif
     let curline = getline(".")
@@ -871,13 +855,44 @@ function! RefreshMagicCardPreview()
         if !filereadable(card_filename)
             echo "Magic card image not found: ".card_name
         else
-            let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g 550x766+805+292 \"".card_filename."\" > /dev/null 2>&1 & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
-            "echo cmd
+            let screen_width = 2160
+            let screen_height = 1350
+            let width = 488
+            let height = 680
+            let start_x = float2nr(floor(screen_width/2.0 - width/2.0))
+            let start_y = float2nr(floor(screen_height/2.0 - height/2.0))
+            let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." \"".card_filename."\" > /dev/null 2>&1 & sleep 0.02 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
             let g:magic_card_was_hovering = 1
             silent! call system(cmd)
         endif
     endif
 endfunction
+
+function! MultipleMagicCardPreviewOnSelection() range
+    let startline = a:firstline
+    let endline = a:lastline
+    let g:startline = startline
+    let g:endline = endline
+    if startline > endline
+        let tmp = startline
+        let endline = startline
+        let startline = tmp
+    endif
+    let i = startline
+    let card_names = []
+    while i <= endline
+        let curline = getline(i)
+        if len(curline) > 2 && curline[0] == "=" && curline[1] == " "
+            call add(card_names, curline[2:])
+        endif
+        let i += 1
+    endwhile
+    if len(card_names) > 0
+        let g:magic_card_was_hovering = 1
+        call MultipleMagicCardPreview(card_names)
+    endif
+endfunction
+
 function! MultipleMagicCardPreview(card_names)
     let card_filenames = []
     let card_filenames_argument = ""
@@ -890,23 +905,30 @@ function! MultipleMagicCardPreview(card_names)
         call add(card_filenames, card_filename)
         let card_filenames_argument .= " \"".card_filename."\""
     endfor
-    let tile_width = len(card_filenames)
-    let cmd = "montage -geometry +0+0 -tile ".tile_width."x ".card_filenames_argument." /tmp/gallery.jpg"
+    let tile_width = min([len(card_filenames), 4])
+    let tile_height = (len(card_filenames)-1)/4 + 1
+    let cmd = "montage -geometry +0+0 -tile ".tile_width."x".tile_height." ".card_filenames_argument." /tmp/gallery.jpg"
     silent! call system(cmd)
 
     " todo: Actually use monitor dimensions
     let screen_width = 2160
     let screen_height = 1350
-    let max_width = 1000
-    let width = tile_width * 550
-    let height = 766
+    let max_width = 1600
+    let width = tile_width * 488
+    let height = tile_height * 680
     if width > max_width
         let height = float2nr(floor(height * ((1.0 * max_width) / width)))
         let width = max_width
     endif
+    let max_height = screen_height
+    if height > max_height
+        let width = float2nr(floor(width * ((1.0 * max_height) / height)))
+        let height = max_height
+    endif
     let start_x = float2nr(floor(screen_width/2.0 - width/2.0))
     let start_y = float2nr(floor(screen_height/2.0 - height/2.0))
     let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." /tmp/gallery.jpg & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
+    let g:is_viewing_magic_card_gallery = 1
     silent! call system(cmd)
     "echo cmd
 endfunction
@@ -923,6 +945,7 @@ augroup Notes
     autocmd CursorMoved *.ns :call RefreshMagicCardPreview()
     autocmd WinScrolled *.ns :call RefreshMagicCardPreview()
     autocmd ModeChanged *.ns :call RefreshMagicCardPreview()
+    autocmd Filetype notes vnoremap <silent> <space>m :call MultipleMagicCardPreviewOnSelection()<cr>
 augroup END
 
 function! YankNotesTextLink()
