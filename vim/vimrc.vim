@@ -861,9 +861,10 @@ function! RefreshMagicCardPreview()
             let height = 680
             let start_x = float2nr(floor(screen_width/2.0 - width/2.0))
             let start_y = float2nr(floor(screen_height/2.0 - height/2.0))
-            let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." \"".card_filename."\" > /dev/null 2>&1 & sleep 0.02 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
+            let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." \"".card_filename."\" > /dev/null 2>&1 & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
             let g:magic_card_was_hovering = 1
             silent! call system(cmd)
+            redraw!
         endif
     endif
 endfunction
@@ -930,6 +931,7 @@ function! MultipleMagicCardPreview(card_names)
     let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." /tmp/gallery.jpg & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
     let g:is_viewing_magic_card_gallery = 1
     silent! call system(cmd)
+    redraw!
     "echo cmd
 endfunction
 
@@ -946,6 +948,8 @@ augroup Notes
     autocmd WinScrolled *.ns :call RefreshMagicCardPreview()
     autocmd ModeChanged *.ns :call RefreshMagicCardPreview()
     autocmd Filetype notes vnoremap <silent> <space>m :call MultipleMagicCardPreviewOnSelection()<cr>
+    autocmd Filetype notes nnoremap <space>m V7j:call MultipleMagicCardPreviewOnSelection()<cr>:let g:is_viewing_magic_card_gallery=1<cr>8j
+    autocmd Filetype notes nnoremap <space>M kV7k:call MultipleMagicCardPreviewOnSelection()<cr>:let g:is_viewing_magic_card_gallery=1<cr>
 augroup END
 
 function! YankNotesTextLink()
