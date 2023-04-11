@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd $(dirname $0)
+git branch -D download_temp
+git checkout -b download_temp
+git checkout main
+git fetch --all
+git reset --hard origin/main
