@@ -783,7 +783,6 @@ function! GetNotesTextLinkUnderCursor()
 
     if filename =~# "^(.*)$"
         let cmd = "ns resolve ".filename[1:-2]." ".expand("%:p")
-        echo cmd
         let filename = systemlist(cmd)[0]
         if v:shell_error
             echoerr "ns resolve failed"
@@ -1005,6 +1004,14 @@ endfunction
 nnoremap .. :call CycleNotesFiles(1)<cr>
 nnoremap .> :call CycleNotesFiles(1, 1)<cr>
 nnoremap ., :call YankNotesTextLink()<cr>
+
+function! GoToLetterboxdMovie()
+    let movie_name = getline(".")
+    let movie_name_modified = system("echo \"".movie_name."\" | tr ' ' '-' | tr A-Z a-z")
+    let url = "https://letterboxd.com/film/".movie_name_modified
+    call system("qutebrowser \"".url."\" &")
+endfunction
+nnoremap .<M-m> :call GoToLetterboxdMovie()<cr>
 ">>>
 
 " Enable syntax highlighting for LLVM files. To use, copy

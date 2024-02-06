@@ -44,7 +44,7 @@ fi
 # Open a temporary file from stdin.
 if [[ $opt_nostdin -ne 1 ]] ; then
     if [ ! -t 0 ] ; then
-        temporary_filename=$(tempfile)
+        temporary_filename=$(tempfile 2>/dev/null)
         cat > $temporary_filename
         files+=("$temporary_filename")
     fi

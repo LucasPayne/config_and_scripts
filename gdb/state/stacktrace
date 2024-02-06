@@ -1,0 +1,18 @@
+{
+  "frames": [
+    {
+      "type": "Source",
+      "binary": "/home/lucas/code/graphics/applications/test/test",
+      "filename": "./platforms/glfw_vulkan_window.cc",
+      "function": "Platform_GLFWVulkanWindow::enter_loop",
+      "line": 317
+    },
+    {
+      "type": "Source",
+      "binary": "/home/lucas/code/graphics/applications/test/test",
+      "filename": "applications/test/test.cc",
+      "function": "main",
+      "line": 45
+    }
+  ]
+}

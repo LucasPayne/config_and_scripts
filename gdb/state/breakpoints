@@ -1,0 +1,20 @@
+[
+    {
+        "number": 1,
+        "locations": [
+            {
+                "address": "0x000055555555bf85",
+                "binary": " /home/lucas/code/graphics/applications/test/test",
+                "symbol": {
+                    "name": "main + 28",
+                    "section": ".text"
+                },
+                "plt": false,
+                "source": null
+            }
+        ],
+        "expression": "/home/lucas/code/graphics/applications/test/test.cc:38",
+        "condition": null,
+        "pending": false
+    }
+]

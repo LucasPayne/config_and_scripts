@@ -4,9 +4,9 @@
 #
 
 dpkg_package="$1"
-# https://stackoverflow.com/questions/20943025/how-can-i-get-sed-to-quit-after-the-first-matching-address-range
 full_desc="$(apt-cache show "$dpkg_package")"
 
+# https://stackoverflow.com/questions/20943025/how-can-i-get-sed-to-quit-after-the-first-matching-address-range
 echo "$full_desc" | sed -n '/^Description-en/{p; :loop n; p; /^Description-md5/q; b loop}' \
                   | tail -n+2 \
                   | head -n-1 \
