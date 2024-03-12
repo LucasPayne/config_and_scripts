@@ -15,6 +15,8 @@ export MANPATH="$MANPATH:$(realpath ~/man)"
 
 alias fd=fdfind
 
+alias z=zathura
+
 # Vulkan development
 export VULKAN_DEV_PATH="$(realpath ~/drive/dev/vulkan)"
 export PATH="$PATH:$VULKAN_DEV_PATH/bin"
@@ -91,7 +93,7 @@ xarg () {
         c16 blue
         echo "$line"
         c16 --reset
-        echo "$line" | xargs  -L 1 -I {} "$@"
+        echo "$line" | xargs -I {} "$@"
     done
 }
 # Invoke command for each line, with each line as standard input.

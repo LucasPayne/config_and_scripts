@@ -98,12 +98,3 @@ do
     echo
     let counter++
 done < <(echo "$colors") ) | column
-
-# printf "\u001b[30mBlack\u001b[0m  " ; printf "\u001b[40m    \u001b[0m" ; echo
-# printf "\u001b[31mRed\u001b[0m  " ; printf "\u001b[41m    \u001b[0m" ; echo
-# printf "\u001b[32mGreen\u001b[0m  " ; printf "\u001b[42m    \u001b[0m" ; echo
-# printf "\u001b[33mYellow\u001b[0m  " ; printf "\u001b[43m    \u001b[0m" ; echo
-# printf "\u001b[34mBlue\u001b[0m  " ; printf "\u001b[44m    \u001b[0m" ; echo
-# printf "\u001b[35mMagenta\u001b[0m  " ; printf "\u001b[45m    \u001b[0m" ; echo
-# printf "\u001b[36mCyan\u001b[0m  " ; printf "\u001b[46m    \u001b[0m" ; echo
-# printf "\u001b[37mWhite\u001b[0m  " ; printf "\u001b[47m    \u001b[0m" ; echo
