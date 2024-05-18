@@ -29,7 +29,7 @@ cmd open &{{
     esac
 
     for file in $fx ; do
-        case $(file --mime-type -Lb $file) in
+        case $(file --mime-type -Lb "$file") in
             text/*|inode/x-empty)
                 v $file
                 ;;

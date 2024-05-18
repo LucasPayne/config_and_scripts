@@ -494,7 +494,19 @@ fzf_checkout () {
     )
     # A bit of a hack to expand just the dir variable in the preview string.
     local preview_string=$(echo "$preview_string" | sed "s@DIR_STRING@$dir@g")
-    local list="$(find $dir -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename)"
+    local list="$(find $dir -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename | grep -E -v '^~')"
+    while read -r user_directory ; do
+        if [[ -z "${user_directory// }" ]] ; then
+            continue
+        fi
+        subdirs="$(find $dir/$user_directory -mindepth 1 -maxdepth 1 -type d | 
+            while read -r dirpath ; do
+                # Extract the last two directories in the path (e.g. ~user/project).
+                echo "$(basename $(realpath "$dirpath/.."))/$(basename "$dirpath")"
+            done)"
+        list="$(printf "$list\n$subdirs")"
+    done <<<$(find $dir -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename | grep -E '^~')
+
     local preview_percent=$(echo "$list" | get_fzf_right_box_percent)
     if [ "$preview_percent" -ge 85 ] ; then
         local preview_percent=85
