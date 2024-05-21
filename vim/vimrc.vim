@@ -960,7 +960,7 @@ function! YankNotesTextLink()
         endif
         let @" = "(".link.") ".line(".")."\n"
     else
-        let @" = expand("%")." ".line(".")."\n"
+        let @" = systemlist("realpath \"".expand("%")."\"")[0]." ".line(".")."\n"
     endif
 endfunction
 
