@@ -8,7 +8,6 @@ set previewer ~/.config/lf/previewer.sh
 map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' less -R $f
 
 cmd open &{{
-    
     # Open all images in the directory into the gallery view.
     # The first image will be the selected one.
     case $(file --mime-type -Lb $f) in
@@ -30,7 +29,7 @@ cmd open &{{
 
     for file in $fx ; do
         case $(file --mime-type -Lb "$file") in
-            text/*|inode/x-empty)
+            text/*|application/json|application/xml|inode/x-empty)
                 v --nostdin "$file"
                 ;;
             video/*|application/pdf)
