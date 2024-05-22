@@ -22,3 +22,4 @@ ln -s -f "$(realpath scripts)" ~/scripts
 ln -s -f "$(realpath source-highlight)" ~/.source-highlight
 ln -s -f "$(realpath lf)" ~/.config/lf
 ln -s -f "$(realpath qutebrowser)" ~/.config/qutebrowser
+ln -s -f "$(realpath nvim)" ~/.config/nvim
