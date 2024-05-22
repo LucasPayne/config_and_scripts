@@ -11,7 +11,8 @@ export PATH="$PATH:$(realpath ~/.cargo/bin)"
 # Go packages
 export PATH="$PATH:$(realpath ~/go/bin)"
 
-export MANPATH="$MANPATH:$(realpath ~/man)"
+# Man pages in synced config.
+export MANPATH="$MANPATH:$(realpath ~/config/man)"
 
 alias fd=fdfind
 

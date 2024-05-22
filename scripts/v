@@ -5,7 +5,9 @@ if [ -z "$VIMSHELL_ID" ] ; then
     exit 1
 fi
 
-# option: Suppress reading stdin into a temporary file to open.
+# option: Suppress reading stdin.
+# note: Sometimes an application invoking this script will set it up with an empty stdin (lf bug?),
+#       so --nostdin needs to be given explicitly.
 opt_nostdin=0
 # option: Tell the vimshell to cd to the current working directory.
 opt_cd=0

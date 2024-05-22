@@ -1,12 +1,12 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =9
+let g:netrw_dirhistcnt =3
+let g:netrw_dirhist_3='/home/lucas/code/raytracer_assignment/main_programs'
+let g:netrw_dirhist_2='/home/lucas/code/raytracer_assignment'
+let g:netrw_dirhist_1='/home/lucas/code/raytracer_assignment/libraries/glad'
+let g:netrw_dirhist_0='/home/lucas/code/raytracer_assignment'
 let g:netrw_dirhist_9='/home/lucas/code/~raoofha/gter/src'
 let g:netrw_dirhist_8='/home/lucas/code/ancient_opengl_museum'
 let g:netrw_dirhist_7='/home/lucas/code/mesh_processing/src/surface_mesh'
 let g:netrw_dirhist_6='/home/lucas/code/ancient_opengl_museum/src'
 let g:netrw_dirhist_5='/home/lucas/code/ancient_opengl_museum'
 let g:netrw_dirhist_4='/home/lucas/code/ancient_opengl_museum/include'
-let g:netrw_dirhist_3='/home/lucas/code/ancient_opengl_museum/include/generated'
-let g:netrw_dirhist_2='/home/lucas/code/ancient_opengl_museum/include'
-let g:netrw_dirhist_1='/home/lucas/code/ancient_opengl_museum/include/generated'
-let g:netrw_dirhist_0='/home/lucas/code/cg_sandbox/examples/eye_floaters'

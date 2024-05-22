@@ -1,4 +1,4 @@
-set shell bash
+set shell /usr/bin/bash
 set ifs " "
 #set drawbox
 #set icons
@@ -8,7 +8,7 @@ set previewer ~/.config/lf/previewer.sh
 map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' less -R $f
 
 cmd open &{{
-
+    
     # Open all images in the directory into the gallery view.
     # The first image will be the selected one.
     case $(file --mime-type -Lb $f) in
@@ -31,13 +31,13 @@ cmd open &{{
     for file in $fx ; do
         case $(file --mime-type -Lb "$file") in
             text/*|inode/x-empty)
-                v $file
+                v --nostdin "$file"
                 ;;
             video/*|application/pdf)
                 xdg-open "$file" & disown
                 ;;
             application/zip)
-                v $file
+                v --nostdin "$file"
                 ;;
             *)
                 # Don't try to open it.
@@ -133,7 +133,7 @@ map e &{{
     for file in $fx ; do
         case $(file --mime-type -Lb $file) in
             text/*)
-                v $file
+                v --nostdin "$file"
             ;;
         esac
     done
