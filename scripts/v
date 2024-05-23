@@ -72,5 +72,11 @@ fi
 
 # Send the necessary commands to the vimshell.
 for file in ${files[*]} ; do
-    vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:tabnew '"$file"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+    # Use the full file path. This means no matter what directory vim is working in,
+    # the file specified in the command is opened.
+    # It is expected that files referenced in the shell are relative to the shell working directory.
+    # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
+    #fullfilepath="$(realpath "$file")"
+    fullfilepath="$(realpath "$file")"
+    vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:tabnew '"$fullfilepath"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
 done
