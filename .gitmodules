@@ -4,12 +4,6 @@
 [submodule "vim/__tmp/vim-surround"]
 	path = vim/repos/vim-surround
 	url = git@github.com:tpope/vim-surround.git
-[submodule "vim/__tmp/AnsiEsc.vim"]
-	path = vim/repos/AnsiEsc.vim
-	url = git@github.com:vim-scripts/AnsiEsc.vim.git
-[submodule "vim/repos/tig-explorer.vim"]
-	path = vim/repos/tig-explorer.vim
-	url = git@github.com:LucasPayne/tig-explorer.vim.git
 [submodule "vim/__tmp/vim-gitgutter"]
 	path = vim/repos/vim-gitgutter
 	url = git@github.com:airblade/vim-gitgutter.git
