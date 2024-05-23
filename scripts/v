@@ -15,6 +15,9 @@ opt_cd=0
 opt_line=0
 # option: Interpret stdin as a list of files to open in new tabs.
 opt_filelist=0
+# option: Interpret filenames instead as command names, and attempt to edit the corresponding script.
+opt_open_scripts=0
+
 files=()
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -33,6 +36,10 @@ while [[ $# -gt 0 ]]; do
         ;;
     -f|--filelist)
         opt_filelist=1
+        shift
+        ;;
+    -s|--scripts)
+        opt_open_scripts=1
         shift
         ;;
     *)
@@ -72,11 +79,21 @@ fi
 
 # Send the necessary commands to the vimshell.
 for file in ${files[*]} ; do
-    # Use the full file path. This means no matter what directory vim is working in,
-    # the file specified in the command is opened.
-    # It is expected that files referenced in the shell are relative to the shell working directory.
-    # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
-    #fullfilepath="$(realpath "$file")"
-    fullfilepath="$(realpath "$file")"
-    vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:tabnew '"$fullfilepath"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+    if [[ $opt_open_scripts -eq 1 ]] ; then
+        # Each "file" is actually a command name.
+        # Attempt to find a corresponding script file for the command.
+        path="$(which "$file")"
+        if [[ $? -ne 0 ]] ; then
+            continue
+        fi 
+        # Just in case, possibly not needed.
+        path="$(realpath "$path")"
+    else
+        # Use the full file path. This means no matter what directory vim is working in,
+        # the file specified in the command is opened.
+        # It is expected that files referenced in the shell are relative to the shell working directory.
+        # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
+        path="$(realpath "$file")"
+    fi
+    vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
 done
