@@ -14,8 +14,6 @@ export PATH="$PATH:$(realpath ~/go/bin)"
 # Man pages in synced config.
 export MANPATH="$MANPATH:$(realpath ~/config/man)"
 
-alias fd=fdfind
-
 alias z=zathura
 
 # Vulkan development
