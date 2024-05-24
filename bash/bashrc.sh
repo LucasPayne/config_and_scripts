@@ -494,7 +494,7 @@ fzf_checkout () {
     )
     # A bit of a hack to expand just the dir variable in the preview string.
     local preview_string=$(echo "$preview_string" | sed "s@DIR_STRING@$dir@g")
-    local list="$(find $dir -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename | grep -E -v '^~')"
+    local list="$(find $dir -mindepth 1 -maxdepth 1 -type d -not -name '.*' | xargs -L 1 basename | grep -E -v '^~')"
     while read -r user_directory ; do
         if [[ -z "${user_directory// }" ]] ; then
             continue
