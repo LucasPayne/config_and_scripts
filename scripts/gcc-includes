@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# List the default gcc system includes for a file.
+# List the default gcc system includes.
+# No args: all filetypes.
+# Args: filetypes.
 
 opt_c=0
 opt_cxx=0
