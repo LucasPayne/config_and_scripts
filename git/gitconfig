@@ -5,7 +5,10 @@
     editor = vim
     pager = perl /usr/share/doc/git/contrib/diff-highlight/diff-highlight | less
 [alias]
-    go = !firefox "https://github.com/$(git remote show origin | sed -n '2,2 s/  Fetch URL: //p' | cut -d: -f 2 | cut -d. -f 1)" &
+    # git go: Open remote origin url in web browser.
+    # This text transformation works with github remotes.
+    # Note: git uses escape codes, so double escape is needed in sed.
+    go = !firefox "$(git config --get remote.origin.url | cut -d@ -f 2- | sed '0,/:/{s/:/\\//}')" &
     branchfrom = "!f() { git tag -d branchfrom 2>&1 >/dev/null ; git tag branchfrom \"$1\"; }; f"
 [credential]
     helper = store
