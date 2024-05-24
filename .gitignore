@@ -1,5 +1,6 @@
 vim/bundle/*
 vim/.netrwhist
+vim/vimdir/.netrwhist
 vim
 # mandb generates files in the directory where the man pages are (e.g. man1, man2, ...).
 # Ignore these.
