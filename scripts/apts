@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# Helper to download apt sources and sort them.
+# This is just a simple utility to avoid clutter, as apt source just downloads the debian and orig tars
+# and dsc file, and unpacks them, all in the current directory.
+# This script just calls apt source and moves the downloaded package files into a directory with the package name.
+
+apt_source_output="$(apt source "$@" 2>&1)"
+
+if [[ $? -ne 0 ]] ; then
+    c16 red ; >&2 echo "apts error: apt source failed" ; c16 --reset
+    >&2 echo "$apt_source_output"
+fi
+
+# 
+packages="$(echo "$apt_source_output" | grep '^dpkg-source: info: extracting ' \
+                                      | sed 's/^dpkg-source: info: extracting \(.*\) in .*$/\1/')"
+
+c16 blue ; echo "apts downloading source and sorting files..." ; c16 --reset
+echo "$apt_source_output"
+
+echo "$packages" | while read -r package ; do
+    if [[ -d "$package" ]] ; then
+        c16 red ; >&2 echo "apts error: \"$package\" directory already exists." ; c16 --reset
+        rm -r $package-* $package_*
+    else
+        c16 blue ; echo "Downloaded $package into $package/" ; c16 --reset
+        mkdir $package
+        mv $package-* ${package}_* $package
+    fi
+done
