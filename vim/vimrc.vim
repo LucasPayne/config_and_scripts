@@ -917,5 +917,23 @@ augroup filetype
     autocmd! BufRead,BufNewFile *.td set filetype=tablegen
 augroup END
 
+" Code file settings.
+function! CodeFileType()
+    " set number
+endfunction
+let g:code_filetypes = [
+    \ "c",
+    \ "cpp",
+    \ "sh",
+    \ "glsl",
+    \ "python",
+    \ "vim",
+    \ "cmake",
+    \ "make",
+    \ ]
+augroup filetype
+    execute "autocmd! FileType ".join(g:code_filetypes, ",")." call CodeFileType()"
+augroup END
+
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
