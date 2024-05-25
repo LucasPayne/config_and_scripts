@@ -515,13 +515,24 @@ fzf_checkout () {
         fzf --preview="$preview_string" \
             --preview-window=right:$preview_percent% \
             --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
-            --bind='alt-l:accept' \
+            --bind='alt-l:execute(echo "__OPEN_FILE_BROWSER")+accept' \
             --ansi \
             --layout=reverse \
             --border=none
     )
+    # Try to extract command from first line of output of lf.
+    command="$(echo "$selected" | head -n 1)"
+    opt_open_file_browser=0
+    if [[ $command == __OPEN_FILE_BROWSER ]] ; then
+        opt_open_file_browser=1
+        selected="$(echo "$selected" | tail +2)"
+    fi
     if [ ! -z "$selected" ] ; then
+        echo NICE >> ~/test/watch
         cd $dir/$selected
+    fi
+    if [[ $opt_open_file_browser -eq 1 ]] ; then
+        lfcd
     fi
 }
 fzf_code_checkout () {
@@ -589,9 +600,10 @@ preview_git_log () {
 #    ...
 #<<<
 
-# Shortcut to reopen vim session.
-bind -m vi-insert '"\ew": "\C-uv\n"'
-bind -m vi-command '"\ew": "\C-uv\n"'
+# Shortcut to open vimshell session.
+# (Should do nothing if already in a vimshell.)
+bind -m vi-insert '"\ew": "\C-uvs\n"'
+bind -m vi-command '"\ew": "\C-uvs\n"'
 
 # Navigate forward
 #bind -m vi-command '"\el": "\C-u\C-lfzf_navigate './'\n"'
@@ -617,8 +629,8 @@ bind -m vi-command '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
 bind -m vi-insert '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
 
 # fzf_config_checkout
-bind -m vi-command '"\ei": "\C-u\C-lfzf_config_checkout\nlf\n"'
-bind -m vi-insert '"\ei": "\C-u\C-lfzf_config_checkout\nlf\n"'
+bind -m vi-command '"\ei": "\C-u\C-lfzf_config_checkout\n"'
+bind -m vi-insert '"\ei": "\C-u\C-lfzf_config_checkout\n"'
 
 # checkout branch
 bind -m vi-command '"\eo": "\C-ugcb\n"'
