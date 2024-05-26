@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# List the default gcc system include directories or library directories.
+# No args: all filetypes.
+# Args: filetypes.
+
+opt_include=0
+opt_library=0
+opt_c=0
+opt_cxx=0
+language_specified=0
+type_specified=0
+while [[ $# -gt 0 ]]; do
+    # Case insensitive.
+    opt="${1,,}"
+    case $opt in
+    c++|cpp|cxx)
+        opt_cxx=1
+        language_specified=1
+        shift
+        ;;
+    c)
+        opt_c=1
+        language_specified=1
+        shift
+        ;;
+    -i|--include)
+        opt_include=1
+        type_specified=1
+        shift
+        ;;
+    -l|--library)
+        opt_library=1
+        type_specified=1
+        shift
+        ;;
+    esac
+done
+
+function display_include_directories
+{
+    local lang=$1
+    echo | gcc -x"$lang" -E -v - 2>&1 \
+         | sed -ne '/> search starts here/,/End of search list./ p' \
+         | tail +2 \
+         | head -n -1 \
+         | sed 's/^ *//;s/ *$//' \
+         | xargs -I {} realpath {} \
+         | sort \
+         | uniq
+}
+
+function display_library_directories
+{
+    local lang=$1
+    echo | gcc -x"$lang" -E -v - 2>&1 | grep '^LIBRARY_PATH=' | cut -d= -f 2- | tr ':' '\n' | xargs -I {} realpath {} | sort | uniq
+}
+
+if [[ $opt_c -eq 1 ]] ; then
+    if [[ $opt_include -eq 1 ]] ; then
+        display_include_directories c
+    fi
+    if [[ $opt_library -eq 1 ]] ; then
+        display_library_directories c
+    fi
+fi
+
+if [[ $opt_cxx -eq 1 ]] ; then
+    if [[ $opt_include -eq 1 ]] ; then
+        display_include_directories c++
+    fi
+    if [[ $opt_library -eq 1 ]] ; then
+        display_library_directories c++
+    fi
+fi
+
+if [[ $language_specified -eq 0 ]] ; then
+    c16 blue ; echo C ; c16 --reset
+    if [[ $type_specified -eq 0 || $opt_include -eq 1 ]] ; then
+        c16 green ; echo Include directories ; c16 --reset
+        display_include_directories c
+    fi
+    if [[ $type_specified -eq 0 || $opt_library -eq 1 ]] ; then
+        c16 green ; echo Library directories ; c16 --reset
+        display_library_directories c
+    fi
+    c16 blue ; echo C++ ; c16 --reset
+    if [[ $type_specified -eq 0 || $opt_include -eq 1 ]] ; then
+        c16 green ; echo Include directories ; c16 --reset
+        display_include_directories c++
+    fi
+    if [[ $type_specified -eq 0 || $opt_library -eq 1 ]] ; then
+        c16 green ; echo Library directories ; c16 --reset
+        display_library_directories c++
+    fi
+fi
+
