@@ -74,23 +74,32 @@ if [[ $opt_cxx -eq 1 ]] ; then
     fi
 fi
 
+echoerr ()
+{
+    local msg="$1"
+    local color="$2"
+    c16 $color
+    >&2 echo "$msg"
+    c16 --reset
+}
+
 if [[ $language_specified -eq 0 ]] ; then
-    c16 blue ; echo C ; c16 --reset
+    echoerr "C" blue
     if [[ $type_specified -eq 0 || $opt_include -eq 1 ]] ; then
-        c16 green ; echo Include directories ; c16 --reset
+        echoerr "Include directories" green
         display_include_directories c
     fi
     if [[ $type_specified -eq 0 || $opt_library -eq 1 ]] ; then
-        c16 green ; echo Library directories ; c16 --reset
+        echoerr "Library directories" green
         display_library_directories c
     fi
-    c16 blue ; echo C++ ; c16 --reset
+    echoerr "C++" blue
     if [[ $type_specified -eq 0 || $opt_include -eq 1 ]] ; then
-        c16 green ; echo Include directories ; c16 --reset
+        echoerr "Include directories" green
         display_include_directories c++
     fi
     if [[ $type_specified -eq 0 || $opt_library -eq 1 ]] ; then
-        c16 green ; echo Library directories ; c16 --reset
+        echoerr "Library directories" green
         display_library_directories c++
     fi
 fi
