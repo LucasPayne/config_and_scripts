@@ -13,6 +13,7 @@ ln -s -f "$(realpath gdb/gdbinit.gdb)" ~/.gdbinit
 ln -s -f "$(realpath gdb/)" ~/.gdb
 ln -s -f "$(realpath X/Xresources.txt)" ~/.Xresources
 ln -s -f "$(realpath X/xinitrc)" ~/.xinitrc
+ln -s -f "$(realpath X/xsession)" ~/.xsession
 ln -s -f "$(realpath screen/screenrc.txt)" ~/.screenrc
 ln -s -f "$(realpath readline/inputrc.txt)" ~/.inputrc
 ln -s -f "$(realpath pager/lesskey.txt)" ~/.lesskey
