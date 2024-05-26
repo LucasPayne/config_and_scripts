@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Helper to download apt packages and sort them.
+
+if [[ $# -eq 0 ]] ; then
+    >&2 echo "Usage: aptb [package]"
+    exit 1
+fi
+
+package="$1"
+
+apt_download_output="$(apt download "$@" | tee /dev/tty)"
+
+if [[ $? -ne 0 ]] ; then
+    >&2 echo "apt download error"
+    echo "$apt_download_output"
+    exit 1
+fi
+
+re='^The package '"$package"' is already installed.*$' 
+last_line="$(echo "$apt_download_output" | tail -1)"
+if [[ $last_line =~ $re ]] ; then
+    # `apt download` apparently moves the .deb from somewhere on the system, if the package is already installed.
+    dpkg-deb -R "$package_"*.deb "$package"
+    rm "$package_"*.deb
+else
+    # Otherwise `apt download` downloads a .tar.gz which contains a .deb.
+    gunzip "$package.tar.gz"
+    tar xf "$package.tar"
+    cd "$package"
+    dpkg-deb -R *.deb .
+fi
