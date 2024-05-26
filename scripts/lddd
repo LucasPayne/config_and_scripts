@@ -15,13 +15,13 @@ usage_and_exit () {
 
 if [ "$#" -eq 1 ] ; then
     path="$1"
-    library_paths="$(ldd "$path" | grep '=>' | cut -d' ' -f 3 | sed '/^$/d ; s/^[[:space:]]*//')"
+    library_paths="$(ldd "$path" | grep '=>' | cut -d' ' -f 3 | sed '/^$/d ; s/^[[:space:]]*//' | xargs -I {} realpath {} | sort | uniq)"
 elif [ "$#" -eq 2 ] ; then
     if [[ "$1" != "-p" ]] ; then
         usage_and_exit
     fi
     pid="$2"
-    library_paths="$(cat /proc/$pid/maps | grep '\.so' | awk '{ print $NF }' | sort | uniq)"
+    library_paths="$(cat /proc/$pid/maps | grep '\.so' | awk '{ print $NF }' | xargs -I {} realpath {} | sort | uniq)"
 else
     usage_and_exit
 fi

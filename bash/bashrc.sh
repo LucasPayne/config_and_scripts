@@ -3,6 +3,8 @@ export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive
 export NOTES_REPO_DIR=~/drive/notes
 
+export EDITOR=vim
+
 export PATH="$PATH:$(realpath ~/bin)"
 export PATH="$PATH:$CONFIG_DIR/scripts"
 export PATH="$PATH:$NOTES_REPO_DIR:$PATH"
@@ -38,6 +40,13 @@ alias sudo='sudo env PATH=$PATH'
 set -o vi
 
 alias vs=vimshell
+# Strace helpers
+alias stracee='strace 2>&1'
+stracev ()
+{
+    strace 2>&1 "$@" | less
+}
+
 
 alias gdb='gdb -q'
 export GDB_DEV="$(realpath ~/.gdb)"

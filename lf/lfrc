@@ -118,6 +118,22 @@ cmd wp ${{
     wp $f
 }}
 
+# Make a directory
+cmd make_dir %{{
+    printf "Make directory: "
+    read ans
+    mkdir -p "$ans"
+}}
+map D make_dir
+
+# Make a file
+cmd touch_file %{{
+    printf "Touch file: "
+    read ans
+    touch "$ans"
+}}
+map T touch_file
+
 
 map f :fzf_jump 0
 map F :fzf_jump 1
