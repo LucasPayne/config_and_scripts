@@ -8,6 +8,7 @@
 ln -s -f "$(realpath vim/vimdir/)" ~/.vim
 ln -s -f "$(realpath vim/vimrc.vim)" ~/.vimrc
 ln -s -f "$(realpath bash/bashrc.sh)" ~/.bashrc
+ln -s -f "$(realpath bash/bash_aliases.sh)" ~/.bash_aliases
 ln -s -f "$(realpath bash/bash_profile.sh)" ~/.bash_profile
 ln -s -f "$(realpath gdb/gdbinit.gdb)" ~/.gdbinit
 ln -s -f "$(realpath gdb/)" ~/.gdb

@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# List user-installed
+# Uses a heuristic:
+#     "Manually installed" packages which were not included in the initial system install.
+#     Some initial install packages are marked as manual, so these are filtered out.
+# Sorted by newest first.
+
+# Use the heuristic to find relevant packages.
+declare -a installed
+mapfile -t installed < <(comm -23 \
+                           <(apt-mark showmanual | sort -u) \
+                           <(gzip -dc /var/log/installer/initial-status.gz | sed -n 's/^Package: //p' | sort -u))
+
+for package in "${installed[@]}" ; do
+    dpkg_list_files="$(echo "/var/lib/dpkg/info/$package"*"."list")"
+    if echo "$dpkg_list_files" | grep -q '*' ; then
+        # echo didn't expand the wildcard, so a package wasn't found.
+        continue
+    fi
+    # Only use the first file (e.g. supposedly it could be that :amd64 and :i386 are both installed).
+    dpkg_list_file="$(echo "$dpkg_list_files")"
+    if [[ ! -f "$dpkg_list_file" ]] ; then
+        dpkg_list_file="/var/lib/dpkg/info/$package.list"
+    fi
+done
+exit
+
+ | xargs -I {} echo /var/lib/dpkg/info/{}.list \
+    | while read -r line ; do if [[ -f "$line" ]] ; then echo "$line" ; fi ; done \
+    | xargs ls -t \
+    | cat

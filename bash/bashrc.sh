@@ -17,7 +17,6 @@ export PATH="$PATH:$(realpath ~/go/bin)"
 # Man pages in synced config.
 export MANPATH="$MANPATH:$(realpath ~/config/man)"
 
-alias z=zathura
 
 # Vulkan development
 export VULKAN_DEV_PATH="$(realpath ~/drive/dev/vulkan)"
@@ -29,41 +28,31 @@ export PATH="$PATH:$RENDERDOC_SOURCE_PATH/build/bin"
 
 setxkbmap us
 source $CONFIG_DIR/scripts/syncer_files/syncer-bash.sh
-alias man='COLUMNS=120 man'
-alias .sb="source ~/.bashrc"
 
 source "$CONFIG_DIR/scripts/fzf_tools/fzf_tools.sh"
 
 # Risk it...
-alias sudo='sudo env PATH=$PATH'
 
 set -o vi
 
-alias vs=vimshell
 # Strace helpers
-alias stracee='strace 2>&1'
 stracev ()
 {
     strace 2>&1 "$@" | less
 }
 
 
-alias gdb='gdb -q'
 export GDB_DEV="$(realpath ~/.gdb)"
 
 # Explicit terminfo needed for some reason, when using built-from-source ncurses.
 export TERMINFO=/lib/terminfo
 
-alias p=python3
-alias python=python3
 
 export LESS="-R --mouse --wheel-lines=3"
 #https://www.gnu.org/software/src-highlite/source-highlight.html#Introduction
 export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
 
-alias ls="ls --color=auto"
 
-alias vless="~/.vim/macros/less.sh"
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
@@ -744,3 +733,5 @@ ins () {
         --preview-window=right:80%
 }
 #>>>
+
+source ~/.bash_aliases
