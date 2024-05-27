@@ -26,3 +26,4 @@ ln -s -f "$(realpath lf)" ~/.config/lf
 ln -s -f "$(realpath qutebrowser)" ~/.config/qutebrowser
 ln -s -f "$(realpath nvim)" ~/.config/nvim
 ln -s -f "$(realpath apt/dpkg.cfg)" ~/.dpkg.cfg
+ln -s -f "$(realpath freedesktop.org/autostart)" ~/.config/autostart
