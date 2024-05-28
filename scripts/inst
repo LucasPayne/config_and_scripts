@@ -1,0 +1,9 @@
+#!/bin/bash
+
+apt_installed | fzf --preview="dpkgdesc {}" \
+                    --preview-window=right:50% \
+                    --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
+                    --ansi \
+                    --layout=reverse \
+                    --border=none
+

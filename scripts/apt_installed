@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# List user-installed
+# List user-installed apt packages.
 # Uses a heuristic:
 #     "Manually installed" packages which were not included in the initial system install.
 #     Some initial install packages are marked as manual, so these are filtered out.
@@ -12,21 +12,20 @@ mapfile -t installed < <(comm -23 \
                            <(apt-mark showmanual | sort -u) \
                            <(gzip -dc /var/log/installer/initial-status.gz | sed -n 's/^Package: //p' | sort -u))
 
+declare -A list_files
+
 for package in "${installed[@]}" ; do
-    dpkg_list_files="$(echo "/var/lib/dpkg/info/$package"*"."list")"
+    dpkg_list_files="$(echo "/var/lib/dpkg/info/$package"*".list")"
     if echo "$dpkg_list_files" | grep -q '*' ; then
         # echo didn't expand the wildcard, so a package wasn't found.
         continue
     fi
     # Only use the first file (e.g. supposedly it could be that :amd64 and :i386 are both installed).
-    dpkg_list_file="$(echo "$dpkg_list_files")"
-    if [[ ! -f "$dpkg_list_file" ]] ; then
-        dpkg_list_file="/var/lib/dpkg/info/$package.list"
-    fi
+    list_file="$(echo "$dpkg_list_files" | tr ' ' '\n' | head -1)"
+    list_files["$list_file"]="$package"
 done
-exit
 
- | xargs -I {} echo /var/lib/dpkg/info/{}.list \
-    | while read -r line ; do if [[ -f "$line" ]] ; then echo "$line" ; fi ; done \
-    | xargs ls -t \
-    | cat
+list_files_by_date="$(printf '%s\n' "${!list_files[@]}" | xargs ls -t | cat)"
+echo "$list_files_by_date" | while read -r list_file ; do
+    echo "${list_files["$list_file"]}"
+done
