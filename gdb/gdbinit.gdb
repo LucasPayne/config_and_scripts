@@ -32,7 +32,7 @@ gdb.selected_frame().newer().select()
     end
 end
 
-# Workaround. I think vim TermDebug might only update the source view if frame or select-frame is run (?)
+# Workaround. I think vim Termdebug might only update the source view if frame or select-frame is run (?)
 define __vim_write_selected_frame_number
     python
 #--------------------------------------------------------------------------------
@@ -126,23 +126,22 @@ import json
 
 out = {}
 
-# 
 # Extract non-pending breakpoints.
-#
-pattern = re.compile(r"^(\d+)\.(\d+)[ ]+(y|n)[ ]+(0x[0-9a-f]+)[ ]+([^ ]*).*$")
+pattern = re.compile(r"^(\d+)\.(\d+)[ ]+(y|n)[ ]+(0x[0-9a-f]+)(?: in .* at ([^ ]+)).*$")
 for line in lines:
     result = pattern.match(line)
     if result:
         major = result.group(1)
         minor = result.group(2)
         address = result.group(4)
+        source_info = result.group(5)
         if major not in out:
             out[major] = []
 
         location = {}
         # location["minor"] = minor
         location["address"] = address
-        
+
         # Note: Any way to do this in just the python interface?
         info_symbol_out = gdb.execute("info symbol {}".format(address), to_string=True)
         # Note: The first group should catch the "name + offset in section..." case.
@@ -175,7 +174,6 @@ for line in lines:
 
         plt = symbol.endswith("@plt")
         location["plt"] = plt
-
         symbol_obj = gdb.lookup_global_symbol(symbol)
         if symbol_obj:
             location["source"] = {}
@@ -184,7 +182,10 @@ for line in lines:
             #-Maybe the python api gives a more accurate binary?
             #location["binary"] = symbol_obj.symtab.objfile.filename
         else:
-            location["source"] = None
+            # Parse source from `maint info break`.
+            location["source"] = {}
+            location["source"]["file"] = "".join(source_info.split(":")[:-1])
+            location["source"]["line"] = source_info.split(":")[-1]
 
         out[major].append(location)
 
@@ -225,7 +226,7 @@ f.close()
     end
 end
 
-define json
+define sync
     json_serialize_stacktrace
     json_serialize_breakpoints
 end

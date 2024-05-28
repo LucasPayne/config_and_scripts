@@ -210,6 +210,8 @@ hi Normal ctermbg=None
 set fillchars=eob:\ 
 set signcolumn=auto
 hi SignColumn ctermbg=none
+" todo: Find a good unintrusive styling for thgis line.
+hi debugPC ctermbg=none
 ">>>
 
 " Cursor styles
@@ -290,19 +292,17 @@ hi debugPC ctermbg=white
 nnoremap .T :Termdebug<cr><Esc><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>1000<<C-w>58><C-w>k
 function! DoTermdebugBreakpointModify(cmd)
     execute a:cmd
-    sleep 50m
-    "call TermDebugSendCommand("json_serialize_breakpoints")
+    sleep 150m
     TermdebugSendCommand json_serialize_breakpoints
-    sleep 50m
+    sleep 150m
     call BreakpointsQuickfix()
     Source
 endfunction
 function! DoTermdebugCodeMove(cmd)
     execute a:cmd
-    sleep 50m
-    "call TermDebugSendCommand("json_serialize_stacktrace")
+    sleep 150m
     TermdebugSendCommand json_serialize_stacktrace
-    sleep 50m
+    sleep 150m
     call QuickfixCallstackFromGDB()
     Source
 endfunction
@@ -310,6 +310,7 @@ nnoremap <space>b :call DoTermdebugBreakpointModify("Break")<cr>
 nnoremap <space>B :call DoTermdebugBreakpointModify("Clear")<cr>
 nnoremap <space>u :call DoTermdebugCodeMove("Until")<cr>
 nnoremap <space>n :call DoTermdebugCodeMove("Over")<cr>
+nnoremap <space>c :call DoTermdebugCodeMove("Continue")<cr>
 nnoremap <space>s :call DoTermdebugCodeMove("Step")<cr>
 nnoremap <space>f :call DoTermdebugCodeMove("Finish")<cr>
 function! ToggleTermdebugAsm()
@@ -338,22 +339,22 @@ nnoremap <space>e :call SwapBetweenSourceAndGdb()<cr>
 
 " help termdebug_shortcuts
 function! GDBRelativeFrame(jump)
-    call TermDebugSendCommand("__vim_write_selected_frame_number")
+    call TermdebugSendCommand("__vim_write_selected_frame_number")
     " Note: Apparently there is a race condition...
     sleep 25m
     let l:frame_number = readfile("/tmp/gdb__vim_write_selected_frame_number")[0]
-    call TermDebugSendCommand("select-frame ".(l:frame_number+a:jump))
+    call TermdebugSendCommand("select-frame ".(l:frame_number+a:jump))
 
     " Todo: Simplify this, don't require multiple calls.
     " -- To do this, need to query max frame number.
-    call TermDebugSendCommand("__vim_write_selected_frame_number")
+    call TermdebugSendCommand("__vim_write_selected_frame_number")
     sleep 25m
     let l:frame_number = readfile("/tmp/gdb__vim_write_selected_frame_number")[0]
     execute "cc ".(l:frame_number+1)
 
     "--------------------------------------------------------------------------------
     " pwndbg
-    " call TermDebugSendCommand("context")
+    " call TermdebugSendCommand("context")
 endfunction
 
 nnoremap [f :call GDBRelativeFrame(-1)<cr>zz
@@ -526,7 +527,6 @@ function! BreakpointsQuickfix()
             " Make overall breakpoint info available in the sub-breakpoints info.
             let l:loc["number"] = l:bp["number"]
             let l:loc["expression"] = l:bp["expression"]
-
             call add(g:gdb_breakpoint_jsons, l:loc)
             if l:loc["source"] != v:null
                 call add(l:qflist, {
@@ -542,6 +542,7 @@ function! BreakpointsQuickfix()
     augroup filetype_qf
         autocmd!
         autocmd Filetype qf setlocal nonumber
+        autocmd Filetype qf setlocal nowrap
         autocmd Filetype qf setlocal statusline=%{BreakpointsQuickfixStatusLine()}
     augroup END
 
@@ -555,7 +556,7 @@ function! BreakpointsQuickfixStatusLine()
 endfunction
 
 function! BreakpointsQuickfixSyncGdb()
-    call TermDebugSendCommand("json_serialize_breakpoints")
+    TermdebugSendCommand json_serialize_breakpoints
     sleep 150m
     call BreakpointsQuickfix()
 endfunction
@@ -598,8 +599,8 @@ tnoremap <C-w><C-j> <C-w>gT
 tnoremap <C-w><C-k> <C-w>gt
 nnoremap <C-w><C-j> gT
 nnoremap <C-w><C-k> gt
-nnoremap <space>c :term ++curwin<cr>
-nnoremap <space>C :tabnew<cr>:term ++curwin<cr>
+nnoremap <space>t :term ++curwin<cr>
+nnoremap <space>T :tabnew<cr>:term ++curwin<cr>
 nnoremap <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 
