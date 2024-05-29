@@ -60,9 +60,9 @@ cclean () {
 # Separate output by printing each input line.
 xarg () {
     while read -r line ; do
-        c16 blue
-        echo "$line"
-        c16 --reset
+        #c16 blue
+        >&2 echo "$line"
+        #c16 --reset
         echo "$line" | xargs -I {} "$@"
     done
 }

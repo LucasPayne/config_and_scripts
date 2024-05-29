@@ -29,6 +29,7 @@ ln -s -f "$(realpath qutebrowser)" ~/.config/qutebrowser
 ln -s -f "$(realpath nvim)" ~/.config/nvim
 ln -s -f "$(realpath apt/dpkg.cfg)" ~/.dpkg.cfg
 ln -s -f "$(realpath freedesktop.org/autostart)" ~/.config/autostart
+ln -s -f "$(realpath cool-retro-term)" ~/.local/share/cool-retro-term
 
 # ~/.local/share/applications.
 # The system saves files in here, so don't want to copy those to this repo.

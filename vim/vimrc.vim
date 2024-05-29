@@ -600,7 +600,7 @@ endfunction
 
 "tnoremap JK <C-\><C-n>
 tnoremap <C-j><C-k> <C-\><C-n>
-nnoremap <C-c> :call CtrlCHandler()<cr>
+nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 tnoremap <C-w><C-j> <C-w>gT
 tnoremap <C-w><C-k> <C-w>gt
 nnoremap <C-w><C-j> gT
