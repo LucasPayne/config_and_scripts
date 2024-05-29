@@ -116,6 +116,11 @@ nnoremap <M-x> :q<cr>
 nnoremap .cp :let @" = expand("%:p")<cr>
 " Copy file directory
 nnoremap .cd :let @" = expand("%:p:h")<cr>
+" Move to first tab.
+nnoremap .q :tabm 0<cr>
+" Move tab left and right.
+nnoremap .[ :tabm -1<cr>
+nnoremap .] :tabm +1<cr>
 ">>>
 
 " Plugins

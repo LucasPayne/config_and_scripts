@@ -26,3 +26,5 @@ export MANPATH="$MANPATH:$VULKAN_DEV_PATH/man"
 export RENDERDOC_SOURCE_PATH="$VULKAN_DEV_PATH/renderdoc"
 export PATH="$PATH:$RENDERDOC_SOURCE_PATH/build/bin"
 
+# Make sure the path doesn't get too long.
+export PATH="$(unique-path)"

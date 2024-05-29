@@ -1,0 +1,46 @@
+#/bin/bash
+#
+# prints a new PATH variable, sorted with unique elements.
+# note: This must be used to set the PATH variable by the caller.
+#       This script cannot change the caller's environments.
+#
+# todo: Robustly handle empty path elements.
+#       String processing...
+
+usage()
+{
+    echo 'Usage:'
+    echo '    `unique-path`: Uniquifys $PATH'
+    echo '    `unique-path [path]`: Uniquifys the given path'
+    echo '    `unique-path -`: Uniquifys the path given through stdin'
+}
+
+if [ $# -eq 0 ] ; then
+    path="$PATH"
+elif [ $# -eq 1 ] ; then
+    if [[ "$path" = "-" ]] ; then
+        path="$(cat)"
+    else
+        path="$1"
+    fi
+else
+    usage
+    exit 0
+fi
+
+path_array=()
+IFS=':' read -ra path_array <<< "$path"
+
+declare -A path_set
+for member in "${path_array[@]}" ; do
+    path_set["$member"]=1
+done
+
+index=0
+for element in "${!path_set[@]}" ; do
+    printf '%s' "$element"
+    if [ $index -ne $(( ${#path_set[@]} - 1 )) ] ; then
+        printf ':'
+    fi
+    ((index++))
+done
