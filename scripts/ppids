@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]] ; then
+    exit 0
+fi
+pid="$1"
+
+ppids=()
+cur_pid="$pid"
+while [[ "$cur_pid" -ne 0 ]] ; do
+    ppids+=("$cur_pid")
+    cur_pid="$(ppid "$cur_pid")"
+    if [[ $? -ne 0 ]] ; then
+        exit 1
+    fi
+done
+
+echo "${ppids[@]}"
