@@ -574,7 +574,8 @@ function! VimTerminalHostStart()
     let g:terminal_host_primary_shell_buffer = term_start('bash', {
         \ 'term_name' : 'shell',
         \ 'curwin' : 1,
-        \ 'env' : { 'VIMSHELL_PRIMARY_SHELL' : '1' }
+        \ 'env' : { 'VIMSHELL_PRIMARY_SHELL' : '1' },
+        \ 'term_finish' : 'close'
         \ })
     let g:terminal_host_primary_shell_winid = win_getid(winnr())
 endfunction

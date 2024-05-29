@@ -1,14 +1,14 @@
 #!/bin/bash
 
+if [ ! -t 1 ] ; then
+    exec bash "$@"
+fi
+
 # Uncomment if set as login shell.
 export DISPLAY=:0
 source ~/.bashrc
 
-if [ ! -z "$VIMSHELL_ID" ] ; then
-    echo "Already in a vimshell."
-    exit 1
-fi
 tempfile="$(tempfile 2>/dev/null)"
 export VIMSHELL_ID="$tempfile"
 pwd > $VIMSHELL_ID
-vim --servername "$VIMSHELL_ID" -c "call VimTerminalHostStart()"
+exec vim --servername "$VIMSHELL_ID" -c "call VimTerminalHostStart()"
