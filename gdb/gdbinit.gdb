@@ -1,4 +1,9 @@
 set print asm-demangle
+# https://stackoverflow.com/questions/8877969/why-does-gdb-start-a-new-shell-and-how-to-disable-this-behaviour
+# todo:
+#     vimshell should work for parameter expansion.
+#     Turning this off for now as it confuses gdb.
+set startup-with-shell off
 
 # If break points are set up for every API call (for example every entry point into a shared library),
 # this command will step through a trace.
