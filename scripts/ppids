@@ -1,14 +1,22 @@
 #!/bin/bash
 
+ppid_ignore_next=0
 if [[ $# -eq 0 ]] ; then
-    exit 0
+    pid=$$
+    # The pid of this script's shell is transient and the caller won't care about it, so ignore it.
+    ppid_ignore_next=1
+else
+    pid="$1"
 fi
-pid="$1"
 
 ppids=()
 cur_pid="$pid"
 while [[ "$cur_pid" -ne 0 ]] ; do
-    ppids+=("$cur_pid")
+    if [[ $ppid_ignore_next -eq 1 ]] ; then
+        ppid_ignore_next=0
+    else
+        ppids+=("$cur_pid")
+    fi
     cur_pid="$(ppid "$cur_pid")"
     if [[ $? -ne 0 ]] ; then
         exit 1

@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Pretty-print the /proc/pid/cmdline file.
+# This should not be used for argument parsing, just checking the cmdline.
+# For parsing, use the null-separated /proc/pid/cmdline file instead.
+
+pids=()
+if [ $# -eq 0 ] ; then
+    pids+=($$)
+else
+    while [ $# -gt 0 ] ; do
+        re='^[0-9]+$'
+        if ! [[ $1 =~ $re ]] ; then
+            2>&1 printf 'bad pid: %s' "$1"
+            exit 1
+        fi
+        pids+=($1)
+        shift
+    done
+fi
+
+for pid in ${pids[@]} ; do
+    cmdline="$(cat /proc/$pid/cmdline | tr '\0' ' ')"
+    cmdline="${cmdline:-1}"
+    >&2 printf '%s: ' $pid
+    echo "$cmdline"
+done
+
