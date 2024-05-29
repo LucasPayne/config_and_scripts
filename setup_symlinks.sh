@@ -29,3 +29,9 @@ ln -s -f "$(realpath qutebrowser)" ~/.config/qutebrowser
 ln -s -f "$(realpath nvim)" ~/.config/nvim
 ln -s -f "$(realpath apt/dpkg.cfg)" ~/.dpkg.cfg
 ln -s -f "$(realpath freedesktop.org/autostart)" ~/.config/autostart
+
+# ~/.local/share/applications.
+# The system saves files in here, so don't want to copy those to this repo.
+# Currently can't think of a nice symlink-overlay solution. Possible?
+# overlayfs possibly, but way too much to do for such a simple thing. Also I think this supposes read-only for underlying directory.
+cp freedesktop.org/user_applications_overrides/*.desktop ~/.local/share/applications
