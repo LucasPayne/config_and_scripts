@@ -1,5 +1,7 @@
 #!/bin/bash
 
+tty > ~/test/tmp
+
 if [ ! -t 1 ] ; then
     exec bash "$@"
 fi

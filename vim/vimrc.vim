@@ -1,3 +1,4 @@
+"M
 "
 " Yank file path and line number.
 function! YankFilePath()
@@ -35,6 +36,9 @@ syntax on
 filetype indent on
 filetype plugin on
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+" Set shell to a normal shell.
+" Make sure not to call vimshell.
+set shell=bash
 " set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
