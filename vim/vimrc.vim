@@ -156,7 +156,8 @@ function! ToggleFullscreen()
         let w:is_fullscreen_old_winid = l:old_winid
     endif
 endfunction
-nnoremap .f :call ToggleFullscreen()<cr>
+execute "set <M-f>=\ef"
+nnoremap <M-f> :call ToggleFullscreen()<cr>
 
 ">>>
 
