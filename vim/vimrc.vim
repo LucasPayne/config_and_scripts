@@ -163,6 +163,18 @@ endfunction
 execute "set <M-f>=\ef"
 nnoremap <M-f> :call ToggleFullscreen()<cr>
 
+let g:detail_view_active = 0
+function! ToggleDetailView()
+    if g:detail_view_active == 0
+        
+        let g:detail_view_active = 1
+    else
+        let g:detail_view_active = 0
+    endif
+endfunction
+execute "set <M-f>=\ef"
+nnoremap <M-f> :call ToggleFullscreen()<cr>
+
 ">>>
 
 " Plugins
@@ -255,7 +267,9 @@ hi Normal ctermbg=None
 "hi Normal ctermfg=White
 "hi Comment ctermfg=Blue
 set enc=utf8
-set fillchars=eob:\ ,vert:\│
+set laststatus=0
+set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
+set statusline=⎯
 hi VertSplit ctermbg=0
 set signcolumn=auto
 hi SignColumn ctermbg=none
@@ -984,6 +998,13 @@ let g:code_filetypes = [
 augroup filetype
     execute "autocmd! FileType ".join(g:code_filetypes, ",")." call CodeFileType()"
 augroup END
+
+" guifg trick to prevent vim from inserting ^^^ if stl/stlnc fillchars are
+" the same, see https://vi.stackexchange.com/questions/15873/carets-in-status-line
+hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=red
+hi StatusLineNC term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=green
+hi StatusLineTerm term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=red
+hi StatusLineTermNC term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=green
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
