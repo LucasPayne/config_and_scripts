@@ -4,6 +4,8 @@ export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive
 export NOTES_REPO_DIR=~/drive/notes
 
+export SCREENDIR=~/.screen
+
 export EDITOR=vim
 
 export PATH="$PATH:$CONFIG_DIR/scripts"

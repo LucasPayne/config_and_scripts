@@ -18,6 +18,7 @@ ln -s -f "$(realpath X/Xresources.txt)" ~/.Xresources
 ln -s -f "$(realpath X/xinitrc)" ~/.xinitrc
 ln -s -f "$(realpath X/xsession)" ~/.xsession
 ln -s -f "$(realpath screen/screenrc.txt)" ~/.screenrc
+ln -s -f "$(realpath screen/screendir)" ~/.screen
 ln -s -f "$(realpath readline/inputrc.txt)" ~/.inputrc
 ln -s -f "$(realpath pager/lesskey.txt)" ~/.lesskey
 ln -s -f "$(realpath git/gitconfig)" ~/.gitconfig

@@ -76,4 +76,5 @@ layout save default
 
 # Captions
 # caption always "%{= g}[ %{G}${USER}@%H%{g} ][%= %{= w}%?%-Lw%?%{r}(%{W}%n*%f %t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c:%s %{g}][%{Y}%l%{g}]%{=b C}%{W}"
+caption string "%{= dd} "
 
