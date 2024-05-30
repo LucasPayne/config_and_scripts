@@ -1025,5 +1025,15 @@ set wincolor=Window
 hi Window ctermbg=black ctermfg=white
 hi Normal ctermbg=white ctermfg=darkgrey
 
+function! TerminalWinOpenCommands()
+    set wincolor=Window
+endfunction
+augroup TerminalWinOpen_augroup
+    autocmd!
+    autocmd TerminalWinOpen * call TerminalWinOpenCommands()
+augroup END
+
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
+
+
