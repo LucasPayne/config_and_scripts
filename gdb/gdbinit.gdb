@@ -1,4 +1,5 @@
 set print asm-demangle
+
 # https://stackoverflow.com/questions/8877969/why-does-gdb-start-a-new-shell-and-how-to-disable-this-behaviour
 # todo:
 #     vimshell should work for parameter expansion.
