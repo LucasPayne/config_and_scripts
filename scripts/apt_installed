@@ -6,6 +6,12 @@
 #     Some initial install packages are marked as manual, so these are filtered out.
 # Sorted by newest first.
 
+cache_file=~/config/cache/apt_installed.txt
+if [ -f "$cache_file" ] ; then
+    cat "$cache_file"
+    exit 0
+fi
+
 # Use the heuristic to find relevant packages.
 declare -a installed
 mapfile -t installed < <(comm -23 \
@@ -26,6 +32,7 @@ for package in "${installed[@]}" ; do
 done
 
 list_files_by_date="$(printf '%s\n' "${!list_files[@]}" | xargs ls -t | cat)"
+>$cache_file
 echo "$list_files_by_date" | while read -r list_file ; do
-    echo "${list_files["$list_file"]}"
+    echo "${list_files["$list_file"]}" | tee -a "$cache_file"
 done

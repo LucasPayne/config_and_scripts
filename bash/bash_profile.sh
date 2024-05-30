@@ -1,4 +1,4 @@
-export SHELL=vimshell
+export SHELL="$(realpath ~/config/scripts/vimshell)"
 
 export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive
