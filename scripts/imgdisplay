@@ -1,1 +1,0 @@
-echo -e '0;1;20;20;'$1';'$2';;;;;/home/lucas/images/gandalf.jpeg\n4;\n3;' | /usr/lib/w3m/w3mimgdisplay 

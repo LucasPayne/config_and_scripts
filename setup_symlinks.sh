@@ -7,6 +7,7 @@
 
 ln -s -f "$(realpath vim/vimdir/)" ~/.vim
 ln -s -f "$(realpath vim/vimrc.vim)" ~/.vimrc
+ln -s -f "$(realpath emacs/infokey)" ~/.infokey
 ln -s -f "$(realpath shell/profile.sh)" ~/.profile
 ln -s -f "$(realpath shell/bashrc.sh)" ~/.bashrc
 ln -s -f "$(realpath shell/bash_aliases.sh)" ~/.bash_aliases
