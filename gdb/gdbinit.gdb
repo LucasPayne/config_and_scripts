@@ -79,7 +79,7 @@ def serialize_frame(frame):
     if exit_code == 0:
         val["type"] = "Source"
         val["binary"] = symtab.objfile.filename
-        val["filename"] = symtab.filename
+        val["filename"] = os.path.realpath(symtab.filename)
         val["function"] = str(frame.function())
         left_paren_index = val["function"].find("(")
         if left_paren_index >= 0:
@@ -183,14 +183,14 @@ for line in lines:
         symbol_obj = gdb.lookup_global_symbol(symbol)
         if symbol_obj:
             location["source"] = {}
-            location["source"]["file"] = symbol_obj.symtab.filename
+            location["source"]["file"] = os.path.realpath(symbol_obj.symtab.filename)
             location["source"]["line"] = symbol_obj.line
             #-Maybe the python api gives a more accurate binary?
             #location["binary"] = symbol_obj.symtab.objfile.filename
         else:
             # Parse source from `maint info break`.
             location["source"] = {}
-            location["source"]["file"] = "".join(source_info.split(":")[:-1])
+            location["source"]["file"] = os.path.realpath("".join(source_info.split(":")[:-1]))
             location["source"]["line"] = source_info.split(":")[-1]
 
         out[major].append(location)

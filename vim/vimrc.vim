@@ -2,6 +2,10 @@
 " vimrc
 "--------------------------------------------------------------------------------
 
+augroup filetype_qf
+    autocmd!
+    autocmd Filetype qf nnoremap <buffer> <C-t> <C-w><cr><C-w>T
+augroup END
 
 " Yank file path and line number.
 function! YankFilePath()
@@ -408,7 +412,7 @@ nnoremap ]f :call GDBRelativeFrame(1)<cr>zz
 function! ToggleQuickFix()
     " https://stackoverflow.com/questions/11198382/how-to-create-a-key-map-to-open-and-close-the-quickfix-window-in-vim
     if empty(filter(getwininfo(), 'v:val.quickfix'))
-        copen
+        botright copen
         let l:quickfix_list_length = len(getqflist())
         let l:quickfix_window_height = min([l:quickfix_list_length, 12])
         execute "resize ".l:quickfix_window_height
@@ -455,7 +459,7 @@ function! QuickfixCallstackFromGDB()
 
     call setqflist([], ' ', {"items" : l:qflist, "quickfixtextfunc" : "QuickfixCallstackTextFunc"})
 
-    augroup filetype_qf
+    augroup filetype_qf_statusline
         autocmd!
         autocmd Filetype qf setlocal nonumber
         autocmd Filetype qf setlocal statusline=%{QuickfixCallstackStatusLine()}
@@ -463,7 +467,7 @@ function! QuickfixCallstackFromGDB()
 
     cclose
     call ToggleQuickFix()
-    copen
+    botright copen
 
 endfunction
 
@@ -584,7 +588,7 @@ function! BreakpointsQuickfix()
 
     call setqflist([], ' ', {"items" : l:qflist, "quickfixtextfunc" : "BreakpointsQuickfixTextFunc"})
 
-    augroup filetype_qf
+    augroup filetype_qf_breakpoints
         autocmd!
         autocmd Filetype qf setlocal nonumber
         autocmd Filetype qf setlocal nowrap
@@ -593,7 +597,6 @@ function! BreakpointsQuickfix()
 
     cclose
     call ToggleQuickFix()
-    copen
 endfunction
 
 function! BreakpointsQuickfixStatusLine()
