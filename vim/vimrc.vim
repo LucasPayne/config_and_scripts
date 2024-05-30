@@ -128,6 +128,36 @@ nnoremap .q :tabm 0<cr>
 " Move tab left and right.
 nnoremap .[ :tabm -1<cr>
 nnoremap .] :tabm +1<cr>
+
+function! ToggleFullscreen()
+    if get(w:, 'is_fullscreen', 0) == 1
+        let l:line = line(".")
+        let l:col = col(".")
+        let l:topline = winsaveview().topline
+        let l:old_winid = w:is_fullscreen_old_winid
+        tabclose
+        call win_gotoid(l:old_winid)
+        call cursor(l:topline, 1)
+        normal! zt
+        call cursor(l:line, l:col)
+        set showtabline=1
+    else
+        let l:line = line(".")
+        let l:col = col(".")
+        let l:topline = winsaveview().topline
+        let l:old_winid = win_getid()
+        " Open in a new tab. This doesn't close the window.
+        tabedit %
+        call cursor(l:topline, 1)
+        normal! zt
+        call cursor(l:line, l:col)
+        set showtabline=0
+        let w:is_fullscreen = 1
+        let w:is_fullscreen_old_winid = l:old_winid
+    endif
+endfunction
+nnoremap .f :call ToggleFullscreen()<cr>
+
 ">>>
 
 " Plugins
@@ -219,7 +249,9 @@ hi LineNr ctermbg=None
 hi Normal ctermbg=None
 "hi Normal ctermfg=White
 "hi Comment ctermfg=Blue
-set fillchars=eob:\ 
+set enc=utf8
+set fillchars=eob:\ ,vert:\│
+hi VertSplit ctermbg=0
 set signcolumn=auto
 hi SignColumn ctermbg=none
 " todo: Find a good unintrusive styling for thgis line.
