@@ -6,7 +6,6 @@ export NOTES_REPO_DIR=~/drive/notes
 
 export EDITOR=vim
 
-export PATH="$PATH:$(realpath ~/bin)"
 export PATH="$PATH:$CONFIG_DIR/scripts"
 export PATH="$PATH:$NOTES_REPO_DIR:$PATH"
 export PATH="$PATH:$(realpath ~/.local/bin)"
@@ -28,3 +27,5 @@ export PATH="$PATH:$RENDERDOC_SOURCE_PATH/build/bin"
 
 # Make sure the path doesn't get too long.
 export PATH="$(unique-path)"
+# Allow user binaries to override system binaries.
+export PATH="$(realpath ~/bin):$PATH"

@@ -1,6 +1,6 @@
-"--------------------------------------------------------------------------------
+"/--------------------------------------------------------------------------------
 " vimrc
-"--------------------------------------------------------------------------------
+"--------------------------------------------------------------------------------/
 
 augroup filetype_qf
     autocmd!
@@ -166,14 +166,17 @@ nnoremap <M-f> :call ToggleFullscreen()<cr>
 let g:detail_view_active = 0
 function! ToggleDetailView()
     if g:detail_view_active == 0
-        
         let g:detail_view_active = 1
+        set laststatus=0
+        set statusline=⎯
     else
         let g:detail_view_active = 0
+        set laststatus=2
+        set statusline=
     endif
 endfunction
-execute "set <M-f>=\ef"
-nnoremap <M-f> :call ToggleFullscreen()<cr>
+execute "set <M-r>=\er"
+nnoremap <M-r> :call ToggleDetailView()<cr>
 
 ">>>
 
@@ -721,7 +724,7 @@ function! DelayPopupTextLink(buffer, filename, line_identifier, options)
     endif
     "call win_execute(popup_winid, "set number")
     "call win_execute(popup_winid, "set relativenumber")
-    "call win_execute(popup_winid, "set wincolor=hl-Normal")
+    call win_execute(popup_winid, "set wincolor=Window")
 endfunction
 
 function! GetNotesTextLinkUnderCursor()
@@ -1005,6 +1008,22 @@ hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=red
 hi StatusLineNC term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=green
 hi StatusLineTerm term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=red
 hi StatusLineTermNC term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=green
+
+" patch-9.0.0340
+"     a2a8973e51a0052bb52e43a2b22e7ecdecc32003
+"     Removes cmdheight=0.
+if exists("&cmdheight") == 1
+    if has("patch-9.0.0340") == 1
+        set cmdheight=1
+    else
+        " Hide the command line.
+        set cmdheight=0
+    endif
+endif
+
+set wincolor=Window
+hi Window ctermbg=black ctermfg=white
+hi Normal ctermbg=white ctermfg=darkgrey
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim

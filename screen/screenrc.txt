@@ -62,8 +62,10 @@ hardstatus alwayslastline "%` %-Lw %t %+Lw"
 # hardstatus string "%` %{= KW} %{= Kw}|%{-} %-Lw%{= bW}%n%f %t%{-}%+Lw %=%C%a %Y-%M-%d"
 
 # Just list the name of the tab.
-hardstatus string "%{= KW} %{= Kw}%` |%{-} %t %=%C%a %Y-%M-%d"
+# hardstatus string "%{= KW} %{= Kw}%` |%{-} %t %=%C%a %Y-%M-%d"
 # hardstatus string "%` %{= KW} %{= Kw}|%{-} %t %=%C%a %Y-%M-%d"
+
+hardstatus ignore
 
 #------------------------------------------------------------
 
