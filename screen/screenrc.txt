@@ -4,8 +4,6 @@
 # (So vim can restore screen contents.)
 altscreen on
 
-#shell /home/lucas/config/scripts/shell
-
 # Set TERM variable.
 term "screen-256color"
 
@@ -78,3 +76,4 @@ layout save default
 # caption always "%{= g}[ %{G}${USER}@%H%{g} ][%= %{= w}%?%-Lw%?%{r}(%{W}%n*%f %t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c:%s %{g}][%{Y}%l%{g}]%{=b C}%{W}"
 caption string "%{= dd} "
 
+shelltitle -

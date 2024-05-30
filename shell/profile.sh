@@ -31,3 +31,7 @@ export PATH="$PATH:$RENDERDOC_SOURCE_PATH/build/bin"
 export PATH="$(unique-path)"
 # Allow user binaries to override system binaries.
 export PATH="$(realpath ~/bin):$PATH"
+
+# Preferably this would be in source-highlight.conf, but that can't expand HOME.
+# (See info source-highlight)
+export SOURCE_HIGHLIGHT_DATADIR="$HOME/config/source-highlight/datadir"
