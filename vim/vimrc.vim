@@ -199,6 +199,15 @@ if PluginEnabled("tagbar") == 1
     nnoremap <leader>t :Tagbar<cr>
 endif
 
+"if PluginEnabled("quickpeek") == 1
+let g:quickpeek_auto = 1
+let g:quickpeek_popup_options = {
+    \ 'border': [0,0,0,0],
+    \ 'title': ''
+    \ }
+"let g:quickpeek_window_settings = ["wincolor=Window"]
+"endif
+
 "if PluginEnabled("tig-explorer.vim") == 1
 "    let g:tig_explorer_use_builtin_term = 0
 "
@@ -539,6 +548,7 @@ function! QuickfixCallstackStatusLine()
 endfunction
 
 nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
+nnoremap .S :call QuickfixCallstackFromGDB()<cr>
 
 
 let g:gdb_breakpoint_jsons = []
@@ -627,6 +637,7 @@ function! BreakpointsQuickfixSyncGdb()
 endfunction
 
 nnoremap .2 :call BreakpointsQuickfixSyncGdb()<cr>
+nnoremap .B :call BreakpointsQuickfixSyncGdb()<cr>
 
 
 ">>>
