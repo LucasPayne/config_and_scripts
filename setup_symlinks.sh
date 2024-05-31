@@ -38,6 +38,9 @@ ln -n -s -f "$(realpath cool-retro-term)" ~/.local/share/cool-retro-term
 # Setup symlinks in this directory to system files.
 # This is for convenient navigation of config. The directory contents, and the symlinks themselves, are not tracked by git.
 # The symlinks are not tracked because they could point to different places on different machines, e.g. with different usernames.
+#
+# These symlinks should be in .gitignore.
+# TODO: How to do this automatically?
 ln -n -s -f /etc/sources.list apt/sources.list
 ln -n -s -f /etc/sources.list.d apt/sources.list.d
 ln -n -s -f /var/lib/apt apt/aptdir

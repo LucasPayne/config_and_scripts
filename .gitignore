@@ -8,3 +8,17 @@ man/cat*
 man/index.db
 qutebrowser/bookmarks/
 qutebrowser/qsettings/
+
+# Symlinks to system directories.
+apt/aptdir
+apt/aptlogs
+apt/dpkgdir
+apt/sources.list
+apt/sources.list.d
+freedesktop.org/applications
+freedesktop.org/user_applications
+python/local_python3.10
+python/python_history
+qutebrowser/qutebrowser
+scripts/scripts
+shell/bash_history
