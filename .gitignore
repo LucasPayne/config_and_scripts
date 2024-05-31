@@ -6,3 +6,5 @@ vim
 # Ignore these.
 man/cat*
 man/index.db
+qutebrowser/bookmarks/
+qutebrowser/qsettings/

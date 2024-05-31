@@ -3,3 +3,6 @@
 \eq quit
 \eF forw-search (\^\\s\+-|, -)-?
 \ef noaction g\eF
+w back-scroll
+r back-line
+f forw-line
