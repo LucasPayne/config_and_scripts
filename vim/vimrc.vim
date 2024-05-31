@@ -63,6 +63,14 @@ set showtabline=1
 set splitright
 " Don't resize splits when closing a window.
 set noequalalways
+" COLUMNS=120 man
+" This is a script as I cannot figure out the right syntax, or if vim would
+" accept a form which allows environment variable setting.
+set keywordprg=man_120_columns
+" Press enter after executing external keywordprg pages.
+nnoremap K K<cr>
+vnoremap K K<cr>
+
 " Alt key mappings
 " If terminal is sending modifiers as esc-key.
 " For some reason, the below works!
