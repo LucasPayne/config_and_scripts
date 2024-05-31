@@ -33,7 +33,8 @@ ln -n -s -f "$(realpath qutebrowser)" ~/.config/qutebrowser
 ln -n -s -f "$(realpath nvim)" ~/.config/nvim
 ln -n -s -f "$(realpath apt/dpkg.cfg)" ~/.dpkg.cfg
 ln -n -s -f "$(realpath freedesktop.org/autostart)" ~/.config/autostart
-ln -n -s -f "$(realpath cool-retro-term)" ~/.local/share/cool-retro-term
+ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-share)" ~/.local/share/cool-retro-term
+ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-config)" ~/.config/cool-retro-term
 
 # Setup symlinks in this directory to system files.
 # This is for convenient navigation of config. The directory contents, and the symlinks themselves, are not tracked by git.
