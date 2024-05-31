@@ -1,6 +1,0 @@
-#!/bin/bash
-
-cd $(dirname $0)
-git add -u
-git commit -m "config --- $(date)"
-git push -f
