@@ -476,6 +476,7 @@ fzf_checkout () {
             done)"
         list="$(printf "$list\n$subdirs")"
     done <<<$(find $dir -mindepth 1 -maxdepth 1 -type d | xargs -L 1 basename | grep -E '^~')
+    list="$(echo "$list" | sort)"
 
     local preview_percent=$(echo "$list" | get_fzf_right_box_percent)
     if [ "$preview_percent" -ge 85 ] ; then

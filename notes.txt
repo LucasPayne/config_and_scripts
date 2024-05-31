@@ -1,2 +1,2 @@
 TODO:
-Why is setup_symlinks apparently putting symlinks in config directories, e.g., gdb/gdb?
+Symlinks to system directories, declarative syntax for this which generates part of .gitignore.

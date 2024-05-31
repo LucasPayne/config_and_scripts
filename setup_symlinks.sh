@@ -53,6 +53,7 @@ ln -n -s -f "$HOME/.python_history" ./python/python_history
 ln -n -s -f "$HOME/config/qutebrowser" ./qutebrowser/qutebrowser
 ln -n -s -f "$HOME/config/scripts" ./scripts/scripts
 ln -n -s -f "$HOME/.bash_history" ./shell/bash_history
+ln -n -s -f "$HOME/.terminfo" ./terminal/terminfo
 
 # ~/.local/share/applications.
 # The system saves files in here, so don't want to copy those to this repo.
