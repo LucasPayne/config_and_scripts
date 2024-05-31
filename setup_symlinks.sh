@@ -47,6 +47,8 @@ ln -n -s -f /var/lib/apt apt/aptdir
 ln -n -s -f /var/lib/aptlogs apt/aptlogs
 ln -n -s -f /var/lib/dpkgdir apt/dpkgdir
 ln -n -s -f /usr/share/applications ./freedesktop.org/applications
+ln -n -s -f /usr/share/applications ./freedesktop.org/applications
+ln -n -s -f /usr/local/share/vim/vim90 ./vim/system_vimdir
 ln -n -s -f "$HOME/.local/share/applications" ./freedesktop.org/user_applications
 ln -n -s -f "$HOME/.local/lib/python3.10/" ./python/local_python3.10
 ln -n -s -f "$HOME/.python_history" ./python/python_history
