@@ -42,8 +42,8 @@ ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-config)" ~/.config/cool-
 #
 # These symlinks should be in .gitignore.
 # TODO: How to do this automatically?
-ln -n -s -f /etc/sources.list apt/sources.list
-ln -n -s -f /etc/sources.list.d apt/sources.list.d
+ln -n -s -f /etc/apt/sources.list apt/sources.list
+ln -n -s -f /etc/apt/sources.list.d apt/sources.list.d
 ln -n -s -f /var/lib/apt apt/aptdir
 ln -n -s -f /var/lib/aptlogs apt/aptlogs
 ln -n -s -f /var/lib/dpkgdir apt/dpkgdir
