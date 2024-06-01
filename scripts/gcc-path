@@ -2,7 +2,7 @@
 #
 # List the default gcc system include directories or library directories.
 # No args: all filetypes.
-# Args: filetypes.
+# Args: filetypes. If specified, must also use -i/-l flags to specifiy include paths and/or library paths.
 
 opt_include=0
 opt_library=0
