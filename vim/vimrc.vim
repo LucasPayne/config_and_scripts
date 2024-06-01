@@ -919,6 +919,10 @@ augroup Notes
     autocmd Filetype notes nnoremap <enter> :call NotesFollowLinkUnderCursor(0)<cr>
     autocmd Filetype notes nnoremap .? :call NotesFollowLinkUnderCursor(1)<cr>
     autocmd Filetype notes nnoremap >? :call NotesFollowLinkUnderCursor(1)<cr>
+    " It is convenient to not have to have notes open on only one vim.
+    " Currently want this as keep switching between screen tabs, but each vim
+    " should have a notes buffer anyway. It is nice to synchronize them.
+    autocmd Filetype notes set autoread
 
     autocmd CursorMoved *.ns :call RefreshMagicCardPreview()
     autocmd WinScrolled *.ns :call RefreshMagicCardPreview()
