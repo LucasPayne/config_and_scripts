@@ -1,0 +1,10 @@
+#!/bin/bash
+# 
+# Highlighted character level diff output.
+# 
+# Uses git's diff-highlight for character-level diffing.
+# This must be in PATH, and is provded by the git system package.
+# 
+# https://stackoverflow.com/questions/1721738/using-diff-or-anything-else-to-get-character-level-diff-between-text-files
+
+diff -u "$@" | colordiff | diff-highlight
