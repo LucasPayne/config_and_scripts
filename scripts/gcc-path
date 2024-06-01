@@ -24,15 +24,20 @@ while [[ $# -gt 0 ]]; do
         language_specified=1
         shift
         ;;
-    -i|--include)
+    i|-i|--include)
         opt_include=1
         type_specified=1
         shift
         ;;
-    -l|--library)
+    l|-l|--library)
         opt_library=1
         type_specified=1
         shift
+        ;;
+    *)
+        >&2 echo "Invalid argument: $1"
+        shift
+        exit 1
         ;;
     esac
 done

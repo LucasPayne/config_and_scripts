@@ -1,0 +1,14 @@
+#!/bin/bash
+
+commands_filename=compile_commands.json
+
+if [ ! -f "$commands_filename" ] ; then
+    >&2 echo "The file \"$commands_filename\" does not exist."
+    exit 1
+fi
+
+if [ ! "$(file -b --mime-type "$commands_filename")" = "application/json" ] ;
+then
+    >&2 echo "The file \"$commands_filename\" is not well-formed json."
+    exit 1
+fi
