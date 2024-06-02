@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Alias for `xargs -i -d '\n' "$NORMAL_SHELL" -c "..."`
+
+exec xargs -i -d '\n' "$NORMAL_SHELL" -c "$*"

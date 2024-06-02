@@ -1,5 +1,5 @@
 #!/bin/bash
 #
-# Alias for `xargs -i $NORMAL_SHELL -c "..."`
+# Alias for `xargs -i "$NORMAL_SHELL" -c "..."`
 
 exec xargs -i "$NORMAL_SHELL" -c "$*"
