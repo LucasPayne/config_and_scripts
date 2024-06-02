@@ -1,5 +1,6 @@
 #!/bin/sh
 # unix cut utility with delimiter set to space.
 # This is a script instead of an alias so it can be used with xargs.
+# Supposed using -f as a delimiter is specified, so put this flag for the first argument.
 
-cut -d' ' "$@"
+cut -d' ' -f "$@"

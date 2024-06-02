@@ -11,3 +11,4 @@ alias ls="ls --color=auto"
 alias vless="~/.vim/macros/less.sh"
 alias grep='grep --color=auto'
 alias x='xargs'
+alias xi='xargs -i'

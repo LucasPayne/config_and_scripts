@@ -2,4 +2,4 @@
 #
 # cutc but with the "rev trick".
 
-rev | cut -d':' "$@" | rev
+rev | cut -d':' -f "$@" | rev

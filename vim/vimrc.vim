@@ -648,6 +648,8 @@ function! CtrlCHandler()
 endfunction
 
 tnoremap <C-j><C-k> <C-\><C-n>
+tnoremap <C-w><C-j> <C-w>gT
+tnoremap <C-w><C-k> <C-w>gt
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 nnoremap <C-w><C-j> gT
 nnoremap <C-w><C-k> gt

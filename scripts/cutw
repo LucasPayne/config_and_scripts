@@ -9,7 +9,7 @@
 #
 # Note that this does not get the n'th "word" in terms of sh/bash,
 # it uses a simple whitespace based word delimiting logic.
+#
+# Supposed using -f as a delimiter is specified, so put this flag for the first argument.
 
-trs | cut -d' ' "$@"
-
-
+trs | cut -d' ' -f "$@"
