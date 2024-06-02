@@ -21,7 +21,7 @@ ln -n -s -f "$(realpath X/xinitrc)" ~/.xinitrc
 ln -n -s -f "$(realpath X/xsession)" ~/.xsession
 ln -n -s -f "$(realpath screen/screenrc.txt)" ~/.screenrc
 ln -n -s -f "$(realpath screen/screendir)" ~/.screen
-ln -n -s -f "$(realpath readline/inputrc.txt)" ~/.inputrc
+ln -n -s -f "$(realpath readline/inputrc)" ~/.inputrc
 ln -n -s -f "$(realpath pager/lesskey.txt)" ~/.lesskey
 ln -n -s -f "$(realpath git/gitconfig)" ~/.gitconfig
 ln -n -s -f "$(realpath git/tigrc)" ~/.tigrc
@@ -42,6 +42,7 @@ ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-config)" ~/.config/cool-
 #
 # These symlinks should be in .gitignore.
 # TODO: How to do this automatically?
+ln -n -s -f /etc/inputrc readline/system_inputrc
 ln -n -s -f /etc/apt/sources.list apt/sources.list
 ln -n -s -f /etc/apt/sources.list.d apt/sources.list.d
 ln -n -s -f /var/lib/apt apt/aptdir

@@ -24,3 +24,4 @@ scripts/scripts
 shell/bash_history
 terminal/terminfo
 vim/system_runtime
+readline/system_inputrc

@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Search for string in dpkg -l.
+# Uses leading and trailing wildcard which is understood by dpkg -l.
+
+dpkg -l '*'"$@"'*'

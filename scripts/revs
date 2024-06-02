@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Reverse space-separated fields.
+# Note that this does not handle trim leading or trailing whitespace or squeeze multiple spaces.
+
+awk -F'[ ]' '{ for (i=NF; i>1; i--) printf("%s ",$i); print $1; }'

@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# Convert spaces into newlines.
+
+tr ' ' '\n'

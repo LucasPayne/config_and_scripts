@@ -46,6 +46,11 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " Set shell to a normal shell.
 " Make sure not to call vimshell.
 set shell=bash
+" help :!
+"    On Unix the command normally runs in a non-interactive
+"    shell.  If you want an interactive shell to be used
+"    (to use aliases) set 'shellcmdflag' to "-ic".
+set shellcmdflag=-ic
 " set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
@@ -140,6 +145,12 @@ nnoremap .q :tabm 0<cr>
 " Move tab left and right.
 nnoremap .[ :tabm -1<cr>
 nnoremap .] :tabm +1<cr>
+" emacs-style keybindings.
+" C-u by default kills to start of a line restricted to the insert region.
+" Preferring emacs logic (kill to start of line, regardless of insert region).
+inoremap <C-u> <Esc>"_d0I
+" Kill to end of line.
+inoremap <C-k> <Esc>l"_d$A
 
 function! ToggleFullscreen()
     if get(w:, 'is_fullscreen', 0) == 1
