@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# Simpler wrapper for kill to use -SIGKILL/-9.
+
+exec kill -SIGKILL "$@"
