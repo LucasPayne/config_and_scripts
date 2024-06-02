@@ -28,3 +28,6 @@
 [submodule "vim/__tmp/quickpeek.vim"]
 	path = vim/repos/quickpeek.vim
 	url = git@github.com:AndrewRadev/quickpeek.vim.git
+[submodule "vim/__tmp/focus-previous"]
+	path = vim/repos/focus-previous/focus-previous
+	url = https://github.com/viecks/focus-previous

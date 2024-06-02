@@ -129,7 +129,7 @@ nnoremap <M-h> <C-w>h
 nnoremap <M-j> <C-w>j
 nnoremap <M-k> <C-w>k
 nnoremap <M-l> <C-w>l
-" Quick close window
+" Quick close window.
 nnoremap <M-x> :q<cr>
 " Copy file path
 nnoremap .cp :let @" = expand("%:p")<cr>

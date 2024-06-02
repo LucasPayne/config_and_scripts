@@ -1,4 +1,5 @@
 vim/bundle/*
+vim/runtime/bundle/*
 
 #
 # mandb generates files in the directory where the man pages are (e.g. man1, man2, ...).
