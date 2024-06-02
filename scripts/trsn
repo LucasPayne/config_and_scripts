@@ -2,4 +2,4 @@
 #
 # Convert spaces into newlines.
 
-tr ' ' '\n'
+exec tr ' ' '\n'

@@ -3,5 +3,4 @@
 # Workaround for vim keywordprg.
 # Apparently something like `set keywordprg=:!COLUMNS=120 man` doesn't work.
 
-COLUMNS=120 man "$@"
-
+COLUMNS=120 exec man "$@"

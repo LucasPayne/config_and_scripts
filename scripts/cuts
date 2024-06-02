@@ -3,4 +3,4 @@
 # This is a script instead of an alias so it can be used with xargs.
 # Supposed using -f as a delimiter is specified, so put this flag for the first argument.
 
-cut -d' ' -f "$@"
+exec cut -d' ' -f "$@"

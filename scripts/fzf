@@ -7,10 +7,10 @@
 # Is there a way to map Alt-shift-j and Alt-shift-k?
 # (To page down, page up.)
 
-fzf_raw --bind 'alt-q:abort' \
-        --bind 'alt-j:down' \
-        --bind 'alt-k:up' \
-        --bind 'alt-space:toggle+down' \
-        --bind 'ctrl-d:half-page-down' \
-        --bind 'ctrl-u:half-page-up' \
-         "$@"
+exec fzf_raw --bind 'alt-q:abort' \
+             --bind 'alt-j:down' \
+             --bind 'alt-k:up' \
+             --bind 'alt-space:toggle+down' \
+             --bind 'ctrl-d:half-page-down' \
+             --bind 'ctrl-u:half-page-up' \
+              "$@"

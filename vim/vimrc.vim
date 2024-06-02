@@ -50,7 +50,11 @@ set shell=bash
 "    On Unix the command normally runs in a non-interactive
 "    shell.  If you want an interactive shell to be used
 "    (to use aliases) set 'shellcmdflag' to "-ic".
-set shellcmdflag=-ic
+" Reason not to do this: aliases should be for interactive mode anyway, e.g.
+" passing highlighting flags. There are other downsides to using more general aliases
+" in non-interactive mode, e.g., doesn't work in xargs. So prefer wrapper exec
+" scripts to aliases for non-interactive mode work.
+"set shellcmdflag=-ic
 " set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
