@@ -6,7 +6,7 @@
 #    Ask for confirmation if a file would be deleted.
 
 # Setup symlinks on system to this config dir.
-ln -n -s -f "$(realpath vim/vimdir/)" ~/.vim
+ln -n -s -f "$(realpath vim/runtime/)" ~/.vim
 ln -n -s -f "$(realpath vim/vimrc.vim)" ~/.vimrc
 ln -n -s -f "$(realpath emacs/infokey)" ~/.infokey
 ln -n -s -f "$(realpath shell/profile.sh)" ~/.profile
@@ -49,7 +49,12 @@ ln -n -s -f /var/lib/aptlogs apt/aptlogs
 ln -n -s -f /var/lib/dpkgdir apt/dpkgdir
 ln -n -s -f /usr/share/applications ./freedesktop.org/applications
 ln -n -s -f /usr/share/applications ./freedesktop.org/applications
-ln -n -s -f /usr/local/share/vim/vim90 ./vim/system_vimdir
+# Query the vim version.
+# Note that it is expected that the system runs just one version of vim when invoked on the command line,
+# although other vims may be installed, so VIMRUNTIME_NUMBER should be the same from any shell.
+# This would not be the case with different vim versions installed and accessible by different PATHs e.g. in a login vs non-login shell.
+VIMRUNTIME_NUMBER="$(vim --version | head -1 | sed -En -e 's/^VIM - Vi IMproved ([[:digit:]]+\.[[:digit:]]+) .*$/\1/' -e 's/\.//p')"
+ln -n -s -f "/usr/local/share/vim/vim$VIMRUNTIME_NUMBER" ./vim/system_runtime
 ln -n -s -f "$HOME/.local/share/applications" ./freedesktop.org/user_applications
 ln -n -s -f "$HOME/.local/lib/python3.10/" ./python/local_python3.10
 ln -n -s -f "$HOME/.python_history" ./python/python_history

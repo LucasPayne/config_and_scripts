@@ -22,4 +22,4 @@ qutebrowser/qutebrowser
 scripts/scripts
 shell/bash_history
 terminal/terminfo
-vim/system_vimdir
+vim/system_runtime

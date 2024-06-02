@@ -1,1 +1,0 @@
-../../repos/tig-explorer.vim

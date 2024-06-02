@@ -327,36 +327,6 @@ endif
 " autocmd FocusGained * :call ResetCursor()
 ">>>
 
-" Vim server
-" ...
-"<<<
-"if $NO_VIM_SERVER != "1"
-"    nnoremap <C-z> :call SuspendNoVimDir()<cr>
-"    " Suspend and save vimdir so bash scripts can cd to it.
-"    nnoremap <leader>z :call SuspendNoVimDir()<cr>
-"    nnoremap <leader>Z :call Suspend()<cr>
-"    nnoremap <leader>Z :call Suspend()<cr>
-"    " Alt-q is much easier to press. Also can bind Alt-q to re-open vim session in readline.
-"    execute "set <M-q>=\eq"
-"    nnoremap <M-q> :call SuspendNoVimDir()<cr>
-"    
-"    function! Suspend()
-"        call SaveDir()
-"        suspend
-"    endfunction
-"    function! SaveDir()
-"        silent! execute "!echo \"".expand("%:p:h")."\" > /tmp/vimdir"
-"    endfunction
-"    
-"    function! SuspendNoVimDir()
-"        silent! execute "!rm /tmp/vimdir"
-"        suspend
-"    endfunction
-"    
-"    autocmd VimLeave * :!echo "1" > /tmp/${VIM_SERVER_ID}_vim_server_closed
-"endif
-">>>
-
 " Debugging
 " ...
 "<<<
