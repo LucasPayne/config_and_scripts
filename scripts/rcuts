@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# cuts but with the "rev trick".
+
+rev | cut -d' ' "$@" | rev

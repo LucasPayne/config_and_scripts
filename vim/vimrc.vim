@@ -647,11 +647,8 @@ function! CtrlCHandler()
     endif
 endfunction
 
-"tnoremap JK <C-\><C-n>
 tnoremap <C-j><C-k> <C-\><C-n>
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-tnoremap <C-w><C-j> <C-w>gT
-tnoremap <C-w><C-k> <C-w>gt
 nnoremap <C-w><C-j> gT
 nnoremap <C-w><C-k> gt
 nnoremap <space>t :term ++curwin<cr>
@@ -1028,5 +1025,3 @@ augroup END
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
-
-

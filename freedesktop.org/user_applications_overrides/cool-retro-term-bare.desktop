@@ -1,9 +1,9 @@
 [Desktop Entry]
-Comment=Use the command line the old way
-Exec=cool-retro-term --fullscreen -e bash
+Comment=Start up the terminal with the normal shell
+Exec=cool-retro-term --fullscreen -e $NORMAL_SHELL
 GenericName=Terminal emulator
 Icon=cool-retro-term
-Name=Cool Retro Term bare mode
+Name=Cool Retro Term normal
 Categories=System;TerminalEmulator;
 StartupNotify=true
 Terminal=false

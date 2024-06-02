@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# cut with the "rev trick",
+# e.g.
+#     echo "this is a cool string" | rev | cut -f 2 | rev
+#     --> cool
+# to get the second to last word, is now simpler,
+#     echo "this is a cool string" | rcut -f 2
+#     --> cool
+
+rev | cut "$@" | rev
+

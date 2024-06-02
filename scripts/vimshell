@@ -1,9 +1,15 @@
 #!/bin/bash
 
+if [ -z ${NORMAL_SHELL+x} ] ; then
+    # Set NORMAL_SHELL locally to bash as a fallback.
+    # NORMAL_SHELL should always be explicitly set, but just in case.
+    NORMAL_SHELL=bash
+fi
+
 ls -l /proc/$$/fd > ~/test/tmp
 
 if [ ! -t 1 ] ; then
-    exec bash "$@"
+    exec "$NORMAL_SHELL" "$@"
 fi
 
 # Don't open vimshell inside vim. It is assumed the parent vim is a vimshell.
@@ -18,12 +24,8 @@ for pid in $(ppids) ; do
     fi
 done
 if [[ $inside_vim -eq 1 ]] ; then
-    exec bash "$@"
+    exec "$NORMAL_SHELL" "$@"
 fi
-
-# Uncomment if set as login shell.
-export DISPLAY=:0
-source ~/.bashrc
 
 tempfile="$(tempfile 2>/dev/null)"
 export VIMSHELL_ID="$tempfile"

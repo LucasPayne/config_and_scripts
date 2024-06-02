@@ -1,9 +1,9 @@
 [Desktop Entry]
-Comment=Use the command line the old way
+Comment=Start up the terminal with a terminal "desktop environment"
 Exec=cool-retro-term --fullscreen -e screen -S cool-retro-term
 GenericName=Terminal emulator
 Icon=cool-retro-term
-Name=Cool Retro Term
+Name=Cool Retro Term terminal desktop
 Categories=System;TerminalEmulator;
 StartupNotify=true
 Terminal=false

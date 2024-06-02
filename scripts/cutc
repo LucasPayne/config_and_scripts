@@ -1,0 +1,5 @@
+#!/bin/sh
+# unix cut utility with delimiter set to :.
+# This is a script instead of an alias so it can be used with xargs.
+
+cut -d':' "$@"

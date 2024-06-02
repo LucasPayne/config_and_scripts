@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# cutw: "cut word".
+#
+# Find the n'th word ignoring spaces, words delimited by any number of spaces.
+# unix cut utility with delimiter set to space,
+# run through `tr -s ' '` (removing inter-word whitespace),
+# after removal of leading and trailing spaces.
+#
+# Note that this does not get the n'th "word" in terms of sh/bash,
+# it uses a simple whitespace based word delimiting logic.
+
+trs | cut -d' ' "$@"
+
+

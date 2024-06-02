@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# tr -s ' ', but also removing leading and trailing spaces.
+
+sed 's/^[ ]*//' | sed 's/[ ]*$//' | tr -s ' '

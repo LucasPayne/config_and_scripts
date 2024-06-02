@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# cutc but with the "rev trick".
+
+rev | cut -d':' "$@" | rev
