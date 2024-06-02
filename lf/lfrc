@@ -1,4 +1,4 @@
-set shell /usr/bin/bash
+set shell bash
 set ifs " "
 #set drawbox
 #set icons

@@ -6,7 +6,7 @@
 #    Ask for confirmation if a file would be deleted.
 
 # Setup symlinks on system to this config dir.
-ln -n -s -f "$(realpath vim/runtime/)" ~/.vim
+ln -n -s -f "$(realpath vim/runtime)" ~/.vim
 ln -n -s -f "$(realpath vim/vimrc.vim)" ~/.vimrc
 ln -n -s -f "$(realpath emacs/infokey)" ~/.infokey
 ln -n -s -f "$(realpath shell/profile.sh)" ~/.profile
