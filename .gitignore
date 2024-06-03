@@ -10,11 +10,11 @@ qutebrowser/bookmarks/
 qutebrowser/qsettings/
 
 # Symlinks to system directories.
-apt/aptdir
-apt/aptlogs
-apt/dpkgdir
-apt/sources.list
-apt/sources.list.d
+debian/aptdir
+debian/aptlogs
+debian/dpkgdir
+debian/sources.list
+debian/sources.list.d
 freedesktop.org/applications
 freedesktop.org/user_applications
 python/local_python3.10
@@ -28,3 +28,5 @@ readline/system_inputrc
 freedesktop.org/Trash
 freedesktop.org/local
 freedesktop.org/xdg_dir
+freedesktop.org/config
+freedesktop.org/cache

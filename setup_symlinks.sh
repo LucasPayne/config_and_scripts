@@ -31,7 +31,7 @@ ln -n -s -f "$(realpath source-highlight)" ~/.source-highlight
 ln -n -s -f "$(realpath lf)" ~/.config/lf
 ln -n -s -f "$(realpath qutebrowser)" ~/.config/qutebrowser
 ln -n -s -f "$(realpath nvim)" ~/.config/nvim
-ln -n -s -f "$(realpath apt/dpkg.cfg)" ~/.dpkg.cfg
+ln -n -s -f "$(realpath debian/dpkg.cfg)" ~/.dpkg.cfg
 ln -n -s -f "$(realpath freedesktop.org/autostart)" ~/.config/autostart
 ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-share)" ~/.local/share/cool-retro-term
 ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-config)" ~/.config/cool-retro-term
@@ -43,13 +43,15 @@ ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-config)" ~/.config/cool-
 # These symlinks should be in .gitignore.
 # TODO: How to do this automatically?
 ln -n -s -f /etc/inputrc readline/system_inputrc
-ln -n -s -f /etc/apt/sources.list apt/sources.list
-ln -n -s -f /etc/apt/sources.list.d apt/sources.list.d
-ln -n -s -f /var/lib/apt apt/aptdir
-ln -n -s -f /var/lib/aptlogs apt/aptlogs
-ln -n -s -f /var/lib/dpkgdir apt/dpkgdir
+ln -n -s -f /etc/apt/sources.list debian/sources.list
+ln -n -s -f /etc/apt/sources.list.d debian/sources.list.d
+ln -n -s -f /var/lib/apt debian/aptdir
+ln -n -s -f /var/lib/aptlogs debian/aptlogs
+ln -n -s -f /var/lib/dpkgdir debian/dpkgdir
 ln -n -s -f /usr/share/applications ./freedesktop.org/applications
 ln -n -s -f "$HOME/.local" "./freedesktop.org/local"
+ln -n -s -f "$HOME/.config" ./freedesktop.org/config
+ln -n -s -f "$HOME/.cache" ./freedesktop.org/cache
 ln -n -s -f /etc/xdg ./freedesktop.org/xdg_dir
 ln -n -s -f "$HOME/.local/share/Trash" ./freedesktop.org/Trash
 
