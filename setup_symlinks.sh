@@ -46,8 +46,8 @@ ln -n -s -f /etc/inputrc readline/system_inputrc
 ln -n -s -f /etc/apt/sources.list debian/sources.list
 ln -n -s -f /etc/apt/sources.list.d debian/sources.list.d
 ln -n -s -f /var/lib/apt debian/aptdir
-ln -n -s -f /var/lib/aptlogs debian/aptlogs
-ln -n -s -f /var/lib/dpkgdir debian/dpkgdir
+ln -n -s -f /var/log/apt debian/aptlogs
+ln -n -s -f /var/lib/dpkg debian/dpkgdir
 ln -n -s -f /usr/share/applications ./freedesktop.org/applications
 ln -n -s -f "$HOME/.local" "./freedesktop.org/local"
 ln -n -s -f "$HOME/.config" ./freedesktop.org/config
