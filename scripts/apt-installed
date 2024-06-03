@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # List user-installed apt packages.
 # Uses a heuristic:

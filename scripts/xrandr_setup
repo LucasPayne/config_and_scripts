@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Set up xrandr for desktop.
 xrandr --output HDMI-1 --mode 1920x1080 --pos 0x0 --scale 1x1 --rotate left

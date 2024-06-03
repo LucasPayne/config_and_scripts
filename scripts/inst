@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 apt_installed | fzf --preview="dpkgdesc {}" \
                     --preview-window=right:50% \

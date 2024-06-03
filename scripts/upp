@@ -1,8 +1,0 @@
-#!/bin/bash
-#
-# Upload configs and notes, should run this before shutting down or switching context, going out, etc.,
-# but not bothered to make commit messages.
-
-nsup
-( cd ~/config ; ./update )
-

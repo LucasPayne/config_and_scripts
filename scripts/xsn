@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Alias for `xargs -i -d '\n' "$NORMAL_SHELL" -c "..."`
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Set up xrandr for desktop.
 xrandr --output DP-0 --mode 3840x2160 --pos 0x0
