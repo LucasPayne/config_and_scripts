@@ -5,6 +5,33 @@
 # todo:
 #    Ask for confirmation if a file would be deleted.
 
+# xdg/freedesktop.org stuff
+# On debian, the variables
+#    XDG_DATA_HOME
+#    XDG_CONFIG_HOME
+#    XDG_CACHE_HOME
+# are not set, as they have well-defined default values in the specification:
+# Just in case these variables are set on the current system, use them, and if not, follow the defaults described in the spec:
+# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
+set_xdg_dir()
+{
+    varname=$1
+    xdg_varname=$2
+    xdg_default=$3
+    if [[ -v $xdg_varname ]] ; then
+        declare -g $varname="$xdg_varname"
+        echo "$varname: $xdg_varname"
+    else
+        declare -g $varname="$xdg_default"
+        echo "$varname: $xdg_default"
+    fi
+    declare xdg_data_home=nice
+}
+set_xdg_dir xdg_data_home XDG_DATA_HOME "$HOME/.local/share"
+set_xdg_dir xdg_config_home XDG_CONFIG_HOME "$HOME/.config"
+set_xdg_dir xdg_cache_home XDG_CACHE_HOME "$HOME/.cache"
+#TODO: "XDG_LOCAL_HOME"? See spec.
+
 # Setup symlinks on system to this config dir.
 ln -n -s -f "$(realpath vim/runtime)" ~/.vim
 ln -n -s -f "$(realpath vim/vimrc.vim)" ~/.vimrc
@@ -24,17 +51,21 @@ ln -n -s -f "$(realpath screen/screendir)" ~/.screen
 ln -n -s -f "$(realpath readline/inputrc)" ~/.inputrc
 ln -n -s -f "$(realpath pager/lesskey.txt)" ~/.lesskey
 ln -n -s -f "$(realpath git/gitconfig)" ~/.gitconfig
-ln -n -s -f "$(realpath git/tigrc)" ~/.tigrc
+
+# See `man tig`'s FILES section.
+mkdir -p "$xdg_config_home/tig"
+ln -n -s -f "$(realpath git/tigrc)" "$xdg_config_home/tig/config"
+
 ln -n -s -f "$(realpath i3)" ~/.i3
 ln -n -s -f "$(realpath scripts)" ~/scripts
 ln -n -s -f "$(realpath source-highlight)" ~/.source-highlight
-ln -n -s -f "$(realpath lf)" ~/.config/lf
-ln -n -s -f "$(realpath qutebrowser)" ~/.config/qutebrowser
-ln -n -s -f "$(realpath nvim)" ~/.config/nvim
+ln -n -s -f "$(realpath lf)" "$xdg_config_home/lf"
+ln -n -s -f "$(realpath qutebrowser)" "$xdg_config_home/qutebrowser"
+ln -n -s -f "$(realpath nvim)" "$xdg_config_home/nvim"
 ln -n -s -f "$(realpath debian/dpkg.cfg)" ~/.dpkg.cfg
-ln -n -s -f "$(realpath freedesktop.org/autostart)" ~/.config/autostart
-ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-share)" ~/.local/share/cool-retro-term
-ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-config)" ~/.config/cool-retro-term
+ln -n -s -f "$(realpath freedesktop.org/autostart)" "$xdg_config_home/autostart"
+ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-share)" "$xdg_data_home/cool-retro-term"
+ln -n -s -f "$(realpath cool-retro-term/cool-retro-term-config)" "$xdg_config_home/cool-retro-term"
 
 # Setup symlinks in this directory to system files.
 # This is for convenient navigation of config. The directory contents, and the symlinks themselves, are not tracked by git.
@@ -50,10 +81,10 @@ ln -n -s -f /var/log/apt debian/aptlogs
 ln -n -s -f /var/lib/dpkg debian/dpkgdir
 ln -n -s -f /usr/share/applications ./freedesktop.org/applications
 ln -n -s -f "$HOME/.local" "./freedesktop.org/local"
-ln -n -s -f "$HOME/.config" ./freedesktop.org/config
-ln -n -s -f "$HOME/.cache" ./freedesktop.org/cache
+ln -n -s -f "$xdg_config_home" ./freedesktop.org/config
+ln -n -s -f "$xdg_cache_home" ./freedesktop.org/cache
 ln -n -s -f /etc/xdg ./freedesktop.org/xdg_dir
-ln -n -s -f "$HOME/.local/share/Trash" ./freedesktop.org/Trash
+ln -n -s -f "$xdg_data_home/Trash" ./freedesktop.org/Trash
 
 # Query the vim version.
 # Note that it is expected that the system runs just one version of vim when invoked on the command line,
@@ -61,11 +92,11 @@ ln -n -s -f "$HOME/.local/share/Trash" ./freedesktop.org/Trash
 # This would not be the case with different vim versions installed and accessible by different PATHs e.g. in a login vs non-login shell.
 VIMRUNTIME_NUMBER="$(vim --version | head -1 | sed -En -e 's/^VIM - Vi IMproved ([[:digit:]]+\.[[:digit:]]+) .*$/\1/' -e 's/\.//p')"
 ln -n -s -f "/usr/local/share/vim/vim$VIMRUNTIME_NUMBER" ./vim/system_runtime
-ln -n -s -f "$HOME/.local/share/applications" ./freedesktop.org/user_applications
+
+ln -n -s -f "$xdg_data_home/applications" ./freedesktop.org/user_applications
 ln -n -s -f "$HOME/.local/lib/python3.10/" ./python/local_python3.10
 ln -n -s -f "$HOME/.python_history" ./python/python_history
-ln -n -s -f "$HOME/config/qutebrowser" ./qutebrowser/qutebrowser
-ln -n -s -f "$HOME/config/scripts" ./scripts/scripts
+ln -n -s -f "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
 ln -n -s -f "$HOME/.bash_history" ./shell/bash_history
 ln -n -s -f "$HOME/.terminfo" ./terminal/terminfo
 
