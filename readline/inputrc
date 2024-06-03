@@ -1,3 +1,6 @@
+# Resources
+#     Sample inputrc: https://www.gnu.org/software/bash/manual/html_node/Sample-Init-File.html
+
 set editing-mode vi
 
 # Change cursor styles.
@@ -15,6 +18,10 @@ $endif
 
 $if mode=vi
     set keymap vi-command
+    
+    # Reload ~/.inputrc
+    "\C-x\C-r": re-read-init-file
+
     Control-l: clear-screen
     # Vim bindings
     "ciw": "wbcw"
@@ -81,4 +88,5 @@ $if mode=vi
     set keymap vi-insert
     Control-l: clear-screen
     "jk": vi-movement-mode
+    "\e.": yank-last-arg
 $endif

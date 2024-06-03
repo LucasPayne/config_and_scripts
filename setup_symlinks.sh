@@ -49,7 +49,10 @@ ln -n -s -f /var/lib/apt apt/aptdir
 ln -n -s -f /var/lib/aptlogs apt/aptlogs
 ln -n -s -f /var/lib/dpkgdir apt/dpkgdir
 ln -n -s -f /usr/share/applications ./freedesktop.org/applications
-ln -n -s -f /usr/share/applications ./freedesktop.org/applications
+ln -n -s -f "$HOME/.local" "./freedesktop.org/local"
+ln -n -s -f /etc/xdg ./freedesktop.org/xdg_dir
+ln -n -s -f "$HOME/.local/share/Trash" ./freedesktop.org/Trash
+
 # Query the vim version.
 # Note that it is expected that the system runs just one version of vim when invoked on the command line,
 # although other vims may be installed, so VIMRUNTIME_NUMBER should be the same from any shell.

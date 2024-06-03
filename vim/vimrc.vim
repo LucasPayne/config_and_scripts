@@ -147,8 +147,11 @@ nnoremap .cd :let @" = expand("%:p:h")<cr>
 " Move to first tab.
 nnoremap .q :tabm 0<cr>
 " Move tab left and right.
-nnoremap .[ :tabm -1<cr>
-nnoremap .] :tabm +1<cr>
+nnoremap <C-w>. :tabm +1<cr>
+nnoremap <C-w>, :tabm -1<cr>
+" todo: Shouldn't leave the terminal tab entered in command mode.
+tnoremap <C-w>. <C-\><C-n>:tabm +1<cr>
+tnoremap <C-w>, <C-\><C-n>:tabm -1<cr>
 " emacs-style keybindings.
 " C-u by default kills to start of a line restricted to the insert region.
 " Preferring emacs logic (kill to start of line, regardless of insert region).
@@ -200,6 +203,12 @@ function! ToggleDetailView()
 endfunction
 execute "set <M-r>=\er"
 nnoremap <M-r> :call ToggleDetailView()<cr>
+execute "set <M-n>=\en"
+nnoremap <M-n> :set number!<cr>
+
+" Be careful...
+" todo: Better than this. Popup, or general terminal, pager.
+nnoremap .! :execute "!".getline(".")<cr>
 
 ">>>
 
