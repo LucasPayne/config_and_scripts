@@ -40,6 +40,7 @@ nnoremap <leader>cb :call YankBreakPoint()<cr>
 "    ...
 "<<<
 syntax on
+set path=.,,
 filetype indent on
 filetype plugin on
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
@@ -55,7 +56,11 @@ set shell=bash
 " in non-interactive mode, e.g., doesn't work in xargs. So prefer wrapper exec
 " scripts to aliases for non-interactive mode work.
 "set shellcmdflag=-ic
-" set autochdir
+"
+" Change directory to the current file.
+" Note that plugins and other program integrations might want to send relative
+" paths, e.g. through a vimserver command. They should send absolute paths instead.
+set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
 " set cursorline
@@ -144,6 +149,9 @@ nnoremap <M-l> <C-w>l
 execute "set <M-l>=\el"
 " Quick close window.
 nnoremap <M-x> :q<cr>
+" Quick new empty tab.
+execute "set <M-t>=\et"
+nnoremap <M-t> :tabnew<cr>
 " Copy file path
 nnoremap .cp :let @" = expand("%:p")<cr>
 " Copy file directory
@@ -712,8 +720,9 @@ tnoremap <C-w><C-k> <C-w>gt
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 nnoremap <C-w><C-j> gT
 nnoremap <C-w><C-k> gt
-nnoremap <space>t :term ++curwin<cr>
-nnoremap <space>T :tabnew<cr>:term ++curwin<cr>
+" Open a terminal in the current window.
+execute "set <M-c>=\ec"
+nnoremap <M-c> :term ++curwin<cr>
 nnoremap <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 

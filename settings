@@ -1,6 +1,4 @@
 #!/bin/sh
-# (hash-bang for filetype detection, ignore.)
-
 #--------------------------------------------------------------------------------
 # Configuration settings.
 # These are variables to be provided to the apply script.
