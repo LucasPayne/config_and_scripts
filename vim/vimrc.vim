@@ -135,9 +135,13 @@ nnoremap <M-w> :w<cr>
 inoremap <M-w> <Esc>:w<cr>
 " Quick navigate windows
 nnoremap <M-h> <C-w>h
+execute "set <M-h>=\eh"
 nnoremap <M-j> <C-w>j
+execute "set <M-j>=\ej"
 nnoremap <M-k> <C-w>k
+execute "set <M-k>=\ek"
 nnoremap <M-l> <C-w>l
+execute "set <M-l>=\el"
 " Quick close window.
 nnoremap <M-x> :q<cr>
 " Copy file path
@@ -309,6 +313,24 @@ if PluginEnabled("vim-lsp") == 1
     nnoremap <space>D :LspDeclaration<cr>
     nnoremap <space>r :LspReferences<cr>
     nnoremap <space>t :LspTypeDefinition<cr>
+endif
+
+if PluginEnabled("targets") == 1
+    " Documentation:
+    " https://github.com/wellle/targets.vim
+
+    " If enabled (set to 1) , both growing and seeking will work on the
+    " largest available count if a too large count is given. 
+    let g:targets_gracious = 1
+
+    " Default: 'aiAI'
+    let g:targets_aiAI = 'aiAI'
+
+    " Default: 'nl'
+    " nN seems more in line with forward/backward keys (e.g. search).
+    " Also 'l' feels like hjkl's 'go to right' but 'last' should 'go to left',
+    " so that is a bit non-mnemonic.
+    let g:targets_nl = 'nN'
 endif
 
 ">>>

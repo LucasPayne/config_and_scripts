@@ -1,0 +1,19 @@
+#!/bin/sh
+# (hash-bang for filetype detection, ignore.)
+
+#--------------------------------------------------------------------------------
+# Configuration settings.
+# These are variables to be provided to the apply script.
+#--------------------------------------------------------------------------------
+
+# If set, always create symlinks to system directories, even if they do not exist.
+opt_generate_dangling_system_symlinks=1
+
+# List of web browsers to try to set as the XDG default (e.g. for xdg-open of urls).
+# Earlier in the list is higher priority.
+opt_web_browser_priorities=(
+    firefox
+    qutebrowser
+    org.qutebrowser.qutebrowser
+    google-chrome
+)

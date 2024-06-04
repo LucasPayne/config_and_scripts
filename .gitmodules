@@ -31,3 +31,6 @@
 [submodule "vim/__tmp/focus-previous"]
 	path = vim/repos/focus-previous/focus-previous
 	url = https://github.com/viecks/focus-previous
+[submodule "vim/__tmp/targets.vim"]
+	path = vim/repos/targets.vim
+	url = https://github.com/wellle/targets.vim
