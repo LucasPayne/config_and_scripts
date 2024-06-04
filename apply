@@ -179,6 +179,7 @@ link_config_to_system "/usr/local/share/vim/vim$VIMRUNTIME_NUMBER" ./vim/system_
 
 link_config_to_system /etc/inputrc ./readline/system_inputrc
 link_config_to_system "$xdg_data_home/applications" ./freedesktop.org/user_applications
+link_config_to_system "$xdg_config_home/mimeapps.list" ./freedesktop.org/mimeapps.list
 link_config_to_system "$HOME/.local/lib/python3.10/" ./python/local_python3.10
 link_config_to_system "$HOME/.python_history" ./python/python_history
 link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
@@ -203,9 +204,14 @@ echo "Distributing "override" files to system directories."
     export -f distribute_override_file
     # Using find -exec to execute a bash function.
     # https://stackoverflow.com/questions/4321456/find-exec-a-shell-function-in-linux
-    find freedesktop.org/user_applications_overrides/ -name '*.desktop' -exec bash -c 'distribute_override_file "$1" "$2"' -- {} "$xdg_data_home/applications" \;
-    find freedesktop.org/autostart_overrides/ -name '*.desktop' -exec bash -c 'distribute_override_file "$1" "$2"' -- {} "$xdg_config_home/autostart" \;
+    find freedesktop.org/xdg_override_applications/ -name '*.desktop' -exec bash -c 'distribute_override_file "$1" "$2"' -- {} "$xdg_data_home/applications" \;
+    find freedesktop.org/xdg_override_autostart/ -name '*.desktop' -exec bash -c 'distribute_override_file "$1" "$2"' -- {} "$xdg_config_home/autostart" \;
 )
+
+# Source the xdg settings script.
+#--------------------------------------------------------------------------------
+echo
+source xdg_settings.sh
 
 # Generate a .gitignore file.
 #--------------------------------------------------------------------------------

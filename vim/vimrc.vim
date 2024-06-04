@@ -213,6 +213,12 @@ for index in [1,2,3,4,5,6,7,8,9]
     execute "tnoremap <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
 endfor
 
+" Create splits
+execute "set <M-\\>=\e\\"
+nnoremap <M-\> :vsp<cr>
+execute "set <M-->=\e-"
+nnoremap <M--> :sp<cr>
+
 " Be careful...
 " todo: Better than this. Popup, or general terminal, pager.
 nnoremap .! :execute "!".getline(".")<cr>
