@@ -206,6 +206,13 @@ nnoremap <M-r> :call ToggleDetailView()<cr>
 execute "set <M-n>=\en"
 nnoremap <M-n> :set number!<cr>
 
+" Go to tab
+for index in [1,2,3,4,5,6,7,8,9]
+    execute "set <M-".index.">=\e".index
+    execute "nnoremap <M-".index."> :normal! ".index."gt<cr>"
+    execute "tnoremap <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+endfor
+
 " Be careful...
 " todo: Better than this. Popup, or general terminal, pager.
 nnoremap .! :execute "!".getline(".")<cr>

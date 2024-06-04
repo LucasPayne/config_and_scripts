@@ -1,20 +1,13 @@
 #!/bin/bash
 #
-# Set up the configuration symlinks.
-#
-# todo:
-#    Ask for confirmation if a file would be deleted.
+# configuration application script.
+# See the README for details.
 #
 #--------------------------------------------------------------------------------
 # Configuration options
 #--------------------------------------------------------------------------------
 # If set, always create symlinks to system directories, even if they do not exist.
 opt_generate_dangling_system_symlinks=1
-# If set, warn and ignore whenever a symlink would be created on the system
-# which would overwrite a file/directory which is not a symlink into this config repo.
-# e.g., if someone already has a ~/.vimrc.
-# Unsetting this is dangerous.
-opt_warn_if_config_exists_on_system=1
 #--------------------------------------------------------------------------------
 
 if [ ! "$PWD" = "$HOME/config" ]
@@ -129,8 +122,6 @@ link_system_to_config lf "$xdg_config_home/lf"
 link_system_to_config qutebrowser "$xdg_config_home/qutebrowser"
 link_system_to_config nvim "$xdg_config_home/nvim"
 link_system_to_config debian/dpkg.cfg ~/.dpkg.cfg
-link_system_to_config freedesktop.org/autostart "$xdg_config_home/autostart"
-link_system_to_config cool-retro-term/cool-retro-term-share "$xdg_data_home/cool-retro-term"
 link_system_to_config cool-retro-term/cool-retro-term-config "$xdg_config_home/cool-retro-term"
 
 # Setup symlinks in this directory to system files.
@@ -193,13 +184,28 @@ link_config_to_system "$HOME/.python_history" ./python/python_history
 link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
 link_config_to_system "$HOME/.bash_history" ./shell/bash_history
 
-# $xdg_data_home/applications.
+# Distribute "override" files to system directories.
 #--------------------------------------------------------------------------------
+echo
+echo "Distributing "override" files to system directories."
 # The system saves files in here, so don't want to copy those to this repo.
 # Currently can't think of a nice symlink-overlay solution. Possible?
 # overlayfs possibly, but way too much to do for such a simple thing. Also I think this supposes read-only for underlying directory.
 # Or, can xdg be configured to look for applications in an additional user-specified directory?
-cp freedesktop.org/user_applications_overrides/*.desktop "$xdg_data_home/applications"
+(
+    distribute_override_file()
+    (
+        override_file="$1"
+        into_dir="$2"
+        cp --target="$into_dir" "$override_file"
+        echo "Inserted $override_file into $into_dir"
+    )
+    export -f distribute_override_file
+    # Using find -exec to execute a bash function.
+    # https://stackoverflow.com/questions/4321456/find-exec-a-shell-function-in-linux
+    find freedesktop.org/user_applications_overrides/ -name '*.desktop' -exec bash -c 'distribute_override_file "$1" "$2"' -- {} "$xdg_data_home/applications" \;
+    find freedesktop.org/autostart_overrides/ -name '*.desktop' -exec bash -c 'distribute_override_file "$1" "$2"' -- {} "$xdg_config_home/autostart" \;
+)
 
 # Generate a .gitignore file.
 #--------------------------------------------------------------------------------
