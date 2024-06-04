@@ -5,6 +5,11 @@
 # todo:
 #    Ask for confirmation if a file would be deleted.
 
+if [ ! "$PWD" = "$HOME/config" ] ; then
+    echo "setup_symlinks.sh error: This script can only be run from the config_and_scripts repo root directory, cloned as \$HOME/config/."
+    exit 0
+fi
+
 # xdg/freedesktop.org stuff
 # On debian, some XDG variables such as XDG_DATA_HOME are not set, as they have well-defined default values in the specification.
 # Just in case these variables are set on the current system, use them, and if not, follow the defaults described in the spec:
@@ -43,10 +48,12 @@ link_system_to_config()
     create_link "$1" "$2"
     echo "Put link in system: $link_name ---> $target"
 }
+declare -a config_symlinks_to_gitignore
 link_config_to_system()
 {
     create_link "$1" "$2"
     echo "Created navigation link in config: $link_name ---> $target"
+    config_symlinks_to_gitignore+=("$link_name")
 }
 
 # Setup symlinks on system to this config dir.
@@ -84,23 +91,25 @@ link_system_to_config freedesktop.org/autostart "$xdg_config_home/autostart"
 link_system_to_config cool-retro-term/cool-retro-term-share "$xdg_data_home/cool-retro-term"
 link_system_to_config cool-retro-term/cool-retro-term-config "$xdg_config_home/cool-retro-term"
 
-echo
 # Setup symlinks in this directory to system files.
 # This is for convenient navigation of config. The directory contents, and the symlinks themselves, are not tracked by git.
 # The symlinks are not tracked because they could point to different places on different machines, e.g. with different usernames.
 #
 # These symlinks should be in .gitignore.
 # TODO: How to do this automatically?
-link_config_to_system /etc/inputrc ./readline/system_inputrc
 
 # system debian symlinks
-link_config_to_system /etc/apt/sources.list debian/sources.list
-link_config_to_system /etc/apt/sources.list.d debian/sources.list.d
-link_config_to_system /var/lib/apt debian/aptdir
-link_config_to_system /var/log/apt debian/aptlogs
-link_config_to_system /var/lib/dpkg debian/dpkgdir
+echo
+echo "Creating debian navigation symlinks in ./debian/..."
+link_config_to_system /etc/apt/sources.list ./debian/sources.list
+link_config_to_system /etc/apt/sources.list.d ./debian/sources.list.d
+link_config_to_system /var/lib/apt ./debian/aptdir
+link_config_to_system /var/log/apt ./debian/aptlogs
+link_config_to_system /var/lib/dpkg ./debian/dpkgdir
 
 # system xdg symlinks
+echo
+echo "Creating debian xdg navigation symlinks in ./freedesktop.org/..."
 link_config_to_system "$xdg_config_home" ./freedesktop.org/xdg_config_home
 link_config_to_system "$xdg_cache_home" ./freedesktop.org/xdg_cache_home
 link_config_to_system "$xdg_state_home" ./freedesktop.org/xdg_state_home
@@ -109,7 +118,7 @@ link_config_to_system "$xdg_data_home/Trash" ./freedesktop.org/Trash
 create_xdg_dir_symlinks()
 {
     xdg_dirs_var="$1"
-    echo "${!xdg_dirs_var}" | tr ':' '\n' | while read -r dirpath
+     while read -r dirpath
     do
         if [ -d "$dirpath" ] ; then
             mangled_path="$(echo -n "$dirpath" | tr '/' '_' | tr ' ' '_')"
@@ -117,27 +126,46 @@ create_xdg_dir_symlinks()
         else
             echo "$xdg_dirs_var: $dirpath not found. Not creating symlink."
         fi
-    done
+    done < <(echo "${!xdg_dirs_var}" | tr ':' '\n')
 }
 create_xdg_dir_symlinks xdg_config_dirs
 create_xdg_dir_symlinks xdg_data_dirs
 
+echo
+echo "Creating general navigation symlinks..."
 # Query the vim version.
 # Note that it is expected that the system runs just one version of vim when invoked on the command line,
 # although other vims may be installed, so VIMRUNTIME_NUMBER should be the same from any shell.
 # This would not be the case with different vim versions installed and accessible by different PATHs e.g. in a login vs non-login shell.
+#
+# todo: This logic is not nice. Expects to be in /usr/local/share.
 VIMRUNTIME_NUMBER="$(vim --version | head -1 | sed -En -e 's/^VIM - Vi IMproved ([[:digit:]]+\.[[:digit:]]+) .*$/\1/' -e 's/\.//p')"
 link_config_to_system "/usr/local/share/vim/vim$VIMRUNTIME_NUMBER" ./vim/system_runtime
 
+link_config_to_system /etc/inputrc ./readline/system_inputrc
 link_config_to_system "$xdg_data_home/applications" ./freedesktop.org/user_applications
 link_config_to_system "$HOME/.local/lib/python3.10/" ./python/local_python3.10
 link_config_to_system "$HOME/.python_history" ./python/python_history
 link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
 link_config_to_system "$HOME/.bash_history" ./shell/bash_history
-link_config_to_system "$HOME/.terminfo" ./terminal/terminfo
 
-# ~/.local/share/applications.
+# $xdg_data_home/applications.
 # The system saves files in here, so don't want to copy those to this repo.
 # Currently can't think of a nice symlink-overlay solution. Possible?
 # overlayfs possibly, but way too much to do for such a simple thing. Also I think this supposes read-only for underlying directory.
-cp freedesktop.org/user_applications_overrides/*.desktop ~/.local/share/applications
+cp freedesktop.org/user_applications_overrides/*.desktop "$xdg_data_home/applications"
+
+echo
+echo "Creating .gitignore..."
+cat base_gitignore > .gitignore
+echo "Initialized with ./base_gitignore."
+echo "" >> .gitignore
+echo "# Ignore system symlinks" >> .gitignore
+printf '%s\n' "${config_symlinks_to_gitignore[@]}" >> .gitignore
+echo "Transient symlinks have been created in this repo. Added these lines to .gitignore:"
+for line in "${config_symlinks_to_gitignore[@]}"
+do
+    # .gitignore doesn't parse leading ./, so remove this.
+    fixed_line="$(echo "$line" | sed 's/^\.\///')"
+    echo "$fixed_line" | tee -a .gitignore
+done

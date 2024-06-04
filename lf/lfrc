@@ -5,6 +5,7 @@ set ifs " "
 set ignorecase
 set mouse
 set previewer ~/.config/lf/previewer.sh
+set sortby 'name'
 map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' less -R $f
 
 cmd open &{{
