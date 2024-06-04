@@ -1,3 +1,6 @@
+# NOTE: This is used to generate a .gitignore file.
+# ./apply must be run before changes take effect.
+
 # Ignore generated .gitignore.
 .gitignore
 

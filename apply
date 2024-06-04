@@ -4,13 +4,20 @@
 #
 # todo:
 #    Ask for confirmation if a file would be deleted.
+#
+#--------------------------------------------------------------------------------
+# Configuration options
+#--------------------------------------------------------------------------------
+opt_generate_dangling_system_symlinks=0
+#--------------------------------------------------------------------------------
 
 if [ ! "$PWD" = "$HOME/config" ] ; then
-    echo "setup_symlinks.sh error: This script can only be run from the config_and_scripts repo root directory, cloned as \$HOME/config/."
+    echo "config apply error: This script can only be run from the config_and_scripts repo root directory, cloned as \$HOME/config/."
     exit 0
 fi
 
 # xdg/freedesktop.org stuff
+#--------------------------------------------------------------------------------
 # On debian, some XDG variables such as XDG_DATA_HOME are not set, as they have well-defined default values in the specification.
 # Just in case these variables are set on the current system, use them, and if not, follow the defaults described in the spec:
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
@@ -57,6 +64,7 @@ link_config_to_system()
 }
 
 # Setup symlinks on system to this config dir.
+#--------------------------------------------------------------------------------
 link_system_to_config ./vim/runtime ~/.vim
 link_system_to_config ./vim/vimrc.vim ~/.vimrc
 link_system_to_config ./emacs/infokey ~/.infokey
@@ -92,6 +100,7 @@ link_system_to_config cool-retro-term/cool-retro-term-share "$xdg_data_home/cool
 link_system_to_config cool-retro-term/cool-retro-term-config "$xdg_config_home/cool-retro-term"
 
 # Setup symlinks in this directory to system files.
+#--------------------------------------------------------------------------------
 # This is for convenient navigation of config. The directory contents, and the symlinks themselves, are not tracked by git.
 # The symlinks are not tracked because they could point to different places on different machines, e.g. with different usernames.
 #
@@ -120,12 +129,15 @@ create_xdg_dir_symlinks()
     xdg_dirs_var="$1"
      while read -r dirpath
     do
-        if [ -d "$dirpath" ] ; then
-            mangled_path="$(echo -n "$dirpath" | tr '/' '_' | tr ' ' '_')"
-            link_config_to_system "$dirpath" "./freedesktop.org/$xdg_dirs_var@$mangled_path"
-        else
-            echo "$xdg_dirs_var: $dirpath not found. Not creating symlink."
-        fi
+        mangled_path="$(echo -n "$dirpath" | tr '/' '_' | tr ' ' '_')"
+        link_config_to_system "$dirpath" "./freedesktop.org/$xdg_dirs_var@$mangled_path"
+        # Use below instead to avoid dangling symlinks to xdg system dirs.
+        # if [ -d "$dirpath" ] ; then
+        #     mangled_path="$(echo -n "$dirpath" | tr '/' '_' | tr ' ' '_')"
+        #     link_config_to_system "$dirpath" "./freedesktop.org/$xdg_dirs_var@$mangled_path"
+        # else
+        #     echo "$xdg_dirs_var: $dirpath not found. Not creating symlink."
+        # fi
     done < <(echo "${!xdg_dirs_var}" | tr ':' '\n')
 }
 create_xdg_dir_symlinks xdg_config_dirs
@@ -150,11 +162,14 @@ link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
 link_config_to_system "$HOME/.bash_history" ./shell/bash_history
 
 # $xdg_data_home/applications.
+#--------------------------------------------------------------------------------
 # The system saves files in here, so don't want to copy those to this repo.
 # Currently can't think of a nice symlink-overlay solution. Possible?
 # overlayfs possibly, but way too much to do for such a simple thing. Also I think this supposes read-only for underlying directory.
 cp freedesktop.org/user_applications_overrides/*.desktop "$xdg_data_home/applications"
 
+# Generate a .gitignore file.
+#--------------------------------------------------------------------------------
 echo
 echo "Creating .gitignore..."
 cat base_gitignore > .gitignore

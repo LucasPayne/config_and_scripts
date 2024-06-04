@@ -1,2 +1,0 @@
-TODO:
-Symlinks to system directories, declarative syntax for this which generates part of .gitignore.
