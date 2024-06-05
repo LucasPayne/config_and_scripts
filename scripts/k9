@@ -1,5 +1,6 @@
 #!/bin/sh
 #
 # Simpler wrapper for kill to use -SIGKILL/-9.
+# Note that this doesn't understand the caller's job specifiers (e.g. %1).
 
 exec kill -SIGKILL "$@"

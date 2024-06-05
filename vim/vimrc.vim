@@ -31,10 +31,10 @@ endfunction
 function! YankSelectionAndFilePath()
     let @" = "    ".@*."\n".expand("%:p")." ".line(".")."\n"
 endfunction
-nnoremap <leader>cp :call YankFilePath()<cr>
-nnoremap <leader>CP :call YankWordAndFilePath()<cr>
-vnoremap <leader>cp :call YankSelectionAndFilePath()<cr>
-nnoremap <leader>cb :call YankBreakPoint()<cr>
+nnoremap .cp :call YankFilePath()<cr>
+nnoremap .CP :call YankWordAndFilePath()<cr>
+vnoremap .cp :call YankSelectionAndFilePath()<cr>
+nnoremap .cb :call YankBreakPoint()<cr>
 
 " Settings
 "    syntax on
@@ -65,7 +65,7 @@ set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
 " set cursorline
-set nonumber
+set number
 set nuw=5
 set noswapfile
 set mouse=a
@@ -83,12 +83,25 @@ set noequalalways
 " accept a form which allows environment variable setting.
 "TODO: Get this to work also with vim :help.
 "set keywordprg=man_120_columns
+set keywordprg=
 " Press enter after executing external keywordprg pages.
 nnoremap K K<cr>
 vnoremap K K<cr>
 
 " Nice to have center-scroll when going to end of file.
-nnoremap G Gzz
+
+function! EndOfFileNavigate()
+    if line('.') == line('$')
+        " Already at the end. Go to insert new line.
+        " This means GG will always start inserting.
+        normal! o
+        startinsert
+    else
+        " Scroll to bottom of file, and center view.
+        normal! Gzz
+    endif
+endfunction
+nnoremap <silent> G :call EndOfFileNavigate()<cr>
 
 " Alt key mappings
 " If terminal is sending modifiers as esc-key.
@@ -1137,16 +1150,21 @@ if exists("&cmdheight") == 1
         set cmdheight=0
         let g:cmdheight_default=0
     endif
-    let g:cmdheight_expanded=2
+    let g:cmdheight_expanded=3
     
     " Toggle cmdheight.
     " If cmdheight=0, the vim feature (before it was patched out) seems to
     " buggy, missing some messages. So this is useful to see them.
     function! ToggleCmdHeight()
+        " Note: cmdheight is "global or local to tab page", according to :help cmdheight.
         if &cmdheight == g:cmdheight_default
-            let &cmdheight = g:cmdheight_expanded
+            for tab in gettabinfo()
+                call win_execute(get(tab, "windows")[0], "set cmdheight=".g:cmdheight_expanded)
+            endfor
         else
-            let &cmdheight = g:cmdheight_default
+            for tab in gettabinfo()
+                call win_execute(get(tab, "windows")[0], "set cmdheight=".g:cmdheight_default)
+            endfor
         endif
     endfunction
     nnoremap <M-w><M-c> :call ToggleCmdHeight()<cr>
@@ -1167,3 +1185,4 @@ augroup END
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
+

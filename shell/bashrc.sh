@@ -13,7 +13,6 @@ stracev ()
     strace 2>&1 "$@" | less
 }
 
-
 export GDB_DEV="$(realpath ~/.gdb)"
 
 # Explicit terminfo needed for some reason, when using built-from-source ncurses.
