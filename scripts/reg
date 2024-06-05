@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Like xclip but for vim registers.
+
+if [ -z "$VIMSHELL_ID" ] ; then
+    >&2 echo "Not in a vimshell."
+    exit 1
+fi
+
+if [ $# -eq 0 ] ; then
+    # Get contents from stdin.
+    # In interactive bash, without a pipe this will read from input, e.g. like `cat > file`.
+    data="$(cat)"
+else
+    # Get contents from arguments.
+    data="$*"
+fi
+
+# vimserver's --remote-send requires escaping.
+# Want to copy completely general text.
+# Just using a tmp file.
+tmp_file_path="$(mktemp)"
+echo $tmp_file_path
+printf '%s' "$data" > "$tmp_file_path"
+
+vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:let @"=join(readfile("'"$tmp_file_path"'"), "\n")<cr>'
+
