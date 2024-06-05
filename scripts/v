@@ -19,7 +19,8 @@ opt_filelist=0
 opt_open_scripts=0
 
 files=()
-while [[ $# -gt 0 ]]; do
+while [[ $# -gt 0 ]]
+do
     case $1 in
     --nostdin)
         opt_nostdin=1
