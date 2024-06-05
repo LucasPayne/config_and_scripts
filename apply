@@ -119,7 +119,7 @@ link_system_to_config ./scripts ~/scripts
 link_system_to_config source-highlight ~/.source-highlight
 link_system_to_config lf "$xdg_config_home/lf"
 link_system_to_config qutebrowser "$xdg_config_home/qutebrowser"
-link_system_to_config nvim "$xdg_config_home/nvim"
+link_system_to_config nvim/runtime "$xdg_config_home/nvim"
 link_system_to_config debian/dpkg.cfg ~/.dpkg.cfg
 link_system_to_config cool-retro-term/cool-retro-term-config "$xdg_config_home/cool-retro-term"
 
@@ -183,6 +183,7 @@ link_config_to_system "$HOME/.local/lib/python3.10/" ./python/local_python3.10
 link_config_to_system "$HOME/.python_history" ./python/python_history
 link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
 link_config_to_system "$HOME/.bash_history" ./shell/bash_history
+link_config_to_system "$xdg_state_home/nvim" nvim/state
 
 # Distribute "override" files to system directories.
 #--------------------------------------------------------------------------------

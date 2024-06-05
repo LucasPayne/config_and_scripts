@@ -2,6 +2,7 @@
 " vimrc
 "--------------------------------------------------------------------------------/
 
+
 augroup filetype_qf
     autocmd!
     autocmd Filetype qf nnoremap <buffer> <C-t> <C-w><cr><C-w>T
@@ -35,7 +36,6 @@ nnoremap <leader>CP :call YankWordAndFilePath()<cr>
 vnoremap <leader>cp :call YankSelectionAndFilePath()<cr>
 nnoremap <leader>cb :call YankBreakPoint()<cr>
 
-" M
 " Settings
 "    syntax on
 "    ...
