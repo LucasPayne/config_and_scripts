@@ -35,6 +35,7 @@ nnoremap <leader>CP :call YankWordAndFilePath()<cr>
 vnoremap <leader>cp :call YankSelectionAndFilePath()<cr>
 nnoremap <leader>cb :call YankBreakPoint()<cr>
 
+" M
 " Settings
 "    syntax on
 "    ...
@@ -85,6 +86,9 @@ set keywordprg=man_120_columns
 nnoremap K K<cr>
 vnoremap K K<cr>
 
+" Nice to have center-scroll when going to end of file.
+nnoremap G Gzz
+
 " Alt key mappings
 " If terminal is sending modifiers as esc-key.
 " For some reason, the below works!
@@ -105,6 +109,8 @@ function! UnsetAltKeyMappings()
     for char in g:alphabet
         execute "setlocal <M-".char.">="
     endfor
+    # Allow universal navigation modifier <M-w>.
+    execute "setlocal <M-w>=\ew"
 endfunction
 autocmd TerminalOpen * silent! call UnsetAltKeyMappings()
 autocmd WinEnter * silent! call ResetAltKeyMappings()
@@ -136,22 +142,39 @@ nnoremap gk gt
 " Source selection
 vnoremap <leader>S :<C-u>@*<cr>
 " Quick write
-nnoremap <M-w> :w<cr>
-inoremap <M-w> <Esc>:w<cr>
+execute "set <M-s>=\es"
+nnoremap <M-s> :w<cr>
+inoremap <M-s> <Esc>:w<cr>
+" Go to normal mode.
+inoremap <M-w> <Esc>
+tnoremap <M-w> <C-\><C-n>
 " Quick navigate windows
-nnoremap <M-h> <C-w>h
 execute "set <M-h>=\eh"
-nnoremap <M-j> <C-w>j
+nnoremap <M-h> <C-w>h
+nnoremap <M-w><M-h> <C-w>h
+tnoremap <M-w><M-h> <C-w>h
 execute "set <M-j>=\ej"
-nnoremap <M-k> <C-w>k
+nnoremap <M-j> <C-w>j
+nnoremap <M-w><M-j> <C-w>j
+tnoremap <M-w><M-j> <C-w>j
 execute "set <M-k>=\ek"
-nnoremap <M-l> <C-w>l
+nnoremap <M-k> <C-w>k
+nnoremap <M-w><M-k> <C-w>k
+tnoremap <M-w><M-k> <C-w>k
 execute "set <M-l>=\el"
+nnoremap <M-l> <C-w>l
+nnoremap <M-w><M-l> <C-w>l
+tnoremap <M-w><M-l> <C-w>l
 " Quick close window.
-nnoremap <M-x> :q<cr>
+execute "set <M-x>=\ex"
+nnoremap <silent> <M-w><M-x> :q<cr>
+nnoremap <silent> <M-x> :q<cr>
+tnoremap <silent> <M-w><M-x> :q<cr>
 " Quick new empty tab.
 execute "set <M-t>=\et"
-nnoremap <M-t> :tabnew<cr>
+nnoremap <silent> <M-w><M-t> :tabnew<cr>
+nnoremap <silent> <M-t> :tabnew<cr>
+tnoremap <silent> <M-w><M-t> :tabnew<cr>
 " Copy file path
 nnoremap .cp :let @" = expand("%:p")<cr>
 " Copy file directory
@@ -159,11 +182,14 @@ nnoremap .cd :let @" = expand("%:p:h")<cr>
 " Move to first tab.
 nnoremap .q :tabm 0<cr>
 " Move tab left and right.
-nnoremap <C-w>. :tabm +1<cr>
-nnoremap <C-w>, :tabm -1<cr>
+execute "set <M-w>=\ew"
+execute "set <M-.>=\e."
+execute "set <M-,>=\e,"
+nnoremap <silent> <M-w><M-.> :tabm +1<cr>
+nnoremap <silent> <M-w><M-,> :tabm -1<cr>
 " todo: Shouldn't leave the terminal tab entered in command mode.
-tnoremap <C-w>. <C-\><C-n>:tabm +1<cr>
-tnoremap <C-w>, <C-\><C-n>:tabm -1<cr>
+tnoremap <silent> <M-w><M-.>. <C-\><C-n>:tabm +1<cr>
+tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1<cr>
 " emacs-style keybindings.
 " C-u by default kills to start of a line restricted to the insert region.
 " Preferring emacs logic (kill to start of line, regardless of insert region).
@@ -199,7 +225,7 @@ function! ToggleFullscreen()
     endif
 endfunction
 execute "set <M-f>=\ef"
-nnoremap <M-f> :call ToggleFullscreen()<cr>
+nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
 
 let g:detail_view_active = 0
 function! ToggleDetailView()
@@ -214,22 +240,22 @@ function! ToggleDetailView()
     endif
 endfunction
 execute "set <M-r>=\er"
-nnoremap <M-r> :call ToggleDetailView()<cr>
+nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
 execute "set <M-n>=\en"
-nnoremap <M-n> :set number!<cr>
+nnoremap <silent> <M-n> :set number!<cr>
 
 " Go to tab
 for index in [1,2,3,4,5,6,7,8,9]
     execute "set <M-".index.">=\e".index
-    execute "nnoremap <M-".index."> :normal! ".index."gt<cr>"
-    execute "tnoremap <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+    execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
+    execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
 endfor
 
 " Create splits
 execute "set <M-\\>=\e\\"
-nnoremap <M-\> :vsp<cr>
+nnoremap <silent> <M-\> :vsp<cr>
 execute "set <M-->=\e-"
-nnoremap <M--> :sp<cr>
+nnoremap <silent> <M--> :sp<cr>
 
 " Be careful...
 " todo: Better than this. Popup, or general terminal, pager.
@@ -715,15 +741,16 @@ function! CtrlCHandler()
 endfunction
 
 tnoremap <C-j><C-k> <C-\><C-n>
-tnoremap <C-w><C-j> <C-w>gT
-tnoremap <C-w><C-k> <C-w>gt
+tnoremap <M-w><M-w> <C-\><C-n>
+tnoremap <M-w><M-j> <C-w>gT
+tnoremap <M-w><M-k> <C-w>gt
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-nnoremap <C-w><C-j> gT
-nnoremap <C-w><C-k> gt
+nnoremap <M-w><M-j> gT
+nnoremap <M-w><M-k> gt
 " Open a terminal in the current window.
 execute "set <M-c>=\ec"
-nnoremap <M-c> :term ++curwin<cr>
-nnoremap <M-q> :call GoToPrimaryShell()<cr>
+nnoremap <silent> <M-c> :term ++curwin<cr>
+nnoremap <silent> <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 
 " Notes system
@@ -1075,10 +1102,26 @@ hi StatusLineTermNC term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=green
 if exists("&cmdheight") == 1
     if has("patch-9.0.0340") == 1
         set cmdheight=1
+        let g:cmdheight_default=1
     else
-        " Hide the command line.
+        " Hide the command line by default.
         set cmdheight=0
+        let g:cmdheight_default=0
     endif
+    let g:cmdheight_expanded=2
+    
+    " Toggle cmdheight.
+    " If cmdheight=0, the vim feature (before it was patched out) seems to
+    " buggy, missing some messages. So this is useful to see them.
+    function! ToggleCmdHeight()
+        if &cmdheight == g:cmdheight_default
+            let &cmdheight = g:cmdheight_expanded
+        else
+            let &cmdheight = g:cmdheight_default
+        endif
+    endfunction
+    nnoremap <M-w><M-c> :call ToggleCmdHeight()<cr>
+    tnoremap <M-w><M-c> <C-\><C-n>:call ToggleCmdHeight()<cr>
 endif
 
 set wincolor=Window
