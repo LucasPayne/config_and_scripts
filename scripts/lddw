@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# ldd but the file arguments are commands, and are looked up using `which`.
+# Unlike ldd, this prints the file path even if only one argument is given,
+# so the caller can be sure `which` resolved correctly.
+
+command_names=()
+options=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+    -*)
+        # All options to ldd begin with -.
+        options+=("$1")
+        shift
+        ;;
+    *)
+        # Interpret everything else as a command name.
+        command_names+=("$1")
+        shift
+        ;;
+    esac
+done
+
+file_names=()
+for command_name in "${command_names[@]}"
+do
+    path="$(which "$command_name" 2>/dev/null)"
+    if [ $? -ne 0 ] ; then
+        >&2 echo "Cannot find $command_name in PATH"
+        exit 1
+    else
+        file_names+=("$path")
+    fi
+done
+
+if [ ${#file_names[@]} -eq 1 ] ; then
+    printf '%s:\n' "${file_names[0]}"
+fi
+exec ldd "${options[@]}" "${file_names[@]}"
