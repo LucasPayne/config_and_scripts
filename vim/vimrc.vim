@@ -81,7 +81,8 @@ set noequalalways
 " COLUMNS=120 man
 " This is a script as I cannot figure out the right syntax, or if vim would
 " accept a form which allows environment variable setting.
-set keywordprg=man_120_columns
+"TODO: Get this to work also with vim :help.
+"set keywordprg=man_120_columns
 " Press enter after executing external keywordprg pages.
 nnoremap K K<cr>
 vnoremap K K<cr>
@@ -244,12 +245,40 @@ nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
 execute "set <M-n>=\en"
 nnoremap <silent> <M-n> :set number!<cr>
 
-" Go to tab
+" Tab metakeys.
 for index in [1,2,3,4,5,6,7,8,9]
     execute "set <M-".index.">=\e".index
+    " Go to tab
     execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
     execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+    " Move window to tab
+    execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
+    execute "tnoremap <silent> <M-w><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
 endfor
+" Move window to new tab.
+function! MoveCurrentWindowToNewTab(background)
+    let win_id = win_getid()
+    let buf_nr = bufnr()
+    let tabpage_nr = tabpagenr()
+    let number_of_windows = len(get(gettabinfo(tabpage_nr)[0], 'windows'))
+    execute "tab sbuf ".buf_nr
+    call win_execute(win_id, "close")
+    if a:background == 1
+        if number_of_windows > 1
+            " If there are more windows in this tab page,
+            " stay in the tab page. As there was more than one window, the
+            " tabpage should still be around.
+            "todo: Is there a function to go to a tab? Would prefer that to
+            "      normal-mode commands.
+            execute "normal! ".tabpage_nr."gt"
+        endif
+    endif
+endfunction
+nnoremap <silent> <M-w><M-t> :call MoveCurrentWindowToNewTab(0)<cr>
+tnoremap <silent> <M-w><M-t> <C-\><C-n>:call MoveCurrentWindowToNewTab(0)<cr>
+execute "set <M-T>=\eT"
+nnoremap <silent> <M-w><M-T> :call MoveCurrentWindowToNewTab(1)<cr>
+tnoremap <silent> <M-w><M-T> <C-\><C-n>:call MoveCurrentWindowToNewTab(1)<cr>
 
 " Create splits
 execute "set <M-\\>=\e\\"
