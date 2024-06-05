@@ -65,7 +65,7 @@ set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
 " set cursorline
-set number
+set nonumber
 set nuw=5
 set noswapfile
 set mouse=a
