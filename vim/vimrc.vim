@@ -288,10 +288,10 @@ function! MoveCurrentWindowToNewTab(background)
     endif
 endfunction
 nnoremap <silent> <M-w><M-t> :call MoveCurrentWindowToNewTab(0)<cr>
-tnoremap <silent> <M-w><M-t> <C-\><C-n>:call MoveCurrentWindowToNewTab(0)<cr>
+tnoremap <silent> <M-w><M-t> <cmd>call MoveCurrentWindowToNewTab(0)<cr>
 execute "set <M-T>=\eT"
 nnoremap <silent> <M-w><M-T> :call MoveCurrentWindowToNewTab(1)<cr>
-tnoremap <silent> <M-w><M-T> <C-\><C-n>:call MoveCurrentWindowToNewTab(1)<cr>
+tnoremap <silent> <M-w><M-T> <cmd>call MoveCurrentWindowToNewTab(1)<cr>
 
 " Create splits
 execute "set <M-\\>=\e\\"
@@ -789,9 +789,22 @@ tnoremap <M-w><M-k> <C-w>gt
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 nnoremap <M-w><M-j> gT
 nnoremap <M-w><M-k> gt
-" Open a terminal in the current window.
+" Open a terminal below.
+function! LowerTerminal()
+    if v:count == 0
+        let height = 18
+    else
+        let height = v:count
+    endif
+    execute "set termwinsize=".string(height)."x0"
+    botright terminal
+    set termwinsize=0x0
+endfunction
 execute "set <M-c>=\ec"
-nnoremap <silent> <M-c> :term ++curwin<cr>
+nnoremap <silent> <M-c> <cmd>call LowerTerminal()<cr>
+" Open a terminal in the current window.
+execute "set <M-C>=\eC"
+nnoremap <silent> <M-C> :term ++curwin<cr>
 nnoremap <silent> <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 
@@ -1185,4 +1198,3 @@ augroup END
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
-

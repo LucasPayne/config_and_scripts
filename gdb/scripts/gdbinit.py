@@ -54,7 +54,5 @@ def main():
     # Command to list user-defined commands (only those created through this python interface).
     gdb_define_command("user_commands", ["python print(USER_COMMANDS)"], [], "List user-defined commands created through the gdbinit.py python interface.")
 
-    gdb_define_command("foo", ["echo \"hi\""], [], "skibidi")
-
 main()
 
