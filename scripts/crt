@@ -1,4 +1,18 @@
-#!/bin/sh
+#!/bin/bash
+# cool-retro-term wrapper.
 
-exec cool-retro-term "$@"
+# Extend flags.
+# -f is the same as --fullscreen.
+new_args=()
+for arg in "$@"
+do
+    if [ "$arg" = "-f" ]
+    then
+        new_args+=("--fullscreen")
+    else
+        new_args+=("$arg")
+    fi
+done
+
+exec cool-retro-term "${new_args[@]}"
 

@@ -2,6 +2,33 @@
 " vimrc
 "--------------------------------------------------------------------------------/
 
+execute pathogen#infect()
+execute pathogen#helptags()
+function! PluginEnabled(plugin_name)
+    let l:path = expand("~")."/.vim/bundle/".a:plugin_name
+    return filereadable(l:path) || isdirectory(l:path)
+endfunction
+
+" Colors and syntax highlighting
+"    set colorscheme ...
+"    ...
+"<<<
+colorscheme solarized
+set background=dark
+hi LineNr ctermbg=None
+hi Normal ctermbg=None
+"hi Normal ctermfg=White
+"hi Comment ctermfg=Blue
+set enc=utf8
+set laststatus=0
+set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
+set statusline=⎯
+hi VertSplit ctermbg=0
+set signcolumn=auto
+hi SignColumn ctermbg=none
+" todo: Find a good unintrusive styling for thgis line.
+hi debugPC ctermbg=none
+">>>
 
 augroup filetype_qf
     autocmd!
@@ -73,8 +100,8 @@ set mouse=a
 set shm+=I
 set ignorecase
 set smartcase
-" set showtabline=2
-set showtabline=1
+"Buggy? started not working, hiding even with > 1 tab page. todo
+"set showtabline=1
 set splitright
 " Don't resize splits when closing a window.
 set noequalalways
@@ -88,8 +115,67 @@ set keywordprg=
 nnoremap K K<cr>
 vnoremap K K<cr>
 
-" Nice to have center-scroll when going to end of file.
+" Tab line
+" :help tabline
+" :help setting-tabline
+set showtabline=2
+set tabline=%!TabLine()
+function! TabLine()
+    let s = ''
+    for i in range(1, tabpagenr('$'))
+        " select the highlighting
+        if i == tabpagenr()
+            let s ..= '%#TabLineSel#'
+        else
+            let s ..= '%#TabLine#'
+        endif
 
+        " set the tab page number (for mouse clicks)
+        let s ..= '%' .. i .. 'T'
+
+        " the label is made by TabLabel()
+        let s ..= ' %{TabLabel(' .. i .. ')} '
+    endfor
+
+    " after the last tab fill with TabLineFill and reset tab page nr
+    let s ..= '%#TabLineFill#%T'
+
+    " right-align the label to close the current tab page
+    "if tabpagenr('$') > 1
+    "    let s ..= '%=%#TabLine#%999Xclose'
+    "endif
+
+    return s
+endfunction
+function TabLabel(n)
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    let buf = buflist[winnr - 1]
+    let buf_info = buf->getbufinfo()
+    let buf_type = getbufvar(buf, "&buftype", "")
+    let buf_name = bufname(buf)
+    let buf_basename = split(bufname(buf), '/')[-1]
+
+    "-Look for 'primary window'. This will try to find a regular open file.
+    if buf_type ==# "terminal"
+        let l:job_info = buf->term_getjob()->job_info()
+        return get(l:job_info, "cmd")[0]
+    elseif buf_type ==# "help"
+        return "[help ".buf_basename."]"
+    elseif buf_type ==# "quickfix"
+        return "[qf ".buf_basename."]"
+    else
+        return buf_basename
+    endif
+endfunction
+highlight clear TabLine
+highlight clear TabLineSel
+highlight clear TabLineFill
+highlight TabLine cterm=underline ctermfg=white ctermbg=black
+highlight TabLineSel cterm=underline ctermfg=black ctermbg=white
+highlight TabLineFill cterm=underline ctermfg=white ctermbg=black
+
+" Nice to have center-scroll when going to end of file.
 function! EndOfFileNavigate()
     if line('.') == line('$')
         " Already at the end. Go to insert new line.
@@ -306,16 +392,8 @@ nnoremap .! :execute "!".getline(".")<cr>
 ">>>
 
 " Plugins
-"    execute pathogen#infect()
 "    ...
 "<<<
-execute pathogen#infect()
-execute pathogen#helptags()
-function! PluginEnabled(plugin_name)
-    let l:path = expand("~")."/.vim/bundle/".a:plugin_name
-    return filereadable(l:path) || isdirectory(l:path)
-endfunction
-
 if PluginEnabled("vim-surround") == 1
     nmap s ys
 endif
@@ -411,26 +489,6 @@ endif
 
 ">>>
 
-" Colors and syntax highlighting
-"    set colorscheme ...
-"    ...
-"<<<
-colorscheme solarized
-set background=dark
-hi LineNr ctermbg=None
-hi Normal ctermbg=None
-"hi Normal ctermfg=White
-"hi Comment ctermfg=Blue
-set enc=utf8
-set laststatus=0
-set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
-set statusline=⎯
-hi VertSplit ctermbg=0
-set signcolumn=auto
-hi SignColumn ctermbg=none
-" todo: Find a good unintrusive styling for thgis line.
-hi debugPC ctermbg=none
-">>>
 
 " Cursor styles
 "    ...
