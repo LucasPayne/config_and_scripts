@@ -1,6 +1,8 @@
 "/--------------------------------------------------------------------------------
 " vimrc
 "--------------------------------------------------------------------------------/
+" debug...
+let g:loading_vimrc_state = 0
 
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -108,6 +110,15 @@ set keywordprg=
 " Press enter after executing external keywordprg pages.
 nnoremap K K<cr>
 vnoremap K K<cr>
+" H and L are useful in their default mappings, but I am very used to H and L
+" for ^ and $. So <M-H> and <M-L> are the originals.
+execute "set <M-H>=\eH"
+nnoremap <M-H> H
+execute "set <M-L>=\eL"
+nnoremap <M-L> L
+" Define M this way too for consistency.
+execute "set <M-M>=\eM"
+nnoremap <M-M> M
 
 " Tab line
 " :help tabline
@@ -135,9 +146,9 @@ function! TabLine()
     let s ..= '%#TabLineFill#%T'
 
     " right-align the label to close the current tab page
-    if tabpagenr('$') > 1
-        let s ..= '%=%#TabLine#%999Xclose'
-    endif
+    " if tabpagenr('$') > 1
+    "     let s ..= '%=%#TabLine#%999Xclose'
+    " endif
 
     return s
 endfunction
@@ -299,11 +310,11 @@ tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1<cr>
 " Preferring emacs logic (kill to start of line, regardless of insert region).
 function! EmacsKillToStartOfLine()
     if col(".") >= col("$") - 1
-        # At the end of line, kill the whole line.
+        " At the end of line, kill the whole line.
         normal! "_cc
     else
-        # Kill to the start of line.
-        # This does not include the character the cursor is on.
+        " Kill to the start of line.
+        " This does not include the character the cursor is on.
         normal! l"_d0
     endif
     startinsert
@@ -311,11 +322,11 @@ endfunction
 inoremap <silent> <C-u> <Esc>:call EmacsKillToStartOfLine()<cr>
 function! EmacsKillToEndOfLine()
     if col(".") == 1
-        # At the start of line, kill the whole line.
+        " At the start of line, kill the whole line.
         normal! "_cc
     else
-        # Kill to the end of line.
-        # This does not include the character the cursor is on.
+        " Kill to the end of line.
+        " This does not include the character the cursor is on.
         normal! l"_d$
     endif
     startinsert
@@ -433,6 +444,10 @@ nnoremap <silent> <M--> :sp<cr>
 " Be careful...
 " todo: Better than this. Popup, or general terminal, pager.
 nnoremap .! :execute "!".getline(".")<cr>
+
+" Scroll offset trick to make search navigation centered (auto-zz).
+" https://vim.fandom.com/wiki/Make_search_results_appear_in_the_middle_of_the_screen
+set scrolloff=5
 
 ">>>
 
@@ -874,7 +889,9 @@ nnoremap .B :call BreakpointsQuickfixSyncGdb()<cr>
 " ...
 "<<<
 
-function! VimTerminalHostStart()
+function! VimTermDeskInit()
+    call system("echo \"".g:loading_vimrc_state."\" > /tmp/vimrc_state")
+
     let g:terminal_host_primary_shell_buffer = term_start('bash', {
         \ 'term_name' : 'shell',
         \ 'curwin' : 1,
@@ -995,6 +1012,8 @@ function! GetNotesTextLinkUnderCursor()
     if filename =~# "^(.*)$"
         let cmd = "ns resolve ".filename[1:-2]." ".expand("%:p")
         let filename = systemlist(cmd)[0]
+        echo filename
+        return []
         if v:shell_error
             echoerr "ns resolve failed"
             return []
@@ -1307,6 +1326,7 @@ hi Normal ctermbg=white ctermfg=darkgrey
 
 function! TerminalWinOpenCommands()
     set wincolor=Window
+    setlocal scrolloff=0
 endfunction
 augroup TerminalWinOpen_augroup
     autocmd!
@@ -1315,3 +1335,6 @@ augroup END
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
+
+" debug...
+let g:loading_vimrc_state = 1

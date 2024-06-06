@@ -1,5 +1,3 @@
-source ~/.bash_profile
-
 setxkbmap us
 source $CONFIG_DIR/scripts/syncer_files/syncer-bash.sh
 

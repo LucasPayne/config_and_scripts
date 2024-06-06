@@ -1,8 +1,7 @@
 export SHELL=bash
-
 export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive
-export NOTES_REPO_DIR=~/drive/notes
+export NOTES_REPO_DIR=~/notes
 
 export SCREENDIR=~/.screen
 
