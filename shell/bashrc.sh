@@ -92,13 +92,13 @@ cursor_row () {
 cd ()
 {
     builtin cd "$@"
-    if [ ! -z "$VIMSHELL_ID" ] && [ ! -z "$VIMSHELL_PRIMARY_SHELL" ] ; then
-        vim --servername "$VIMSHELL_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
+    if [ ! -z "$TERMDESK_ID" ] && [ ! -z "$TERMDESK_PRIMARY_SHELL" ] ; then
+        vim --servername "$TERMDESK_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
     fi
     # Store the directory in the id temporary file.
     # This is used in vim, which otherwise can't access non-symlink-resolved paths.
-    if [ ! -z "$VIMSHELL_ID" ] ; then
-        pwd > $VIMSHELL_ID
+    if [ ! -z "$TERMDESK_ID" ] ; then
+        pwd > $TERMDESK_ID
     fi
 }
 #>>>
@@ -569,11 +569,6 @@ preview_git_log () {
 # Readline bindings
 #    ...
 #<<<
-
-# Shortcut to open vimshell session.
-# (Should do nothing if already in a vimshell.)
-bind -m vi-insert '"\ew": "\C-uvs\n"'
-bind -m vi-command '"\ew": "\C-uvs\n"'
 
 # Navigate forward
 #bind -m vi-command '"\el": "\C-u\C-lfzf_navigate './'\n"'

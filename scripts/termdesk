@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+#--------------------------------------------------------------------------------
+# termdesk
+#--------------------------------------------------------------------------------
+
+tempfile="$(tempfile 2>/dev/null)"
+export TERMDESK_ID="$tempfile"
+pwd > $TERMDESK_ID
+exec vimnewenv vim --servername "$TERMDESK_ID" -c "call VimTerminalHostStart()"

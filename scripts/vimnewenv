@@ -2,9 +2,6 @@
 #
 # Run a command but with vim's behaviour-changing environment variables unset.
 # This is necessary to run different vims inside of vim,
-# e.g. launching an emulator with nvim attached from a regular vimshell.
-# If this isn't done, for example, neovim would look for runtime files in vim's VIMRUNTIME,
-# leading to errors.
 
 unset MYVIMRC
 unset VIM

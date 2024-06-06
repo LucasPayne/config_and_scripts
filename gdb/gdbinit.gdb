@@ -7,11 +7,8 @@
 #--------------------------------------------------------------------------------
 # Basic settings.
 set print asm-demangle
-# todo:
-#     vimshell should work for parameter expansion.
-#     Turning this off for now as it confuses gdb.
-# https://stackoverflow.com/questions/8877969/why-does-gdb-start-a-new-shell-and-how-to-disable-this-behaviour
-set startup-with-shell off
+# Uncomment if using a strange SHELL.
+#set startup-with-shell off
 
 #--------------------------------------------------------------------------------
 # python.

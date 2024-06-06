@@ -72,9 +72,6 @@ set path=.,,
 filetype indent on
 filetype plugin on
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
-" Set shell to a normal shell.
-" Make sure not to call vimshell.
-set shell=bash
 " help :!
 "    On Unix the command normally runs in a non-interactive
 "    shell.  If you want an interactive shell to be used
@@ -831,7 +828,7 @@ function! VimTerminalHostStart()
     let g:terminal_host_primary_shell_buffer = term_start('bash', {
         \ 'term_name' : 'shell',
         \ 'curwin' : 1,
-        \ 'env' : { 'VIMSHELL_PRIMARY_SHELL' : '1' },
+        \ 'env' : { 'TERMDESK_PRIMARY_SHELL' : '1' },
         \ 'term_finish' : 'close'
         \ })
     let g:terminal_host_primary_shell_winid = win_getid(winnr())
@@ -1134,7 +1131,7 @@ endfunction
 
 function! CycleNotesFiles(yank_from_non_notes_file=0, tabnew=0)
     "let directory = getcwd()
-    let directory = readfile($VIMSHELL_ID)[0]
+    let directory = readfile($TERMDESK_ID)[0]
     let parts = split(directory, "/")
     let notes_files = []
     for i in range(len(parts))

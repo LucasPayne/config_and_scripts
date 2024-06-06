@@ -2,8 +2,8 @@
 #
 # Like xclip but for vim registers.
 
-if [ -z "$VIMSHELL_ID" ] ; then
-    >&2 echo "Not in a vimshell."
+if [ -z "$TERMDESK_ID" ] ; then
+    >&2 echo "Not in a termdesk."
     exit 1
 fi
 
@@ -23,5 +23,5 @@ tmp_file_path="$(mktemp)"
 echo $tmp_file_path
 printf '%s' "$data" > "$tmp_file_path"
 
-vim --servername "$VIMSHELL_ID" --remote-send '<C-w>:let @"=join(readfile("'"$tmp_file_path"'"), "\n")<cr>'
+vim --servername "$TERMDESK_ID" --remote-send '<C-w>:let @"=join(readfile("'"$tmp_file_path"'"), "\n")<cr>'
 

@@ -13,7 +13,6 @@ alias man='COLUMNS=120 man'
 alias .sb="source ~/.bashrc"
 # https://superuser.com/questions/1551566/why-does-sudo-env-path-path-do-anything-at-all
 alias sudo='sudo env PATH=$PATH'
-alias vs=vimshell
 alias stracee='strace 2>&1'
 alias gdb='gdb -q'
 alias ls="ls --color=auto"

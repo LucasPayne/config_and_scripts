@@ -1,6 +1,4 @@
-# Remember the normal shell so scripts can call that instead.
-export NORMAL_SHELL=bash
-export SHELL="$(realpath ~/config/scripts/vimshell)"
+export SHELL=/bin/bash
 
 export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive
