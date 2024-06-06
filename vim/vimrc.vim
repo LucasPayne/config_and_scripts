@@ -16,7 +16,6 @@ endfunction
 colorscheme solarized
 set background=dark
 hi LineNr ctermbg=None
-hi Normal ctermbg=None
 "hi Normal ctermfg=White
 "hi Comment ctermfg=Blue
 set enc=utf8

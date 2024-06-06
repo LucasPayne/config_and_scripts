@@ -1,6 +1,6 @@
 [Desktop Entry]
 Comment=Start up the terminal with a terminal "desktop environment"
-Exec=cool-retro-term --fullscreen -e screen -S cool-retro-term
+Exec=cool-retro-term --fullscreen -e termdesk
 GenericName=Terminal emulator
 Icon=cool-retro-term
 Name=Cool Retro Term terminal desktop
