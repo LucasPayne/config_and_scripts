@@ -366,12 +366,12 @@ let g:detail_view_active = 0
 function! ToggleDetailView()
     if g:detail_view_active == 0
         let g:detail_view_active = 1
-        set laststatus=0
-        set statusline=⎯
-    else
-        let g:detail_view_active = 0
         set laststatus=2
         set statusline=
+    else
+        let g:detail_view_active = 0
+        set laststatus=0
+        set statusline=⎯
     endif
 endfunction
 execute "set <M-r>=\er"
@@ -652,7 +652,19 @@ function! ToggleQuickFix()
         cclose
     endif
 endfunction
-nnoremap <space>w :call ToggleQuickFix()<cr>
+function! GoToQuickFix()
+    " https://stackoverflow.com/questions/11198382/how-to-create-a-key-map-to-open-and-close-the-quickfix-window-in-vim
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        botright copen
+        let l:quickfix_list_length = len(getqflist())
+        let l:quickfix_window_height = min([l:quickfix_list_length, 12])
+        execute "resize ".l:quickfix_window_height
+    else
+        cclose
+    endif
+endfunction
+"nnoremap <M-w><M-q> :call ToggleQuickFix()<cr>
+nnoremap <M-w><M-q> :call GoToQuickFix()<cr>
 
 " Global variable for access by quickfixtextfunc.
 let g:quickfix_callstack_frame_dicts = []
@@ -1127,10 +1139,10 @@ augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
     autocmd WinScrolled *.ns :call RefreshNotesTextLink()
-    autocmd Filetype notes nnoremap ./ :call NotesFollowLinkUnderCursor(0)<cr>
-    autocmd Filetype notes nnoremap <enter> :call NotesFollowLinkUnderCursor(0)<cr>
-    autocmd Filetype notes nnoremap .? :call NotesFollowLinkUnderCursor(1)<cr>
-    autocmd Filetype notes nnoremap >? :call NotesFollowLinkUnderCursor(1)<cr>
+    autocmd Filetype notes nnoremap <buffer> ./ :call NotesFollowLinkUnderCursor(0)<cr>
+    autocmd Filetype notes nnoremap <buffer> <enter> :call NotesFollowLinkUnderCursor(0)<cr>
+    autocmd Filetype notes nnoremap <buffer> .? :call NotesFollowLinkUnderCursor(1)<cr>
+    autocmd Filetype notes nnoremap <buffer> >? :call NotesFollowLinkUnderCursor(1)<cr>
     " It is convenient to not have to have notes open on only one vim.
     " Currently want this as keep switching between screen tabs, but each vim
     " should have a notes buffer anyway. It is nice to synchronize them.
@@ -1139,9 +1151,9 @@ augroup Notes
     autocmd CursorMoved *.ns :call RefreshMagicCardPreview()
     autocmd WinScrolled *.ns :call RefreshMagicCardPreview()
     autocmd ModeChanged *.ns :call RefreshMagicCardPreview()
-    autocmd Filetype notes vnoremap <silent> <space>m :call MultipleMagicCardPreviewOnSelection()<cr>
-    autocmd Filetype notes nnoremap <space>m V7j:call MultipleMagicCardPreviewOnSelection()<cr>:let g:is_viewing_magic_card_gallery=1<cr>8j
-    autocmd Filetype notes nnoremap <space>M kV7k:call MultipleMagicCardPreviewOnSelection()<cr>:let g:is_viewing_magic_card_gallery=1<cr>
+    autocmd Filetype notes vnoremap <buffer> <silent> <space>m :call MultipleMagicCardPreviewOnSelection()<cr>
+    autocmd Filetype notes nnoremap <buffer> <space>m V7j:call MultipleMagicCardPreviewOnSelection()<cr>:let g:is_viewing_magic_card_gallery=1<cr>8j
+    autocmd Filetype notes nnoremap <buffer> <space>M kV7k:call MultipleMagicCardPreviewOnSelection()<cr>:let g:is_viewing_magic_card_gallery=1<cr>
 augroup END
 
 function! YankNotesTextLink()
@@ -1278,6 +1290,8 @@ if exists("&cmdheight") == 1
 endif
 
 set wincolor=Window
+hi clear Window
+hi clear Normal
 hi Window ctermbg=0 ctermfg=white
 hi Normal ctermbg=white ctermfg=darkgrey
 
