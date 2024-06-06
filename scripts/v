@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO: Instead, open in a new vim and do the equivalent of the sent commands.
 if [ -z "$TERMDESK_ID" ] ; then
     echo "Not in a termdesk."
     exit 1

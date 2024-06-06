@@ -69,8 +69,10 @@ URxvt*background: rgba:0000/0000/0000/ffff
 !! black dark/light
 ! *color0: [95]#073642
 ! *color8: [95]#002b36
-*color0: #073642
-*color8: #002b36
+! *color0: #073642
+! *color8: #002b36
+*color0: #000000
+*color8: #000000
 
 !! red dark/light
 *color1: #dc322f

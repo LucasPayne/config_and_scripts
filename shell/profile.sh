@@ -1,4 +1,4 @@
-export SHELL=/bin/bash
+export SHELL=bash
 
 export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive

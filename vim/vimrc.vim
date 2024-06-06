@@ -299,9 +299,38 @@ tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1<cr>
 " emacs-style keybindings.
 " C-u by default kills to start of a line restricted to the insert region.
 " Preferring emacs logic (kill to start of line, regardless of insert region).
-inoremap <C-u> <Esc>"_d0I
-" Kill to end of line.
-inoremap <C-k> <Esc>l"_d$A
+function! EmacsKillToStartOfLine()
+    if col(".") >= col("$") - 1
+        # At the end of line, kill the whole line.
+        normal! "_cc
+    else
+        # Kill to the start of line.
+        # This does not include the character the cursor is on.
+        normal! l"_d0
+    endif
+    startinsert
+endfunction
+inoremap <silent> <C-u> <Esc>:call EmacsKillToStartOfLine()<cr>
+function! EmacsKillToEndOfLine()
+    if col(".") == 1
+        # At the start of line, kill the whole line.
+        normal! "_cc
+    else
+        # Kill to the end of line.
+        # This does not include the character the cursor is on.
+        normal! l"_d$
+    endif
+    startinsert
+endfunction
+inoremap <silent> <C-k> <Esc>:call EmacsKillToEndOfLine()<cr>
+" Add newline above.
+"For mapping Shift-Enter, see
+"https://stackoverflow.com/questions/16359878/how-to-map-shift-enter
+"todo: Not working
+"execute "set <M-O>=\eO"
+"inoremap <M-O> <Esc>O
+"execute "set <M-o>=\eo"
+"inoremap <M-o> <Esc>o
 
 function! ToggleFullscreen()
     if get(w:, 'is_fullscreen', 0) == 1
