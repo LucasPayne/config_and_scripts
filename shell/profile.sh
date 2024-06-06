@@ -35,3 +35,6 @@ export PATH="$(realpath ~/bin):$PATH"
 # Preferably this would be in source-highlight.conf, but that can't expand HOME.
 # (See info source-highlight)
 export SOURCE_HIGHLIGHT_DATADIR="$HOME/config/source-highlight/datadir"
+
+export GDB_DEV="$HOME/.gdb"
+

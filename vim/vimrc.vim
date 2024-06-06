@@ -1249,7 +1249,7 @@ if exists("&cmdheight") == 1
 endif
 
 set wincolor=Window
-hi Window ctermbg=black ctermfg=white
+hi Window ctermbg=0 ctermfg=white
 hi Normal ctermbg=white ctermfg=darkgrey
 
 function! TerminalWinOpenCommands()

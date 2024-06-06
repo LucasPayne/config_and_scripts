@@ -53,7 +53,7 @@ link_system_to_config()
     target="$(realpath -s "$1")"
     link_name="$2"
     # NOTE: -e generally checks if a file exists, but if it is a symlink, this checks the followed symlink.
-    if [ -e "$link_name" ] || [ -h "$line_name" ]
+    if [ -e "$link_name" ] || [ -h "$link_name" ]
     then
         # The file already exists on the system.
         if [ -h "$link_name" ] && [[ $(readlink -f "$link_name")/ = $HOME/config/* ]]

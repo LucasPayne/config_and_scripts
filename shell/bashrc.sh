@@ -13,17 +13,12 @@ stracev ()
     strace 2>&1 "$@" | less
 }
 
-export GDB_DEV="$(realpath ~/.gdb)"
-
 # Explicit terminfo needed for some reason, when using built-from-source ncurses.
 export TERMINFO=/lib/terminfo
-
 
 export LESS="-R --mouse --wheel-lines=3"
 #https://www.gnu.org/software/src-highlite/source-highlight.html#Introduction
 export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
-
-
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
