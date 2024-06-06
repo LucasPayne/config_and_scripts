@@ -12,18 +12,11 @@ if [ ! -t 1 ] ; then
     exec "$NORMAL_SHELL" "$@"
 fi
 
-# Don't open vimshell inside vim. It is assumed the parent vim is a vimshell.
-# TODO: More robust, better heuristic or even exact. e.g. currently vimshell detected in the terminal which spawned a new terminal emulator.
-inside_vim=0
-for pid in $(ppids) ; do
-    if [ -r /proc/$pid/exe ] ; then
-        exe="$(readlink -f /proc/$pid/exe)"
-        if [ "$exe" = "$(which vim)" ] ; then
-            inside_vim=1
-        fi
-    fi
-done
-if [[ $inside_vim -eq 1 ]] ; then
+# Don't open vimshell inside vim.
+# NOTE: This assumes that $VIM is defined only when inside vim.
+#       If that changes, this logic must be updated.
+if [ -z "$VIM" ]
+then
     exec "$NORMAL_SHELL" "$@"
 fi
 

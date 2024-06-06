@@ -154,12 +154,22 @@ function TabLabel(n)
     let buf_info = buf->getbufinfo()
     let buf_type = getbufvar(buf, "&buftype", "")
     let buf_name = bufname(buf)
-    let buf_basename = split(bufname(buf), '/')[-1]
+    if buf_name == ""
+        let buf_basename = "*empty*"
+    else
+        let buf_basename = split(buf_name, '/')[-1]
+    endif
 
-    "-Look for 'primary window'. This will try to find a regular open file.
+    "todo: Look for 'primary window'. This will try to find a regular open file.
+    
     if buf_type ==# "terminal"
         let l:job_info = buf->term_getjob()->job_info()
-        return get(l:job_info, "cmd")[0]
+        let cmd = get(l:job_info, "cmd")
+        if len(cmd) == 0
+            return "[empty terminal]"
+        else
+            return cmd[0]
+        endif
     elseif buf_type ==# "help"
         return "[help ".buf_basename."]"
     elseif buf_type ==# "quickfix"
