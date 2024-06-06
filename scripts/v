@@ -67,9 +67,16 @@ if [[ $opt_nostdin -ne 1 ]] ; then
             done
         else
             # Open a temporary file from stdin.
-            temporary_filename=$(tempfile 2>/dev/null)
-            cat > $temporary_filename
-            files+=("$temporary_filename")
+            if [[ "$(readlink -f /proc/self/fd/0 2>/dev/null)" = "/dev/null" ]] ; then
+                # Don't read from /dev/null.
+                # xargs, for example, will launch this script with /dev/null on stdin.
+                # (Is there a cleaner/idiomatic way to consider this?)
+                :
+            else
+                temporary_filename=$(tempfile 2>/dev/null)
+                cat > $temporary_filename
+                files+=("$temporary_filename")
+            fi
         fi
     fi
 fi
