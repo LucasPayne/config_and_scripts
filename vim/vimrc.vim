@@ -19,9 +19,7 @@ hi LineNr ctermbg=None
 "hi Normal ctermfg=White
 "hi Comment ctermfg=Blue
 set enc=utf8
-set laststatus=0
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
-set statusline=⎯
 hi VertSplit ctermbg=0
 set signcolumn=auto
 hi SignColumn ctermbg=none
@@ -130,20 +128,20 @@ function! TabLine()
         let s ..= '%' .. i .. 'T'
 
         " the label is made by TabLabel()
-        let s ..= ' %{TabLabel(' .. i .. ')} '
+        let s ..= ' %{BufferLabel(' .. i .. ')} '
     endfor
 
     " after the last tab fill with TabLineFill and reset tab page nr
     let s ..= '%#TabLineFill#%T'
 
     " right-align the label to close the current tab page
-    "if tabpagenr('$') > 1
-    "    let s ..= '%=%#TabLine#%999Xclose'
-    "endif
+    if tabpagenr('$') > 1
+        let s ..= '%=%#TabLine#%999Xclose'
+    endif
 
     return s
 endfunction
-function TabLabel(n)
+function BufferLabel(n)
     let buflist = tabpagebuflist(a:n)
     let winnr = tabpagewinnr(a:n)
     let buf = buflist[winnr - 1]
@@ -362,17 +360,29 @@ endfunction
 execute "set <M-f>=\ef"
 nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
 
-let g:detail_view_active = 0
-function! ToggleDetailView()
-    if g:detail_view_active == 0
+function! Chungus(n)
+    return string(a:n)
+endfunction
+let g:detail_view_active = 1
+function! SetDetailView(val)
+    if a:val == 1
         let g:detail_view_active = 1
         set laststatus=2
-        set statusline=
-    else
+        set statusline=%{BufferLabel(bufnr())}
+    elseif a:val == 0
         let g:detail_view_active = 0
         set laststatus=0
         set statusline=⎯
     endif
+endfunction
+call SetDetailView(g:detail_view_active)
+function! ToggleDetailView()
+    if g:detail_view_active == 0
+        call SetDetailView(1)
+    else
+        call SetDetailView(0)
+    endif
+    call SetDetailView(g:detail_view_active)
 endfunction
 execute "set <M-r>=\er"
 nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
@@ -653,14 +663,14 @@ function! ToggleQuickFix()
     endif
 endfunction
 function! GoToQuickFix()
-    " https://stackoverflow.com/questions/11198382/how-to-create-a-key-map-to-open-and-close-the-quickfix-window-in-vim
-    if empty(filter(getwininfo(), 'v:val.quickfix'))
+    let quickfixes = filter(getwininfo(), 'v:val.quickfix')
+    if empty(quickfixes)
         botright copen
         let l:quickfix_list_length = len(getqflist())
         let l:quickfix_window_height = min([l:quickfix_list_length, 12])
         execute "resize ".l:quickfix_window_height
     else
-        cclose
+        call win_gotoid(quickfixes[0].winid)
     endif
 endfunction
 "nnoremap <M-w><M-q> :call ToggleQuickFix()<cr>

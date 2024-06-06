@@ -20,8 +20,6 @@ fi
 # Want to copy completely general text.
 # Just using a tmp file.
 tmp_file_path="$(mktemp)"
-echo $tmp_file_path
 printf '%s' "$data" > "$tmp_file_path"
 
 vim --servername "$TERMDESK_ID" --remote-send '<C-w>:let @"=join(readfile("'"$tmp_file_path"'"), "\n")<cr>'
-
