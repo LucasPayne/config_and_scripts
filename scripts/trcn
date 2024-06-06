@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# Convert colons into newlines.
+
+exec tr ':' '\n'
