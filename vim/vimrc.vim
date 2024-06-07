@@ -1,8 +1,6 @@
 "/--------------------------------------------------------------------------------
 " vimrc
 "--------------------------------------------------------------------------------/
-" debug...
-let g:loading_vimrc_state = 0
 
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -22,7 +20,6 @@ hi LineNr ctermbg=None
 "hi Comment ctermfg=Blue
 set enc=utf8
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
-hi VertSplit ctermbg=0
 set signcolumn=auto
 hi SignColumn ctermbg=none
 " todo: Find a good unintrusive styling for thgis line.
@@ -119,6 +116,18 @@ nnoremap <M-L> L
 " Define M this way too for consistency.
 execute "set <M-M>=\eM"
 nnoremap <M-M> M
+
+" Project browser.
+function! ProjectBrowser()
+    NERDTree
+endfunction
+function! ToggleProjectBrowser()
+    NERDTreeToggle
+endfunction
+execute "set <M-a>=\ea"
+nnoremap <silent> <M-a> :call ProjectBrowser()<cr>
+execute "set <M-A>=\eA"
+nnoremap <silent> <M-A> :call ToggleProjectBrowser()<cr>
 
 " Tab line
 " :help tabline
@@ -371,9 +380,6 @@ endfunction
 execute "set <M-f>=\ef"
 nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
 
-function! Chungus(n)
-    return string(a:n)
-endfunction
 let g:detail_view_active = 1
 function! SetDetailView(val)
     if a:val == 1
@@ -890,8 +896,6 @@ nnoremap .B :call BreakpointsQuickfixSyncGdb()<cr>
 "<<<
 
 function! VimTermDeskInit()
-    call system("echo \"".g:loading_vimrc_state."\" > /tmp/vimrc_state")
-
     let g:terminal_host_primary_shell_buffer = term_start('bash', {
         \ 'term_name' : 'shell',
         \ 'curwin' : 1,
@@ -1333,8 +1337,8 @@ augroup TerminalWinOpen_augroup
     autocmd TerminalWinOpen * call TerminalWinOpenCommands()
 augroup END
 
+hi clear VertSplit
+hi VertSplit ctermbg=0 ctermfg=darkgrey
+
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
-
-" debug...
-let g:loading_vimrc_state = 1

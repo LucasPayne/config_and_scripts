@@ -7,4 +7,4 @@
 tempfile="$(tempfile 2>/dev/null)"
 export TERMDESK_ID="$tempfile"
 pwd > $TERMDESK_ID
-vimnewenv vim --servername "$TERMDESK_ID" -c "call VimTermDeskInit()"
+vimnewenv screen -S termdesk vim --servername "$TERMDESK_ID" -c "call VimTermDeskInit()"
