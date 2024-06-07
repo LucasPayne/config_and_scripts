@@ -36,6 +36,8 @@ clients = []
 blocks = []
 cur_lines = []
 lines = clients_file.readlines()
+# remove comments
+lines = [line for line in lines if not line.startswith("#")]
 for (i, line) in enumerate(lines):
 	if line.strip() == "":
 		# Found separator

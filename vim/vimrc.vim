@@ -232,6 +232,16 @@ function! UnsetAltKeyMappings()
     # Allow escape
     execute "set <M-j>=\ej"
     execute "set <M-k>=\ek"
+    # Allow tab switching
+    execute "set <M-1>=\e1"
+    execute "set <M-2>=\e2"
+    execute "set <M-3>=\e3"
+    execute "set <M-4>=\e4"
+    execute "set <M-5>=\e5"
+    execute "set <M-6>=\e6"
+    execute "set <M-7>=\e7"
+    execute "set <M-8>=\e8"
+    execute "set <M-9>=\e9"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -417,7 +427,8 @@ nnoremap .! :execute "!".getline(".")<cr>
 
 " Scroll offset trick to make search navigation centered (auto-zz).
 " https://vim.fandom.com/wiki/Make_search_results_appear_in_the_middle_of_the_screen
-set scrolloff=5
+"todo: Disable this in non-file.
+"set scrolloff=5
 
 ">>>
 
@@ -1271,16 +1282,16 @@ if exists("&cmdheight") == 1
         " Note: cmdheight is "global or local to tab page", according to :help cmdheight.
         if &cmdheight == g:cmdheight_default
             for tab in gettabinfo()
-                call win_execute(get(tab, "windows")[0], "set cmdheight=".g:cmdheight_expanded)
+                call win_execute(get(tab, "windows")[0], "setlocal cmdheight=".g:cmdheight_expanded)
             endfor
         else
             for tab in gettabinfo()
-                call win_execute(get(tab, "windows")[0], "set cmdheight=".g:cmdheight_default)
+                call win_execute(get(tab, "windows")[0], "setlocal cmdheight=".g:cmdheight_default)
             endfor
         endif
     endfunction
-    nnoremap <M-w><M-c> :call ToggleCmdHeight()<cr>
-    tnoremap <M-w><M-c> <C-\><C-n>:call ToggleCmdHeight()<cr>
+    nnoremap <silent> <M-w><M-c> :call ToggleCmdHeight()<cr>
+    tnoremap <silent> <M-w><M-c> <C-\><C-n>:call ToggleCmdHeight()<cr>
 endif
 
 set wincolor=Window
@@ -1300,6 +1311,17 @@ augroup END
 
 hi clear VertSplit
 hi VertSplit ctermbg=0 ctermfg=darkgrey
+
+" register "+ paste
+" paste on new line
+nnoremap <silent> <M-p> :normal! o<cr>"+p
+" paste at cursor
+nnoremap <silent> <M-P> "+p
+" register "+ yank
+" yank line
+nnoremap <silent> <M-y> :let @+ = getline(".")<cr>
+" yank selection
+vnoremap <M-y> "+y
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
