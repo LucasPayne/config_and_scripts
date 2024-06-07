@@ -1,6 +1,7 @@
 "/--------------------------------------------------------------------------------
 " vimrc
 "--------------------------------------------------------------------------------/
+let g:vimrc_loaded_state = "start"
 
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -109,12 +110,9 @@ nnoremap K K<cr>
 vnoremap K K<cr>
 " H and L are useful in their default mappings, but I am very used to H and L
 " for ^ and $. So <M-H> and <M-L> are the originals.
-execute "set <M-H>=\eH"
 nnoremap <M-H> H
-execute "set <M-L>=\eL"
 nnoremap <M-L> L
 " Define M this way too for consistency.
-execute "set <M-M>=\eM"
 nnoremap <M-M> M
 
 " Project browser.
@@ -124,9 +122,7 @@ endfunction
 function! ToggleProjectBrowser()
     NERDTreeToggle
 endfunction
-execute "set <M-a>=\ea"
 nnoremap <silent> <M-a> :call ProjectBrowser()<cr>
-execute "set <M-A>=\eA"
 nnoremap <silent> <M-A> :call ToggleProjectBrowser()<cr>
 
 " Tab line
@@ -217,29 +213,28 @@ nnoremap <silent> G :call EndOfFileNavigate()<cr>
 " If terminal is sending modifiers as esc-key.
 " For some reason, the below works!
 " TODO: Do this without autocmds, setlocal not working?
-let g:alphabet = "abcdefghijklmnopqrstuvwxyz"
+let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-"
 function! ResetAltKeyMappings()
-    if &buftype != "terminal"
-        for char in g:alphabet
-            execute "setlocal <M-".char.">=\e".char
-        endfor
-    else
-        for char in g:alphabet
-            execute "setlocal <M-".char.">="
-        endfor
-    endif
+    call system("echo reset >> /tmp/vimlog")
+    for char in g:alphabet
+        execute "set <M-".char.">=\e".char
+    endfor
 endfunction
 function! UnsetAltKeyMappings()
+    call system("echo unset >> /tmp/vimlog")
     for char in g:alphabet
-        execute "setlocal <M-".char.">="
+        execute "set <M-".char.">="
     endfor
+    # OVERRIDE
+    # Allow these to act normally as they are detected in terminal mode.
     # Allow universal navigation modifier <M-w>.
-    execute "setlocal <M-w>=\ew"
+    execute "set <M-w>=\ew"
+    # Allow escape
+    execute "set <M-j>=\ej"
+    execute "set <M-k>=\ek"
 endfunction
-autocmd TerminalOpen * silent! call UnsetAltKeyMappings()
-autocmd WinEnter * silent! call ResetAltKeyMappings()
-autocmd TabEnter * silent! call ResetAltKeyMappings()
-autocmd BufEnter * silent! call ResetAltKeyMappings()
+autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
+autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
 
 ">>>
 
@@ -266,39 +261,20 @@ nnoremap gk gt
 " Source selection
 vnoremap <leader>S :<C-u>@*<cr>
 " Quick write
-execute "set <M-s>=\es"
 nnoremap <M-s> :w<cr>
 inoremap <M-s> <Esc>:w<cr>
-" Go to normal mode.
-inoremap <M-w> <Esc>
-tnoremap <M-w> <C-\><C-n>
 " Quick navigate windows
-execute "set <M-h>=\eh"
 nnoremap <M-h> <C-w>h
-nnoremap <M-w><M-h> <C-w>h
-tnoremap <M-w><M-h> <C-w>h
-execute "set <M-j>=\ej"
 nnoremap <M-j> <C-w>j
-nnoremap <M-w><M-j> <C-w>j
-tnoremap <M-w><M-j> <C-w>j
-execute "set <M-k>=\ek"
 nnoremap <M-k> <C-w>k
-nnoremap <M-w><M-k> <C-w>k
-tnoremap <M-w><M-k> <C-w>k
-execute "set <M-l>=\el"
 nnoremap <M-l> <C-w>l
-nnoremap <M-w><M-l> <C-w>l
-tnoremap <M-w><M-l> <C-w>l
 " Quick close window.
-execute "set <M-x>=\ex"
 nnoremap <silent> <M-w><M-x> :q<cr>
 nnoremap <silent> <M-x> :q<cr>
 tnoremap <silent> <M-w><M-x> :q<cr>
 " Quick new empty tab.
-execute "set <M-t>=\et"
-nnoremap <silent> <M-w><M-t> :tabnew<cr>
-nnoremap <silent> <M-t> :tabnew<cr>
-tnoremap <silent> <M-w><M-t> :tabnew<cr>
+nnoremap <silent> <M-w><M-n> :tabnew<cr>
+tnoremap <silent> <M-w><M-n> :tabnew<cr>
 " Copy file path
 nnoremap .cp :let @" = expand("%:p")<cr>
 " Copy file directory
@@ -306,9 +282,6 @@ nnoremap .cd :let @" = expand("%:p:h")<cr>
 " Move to first tab.
 nnoremap .q :tabm 0<cr>
 " Move tab left and right.
-execute "set <M-w>=\ew"
-execute "set <M-.>=\e."
-execute "set <M-,>=\e,"
 nnoremap <silent> <M-w><M-.> :tabm +1<cr>
 nnoremap <silent> <M-w><M-,> :tabm -1<cr>
 " todo: Shouldn't leave the terminal tab entered in command mode.
@@ -345,9 +318,7 @@ inoremap <silent> <C-k> <Esc>:call EmacsKillToEndOfLine()<cr>
 "For mapping Shift-Enter, see
 "https://stackoverflow.com/questions/16359878/how-to-map-shift-enter
 "todo: Not working
-"execute "set <M-O>=\eO"
 "inoremap <M-O> <Esc>O
-"execute "set <M-o>=\eo"
 "inoremap <M-o> <Esc>o
 
 function! ToggleFullscreen()
@@ -377,7 +348,6 @@ function! ToggleFullscreen()
         let w:is_fullscreen_old_winid = l:old_winid
     endif
 endfunction
-execute "set <M-f>=\ef"
 nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
 
 let g:detail_view_active = 1
@@ -401,14 +371,11 @@ function! ToggleDetailView()
     endif
     call SetDetailView(g:detail_view_active)
 endfunction
-execute "set <M-r>=\er"
 nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
-execute "set <M-n>=\en"
 nnoremap <silent> <M-n> :set number!<cr>
 
 " Tab metakeys.
 for index in [1,2,3,4,5,6,7,8,9]
-    execute "set <M-".index.">=\e".index
     " Go to tab
     execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
     execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
@@ -437,14 +404,11 @@ function! MoveCurrentWindowToNewTab(background)
 endfunction
 nnoremap <silent> <M-w><M-t> :call MoveCurrentWindowToNewTab(0)<cr>
 tnoremap <silent> <M-w><M-t> <cmd>call MoveCurrentWindowToNewTab(0)<cr>
-execute "set <M-T>=\eT"
 nnoremap <silent> <M-w><M-T> :call MoveCurrentWindowToNewTab(1)<cr>
 tnoremap <silent> <M-w><M-T> <cmd>call MoveCurrentWindowToNewTab(1)<cr>
 
 " Create splits
-execute "set <M-\\>=\e\\"
 nnoremap <silent> <M-\> :vsp<cr>
-execute "set <M-->=\e-"
 nnoremap <silent> <M--> :sp<cr>
 
 " Be careful...
@@ -885,8 +849,7 @@ function! BreakpointsQuickfixSyncGdb()
     call BreakpointsQuickfix()
 endfunction
 
-nnoremap .2 :call BreakpointsQuickfixSyncGdb()<cr>
-nnoremap .B :call BreakpointsQuickfixSyncGdb()<cr>
+nnoremap <M-d><M-B> :call BreakpointsQuickfixSyncGdb()<cr>
 
 
 ">>>
@@ -918,10 +881,10 @@ function! CtrlCHandler()
     endif
 endfunction
 
-tnoremap <C-j><C-k> <C-\><C-n>
+tnoremap <M-j><M-k> <C-\><C-n>
 tnoremap <M-w><M-w> <C-\><C-n>
-tnoremap <M-w><M-j> <C-w>gT
-tnoremap <M-w><M-k> <C-w>gt
+tnoremap <M-w><M-j> <C-\><C-n>:normal! gT<cr>
+tnoremap <M-w><M-k> <C-\><C-n>:normal! gt<cr>
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 nnoremap <M-w><M-j> gT
 nnoremap <M-w><M-k> gt
@@ -936,11 +899,9 @@ function! LowerTerminal()
     botright terminal
     set termwinsize=0x0
 endfunction
-execute "set <M-c>=\ec"
 nnoremap <silent> <M-c> <cmd>call LowerTerminal()<cr>
 " Open a terminal in the current window.
-execute "set <M-C>=\eC"
-nnoremap <silent> <M-C> :term ++curwin<cr>
+nnoremap <silent> <M-C> :set termwinsize=0x0 \| term ++curwin<cr>
 nnoremap <silent> <M-q> :call GoToPrimaryShell()<cr>
 ">>>
 
@@ -1342,3 +1303,5 @@ hi VertSplit ctermbg=0 ctermfg=darkgrey
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
+
+let g:vimrc_loaded_state = "finished"
