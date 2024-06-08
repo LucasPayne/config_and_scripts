@@ -58,7 +58,7 @@ link_system_to_config()
         # The file already exists on the system.
         if [ -h "$link_name" ] && [[ $(readlink -f "$link_name")/ = $HOME/config/* ]]
         then
-            # Overwrite without asking if the existing file is a symlink into this repo.
+            # If the existing file is a symlink into this repo, overwrite without asking
             rm -r "$link_name"
             create_link "$target" "$link_name"
             echo "Updated link in system: $link_name ---> $target"
@@ -214,15 +214,7 @@ echo
 apply_xdg_settings()
 {
     local desktop_file_dirs=("/usr/share/applications" "/usr/local/share/applications" "~/.local/share/applications")
-    # CONFIGURATION
-    #--------------------------------------------------------------------------------
-    local web_browser_priorities=(
-        firefox
-        qutebrowser
-        org.qutebrowser.qutebrowser
-        google-chrome
-    )
-    #--------------------------------------------------------------------------------
+
     desktop_file_exists()
     {
         local desktop_basename="$1"
@@ -237,7 +229,7 @@ apply_xdg_settings()
 
     echo "Applying XDG settings..."
     local did_set_web_browser=0
-    for app in "${web_browser_priorities[@]}"
+    for app in "${opt_web_browser_priorities[@]}"
     do
         if desktop_file_exists "$app"
         then
@@ -248,7 +240,7 @@ apply_xdg_settings()
         fi
     done
     if [ $did_set_web_browser -eq 0 ] ; then
-        echo "Couldn't find any of the web browser priorities: (${web_browser_priorities[@]})"
+        echo "Couldn't find any of the web browser priorities: (${opt_web_browser_priorities[@]})"
         echo "Letting the system  use its own default web browser."
     fi
 }
