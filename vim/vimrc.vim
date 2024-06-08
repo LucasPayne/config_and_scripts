@@ -272,7 +272,6 @@ vnoremap H ^
 vnoremap L $
 onoremap H ^
 onoremap L $
-nnoremap .ev :edit ~/.vimrc<cr>
 nnoremap .sv :source ~/.vimrc<cr>
 inoremap <tab> <space><space><space><space>
 nnoremap j gj
@@ -1353,6 +1352,12 @@ function! SystemPasteLine()
     endif
 endfunction
 nnoremap <silent> <M-p> :call SystemPasteLine()<cr>
+" wipe the selection's lines then paste a line.
+" Note that this doesn't care about column-level selection precision, it just
+" wipes all of the lines which the selection spans.
+" Select the line at the end so the '< and '> marks are intuitively reset to
+" the 'collapsed' selection.
+vnoremap <silent> <M-p> <C-c>'<V'>"_c<Esc>:call SystemPasteLine()<cr>V<Esc>
 " paste in terminal job mode
 tnoremap <silent> <M-p> <C-w>"+
 " paste at cursor
@@ -1385,5 +1390,34 @@ source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
 " center cursor after jumping
 nnoremap <C-o> <C-o>zz
 nnoremap <C-i> <C-i>zz
+
+" Select the last inserted text.
+"todo: Seems to not be accurate.
+"Also, maybe trimming whitespace would be intuitive.
+nnoremap <M-v><M-i> `[v`]
+
+" VimTerminalEditor
+" Called remotely by the vim-terminal-editor script which can be set to
+" EDITOR/VISUAL/GIT_EDITOR, etc.
+function! VimTerminalEditor(filename, requesting_pid)
+    execute "tabnew ".a:filename
+    let b:is_vim_terminal_editor = 1
+    " Pass this onto the buffer so it can use it on autocmd.
+    " todo: Can autocmds easily contain evaluating expressions at definition time?
+    let b:vim_terminal_editor_requesting_pid = a:requesting_pid
+    augroup VimTerminalEditor
+        autocmd!
+        " Saving finishes the edit.
+        autocmd BufWritePre,BufWinLeave,WinClosed *
+                  \   if get(b:, 'is_vim_terminal_editor', 0) == 1
+                  \ |     write
+                  \ |     call system("kill -SIGUSR1 ".b:vim_terminal_editor_requesting_pid)
+                  \ |     quit!
+                  \ | endif
+    augroup END
+endfunction
+
+" Tags
+nnoremap <C-[> <C-t>
 
 let g:vimrc_loaded_state = "finished"

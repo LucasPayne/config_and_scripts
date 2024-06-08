@@ -1,12 +1,23 @@
 #!/bin/bash
 
+# todo: Can trap INT and tell vim that it is aborting the job.
+#       Or rather, trap exit handlers. Then vim can e.g. close the stuff it is providing for the edit.
+
 if [ -z "$VIMSERVER_ID" ]
 then
     # Fall back to vim.
     exec vim "$@"
 fi
 
-id="$VIMSERVER_ID"
 filename="$1"
 
-less "$filename"
+# https://stackoverflow.com/questions/8337472/bash-how-should-i-idle-until-i-get-a-signal
+sleep infinity & SLEEPER_PID=$!
+trap 'kill $SLEEPER_PID' USR1
+
+requesting_pid=$$
+vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:call VimTerminalEditor("'"$filename"'", '$requesting_pid')<cr>'
+
+# Wait the sleeper process to be killed by a USR1 signal.
+wait
+echo done

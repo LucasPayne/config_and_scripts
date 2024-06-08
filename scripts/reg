@@ -22,4 +22,4 @@ fi
 tmp_file_path="$(mktemp)"
 printf '%s' "$data" > "$tmp_file_path"
 
-vim --servername "$TERMDESK_ID" --remote-send '<C-w>:let @"=join(readfile("'"$tmp_file_path"'"), "\n")<cr>'
+vim --servername "$TERMDESK_ID" --remote-send '<C-\><C-n>:let @"=join(readfile("'"$tmp_file_path"'"), "\n")<cr>'

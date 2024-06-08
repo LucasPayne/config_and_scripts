@@ -83,7 +83,7 @@ fi
 
 # Optionally tell the vim server to cd to the current working directory.
 if [[ $opt_cd -eq 1 ]] ; then
-    vim --servername "$VIMSERVER_ID" --remote-send '<C-w>:cd '"$(pwd)"'<cr>'
+    vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
 fi
 
 # Send the necessary commands to the vim server.
@@ -104,5 +104,5 @@ for file in ${files[*]} ; do
         # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
         path="$(realpath "$file")"
     fi
-    vim --servername "$VIMSERVER_ID" --remote-send '<C-w>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+    vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
 done
