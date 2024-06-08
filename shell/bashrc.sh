@@ -104,6 +104,10 @@ cd ()
 # (e.g. vim is free to create a new tab, to overlay the shell's terminal, or use a popup, etc.)
 export VISUAL=vim-terminal-editor
 export EDITOR=vim-terminal-editor
+# Set the editor for git.
+# This could also be set with
+#    git config --global core.editor "vim-terminal-editor"
+export GIT_EDITOR=vim-terminal-editor
 
 #>>>
 
