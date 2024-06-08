@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z "$TERMDESK_ID" ]
+then
+    # Fall back to vim.
+    exec vim "$@"
+fi
+
+id="$TERMDESK_ID"
+filename="$1"
+
+less "$filename"

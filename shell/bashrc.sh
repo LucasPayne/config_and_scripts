@@ -1,4 +1,5 @@
 setxkbmap us
+
 source $CONFIG_DIR/scripts/syncer_files/syncer-bash.sh
 
 source "$CONFIG_DIR/scripts/fzf_tools/fzf_tools.sh"
@@ -82,7 +83,7 @@ cursor_row () {
 
 #>>>
 
-# Vim server
+# termdesk
 #    ...
 #<<<
 cd ()
@@ -97,6 +98,13 @@ cd ()
         pwd > $TERMDESK_ID
     fi
 }
+
+# edit-and-execute-command (C-x C-e emacs, v vi)
+# detect if in a termdesk. If so, tell it to integrate the editing buffer
+# (e.g. termdesk is free to create a new tab, to overlay the shell's terminal, or use a popup, etc.)
+export VISUAL=termdesk-editor
+export EDITOR=termdesk-editor
+
 #>>>
 
 # Navigation
