@@ -68,6 +68,8 @@ syntax on
 set path=.,,
 filetype indent on
 filetype plugin on
+" Allow modified buffers to be hidden.
+set hidden
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " help :!
 "    On Unix the command normally runs in a non-interactive
@@ -225,14 +227,14 @@ function! UnsetAltKeyMappings()
     for char in g:alphabet
         execute "set <M-".char.">="
     endfor
-    # OVERRIDE
-    # Allow these to act normally as they are detected in terminal mode.
-    # Allow universal navigation modifier <M-w>.
+    " OVERRIDE
+    " Allow these to act normally as they are detected in terminal mode.
+    " Allow universal navigation modifier <M-w>.
     execute "set <M-w>=\ew"
-    # Allow escape
+    " Allow escape
     execute "set <M-j>=\ej"
     execute "set <M-k>=\ek"
-    # Allow tab switching
+    " Allow tab switching
     execute "set <M-1>=\e1"
     execute "set <M-2>=\e2"
     execute "set <M-3>=\e3"
@@ -242,6 +244,11 @@ function! UnsetAltKeyMappings()
     execute "set <M-7>=\e7"
     execute "set <M-8>=\e8"
     execute "set <M-9>=\e9"
+    " Allow navigation
+    execute "set <M-H>=\eH"
+    execute "set <M-J>=\eJ"
+    execute "set <M-K>=\eK"
+    execute "set <M-L>=\eL"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -270,18 +277,29 @@ nnoremap gj gT
 nnoremap gk gt
 " Source selection
 vnoremap <leader>S :<C-u>@*<cr>
-" Quick write
+" Write
 nnoremap <M-s> :w<cr>
 inoremap <M-s> <Esc>:w<cr>
-" Quick navigate windows
+" Navigate windows
 nnoremap <M-h> <C-w>h
 nnoremap <M-j> <C-w>j
 nnoremap <M-k> <C-w>k
 nnoremap <M-l> <C-w>l
-" Quick close window.
-nnoremap <silent> <M-w><M-x> :q<cr>
-nnoremap <silent> <M-x> :q<cr>
-tnoremap <silent> <M-w><M-x> :q<cr>
+" Use shift when in job mode.
+" M-h,j,k,l are useful for bash prompt mappings,
+" and M-H,J,K,L are less likely to be used by terminal programs.
+tnoremap <M-H> <C-w>h
+tnoremap <M-J> <C-w>j
+tnoremap <M-K> <C-w>k
+tnoremap <M-L> <C-w>l
+" Close window
+nnoremap <silent> <M-w><M-x> :quit<cr>
+nnoremap <silent> <M-x> :quit<cr>
+tnoremap <silent> <M-w><M-x> :quit<cr>
+" Close tab
+nnoremap <silent> <M-w><M-X> :tabclose<cr>
+nnoremap <silent> <M-X> :tabclose<cr>
+tnoremap <silent> <M-w><M-X> :tabclose<cr>
 " Quick new empty tab.
 nnoremap <silent> <M-w><M-n> :tabnew<cr>
 tnoremap <silent> <M-w><M-n> :tabnew<cr>
@@ -1297,8 +1315,10 @@ endif
 set wincolor=Window
 hi clear Window
 hi clear Normal
+"hi Window ctermbg=0 ctermfg=white
 hi Window ctermbg=0 ctermfg=white
-hi Normal ctermbg=white ctermfg=darkgrey
+"hi Normal ctermbg=white ctermfg=darkgrey
+hi Normal ctermbg=black ctermfg=white
 
 function! TerminalWinOpenCommands()
     set wincolor=Window
@@ -1314,7 +1334,20 @@ hi VertSplit ctermbg=0 ctermfg=darkgrey
 
 " register "+ paste
 " paste on new line
-nnoremap <silent> <M-p> :normal! o<cr>"+p
+function! SystemPasteLine()
+    let curline = getline(".")
+    if curline =~ '^\_s*$'
+        " If the cursor is on a line containing only whitespace,
+        " overwrite it. This seems to be intuitive with using paste for e.g.
+        " taking notes. Tend to create newlines once finished writing a
+        " section, to put cursor at the starting point of a new section.
+        normal! V"+p$
+    else
+        normal! o
+        normal! "+p
+    endif
+endfunction
+nnoremap <silent> <M-p> :call SystemPasteLine()<cr>
 " paste at cursor
 nnoremap <silent> <M-P> "+p
 " register "+ yank
@@ -1323,7 +1356,20 @@ nnoremap <silent> <M-y> :let @+ = getline(".")<cr>
 " yank selection
 vnoremap <M-y> "+y
 
+" <M-v>: Prefix for execution commands.
+" execute vimscript line
+nnoremap <M-v><M-v> :<C-u>.source<cr>
+vnoremap <M-v><M-v> :source<cr>
+
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
+, "bufnr"), 
+" Vim state
+
+" function! GetVimState()
+"     for buf_info in getbufinfo()
+"         getbufvar(get(buf_info, "bufnr"), 
+"     endfor
+" endfunction
 
 let g:vimrc_loaded_state = "finished"

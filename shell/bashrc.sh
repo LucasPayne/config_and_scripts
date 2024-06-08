@@ -4,6 +4,9 @@ source $CONFIG_DIR/scripts/syncer_files/syncer-bash.sh
 source "$CONFIG_DIR/scripts/fzf_tools/fzf_tools.sh"
 
 set -o vi
+# https://unix.stackexchange.com/questions/12107/how-to-unfreeze-after-accidentally-pressing-ctrl-s-in-a-terminal
+# Deactivate terminal-driver-level flow control.
+stty -ixon
 
 # Strace helpers
 stracev ()
