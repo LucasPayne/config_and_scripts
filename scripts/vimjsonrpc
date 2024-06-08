@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ -z "$VIM_SERVERNAME" ]
+then
+    >&2 echo "Not in a vim server"
+    exit 1
+fi
+
+json_contents="$(cat)"
+if ! echo "$json_contents" | jq . &>/dev/null
+then
+    >&2 echo "Invalid json"
+    exit 1
+fi
+
+if [ $# -eq 0 ]
+then
+    >&2 echo "A vim function name must be given."
+    exit 1
+fi
+
+vim_function_name="$1"
+shift
+
+vim_function_extra_args=()
+while [[ $# -gt 0 ]]
+do
+    vim_function_extra_args+=("$1")
+    shift
+done
+
+json_temp_file="$(mktemp)"
+echo "$json_contents" > "$json_temp_file"
+
+vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:call VimFunction(json_decode(readfile('"$temp"')))<cr>'
+
+send_string='<C-\><C-n>:call '"$vim_function_name"'(json_decode(readfile('"$json_temp_file"')))<cr>'
+
+vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
