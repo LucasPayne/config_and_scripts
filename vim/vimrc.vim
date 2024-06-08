@@ -1397,8 +1397,8 @@ nnoremap <C-i> <C-i>zz
 nnoremap <M-v><M-i> `[v`]
 
 " VimTerminalEditor
-" Called remotely by the vim-terminal-editor script which can be set to
-" EDITOR/VISUAL/GIT_EDITOR, etc.
+" Called remotely by the vim-terminal-editor script which can be assigned as
+" the EDITOR/VISUAL/GIT_EDITOR, etc.
 function! VimTerminalEditor(filename, requesting_pid)
     execute "tabnew ".a:filename
     let b:is_vim_terminal_editor = 1
@@ -1417,7 +1417,24 @@ function! VimTerminalEditor(filename, requesting_pid)
     augroup END
 endfunction
 
+function! QuickfixDeserialize()
+endfunction
+
 " Tags
 nnoremap <C-[> <C-t>
+
+" JSON remote procedure calls
+function! VimJSONRPC(vim_function_name, json_temp_file)
+    let Func = function(a:vim_function_name)
+    let json_string = join(readfile(a:json_temp_file), "\n") .. "\n"
+    let json = json_decode(json_string)
+    call Func(json)
+endfunction
+
+" testing
+" cat json.json | vimjsonrpc VimJSONTest
+function VimJSONTest(json)
+    let g:vim_json_test = get(a:json, "entry")
+endfunction
 
 let g:vimrc_loaded_state = "finished"

@@ -3,7 +3,7 @@
 # todo: Can trap INT and tell vim that it is aborting the job.
 #       Or rather, trap exit handlers. Then vim can e.g. close the stuff it is providing for the edit.
 
-if [ -z "$VIMSERVER_ID" ]
+if [ -z "$VIM_SERVERNAME" ]
 then
     # Fall back to vim.
     exec vim "$@"
@@ -16,8 +16,10 @@ sleep infinity & SLEEPER_PID=$!
 trap 'kill $SLEEPER_PID' USR1
 
 requesting_pid=$$
-vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:call VimTerminalEditor("'"$filename"'", '$requesting_pid')<cr>'
+vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:call VimTerminalEditor("'"$filename"'", '$requesting_pid')<cr>'
 
 # Wait the sleeper process to be killed by a USR1 signal.
 wait
+# todo: Why does this need to be echo'd?
+#       Might be an accidental workaround for a problem, the VISUAL/EDITOR-pattern-using `git commit` is erroring if this isn't done.
 echo done

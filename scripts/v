@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # TODO: Instead, open in a new vim and do the equivalent of the sent commands.
-if [ -z "$VIMSERVER_ID" ] ; then
+if [ -z "$VIM_SERVERNAME" ]
+then
     echo "Not in a vim server."
     exit 1
 fi
@@ -52,22 +53,28 @@ do
 done
 
 unsigned_integer_regex='^[0-9]+$'
-if ! [[ $opt_line =~ $unsigned_integer_regex ]] ; then
+if ! [[ $opt_line =~ $unsigned_integer_regex ]]
+then
     echo "error: Line number given is not valid" >&2
     exit 1
 fi
 
 # Check if accepting and receiving stdin.
-if [[ $opt_nostdin -ne 1 ]] ; then
-    if [ ! -t 0 ] ; then
-        if [[ $opt_filelist -eq 1 ]] ; then
+if [[ $opt_nostdin -ne 1 ]]
+then
+    if [ ! -t 0 ]
+    then
+        if [[ $opt_filelist -eq 1 ]]
+        then
             # Interpret stdin as a list of files to open in new tabs.
-            while read -r line ; do
+            while read -r line
+            do
                 files+=("$line")
             done
         else
             # Open a temporary file from stdin.
-            if [[ "$(readlink -f /proc/self/fd/0 2>/dev/null)" = "/dev/null" ]] ; then
+            if [[ "$(readlink -f /proc/self/fd/0 2>/dev/null)" = "/dev/null" ]]
+            then
                 # Don't read from /dev/null.
                 # xargs, for example, will launch this script with /dev/null on stdin.
                 # (Is there a cleaner/idiomatic way to consider this?)
@@ -82,17 +89,21 @@ if [[ $opt_nostdin -ne 1 ]] ; then
 fi
 
 # Optionally tell the vim server to cd to the current working directory.
-if [[ $opt_cd -eq 1 ]] ; then
-    vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
+if [[ $opt_cd -eq 1 ]]
+then
+    vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
 fi
 
 # Send the necessary commands to the vim server.
-for file in ${files[*]} ; do
-    if [[ $opt_open_scripts -eq 1 ]] ; then
+for file in ${files[*]}
+do
+    if [[ $opt_open_scripts -eq 1 ]]
+    then
         # Each "file" is actually a command name.
         # Attempt to find a corresponding script file for the command.
         path="$(which "$file")"
-        if [[ $? -ne 0 ]] ; then
+        if [[ $? -ne 0 ]]
+        then
             continue
         fi 
         # Just in case, possibly not needed.
@@ -104,5 +115,5 @@ for file in ${files[*]} ; do
         # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
         path="$(realpath "$file")"
     fi
-    vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+    vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
 done
