@@ -249,6 +249,8 @@ function! UnsetAltKeyMappings()
     execute "set <M-J>=\eJ"
     execute "set <M-K>=\eK"
     execute "set <M-L>=\eL"
+    " Allow system paste.
+    execute "set <M-p>=\ep"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -1348,13 +1350,18 @@ function! SystemPasteLine()
     endif
 endfunction
 nnoremap <silent> <M-p> :call SystemPasteLine()<cr>
+" paste in terminal job mode
+tnoremap <silent> <M-p> <C-w>"+
 " paste at cursor
 nnoremap <silent> <M-P> "+p
 " register "+ yank
-" yank line
-nnoremap <silent> <M-y> :let @+ = getline(".")<cr>
+nnoremap <silent> <M-y> "+y
+" yank line. So don't have to do <M-y>y, can keep holding Alt.
+nnoremap <silent> <M-y><M-y> :let @+ = getline(".")<cr>
 " yank selection
 vnoremap <M-y> "+y
+" yank full file path
+nnoremap <silent> <M-y><M-p> :let @+ = expand("%:p")<cr>
 
 " <M-v>: Prefix for execution commands.
 " execute vimscript line
@@ -1363,13 +1370,17 @@ vnoremap <M-v><M-v> :source<cr>
 
 " Source the syncer'd mappings.
 source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
-, "bufnr"), 
-" Vim state
 
+" Vim state
 " function! GetVimState()
 "     for buf_info in getbufinfo()
 "         getbufvar(get(buf_info, "bufnr"), 
 "     endfor
 " endfunction
+
+" jump list
+" center cursor after jumping
+nnoremap <C-o> <C-o>zz
+nnoremap <C-i> <C-i>zz
 
 let g:vimrc_loaded_state = "finished"

@@ -598,11 +598,11 @@ bind -m vi-command '"\eo": "\C-ugcb\n"'
 bind -m vi-insert '"\eo": "\C-ugcb\n"'
 
 # preview git log
-#bind -m vi-command '"\ep": "\C-upreview_git_log HEAD\n"'
-#bind -m vi-insert '"\ep": "\C-upreview_git_log HEAD\n"'
+#bind -m vi-command '"\eg": "\C-upreview_git_log HEAD\n"'
+#bind -m vi-insert '"\eg": "\C-upreview_git_log HEAD\n"'
 # tig
-bind -m vi-command '"\ep": "\C-utig\n"'
-bind -m vi-insert '"\ep": "\C-utig\n"'
+bind -m vi-command '"\eg": "\C-utig\n"'
+bind -m vi-insert '"\eg": "\C-utig\n"'
 
 #>>>
 
