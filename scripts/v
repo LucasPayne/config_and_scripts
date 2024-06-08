@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # TODO: Instead, open in a new vim and do the equivalent of the sent commands.
-if [ -z "$TERMDESK_ID" ] ; then
-    echo "Not in a termdesk."
+if [ -z "$VIMSERVER_ID" ] ; then
+    echo "Not in a vim server."
     exit 1
 fi
 
@@ -10,7 +10,7 @@ fi
 # note: Sometimes an application invoking this script will set it up with an empty stdin (lf bug?),
 #       so --nostdin needs to be given explicitly.
 opt_nostdin=0
-# option: Tell the termdesk to cd to the current working directory.
+# option: Tell the vim server to cd to the current working directory.
 opt_cd=0
 # option: Go to line in each file (most useful with just one file).
 opt_line=0
@@ -81,12 +81,12 @@ if [[ $opt_nostdin -ne 1 ]] ; then
     fi
 fi
 
-# Optionally tell the termdesk to cd to the current working directory.
+# Optionally tell the vim server to cd to the current working directory.
 if [[ $opt_cd -eq 1 ]] ; then
-    vim --servername "$TERMDESK_ID" --remote-send '<C-w>:cd '"$(pwd)"'<cr>'
+    vim --servername "$VIMSERVER_ID" --remote-send '<C-w>:cd '"$(pwd)"'<cr>'
 fi
 
-# Send the necessary commands to the termdesk.
+# Send the necessary commands to the vim server.
 for file in ${files[*]} ; do
     if [[ $opt_open_scripts -eq 1 ]] ; then
         # Each "file" is actually a command name.
@@ -104,5 +104,5 @@ for file in ${files[*]} ; do
         # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
         path="$(realpath "$file")"
     fi
-    vim --servername "$TERMDESK_ID" --remote-send '<C-w>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+    vim --servername "$VIMSERVER_ID" --remote-send '<C-w>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
 done

@@ -83,27 +83,27 @@ cursor_row () {
 
 #>>>
 
-# termdesk
+# termdesk and vim servers
 #    ...
 #<<<
 cd ()
 {
     builtin cd "$@"
-    if [ ! -z "$TERMDESK_ID" ] && [ ! -z "$TERMDESK_PRIMARY_SHELL" ] ; then
-        vim --servername "$TERMDESK_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
+    if [ ! -z "$VIMSERVER_ID" ] && [ ! -z "$TERMDESK_PRIMARY_SHELL" ] ; then
+        vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
     fi
     # Store the directory in the id temporary file.
     # This is used in vim, which otherwise can't access non-symlink-resolved paths.
-    if [ ! -z "$TERMDESK_ID" ] ; then
-        pwd > $TERMDESK_ID
+    if [ ! -z "$VIMSERVER_ID" ] ; then
+        pwd > "$VIMSERVER_ID"
     fi
 }
 
 # edit-and-execute-command (C-x C-e emacs, v vi)
-# detect if in a termdesk. If so, tell it to integrate the editing buffer
-# (e.g. termdesk is free to create a new tab, to overlay the shell's terminal, or use a popup, etc.)
-export VISUAL=termdesk-editor
-export EDITOR=termdesk-editor
+# detect if in a vim terminal. If so, tell it to integrate the editing buffer.
+# (e.g. vim is free to create a new tab, to overlay the shell's terminal, or use a popup, etc.)
+export VISUAL=vim-terminal-editor
+export EDITOR=vim-terminal-editor
 
 #>>>
 

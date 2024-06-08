@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ -z "$TERMDESK_ID" ]
+if [ -z "$VIMSERVER_ID" ]
 then
     # Fall back to vim.
     exec vim "$@"
 fi
 
-id="$TERMDESK_ID"
+id="$VIMSERVER_ID"
 filename="$1"
 
 less "$filename"

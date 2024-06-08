@@ -4,7 +4,21 @@
 # termdesk
 #--------------------------------------------------------------------------------
 
+#todo: "screen" should be part of termdesk.
+#      need to configure screen to open vim with a new server on each window,
+#      and use VIMSERVER_ID instead of TERMDESK_ID, if using this organization.
+if [ ! -z "$TERMDESK_ID" ]
+then
+    tempfile="$(tempfile 2>/dev/null)"
+    export VIMSERVER_ID="$tempfile"
+    pwd > "$tempfile"
+    vimnewenv vim --servername "$VIMSERVER_ID" -c "call VimTermDeskInit()"
+    exit 0
+fi
+
 tempfile="$(tempfile 2>/dev/null)"
 export TERMDESK_ID="$tempfile"
-pwd > $TERMDESK_ID
-vimnewenv screen -S termdesk vim --servername "$TERMDESK_ID" -c "call VimTermDeskInit()"
+tempfile="$(tempfile 2>/dev/null)"
+export VIMSERVER_ID="$tempfile"
+pwd > "$tempfile"
+vimnewenv screen -S termdesk vim --servername "$VIMSERVER_ID" -c "call VimTermDeskInit()"
