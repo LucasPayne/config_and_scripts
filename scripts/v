@@ -19,6 +19,8 @@ opt_line=0
 opt_filelist=0
 # option: Interpret filenames instead as command names, and attempt to edit the corresponding script.
 opt_open_scripts=0
+# option: Load the files into the quickfix list.
+opt_quickfix=0
 
 files=()
 while [[ $# -gt 0 ]]
@@ -43,6 +45,10 @@ do
         ;;
     -s|--scripts)
         opt_open_scripts=1
+        shift
+        ;;
+    -q|--quickfix)
+        opt_quickfix=1
         shift
         ;;
     *)
@@ -95,6 +101,7 @@ then
 fi
 
 # Send the necessary commands to the vim server.
+paths=()
 for file in ${files[*]}
 do
     if [[ $opt_open_scripts -eq 1 ]]
@@ -115,5 +122,23 @@ do
         # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
         path="$(realpath "$file")"
     fi
-    vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+    paths+=("$path")
 done
+
+
+
+if [[ $opt_quickfix -eq 1 ]]
+then
+    json='[]'
+    for path in ${paths[@]}
+    do
+        json="$(echo "$json" | jq ". += [{\"path\": \"$path\", \"line\": 1, \"column\": 1}]")"
+    done
+    echo "$json" | vimjsonrpc QuickFixFromJSON
+else
+    for path in ${paths[@]}
+    do
+        send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+        vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
+    done 
+fi

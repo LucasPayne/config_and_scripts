@@ -36,4 +36,3 @@ echo "$json" | vimjsonrpc QuickFixFromJSON
 
 # Print for human readability.
 #echo "$rg_output" | tr $'\xFF' ':'
-
