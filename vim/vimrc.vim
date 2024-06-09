@@ -137,17 +137,31 @@ set tabline=%!TabLine()
 function! TabLine()
     let s = ''
     for i in range(1, tabpagenr('$'))
-        " select the highlighting
+        " set the tab page number (for mouse clicks)
+        let s ..= '%' .. i .. 'T'
+
+        let tab_tag = gettabvar(i, "tab_tag", "")
+        if !empty(tab_tag)
+            if i == tabpagenr()
+                let s ..= '%#TabLineTagSel#'
+            else
+                let s ..= '%#TabLineTag#'
+            endif
+            let s ..= ' '
+            let s ..= tab_tag
+            let s ..= ':'
+        endif
+
         if i == tabpagenr()
             let s ..= '%#TabLineSel#'
         else
             let s ..= '%#TabLine#'
         endif
 
-        " set the tab page number (for mouse clicks)
-        let s ..= '%' .. i .. 'T'
-
-        let s ..= ' %{TabLabel(' .. i .. ')} '
+        if empty(tab_tag)
+            let s ..= ' '
+        endif
+        let s ..= '%{TabLabel(' .. i .. ')} '
     endfor
 
     " after the last tab fill with TabLineFill and reset tab page nr
@@ -160,11 +174,13 @@ function! TabLine()
 
     return s
 endfunction
-function! TabLabel(tabnr)
 
+command! -nargs=1 TabTag let t:tab_tag = <q-args>
+
+function! TabLabel(tabnr)
     function! TryIgnoreBuffer(buf)
         let buf_type = getbufvar(a:buf, "&buftype", "")
-        if buf_type ==# "quickfix"
+        if index(["quickfix", "help", "terminal"], buf_type) >= 0
             return 1
         endif
         return 0
@@ -203,17 +219,19 @@ function! TabLabel(tabnr)
         let l:job_info = buf->term_getjob()->job_info()
         let cmd = get(l:job_info, "cmd")
         if len(cmd) == 0
-            return "[empty terminal]"
+            let str = "[empty terminal]"
         else
-            return cmd[0]
+            let str = cmd[0]
         endif
     elseif buf_type ==# "help"
-        return "[help ".buf_basename."]"
+        let str = "[help ".buf_basename."]"
     elseif buf_type ==# "quickfix"
-        return "[qf ".buf_basename."]"
+        let str = "[qf ".buf_basename."]"
     else
-        return buf_basename
+        let str = buf_basename
     endif
+
+    return str
 endfunction
 highlight clear TabLine
 highlight clear TabLineSel
@@ -221,6 +239,9 @@ highlight clear TabLineFill
 highlight TabLine cterm=underline ctermfg=white ctermbg=black
 highlight TabLineSel cterm=underline ctermfg=black ctermbg=white
 highlight TabLineFill cterm=underline ctermfg=white ctermbg=black
+" custom
+highlight TabLineTag cterm=underline ctermfg=red ctermbg=black
+highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=red
 
 " Nice to have center-scroll when going to end of file.
 function! EndOfFileNavigate()
@@ -951,7 +972,7 @@ nnoremap <M-w><M-k> gt
 " Open a terminal below.
 function! LowerTerminal()
     if v:count == 0
-        let height = 18
+        let height = 12
     else
         let height = v:count
     endif
