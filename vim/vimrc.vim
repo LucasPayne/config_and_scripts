@@ -681,7 +681,10 @@ function! ToggleQuickFix()
     endif
 endfunction
 function! GoToQuickFix()
-    let quickfixes = filter(getwininfo(), 'v:val.quickfix')
+    let tabnr = tabpagenr()
+    " Find quickfix in this tab.
+    " (There shouldn't be more than one, but account for more than one.)
+    let quickfixes = filter(getwininfo(), 'v:val.quickfix && v:val.tabnr == '.string(tabnr))
     if empty(quickfixes)
         botright copen
         let l:quickfix_list_length = len(getqflist())
