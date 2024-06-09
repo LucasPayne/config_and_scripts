@@ -1417,18 +1417,32 @@ function! VimTerminalEditor(filename, requesting_pid)
     augroup END
 endfunction
 
-function! QuickfixDeserialize()
-endfunction
-
 " Tags
 nnoremap <C-[> <C-t>
 
 # JSON remote procedure calls
-function! VimJsonRPC(vim_function_name, json_temp_file)
-    let func = function(a:vim_function_name)
-    let json_string = join(readfile(a:json_temp_file), '\n')
+function! VimJSONRPC(vim_function_name, json_temp_file)
+    let Func = function(a:vim_function_name)
+    let json_string = join(readfile(a:json_temp_file), "\n")
+    let g:json_test = json_string
     let json = json_decode(json_string)
-    call func(json)
+    call Func(json)
+endfunction
+
+function! QuickFixFromJSON(json)
+    let qflist = []
+    for entry in a:json
+        call add(l:qflist, {
+            \ "filename": entry["path"],
+            \ "lnum": entry["line"],
+            \ "col": entry["column"]
+        \ })
+    endfor
+    let g:qflist = qflist
+    call setqflist([], ' ', {"items" : qflist, "quickfixtextfunc" : ""})
+
+    # Open the quickfix.
+    call GoToQuickFix()
 endfunction
 
 let g:vimrc_loaded_state = "finished"

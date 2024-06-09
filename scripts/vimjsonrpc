@@ -52,5 +52,6 @@ fi
 json_temp_file="$(mktemp)"
 echo "$json_contents" > "$json_temp_file"
 
-send_string='<C-\><C-n>:call VimJsonRPC("'"$vim_function_name"'", "'"$json_temp_file"'")<cr>'
+send_string='<C-\><C-n>:call VimJSONRPC("'"$vim_function_name"'", "'"$json_temp_file"'")<cr>'
 vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
+
