@@ -47,11 +47,6 @@ splitc () {
     tr ":" "\n"
 }
 
-# Remove ANSI colour commands.
-cclean () {
-    sed "s,\x1B\[[0-9;]*[a-zA-Z],,g"
-}
-
 # Using xargs as a simple for-loop syntax.
 # Separate output by printing each input line.
 xarg () {
@@ -621,48 +616,6 @@ bind -m vi-insert '"\eg": "\C-utig\n"'
 # Prompt
 #    ...
 #<<<
-prompt () {
-    local dir="$(pwd)"
-    local prefix="$(realpath -s ~/drive/dev)"
-    if [ "$(pwd)" != "$prefix" ] && ( echo "$dir" | grep -q "^$prefix" ) ; then
-        local tmp="$(echo "$dir" | cut -c $((${#prefix}+1))-)"
-        local project="$(echo $tmp | cut -d/ -f 2)"
-        local rest="$(echo $tmp | cut -d/ -f 3-)"
-        local desc_file=~/drive/dev/.desc
-        local desc=$(cat $desc_file | grep "^$project desc/" | cut -d/ -f 2-)
-        local color=$(cat $desc_file | grep "^$project color/" | cut -d/ -f 2-)
-        printf ":$(c16 $color)$desc$(c16 --reset)"
-        if [ ! -z "$rest" ] ; then
-            printf "/"
-        fi
-        local dir="$rest"
-    else
-        local drive_prefix_string="="
-        local storage_prefix_string="---"
-        local home_prefix_string="~"
-
-        local dir="$(pwd)"
-        local drive_prefix="$(realpath -s ~/drive)"
-        local storage_prefix="$(realpath -s ~/storage)"
-        local home_prefix="$(realpath -s ~)"
-        if ( echo "$dir" | grep -q "^$drive_prefix" ) ; then
-            local dir="$drive_prefix_string$(echo "$dir" | cut -c $((${#drive_prefix}+1))-)"
-        elif ( echo "$dir" | grep -q "^$storage_prefix" ) ; then
-            local dir="$storage_prefix_string$(echo "$dir" | cut -c $((${#storage_prefix}+1))-)"
-        elif ( echo "$dir" | grep -q "^$home_prefix" ) ; then
-            local dir="$home_prefix_string$(echo "$dir" | cut -c $((${#home_prefix}+1))-)"
-        fi
-    fi
-    local branch=$(git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/') 
-
-    c16 white
-    printf "$dir"
-    c16 --reset
-
-    if [ ! -z "$branch" ] ; then
-        printf ":$(c16 blue)($branch)$(c16 --reset)"
-    fi
-}
 
 PS1=''
 PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]$(prompt)\n\$ '

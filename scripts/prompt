@@ -1,6 +1,6 @@
 #!/bin/bash
 
-prompt () {
+prompt_function () {
     local dir="$(pwd)"
     local prefix="$(realpath -s ~/drive/dev)"
     if [ "$(pwd)" != "$prefix" ] && ( echo "$dir" | grep -q "^$prefix" ) ; then
@@ -42,3 +42,5 @@ prompt () {
         printf ":$(c16 blue)($branch)$(c16 --reset)"
     fi
 }
+
+prompt_function

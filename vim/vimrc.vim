@@ -180,7 +180,7 @@ command! -nargs=1 TabTag let t:tab_tag = <q-args>
 function! TabLabel(tabnr)
     function! TryIgnoreBuffer(buf)
         let buf_type = getbufvar(a:buf, "&buftype", "")
-        if index(["quickfix", "help", "terminal"], buf_type) >= 0
+        if index(["quickfix", "help", "terminal", "nofile", "prompt", "popup"], buf_type) >= 0
             return 1
         endif
         return 0
@@ -240,8 +240,8 @@ highlight TabLine cterm=underline ctermfg=white ctermbg=black
 highlight TabLineSel cterm=underline ctermfg=black ctermbg=white
 highlight TabLineFill cterm=underline ctermfg=white ctermbg=black
 " custom
-highlight TabLineTag cterm=underline ctermfg=red ctermbg=black
-highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=red
+highlight TabLineTag cterm=underline ctermfg=blue ctermbg=black
+highlight TabLineTagSel cterm=underline ctermfg=darkblue ctermbg=white
 
 " Nice to have center-scroll when going to end of file.
 function! EndOfFileNavigate()
@@ -947,7 +947,20 @@ function! VimTermDeskInit()
         \ 'term_finish' : 'close'
         \ })
     let g:terminal_host_primary_shell_winid = win_getid(winnr())
+    execute "TabTag ".system("prompt | cclean")
 endfunction
+
+
+function! PrimaryShellUpdate()
+    let tab = win_id2tabwin(g:terminal_host_primary_shell_winid)[0]
+    let tag = system("prompt | cclean")
+    call settabvar(tab, "tab_tag", tag)
+endfunction
+
+augroup PrimaryShell
+    autocmd!
+    autocmd DirChanged global call PrimaryShellUpdate()
+augroup END
 
 function! GoToPrimaryShell()
     call win_gotoid(g:terminal_host_primary_shell_winid)
@@ -1411,7 +1424,8 @@ tnoremap <silent> <M-p> <C-w>"+
 " paste at cursor
 nnoremap <silent> <M-P> "+p
 " register "+ yank
-nnoremap <silent> <M-y> "+y
+"------todo: Apparently doesn't allow <M-y>... to be mapped. Thought this would work.
+"nnoremap <silent> <M-y> "+y
 " yank line. So don't have to do <M-y>y, can keep holding Alt.
 nnoremap <silent> <M-y><M-y> :let @+ = getline(".")<cr>
 " yank selection
