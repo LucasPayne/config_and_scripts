@@ -83,10 +83,8 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " scripts to aliases for non-interactive mode work.
 "set shellcmdflag=-ic
 "
-" Change directory to the current file.
-" Note that plugins and other program integrations might want to send relative
-" paths, e.g. through a vimserver command. They should send absolute paths instead.
-set autochdir
+
+"set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
 " set cursorline
@@ -141,6 +139,7 @@ function! TabLine()
         let s ..= '%' .. i .. 'T'
 
         let tab_tag = gettabvar(i, "tab_tag", "")
+        let tab_label = TabLabel(i)
         if !empty(tab_tag)
             if i == tabpagenr()
                 let s ..= '%#TabLineTagSel#'
@@ -149,7 +148,6 @@ function! TabLine()
             endif
             let s ..= ' '
             let s ..= tab_tag
-            let s ..= ':'
         endif
 
         if i == tabpagenr()
@@ -160,8 +158,11 @@ function! TabLine()
 
         if empty(tab_tag)
             let s ..= ' '
+        elseif !empty(tab_label)
+            let s ..= ':'
         endif
-        let s ..= '%{TabLabel(' .. i .. ')} '
+        let s ..= tab_label
+        let s ..= ' '
     endfor
 
     " after the last tab fill with TabLineFill and reset tab page nr
@@ -188,6 +189,7 @@ function! TabLabel(tabnr)
 
     let buflist = tabpagebuflist(a:tabnr)
     let winnr = tabpagewinnr(a:tabnr)
+    let l:buf = -1
     if TryIgnoreBuffer(buflist[winnr - 1])
         " Should try to not displayed focused window, as it is an ignored
         " buffer type.
@@ -199,7 +201,7 @@ function! TabLabel(tabnr)
             endif
         endfor
     endif
-    if get(l:, "buf", -1) == -1
+    if l:buf == -1
         " Focused window will be displayed.
         let l:buf = buflist[winnr - 1]
     endif
@@ -213,15 +215,26 @@ function! TabLabel(tabnr)
         let buf_basename = split(buf_name, '/')[-1]
     endif
 
-    "todo: Look for 'primary window'. This will try to find a regular open file.
-    
     if buf_type ==# "terminal"
-        let l:job_info = buf->term_getjob()->job_info()
-        let cmd = get(l:job_info, "cmd")
-        if len(cmd) == 0
-            let str = "[empty terminal]"
+        if getbufvar(l:buf, "is_primary_terminal", 0) == 1
+            " Don't label the primary shell.
+            " That will be tagged with shell details (e.g. the cwd, etc.)
+            " anyway.
+            let str = ""
         else
-            let str = cmd[0]
+            let l:job = buf->term_getjob()
+            if l:job == v:null
+                let str = "[no-job-found terminal]"
+            else
+                let l:job_info = job->job_info()
+
+                let cmd = get(l:job_info, "cmd")
+                if len(cmd) == 0
+                    let str = "[empty terminal]"
+                else
+                    let str = cmd[0]
+                endif
+            endif
         endif
     elseif buf_type ==# "help"
         let str = "[help ".buf_basename."]"
@@ -940,30 +953,78 @@ nnoremap <M-d><M-B> :call BreakpointsQuickfixSyncGdb()<cr>
 "<<<
 
 function! VimTermDeskInit()
-    let g:terminal_host_primary_shell_buffer = term_start('bash', {
-        \ 'term_name' : 'shell',
-        \ 'curwin' : 1,
-        \ 'env' : { 'TERMDESK_PRIMARY_SHELL' : '1' },
-        \ 'term_finish' : 'close'
-        \ })
-    let g:terminal_host_primary_shell_winid = win_getid(winnr())
-    execute "TabTag ".system("prompt | cclean")
+    call GoToPrimaryShell(0)
 endfunction
 
+function! UpdatePrimaryShell()
+    let [buf, winid] = GetPrimaryShellBufferAndWindow()
+    if winid != -1
+        let tab = win_id2tabwin(winid)[0]
+        " Tag the primary shell with the the bash prompt.
+        "todo: Interpret ansi color codes.
+        let tag = system("prompt | cclean")
+        call settabvar(tab, "tab_tag", tag)
+    endif
+endfunction
 
-function! PrimaryShellUpdate()
-    let tab = win_id2tabwin(g:terminal_host_primary_shell_winid)[0]
-    let tag = system("prompt | cclean")
-    call settabvar(tab, "tab_tag", tag)
+function! GetPrimaryShellBufferAndWindow()
+    " Returns [buf, winid]
+    " If no buffer exists, buf is -1.
+    " If no window exists, winid is -1.
+    " This can return a valid buf but a -1 winid as it is possible
+    " for there to be primary shell buffers but none of them loaded in
+    " window.
+    let primary_terminal_buffers = filter(getbufinfo(), 'v:val.listed && getbufvar(v:val.bufnr, "is_primary_terminal", 0) == 1')
+    let buf = -1
+    let winid = -1
+    for bufinfo in primary_terminal_buffers
+        if !empty(bufinfo.windows)
+            let buf = bufinfo.bufnr
+            let winid = bufinfo.windows[0]
+        endif
+    endfor
+
+    if winid == -1 && !empty(primary_terminal_buffers)
+        " No mapped window, return [buf, -1] where buf is the first found primary
+        " shell buffer.
+        let buf = primary_terminal_buffers[0].bufnr
+    endif
+    return [buf, winid]
 endfunction
 
 augroup PrimaryShell
     autocmd!
-    autocmd DirChanged global call PrimaryShellUpdate()
+    autocmd DirChanged global call UpdatePrimaryShell()
 augroup END
 
-function! GoToPrimaryShell()
-    call win_gotoid(g:terminal_host_primary_shell_winid)
+function! GoToPrimaryShell(newtab)
+    let [buf, winid] = GetPrimaryShellBufferAndWindow()
+    if winid != -1
+        call win_gotoid(winid)
+    else
+        if a:newtab == 1
+            tabnew
+            " Avoid cluttering with empty buffers.
+            set bufhidden=wipe
+            tabm 0
+        endif
+        if buf != -1
+            " Possibly a primary terminal buffer exists but isn't shown in a
+            " window. Try to load this.
+            execute "buffer ".buf
+        else
+            " Create a new primary terminal.
+            let term_buf = term_start('bash', {
+                \ 'term_name' : 'shell',
+                \ 'curwin' : 1,
+                \ 'env' : { 'TERMDESK_PRIMARY_SHELL' : '1' },
+                \ 'term_finish' : 'close'
+                \ })
+            call setbufvar(term_buf, "is_primary_terminal", 1)
+        endif
+    endif
+
+    call UpdatePrimaryShell()
 endfunction
 
 function! CtrlCHandler()
@@ -996,7 +1057,7 @@ endfunction
 nnoremap <silent> <M-c> <cmd>call LowerTerminal()<cr>
 " Open a terminal in the current window.
 nnoremap <silent> <M-C> :set termwinsize=0x0 \| term ++curwin<cr>
-nnoremap <silent> <M-q> :call GoToPrimaryShell()<cr>
+nnoremap <silent> <M-q> :call GoToPrimaryShell(1)<cr>
 ">>>
 
 " Notes system
