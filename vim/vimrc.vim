@@ -147,8 +147,7 @@ function! TabLine()
         " set the tab page number (for mouse clicks)
         let s ..= '%' .. i .. 'T'
 
-        " the label is made by TabLabel()
-        let s ..= ' %{BufferLabel(' .. i .. ')} '
+        let s ..= ' %{TabLabel(' .. i .. ')} '
     endfor
 
     " after the last tab fill with TabLineFill and reset tab page nr
@@ -161,13 +160,37 @@ function! TabLine()
 
     return s
 endfunction
-function BufferLabel(n)
-    let buflist = tabpagebuflist(a:n)
-    let winnr = tabpagewinnr(a:n)
-    let buf = buflist[winnr - 1]
-    let buf_info = buf->getbufinfo()
-    let buf_type = getbufvar(buf, "&buftype", "")
-    let buf_name = bufname(buf)
+function! TabLabel(tabnr)
+
+    function! TryIgnoreBuffer(buf)
+        let buf_type = getbufvar(a:buf, "&buftype", "")
+        if buf_type ==# "quickfix"
+            return 1
+        endif
+        return 0
+    endfunction
+
+    let buflist = tabpagebuflist(a:tabnr)
+    let winnr = tabpagewinnr(a:tabnr)
+    if TryIgnoreBuffer(buflist[winnr - 1])
+        " Should try to not displayed focused window, as it is an ignored
+        " buffer type.
+        " Look for representative window.
+        for alt_buf in buflist
+            if !TryIgnoreBuffer(alt_buf)
+                let l:buf = alt_buf
+                break
+            endif
+        endfor
+    endif
+    if get(l:, "buf", -1) == -1
+        " Focused window will be displayed.
+        let l:buf = buflist[winnr - 1]
+    endif
+    let buf_info = l:buf->getbufinfo()
+    let buf_type = getbufvar(l:buf, "&buftype", "")
+
+    let buf_name = bufname(l:buf)
     if buf_name == ""
         let buf_basename = "*empty*"
     else
@@ -386,7 +409,8 @@ function! SetDetailView(val)
     if a:val == 1
         let g:detail_view_active = 1
         set laststatus=2
-        set statusline=%{BufferLabel(bufnr())}
+        "set statusline=%{BufferLabel(bufnr())}
+        set statusline=
     elseif a:val == 0
         let g:detail_view_active = 0
         set laststatus=0
@@ -681,7 +705,10 @@ function! ToggleQuickFix()
     endif
 endfunction
 function! GoToQuickFix()
-    let quickfixes = filter(getwininfo(), 'v:val.quickfix')
+    let tabnr = tabpagenr()
+    " Find quickfix in this tab.
+    " (There shouldn't be more than one, but account for more than one.)
+    let quickfixes = filter(getwininfo(), 'v:val.quickfix && v:val.tabnr == '.string(tabnr))
     if empty(quickfixes)
         botright copen
         let l:quickfix_list_length = len(getqflist())
@@ -1426,15 +1453,32 @@ nnoremap <C-[> <C-t>
 " JSON remote procedure calls
 function! VimJSONRPC(vim_function_name, json_temp_file)
     let Func = function(a:vim_function_name)
-    let json_string = join(readfile(a:json_temp_file), "\n") .. "\n"
+    let json_string = join(readfile(a:json_temp_file), "\n")
     let json = json_decode(json_string)
     call Func(json)
 endfunction
 
-" testing
-" cat json.json | vimjsonrpc VimJSONTest
-function VimJSONTest(json)
-    let g:vim_json_test = get(a:json, "entry")
+function! QuickFixFromJSON(json)
+    let qflist = []
+    for entry in a:json
+        call add(l:qflist, {
+            \ "filename": entry["path"],
+            \ "lnum": entry["line"],
+            \ "col": entry["column"]
+        \ })
+    endfor
+    let g:qflist = qflist
+    call setqflist([], ' ', {"items" : qflist, "quickfixtextfunc" : ""})
+
+    " Open the quickfix.
+    call GoToQuickFix()
 endfunction
+
+
+augroup QFClose
+  autocmd!
+  autocmd WinEnter * if winnr('$') == 1 && &buftype == "quickfix" | q | endif
+augroup END
+
 
 let g:vimrc_loaded_state = "finished"

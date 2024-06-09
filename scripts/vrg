@@ -1,0 +1,39 @@
+#!/bin/bash
+# ripgrep to vim quickfix
+
+if [ "$#" -eq 0 ]
+then
+    # Not rg args, do nothing.
+    exit 0
+fi
+
+# -0 is needed for rg output to be unambiguously machine-readable.
+# However bash internally uses C-style null-terminated strings.
+# So, convert \0 to unused(?) ASCII 255.
+rg_output="$(rg -0 --vimgrep "$@" | tr '\0' $'\xFF')"
+
+json='[]'
+while IFS=$'\xFF' read -r path trail
+do
+    IFS=':' read -r line column contents <<< "$trail"
+    absolute_path="$(realpath --no-symlinks "$path" 2>/dev/null)"
+    if [ -d "$absolute_path" ]
+    then
+        >&2 echo "The path \""$absolute_path\" is a directory."
+        exit 1
+    fi
+    if [ ! -e "$absolute_path" ]
+    then
+        >&2 echo "Could not find file \""$absolute_path\"."
+        exit 1
+    fi
+
+    json="$(echo "$json" | jq ". += [{\"path\": \"$absolute_path\", \"line\": \"$line\", \"column\": \"$column\"}]")"
+
+done <<< "$rg_output"
+
+echo "$json" | vimjsonrpc QuickFixFromJSON
+
+# Print for human readability.
+#echo "$rg_output" | tr $'\xFF' ':'
+
