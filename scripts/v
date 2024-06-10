@@ -100,7 +100,7 @@ then
     vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
 fi
 
-# Send the necessary commands to the vim server.
+# Determine the paths to be communicated to vim.
 paths=()
 for file in ${files[*]}
 do
@@ -125,8 +125,7 @@ do
     paths+=("$path")
 done
 
-
-
+# Send the necessary commands to the vim server.
 if [[ $opt_quickfix -eq 1 ]]
 then
     json='[]'
