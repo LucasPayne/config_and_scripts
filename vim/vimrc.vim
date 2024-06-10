@@ -1038,8 +1038,8 @@ endfunction
 
 tnoremap <M-j><M-k> <C-\><C-n>
 tnoremap <M-w><M-w> <C-\><C-n>
-tnoremap <M-w><M-j> <C-\><C-n>:normal! gT<cr>
-tnoremap <M-w><M-k> <C-\><C-n>:normal! gt<cr>
+tnoremap <silent> <M-w><M-j> <C-\><C-n>:normal! gT<cr>
+tnoremap <silent> <M-w><M-k> <C-\><C-n>:normal! gt<cr>
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 nnoremap <M-w><M-j> gT
 nnoremap <M-w><M-k> gt
