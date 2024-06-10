@@ -111,11 +111,11 @@ set keywordprg=
 nnoremap K K<cr>
 vnoremap K K<cr>
 " H and L are useful in their default mappings, but I am very used to H and L
-" for ^ and $. So <M-H> and <M-L> are the originals.
-nnoremap <M-H> H
-nnoremap <M-L> L
+" for ^ and $. So <M-h> and <M-l> are the originals.
+nnoremap <M-h> H
+nnoremap <M-l> L
 " Define M this way too for consistency.
-nnoremap <M-M> M
+nnoremap <M-m> M
 
 " Project browser.
 function! ProjectBrowser()
@@ -341,10 +341,10 @@ vnoremap <leader>S :<C-u>@*<cr>
 nnoremap <M-s> :w<cr>
 inoremap <M-s> <Esc>:w<cr>
 " Navigate windows
-nnoremap <M-h> <C-w>h
-nnoremap <M-j> <C-w>j
-nnoremap <M-k> <C-w>k
-nnoremap <M-l> <C-w>l
+nnoremap <M-H> <C-w>h
+nnoremap <M-J> <C-w>j
+nnoremap <M-K> <C-w>k
+nnoremap <M-L> <C-w>l
 " Use shift when in job mode.
 " M-h,j,k,l are useful for bash prompt mappings,
 " and M-H,J,K,L are less likely to be used by terminal programs.

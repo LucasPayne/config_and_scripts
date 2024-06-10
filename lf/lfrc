@@ -154,7 +154,7 @@ map e &{{
         esac
     done
 }}
-map .cp :yank-path
+map <a-y> :yank-path
 map <a-j> :down
 map <a-k> :up
 
