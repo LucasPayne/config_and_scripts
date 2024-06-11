@@ -3,6 +3,11 @@
 "--------------------------------------------------------------------------------/
 let g:vimrc_loaded_state = "start"
 
+" workaround for broken laptop keys
+"todo: Do this at a higher level, like through X or something, to convert
+"keys.
+let g:vim_laptop_number_broken_workaround = "on"
+
 set nocompatible
 
 execute pathogen#infect()
@@ -464,14 +469,42 @@ nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
 nnoremap <silent> <M-n> :set number!<cr>
 
 " Tab metakeys.
-for index in [1,2,3,4,5,6,7,8,9]
-    " Go to tab
-    execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
-    execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
-    " Move window to tab
-    execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
-    execute "tnoremap <silent> <M-w><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
-endfor
+if g:vim_laptop_number_broken_workaround == "off"
+    for index in [1,2,3,4,5,6,7,8,9]
+        " Go to tab
+        execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
+        execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+        " Move window to tab
+        execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
+        execute "tnoremap <silent> <M-w><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+    endfor
+else
+    " laptop 1,2,3 keys are not working.
+    " Map to alt-4, alt-5, alt-6 (also allowing shift modifier).
+    map <M-4> 1
+    map <M-5> 2
+    map <M-6> 3
+    map! <M-4> 1
+    map! <M-5> 2
+    map! <M-6> 3
+    tmap <M-4> 1
+    tmap <M-5> 2
+    tmap <M-6> 3
+    execute "set <S-F35>=\e$"
+    execute "set <S-F36>=\e%"
+    execute "set <S-F37>=\e^"
+    " !@#
+    map <S-F35> !
+    map <S-F36> @
+    map <S-F37> #
+    map! <S-F35> !
+    map! <S-F36> @
+    map! <S-F37> #
+    tmap <S-F35> !
+    tmap <S-F36> @
+    tmap <S-F37> #
+endif
+
 " Move window to new tab.
 function! MoveCurrentWindowToNewTab(background)
     let win_id = win_getid()
@@ -1575,6 +1608,5 @@ augroup QFClose
   autocmd!
   autocmd WinEnter * if winnr('$') == 1 && &buftype == "quickfix" | q | endif
 augroup END
-
 
 let g:vimrc_loaded_state = "finished"

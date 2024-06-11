@@ -87,7 +87,7 @@ then
                 :
             else
                 temporary_filename=$(tempfile 2>/dev/null)
-                cat > $temporary_filename
+                cat > "$temporary_filename"
                 files+=("$temporary_filename")
             fi
         fi
