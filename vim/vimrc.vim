@@ -6,7 +6,8 @@ let g:vimrc_loaded_state = "start"
 " workaround for broken laptop keys
 "todo: Do this at a higher level, like through X or something, to convert
 "keys.
-let g:vim_laptop_number_broken_workaround = "on"
+"let g:vim_laptop_number_broken_workaround = "on"
+let g:vim_laptop_number_broken_workaround = "off"
 
 set nocompatible
 
@@ -62,10 +63,10 @@ endfunction
 function! YankSelectionAndFilePath()
     let @" = "    ".@*."\n".expand("%:p")." ".line(".")."\n"
 endfunction
-nnoremap .cp :call YankFilePath()<cr>
-nnoremap .CP :call YankWordAndFilePath()<cr>
-vnoremap .cp :call YankSelectionAndFilePath()<cr>
-nnoremap .cb :call YankBreakPoint()<cr>
+"nnoremap .cp :call YankFilePath()<cr>
+"nnoremap .CP :call YankWordAndFilePath()<cr>
+"vnoremap .cp :call YankSelectionAndFilePath()<cr>
+"nnoremap .cb :call YankBreakPoint()<cr>
 
 " Settings
 "    syntax on
@@ -334,14 +335,13 @@ vnoremap H ^
 vnoremap L $
 onoremap H ^
 onoremap L $
-nnoremap .sv :source ~/.vimrc<cr>
+command! -nargs=0 Sv source ~/.vimrc
+
 inoremap <tab> <space><space><space><space>
 nnoremap j gj
 nnoremap k gk
 nnoremap gj gT
 nnoremap gk gt
-" Source selection
-vnoremap <leader>S :<C-u>@*<cr>
 " Write
 nnoremap <M-s> :w<cr>
 inoremap <M-s> <Esc>:w<cr>
@@ -369,11 +369,11 @@ tnoremap <silent> <M-w><M-X> :tabclose<cr>
 nnoremap <silent> <M-w><M-n> :tabnew<cr>
 tnoremap <silent> <M-w><M-n> :tabnew<cr>
 " Copy file path
-nnoremap .cp :let @" = expand("%:p")<cr>
+"nnoremap .cp :let @" = expand("%:p")<cr>
 " Copy file directory
-nnoremap .cd :let @" = expand("%:p:h")<cr>
+"nnoremap .cd :let @" = expand("%:p:h")<cr>
 " Move to first tab.
-nnoremap .q :tabm 0<cr>
+"nnoremap .q :tabm 0<cr>
 " Move tab left and right.
 nnoremap <silent> <M-w><M-.> :tabm +1<cr>
 nnoremap <silent> <M-w><M-,> :tabm -1<cr>
@@ -535,7 +535,7 @@ nnoremap <silent> <M--> :sp<cr>
 
 " Be careful...
 " todo: Better than this. Popup, or general terminal, pager.
-nnoremap .! :execute "!".getline(".")<cr>
+"nnoremap .! :execute "!".getline(".")<cr>
 
 " Scroll offset trick to make search navigation centered (auto-zz).
 " https://vim.fandom.com/wiki/Make_search_results_appear_in_the_middle_of_the_screen
@@ -552,7 +552,7 @@ if PluginEnabled("vim-surround") == 1
 endif
 
 if PluginEnabled("tagbar") == 1
-    nnoremap <leader>t :Tagbar<cr>
+    "nnoremap <leader>t :Tagbar<cr>
 endif
 
 "if PluginEnabled("quickpeek") == 1
@@ -689,7 +689,7 @@ let g:termdebug_config = {
 
 hi debugPC ctermbg=white
 "hi SignColumn ctermbg=blue
-nnoremap .T :Termdebug<cr><Esc><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>1000<<C-w>58><C-w>k
+"nnoremap .T :Termdebug<cr><Esc><C-w>h<C-w>L<C-w>h<C-w>j<C-w>100-<C-w>15+<C-w>1000<<C-w>58><C-w>k
 function! DoTermdebugBreakpointModify(cmd)
     execute a:cmd
     sleep 150m
@@ -887,8 +887,8 @@ function! QuickfixCallstackStatusLine()
     return "  Callstack"
 endfunction
 
-nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
-nnoremap .S :call QuickfixCallstackFromGDB()<cr>
+"nnoremap .1 :call QuickfixCallstackFromGDB()<cr>
+"nnoremap .S :call QuickfixCallstackFromGDB()<cr>
 
 
 let g:gdb_breakpoint_jsons = []
@@ -1321,10 +1321,10 @@ augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
     autocmd WinScrolled *.ns :call RefreshNotesTextLink()
-    autocmd Filetype notes nnoremap <buffer> ./ :call NotesFollowLinkUnderCursor(0)<cr>
+    "autocmd Filetype notes nnoremap <buffer> ./ :call NotesFollowLinkUnderCursor(0)<cr>
     autocmd Filetype notes nnoremap <buffer> <enter> :call NotesFollowLinkUnderCursor(0)<cr>
-    autocmd Filetype notes nnoremap <buffer> .? :call NotesFollowLinkUnderCursor(1)<cr>
-    autocmd Filetype notes nnoremap <buffer> >? :call NotesFollowLinkUnderCursor(1)<cr>
+    "autocmd Filetype notes nnoremap <buffer> .? :call NotesFollowLinkUnderCursor(1)<cr>
+    "autocmd Filetype notes nnoremap <buffer> >? :call NotesFollowLinkUnderCursor(1)<cr>
     " It is convenient to not have to have notes open on only one vim.
     " Currently want this as keep switching between screen tabs, but each vim
     " should have a notes buffer anyway. It is nice to synchronize them.
@@ -1388,9 +1388,9 @@ function! CycleNotesFiles(yank_from_non_notes_file=0, tabnew=0)
     normal! zz
 endfunction
 
-nnoremap .. :call CycleNotesFiles(1)<cr>
-nnoremap .> :call CycleNotesFiles(1, 1)<cr>
-nnoremap ., :call YankNotesTextLink()<cr>
+"nnoremap .. :call CycleNotesFiles(1)<cr>
+"nnoremap .> :call CycleNotesFiles(1, 1)<cr>
+"nnoremap ., :call YankNotesTextLink()<cr>
 
 function! GoToLetterboxdMovie()
     let movie_name = getline(".")
@@ -1398,7 +1398,7 @@ function! GoToLetterboxdMovie()
     let url = "https://letterboxd.com/film/".movie_name_modified
     call system("qutebrowser \"".url."\" &")
 endfunction
-nnoremap .<M-m> :call GoToLetterboxdMovie()<cr>
+"nnoremap .<M-m> :call GoToLetterboxdMovie()<cr>
 ">>>
 
 " Enable syntax highlighting for LLVM files. To use, copy
@@ -1446,9 +1446,13 @@ if exists("&cmdheight") == 1
         set cmdheight=1
         let g:cmdheight_default=1
     else
+        "EDIT: Temporarily off until patch cmdheight=0 onto current vim and
+        "      fix UI problems like lack of echos.
         " Hide the command line by default.
-        set cmdheight=0
-        let g:cmdheight_default=0
+        "set cmdheight=0
+        "let g:cmdheight_default=0
+        set cmdheight=1
+        let g:cmdheight_default=1
     endif
     let g:cmdheight_expanded=3
     
