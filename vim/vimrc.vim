@@ -10,6 +10,8 @@ let g:vimrc_loaded_state = "start"
 let g:vim_laptop_number_broken_workaround = "off"
 
 set nocompatible
+let g:mapleader = "<C-\>"
+let g:maplocalleader = "<C-\>"
 
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -583,23 +585,23 @@ let g:quickpeek_popup_options = {
 "    nnoremap .bl :TigBlame<cr>
 "endif
 
-if PluginEnabled("vim-gitgutter") == 1
-    let g:gitgutter_enabled = 0
-    let g:gitgutter_preview_win_floating = 0
-
-    nnoremap <space>p :GitGutterToggle<cr>
-    nnoremap <space>P :GitGutterPreviewHunk<cr>
-
-    function! RefreshGitGutter()
-        if g:gitgutter_enabled == 1
-            GitGutterAll
-        endif
-    endfunction
-    augroup GitGutterAuGroup
-        autocmd!
-        autocmd BufWritePost * :call RefreshGitGutter()
-    augroup END
-endif
+"if PluginEnabled("vim-gitgutter") == 1
+"    let g:gitgutter_enabled = 0
+"    let g:gitgutter_preview_win_floating = 0
+"
+"    nnoremap <space>p :GitGutterToggle<cr>
+"    nnoremap <space>P :GitGutterPreviewHunk<cr>
+"
+"    function! RefreshGitGutter()
+"        if g:gitgutter_enabled == 1
+"            GitGutterAll
+"        endif
+"    endfunction
+"    augroup GitGutterAuGroup
+"        autocmd!
+"        autocmd BufWritePost * :call RefreshGitGutter()
+"    augroup END
+"endif
 
 if PluginEnabled("vim-lsp") == 1
     let g:lsp_diagnostics_enabled = 0
@@ -1606,7 +1608,6 @@ function! QuickFixFromJSON(json)
     " Open the quickfix.
     call GoToQuickFix()
 endfunction
-
 
 augroup QFClose
   autocmd!
