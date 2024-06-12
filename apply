@@ -43,6 +43,12 @@ set_xdg_dir xdg_config_dirs XDG_CONFIG_DIRS "/etc/xdg"
 set_xdg_dir xdg_data_dirs XDG_DATA_DIRS "/usr/local/share:/usr/share"
 #TODO: "XDG_LOCAL_HOME"? See spec.
 
+# Linux kernel stuff
+#--------------------------------------------------------------------------------
+LINUX_KERNEL_RELEASE="$(uname -r)"
+
+# Link functions
+#--------------------------------------------------------------------------------
 create_link()
 {
     ln -n -s "$1" "$2"
@@ -184,6 +190,7 @@ link_config_to_system "$HOME/.python_history" ./python/python_history
 link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
 link_config_to_system "$HOME/.bash_history" ./shell/bash_history
 link_config_to_system "$xdg_state_home/nvim" nvim/state
+link_config_to_system "/lib/modules/$LINUX_KERNEL_RELEASE" linux/modules
 
 # Distribute "override" files to system directories.
 #--------------------------------------------------------------------------------

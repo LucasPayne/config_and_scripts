@@ -31,7 +31,6 @@ class UserCommand:
         #documentation_string = "document {}\n{}end".format(self.name, self.documentation)
         #print(documentation_string)
         #gdb.execute(documentation_string)
-        #gdb.execute("document {}\nskibidi toilet\nend".format(self.name))
 
 def gdb_define_command(name, commands, arg_definitions=None, documentation=""):
     # Note: The commands in e.g.

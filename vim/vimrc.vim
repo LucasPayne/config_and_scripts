@@ -114,7 +114,7 @@ set noequalalways
 " accept a form which allows environment variable setting.
 "TODO: Get this to work also with vim :help.
 "set keywordprg=man_120_columns
-set keywordprg=
+"set keywordprg=
 " Press enter after executing external keywordprg pages.
 nnoremap K K<cr>
 vnoremap K K<cr>
@@ -184,7 +184,7 @@ function! TabLine()
     return s
 endfunction
 
-command! -nargs=1 TabTag let t:tab_tag = <q-args>
+command! -nargs=1 Ttag let t:tab_tag = <q-args>
 
 function! TabLabel(tabnr)
     function! TryIgnoreBuffer(buf)

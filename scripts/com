@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+#------wip
 
 commands_filename=compile_commands.json
 
