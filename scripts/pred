@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Filter lines with a predicate.
+
+while read -r line
+do
+    if "$@" "$line"
+    then
+        echo "$line"
+    fi
+done
+

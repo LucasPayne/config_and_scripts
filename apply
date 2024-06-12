@@ -191,6 +191,13 @@ link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser
 link_config_to_system "$HOME/.bash_history" ./shell/bash_history
 link_config_to_system "$xdg_state_home/nvim" nvim/state
 link_config_to_system "/lib/modules/$LINUX_KERNEL_RELEASE" linux/modules
+link_config_to_system "/etc/fstab" linux/@etc@fstab
+link_config_to_system "/etc/mtab" linux/@etc@mtab
+link_config_to_system "/etc/udev" "systemd/@etc@udev"
+link_config_to_system "/lib/systemd" "systemd/@lib@systemd"
+link_config_to_system "/lib/udev" "systemd/@lib@udev"
+link_config_to_system "/usr/local/lib/udev" "systemd/@usr@local@lib@udev"
+link_config_to_system "/run/udev" "systemd/@run@udev"
 
 # Distribute "override" files to system directories.
 #--------------------------------------------------------------------------------

@@ -1513,6 +1513,7 @@ function! SystemPasteLine()
     endif
 endfunction
 nnoremap <silent> <M-p> :call SystemPasteLine()<cr>
+inoremap <silent> <M-p> <C-r>+
 " wipe the selection's lines then paste a line.
 " Note that this doesn't care about column-level selection precision, it just
 " wipes all of the lines which the selection spans.
