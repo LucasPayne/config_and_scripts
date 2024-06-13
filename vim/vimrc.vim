@@ -148,13 +148,17 @@ function! TabLine()
 
         let tab_tag = gettabvar(i, "tab_tag", "")
         let tab_label = TabLabel(i)
+
+        if i == tabpagenr()
+            let s ..= '%#TabLineTagSel#'
+        else
+            let s ..= '%#TabLineTag#'
+        endif
+
+        " Display tab number.
+        let s ..= ' ' .. string(i) .. ' '
+
         if !empty(tab_tag)
-            if i == tabpagenr()
-                let s ..= '%#TabLineTagSel#'
-            else
-                let s ..= '%#TabLineTag#'
-            endif
-            let s ..= ' '
             let s ..= tab_tag
         endif
 
@@ -164,9 +168,7 @@ function! TabLine()
             let s ..= '%#TabLine#'
         endif
 
-        if empty(tab_tag)
-            let s ..= ' '
-        elseif !empty(tab_label)
+        if !empty(tab_tag) && !empty(tab_label)
             let s ..= ':'
         endif
         let s ..= tab_label
