@@ -70,7 +70,6 @@ $if mode=vi
     # Todo: This isn't accurate, need to back-search for $(.
     "ds$": "F$mtxxf)x`t"
     # Add a preceding $ to parenthesis.
-    # Also could be useful for $$().
     "cs($": "mtF(i$jk`t"
     "cs)$": "mtF(i$jk`t"
     # Todo: fix these.
