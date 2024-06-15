@@ -2,12 +2,14 @@
 #
 # Show dpkg dependencies and descriptions.
 
-usage () {
+usage ()
+{
     echo "Usage:"
     echo "    rdepends PACKAGE"
 }
 
-if [[ "$#" -ne 1 ]] ; then
+if [[ "$#" -ne 1 ]]
+then
     usage
     exit 1
 fi

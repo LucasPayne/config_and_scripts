@@ -3,9 +3,11 @@
 #
 # NOTE:
 #    fzf_raw must be in the path. This is the regular fzf.
-
-# Is there a way to map Alt-shift-j and Alt-shift-k?
-# (To page down, page up.)
+#
+# TODO:
+#    Is there a way to map Alt-shift-j and Alt-shift-k? (To page down, page up.)
+#    Is there a config file for this instead?
+#
 
 exec fzf_raw --bind 'alt-q:abort' \
              --bind 'alt-j:down' \

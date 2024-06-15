@@ -2,12 +2,14 @@
 #
 # Like xclip but for vim registers.
 
-if [ -z "$TERMDESK_ID" ] ; then
+if [ -z "$TERMDESK_ID" ]
+then
     >&2 echo "Not in a termdesk."
     exit 1
 fi
 
-if [ $# -eq 0 ] ; then
+if [ $# -eq 0 ]
+then
     # Get contents from stdin.
     # In interactive bash, without a pipe this will read from input, e.g. like `cat > file`.
     data="$(cat)"

@@ -1,10 +1,17 @@
 #!/bin/sh
+#
+# `dpkg -S` but takes a command argument which resolves to a path with `which`.
+
 if [ "$#" -eq 0 ] ; then
     >&2 echo "Usage: dpkgs [commands...]"
     exit 0
 fi
 while [ "$#" -gt 0 ] ; do
-    c16 blue ; echo "$(whereis "$1")" ; c16 --reset
+    (
+        c16 blue
+        echo "$(whereis "$1")"
+        c16 --reset
+    ) >&2
     dpkg -S "$(realpath "$(which "$1")")"
     shift
 done

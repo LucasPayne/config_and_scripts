@@ -2,17 +2,20 @@
 #
 # https://unix.stackexchange.com/questions/85364/how-can-i-check-what-signals-a-process-is-listening-to/85365#85365
 
-if [ $# -eq 0 ] ; then
+if [ $# -eq 0 ]
+then
     proc_identifier="self"
 else
     proc_identifier="$1"
 fi
 
-sigparse () {
+sigparse ()
+{
     i=0
     # bits="$(printf "16i 2o %X p" "0x$1" | dc)" # variant for busybox
     bits="$(printf "ibase=16; obase=2; %X\n" "0x$1" | bc)"
-    while [ -n "$bits" ] ; do
+    while [ -n "$bits" ]
+    do
         i="$(expr "$i" + 1)"
         case "$bits" in
             *1) printf " %s(%s)" "$(kill -l "$i")" "$i" ;;
