@@ -1617,4 +1617,41 @@ augroup QFClose
   autocmd WinEnter * if winnr('$') == 1 && &buftype == "quickfix" | q | endif
 augroup END
 
+" helpful when reading.
+" todo: More robust.
+function! ToggleReaderMode()
+    let val = &t_ve
+    if empty(val)
+        set t_ve&vim
+        nnoremap j gj
+        nnoremap k gk
+        nunmap u
+        nunmap i
+    else
+        set t_ve=
+        " reading with right hand keys (left hand thinking pose)
+        " 
+        " ⠀⠀⠀⠀⠀⠀⡀⣤⢖⠫⠚⠙⠉⠉⠈⠉⠉⠉⠋⠛⠿⡾⣠⢀⠀⠀⠀⠀⠀⠀
+        " ⠀⠀⠀⠀⣄⢶⠛⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠟⡴⢀⠀⠀⠀⠀
+        " ⠀⠀⠀⣦⠹⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠁⠟⣴⠀⠀⠀
+        " ⠀⡀⡷⠘⠀⠀⠀⠀⠀⠀⡀⣀⠀⠀⠀⠀⠀⡄⣿⣿⣾⠀⠀⠀⠀⠀⠃⡾⢀⠀
+        " ⠀⢷⠘⠀⠀⠀⠀⠀⠀⣷⣿⣿⢸⠀⠀⠀⠀⠃⡿⣿⠿⠀⠀⠀⠀⠀⠀⠋⣾⢀
+        " ⣧⠈⠀⠀⠀⠀⠀⠀⠀⠋⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡏⣾
+        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿
+        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣄⣦⣷⢿⠿⠿⠿⡿⣿⠰⠀⡀⣦⢶⡶⣴⠀⠀⣧
+        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⢿⠙⠈⠀⠀⠀⠀⠀⠀⠀⠀⣷⢹⠀⡅⣿⠀⠀⣿
+        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⣦⢷⠿⠶⣶⣶⣴⣤⣤⣤⣤⣿⠘⠀⡇⣿⠀⠀⣿
+        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⣿⣠⣀⢀⠀⠀⠀⠀⠉⠉⠉⠈⠀⠀⠁⡿⢰⠀⣿
+        " ⠟⠾⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠋⠛⡟⣿⠛⠀⠀⠀⠀⠀⠀⠀⠀⡇⣼⢷⠙
+        " ⠀⠀⠀⠉⠛⠾⠶⡴⣤⣤⣄⣠⣀⣀⣀⣁⣿⢰⠀⠀⠀⠀⠀⠀⠀⠀⣇⣿⢸⠀
+        " ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠉⠉⠉⠉⡏⣿⣾⢀⠀⠀⠀⠀⠀⡀⣆⣻⢿⠈⠀
+        "               ⠀⠀⠈⠋⣽⣿⣿⣶⣾⣷⣿⣛⣿⠟⠀⠀
+        nnoremap j <C-e>
+        nnoremap k <C-y>
+        nnoremap u <C-d>
+        nnoremap i <C-u>
+    endif
+endfunction
+nnoremap <silent> <M-F> :call ToggleReaderMode()<cr>
+
 let g:vimrc_loaded_state = "finished"

@@ -224,7 +224,6 @@ echo "Distributing "override" files to system directories."
 
 # Configure XDG with e.g. an expected default web browser.
 #--------------------------------------------------------------------------------
-echo
 apply_xdg_settings()
 {
     local desktop_file_dirs=("/usr/share/applications" "/usr/local/share/applications" "~/.local/share/applications")
@@ -258,6 +257,7 @@ apply_xdg_settings()
         echo "Letting the system  use its own default web browser."
     fi
 }
+echo
 apply_xdg_settings
 unset -f apply_xdg_settings
 
