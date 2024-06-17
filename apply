@@ -197,6 +197,7 @@ link_config_to_system "/etc/fstab" linux/@etc@fstab
 link_config_to_system "/etc/mtab" linux/@etc@mtab
 link_config_to_system "/etc/hosts" linux/@etc@hosts
 link_config_to_system "/etc/resolv.conf" linux/@etc@resolv.conf
+link_config_to_system "/etc/nsswitch.conf" linux/@etc@nsswitch.conf
 link_config_to_system "/etc/udev" "systemd/@etc@udev"
 link_config_to_system "/lib/systemd" "systemd/@lib@systemd"
 link_config_to_system "/lib/udev" "systemd/@lib@udev"

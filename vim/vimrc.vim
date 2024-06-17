@@ -1483,7 +1483,7 @@ set wincolor=Window
 hi clear Window
 hi clear Normal
 "hi Window ctermbg=0 ctermfg=white
-hi Window ctermbg=0 ctermfg=white
+hi Window ctermbg=0 ctermfg=grey
 "hi Normal ctermbg=white ctermfg=darkgrey
 hi Normal ctermbg=black ctermfg=white
 
