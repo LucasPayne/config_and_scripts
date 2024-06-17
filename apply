@@ -185,6 +185,8 @@ link_config_to_system "/usr/local/share/vim/vim$VIMRUNTIME_NUMBER" ./vim/system_
 link_config_to_system /etc/inputrc ./readline/system_inputrc
 link_config_to_system "$xdg_data_home/applications" ./freedesktop.org/user_applications
 link_config_to_system "$xdg_config_home/mimeapps.list" ./freedesktop.org/mimeapps.list
+link_config_to_system /usr/share/dbus-1 ./freedesktop.org/@usr@share@dbus-1
+link_config_to_system /etc/dbus-1 ./freedesktop.org/@etc@dbus-1
 link_config_to_system "$HOME/.local/lib/python3.10/" ./python/local_python3.10
 link_config_to_system "$HOME/.python_history" ./python/python_history
 link_config_to_system "$xdg_config_home/qutebrowser" ./qutebrowser/qutebrowser

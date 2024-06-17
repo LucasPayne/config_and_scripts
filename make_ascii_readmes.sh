@@ -11,13 +11,15 @@
 # Make sure this creates readmes in the config directories relative to the script.
 cd "$(dirname "$(readlink -f "$0")")"
 
-if ! command -v figlet &>/dev/null ; then
+if ! command -v figlet &>/dev/null
+then
     >&2 echo "Cannot find figlet. Is it installed?"
     >&2 echo "With apt, the package name is \"figlet\"."
     exit 1
 fi
 
-find -mindepth 1 -maxdepth 1 -type d | while read -r dirpath ; do
+find -mindepth 1 -maxdepth 1 -type d | while read -r dirpath
+do
     readme_path="$dirpath/README.md"
     > "$readme_path"
     echo '```' >> "$readme_path"
