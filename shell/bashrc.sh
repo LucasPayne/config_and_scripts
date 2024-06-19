@@ -7,7 +7,10 @@ source "$CONFIG_DIR/scripts/fzf_tools/fzf_tools.sh"
 set -o vi
 # https://unix.stackexchange.com/questions/12107/how-to-unfreeze-after-accidentally-pressing-ctrl-s-in-a-terminal
 # Deactivate terminal-driver-level flow control.
-stty -ixon
+if [ -t 1 ]
+then
+    stty -ixon
+fi
 
 # Strace helpers
 stracev ()
