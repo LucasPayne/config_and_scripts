@@ -1,0 +1,4 @@
+#!/bin/bash
+
+exec apt-file search "$@"
+
