@@ -37,3 +37,6 @@
 [submodule "vim/__tmp/nerdtree"]
 	path = vim/repos/nerdtree
 	url = git@github.com:preservim/nerdtree.git
+[submodule "vim/__tmp/goyo.vim"]
+	path = vim/repos/goyo.vim
+	url = https://github.com/junegunn/goyo.vim

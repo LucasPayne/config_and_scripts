@@ -553,6 +553,7 @@ nnoremap <silent> <M--> :sp<cr>
 "<<<
 if PluginEnabled("vim-surround") == 1
     nmap s ys
+    vmap s S
 endif
 
 if PluginEnabled("tagbar") == 1
