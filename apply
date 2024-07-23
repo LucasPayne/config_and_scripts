@@ -121,6 +121,7 @@ mkdir -p "$xdg_config_home/tig"
 link_system_to_config ./git/tigrc "$xdg_config_home/tig/config"
 
 link_system_to_config ./i3 "$xdg_config_home/i3"
+link_system_to_config ./zathura "$xdg_config_home/zathura"
 link_system_to_config ./scripts ~/scripts
 link_system_to_config source-highlight ~/.source-highlight
 link_system_to_config lf "$xdg_config_home/lf"
