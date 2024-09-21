@@ -28,7 +28,7 @@ cmd open &{{
             ;;
     esac
 
-    for file in $fx ; do
+    while read -r file ; do
         case $(file --mime-type -Lb "$file") in
             text/*|application/json|application/xml|inode/x-empty)
                 v --nostdin "$file"
@@ -43,7 +43,7 @@ cmd open &{{
                 # Don't try to open it.
                 ;;
         esac
-    done
+    done < <(echo "$fx")
 }}
 
 # :-command versions of utilities.
