@@ -23,7 +23,7 @@ cmd open &{{
                     fi
                 done
             )
-            feh $files & disown
+            feh $files
             exit
             ;;
     esac
@@ -34,7 +34,7 @@ cmd open &{{
                 v --nostdin "$file"
                 ;;
             video/*|application/pdf)
-                xdg-open "$file" & disown
+                xdg-open "$file"
                 ;;
             application/zip)
                 v --nostdin "$file"
