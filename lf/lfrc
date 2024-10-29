@@ -36,6 +36,9 @@ cmd open &{{
             video/*|application/pdf)
                 xdg-open "$file"
                 ;;
+            audio/*)
+                xdg-open "$file"
+                ;;
             application/zip)
                 v --nostdin "$file"
                 ;;
