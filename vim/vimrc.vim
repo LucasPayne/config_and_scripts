@@ -682,7 +682,7 @@ endif
 " Debugging
 " ...
 "<<<
-packadd termdebug
+"packadd termdebug
 
 let g:termdebug_config = {
             \ 'winbar' : 0,

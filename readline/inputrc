@@ -80,7 +80,6 @@ $if mode=vi
     # More complete text objects.
     # C-A to start of line
     # It could be useful for these commands to understand escape sequences.
-    # Ctrl-P, Ctrl-N history search.
     # Yank with vim text objects.
     # Ctrl-W (seems to work in bash, not in e.g. python readline).
 
@@ -88,4 +87,8 @@ $if mode=vi
     Control-l: clear-screen
     "jk": vi-movement-mode
     "\e.": yank-last-arg
+    
+    # Ctrl-P, Ctrl-N history search.
+    Control-p: previous-history
+    Control-n: next-history
 $endif
