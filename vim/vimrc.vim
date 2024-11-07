@@ -348,7 +348,7 @@ nnoremap gj gT
 nnoremap gk gt
 " Write
 nnoremap <M-s> :w<cr>
-inoremap <M-s> <Esc>:w<cr>
+inoremap <M-s> <Esc>:w<cr>a
 " Navigate windows
 nnoremap <M-H> <C-w>h
 nnoremap <M-J> <C-w>j
