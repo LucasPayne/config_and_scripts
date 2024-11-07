@@ -384,6 +384,10 @@ nnoremap <silent> <M-w><M-,> :tabm -1<cr>
 " todo: Shouldn't leave the terminal tab entered in command mode.
 tnoremap <silent> <M-w><M-.>. <C-\><C-n>:tabm +1<cr>
 tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1<cr>
+" Scroll-wheel goes to terminal normal mode so can scroll in vim buffer.
+tnoremap <ScrollWheelUp> <C-\><C-n>
+tnoremap <ScrollWheelDown> <C-\><C-n>
+
 " emacs-style keybindings.
 " C-u by default kills to start of a line restricted to the insert region.
 " Preferring emacs logic (kill to start of line, regardless of insert region).
