@@ -141,11 +141,13 @@ link_system_to_config cool-retro-term/cool-retro-term-config "$xdg_config_home/c
 # system debian symlinks
 echo
 echo "Creating debian navigation symlinks in ./debian/..."
-link_config_to_system /etc/apt/sources.list ./debian/sources.list
-link_config_to_system /etc/apt/sources.list.d ./debian/sources.list.d
-link_config_to_system /var/lib/apt ./debian/aptdir
-link_config_to_system /var/log/apt ./debian/aptlogs
-link_config_to_system /var/lib/dpkg ./debian/dpkgdir
+link_config_to_system /etc/apt/sources.list ./debian/@etc@apt@sources.list
+link_config_to_system /etc/apt/sources.list.d ./debian/@etc@apt@sources.list.d
+link_config_to_system /var/lib/apt ./debian/@var@lib@apt
+link_config_to_system /var/log/apt ./debian/@var@log@apt
+link_config_to_system /var/lib/dpkg ./debian/@var@lib@dpkg
+link_config_to_system /etc/apt ./debian/@etc@apt
+link_config_to_system /etc/apt/apt.conf.d ./debian/@etc@apt@apt.conf.d
 
 # system xdg symlinks
 echo
@@ -199,11 +201,18 @@ link_config_to_system "/etc/mtab" linux/@etc@mtab
 link_config_to_system "/etc/hosts" linux/@etc@hosts
 link_config_to_system "/etc/resolv.conf" linux/@etc@resolv.conf
 link_config_to_system "/etc/nsswitch.conf" linux/@etc@nsswitch.conf
+# systemd
 link_config_to_system "/etc/udev" "systemd/@etc@udev"
+link_config_to_system "/etc/systemd" "systemd/@etc@systemd"
+link_config_to_system "/etc/systemd/system.conf" "systemd/@etc@systemd@system.conf"
+link_config_to_system "/etc/systemd/system.conf.d" "systemd/@etc@systemd@system.conf.d"
+link_config_to_system "/etc/systemd/user.conf" "systemd/@etc@systemd@user.conf"
+link_config_to_system "/etc/systemd/user.conf.d" "systemd/@etc@systemd@user.conf.d"
 link_config_to_system "/lib/systemd" "systemd/@lib@systemd"
 link_config_to_system "/lib/udev" "systemd/@lib@udev"
 link_config_to_system "/usr/local/lib/udev" "systemd/@usr@local@lib@udev"
 link_config_to_system "/run/udev" "systemd/@run@udev"
+# grub
 link_config_to_system "/boot/grub/grub.cfg" "grub/@boot@grub@grub.cfg"
 link_config_to_system "/etc/grub.d" "grub/@etc@grub.d"
 
