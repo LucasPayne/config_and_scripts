@@ -141,13 +141,21 @@ link_system_to_config cool-retro-term/cool-retro-term-config "$xdg_config_home/c
 # system debian symlinks
 echo
 echo "Creating debian navigation symlinks in ./debian/..."
+# apt
 link_config_to_system /etc/apt/sources.list ./debian/@etc@apt@sources.list
 link_config_to_system /etc/apt/sources.list.d ./debian/@etc@apt@sources.list.d
 link_config_to_system /var/lib/apt ./debian/@var@lib@apt
 link_config_to_system /var/log/apt ./debian/@var@log@apt
-link_config_to_system /var/lib/dpkg ./debian/@var@lib@dpkg
 link_config_to_system /etc/apt ./debian/@etc@apt
+link_config_to_system /etc/apt/apt.conf ./debian/@etc@apt@apt.conf
 link_config_to_system /etc/apt/apt.conf.d ./debian/@etc@apt@apt.conf.d
+# dpkg
+link_config_to_system /var/lib/dpkg ./debian/@var@lib@dpkg
+link_config_to_system /var/log/dpkg.log ./debian/@var@log@dpkg.log
+link_config_to_system /etc/dpkg/dpkg.cfg ./debian/@etc@dpkg@dpkg.cfg
+link_config_to_system /etc/dpkg/dpkg.cfg.d ./debian/@etc@dpkg@dpkg.cfg.d
+link_config_to_system /var/lib/dpkg/available ./debian/@var@lib@dpkg@available
+link_config_to_system /var/lib/dpkg/status ./debian/@var@lib@dpkg@status
 
 # system xdg symlinks
 echo
