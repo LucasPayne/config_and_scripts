@@ -130,6 +130,8 @@ link_system_to_config nvim/runtime "$xdg_config_home/nvim"
 link_system_to_config debian/dpkg.cfg ~/.dpkg.cfg
 link_system_to_config cool-retro-term/cool-retro-term-config "$xdg_config_home/cool-retro-term"
 link_system_to_config freedesktop.org/user-dirs.conf "$xdg_config_home/user-dirs.conf"
+link_system_to_config freedesktop.org/user-dirs.dirs "$xdg_config_home/user-dirs.dirs"
+link_system_to_config freedesktop.org/user-dirs.locale "$xdg_config_home/user-dirs.locale"
 
 # Setup symlinks in this directory to system files.
 #--------------------------------------------------------------------------------
