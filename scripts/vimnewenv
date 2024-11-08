@@ -10,4 +10,4 @@ unset VIM_TERMINAL
 unset VIM_SERVERNAME
 unset NVIM_LISTEN_ADDRESS
 
-exec "$@"
+"$@"

@@ -204,6 +204,8 @@ link_config_to_system "/lib/systemd" "systemd/@lib@systemd"
 link_config_to_system "/lib/udev" "systemd/@lib@udev"
 link_config_to_system "/usr/local/lib/udev" "systemd/@usr@local@lib@udev"
 link_config_to_system "/run/udev" "systemd/@run@udev"
+link_config_to_system "/boot/grub/grub.cfg" "grub/@boot@grub@grub.cfg"
+link_config_to_system "/etc/grub.d" "grub/@etc@grub.d"
 
 # Distribute "override" files to system directories.
 #--------------------------------------------------------------------------------
