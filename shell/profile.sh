@@ -35,4 +35,4 @@ export PATH="$(realpath ~/bin):$PATH"
 # (See info source-highlight)
 export SOURCE_HIGHLIGHT_DATADIR="$HOME/config/source-highlight/datadir"
 
-export GDB_DEV="$HOME/.gdb"
+export GDB_DEV="$HOME/config/gdb"
