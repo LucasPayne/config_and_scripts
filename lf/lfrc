@@ -4,11 +4,12 @@ set ifs " "
 #set icons
 set ignorecase
 set mouse
-set previewer ~/.config/lf/previewer.sh
+#--------------------------------------------------------------------------------
+#set previewer ~/.config/lf/previewer.sh
 #lfimg---------------------------------------------------------------------------
-#set ratios 1:2:3
-#set previewer ~/.config/lf/preview_lfimg
-#set cleaner ~/.config/lf/clean_lfimg
+set ratios 1:2:3
+set previewer ~/.config/lf/preview_lfimg
+set cleaner ~/.config/lf/clean_lfimg
 #--------------------------------------------------------------------------------
 set sortby 'name'
 map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' less -R $f
