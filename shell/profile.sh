@@ -20,8 +20,10 @@ export PATH="$PATH:$(realpath ~/go/bin)"
 if [ -d $(xdg-data-home)/themes/Greybird-dark-override ] ; then
     export GTK_THEME="Greybird-dark-override"
 fi
-#export GTK2_RC_FILES="$(xdg-data-home)/themes/Adwaita-dark/gtk-2.0/gtkrc"
-#export QT_STYLE_OVERRIDE="Adwaita-Dark"
+# Qt
+# Force a custom dark theme for accessibility
+# Note on apt systems this is installed through the package "adwaita-qt".
+export QT_STYLE_OVERRIDE=Adwaita-Dark
 
 # Man pages in synced config.
 export MANPATH="$MANPATH:$(realpath ~/config/man)"
