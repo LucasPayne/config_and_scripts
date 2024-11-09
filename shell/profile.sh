@@ -15,6 +15,14 @@ export PATH="$PATH:$(realpath ~/.cargo/bin)"
 # Go packages
 export PATH="$PATH:$(realpath ~/go/bin)"
 
+# GTK
+# Force a custom dark theme for accessibility
+if [ -d $(xdg-data-home)/themes/Greybird-dark-override ] ; then
+    export GTK_THEME="Greybird-dark-override"
+fi
+#export GTK2_RC_FILES="$(xdg-data-home)/themes/Adwaita-dark/gtk-2.0/gtkrc"
+#export QT_STYLE_OVERRIDE="Adwaita-Dark"
+
 # Man pages in synced config.
 export MANPATH="$MANPATH:$(realpath ~/config/man)"
 

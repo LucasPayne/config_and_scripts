@@ -27,6 +27,7 @@ export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
+
 xdg-mime-set ()
 {
     xdg-mime default feh.desktop image/jpeg

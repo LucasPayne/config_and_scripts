@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Create themes.
+
+# GTK 3
+overridden_theme=Greybird-dark
+overriden_theme_dir="/usr/share/themes/$overridden_theme"
+new_theme_dir="$(xdg-data-home)/themes/${overridden_theme}-override"
+if [ -d "/usr/share/themes/$overriden_theme" ]
+then
+    cp -r "$overriden_theme_dir" "$new_theme_dir"
+fi
+# override relevant files
+cp "${overridden_theme}-override_gtk.css" "$new_theme_dir/gtk-3.0/gtk.css"
