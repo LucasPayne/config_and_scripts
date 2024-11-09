@@ -126,14 +126,14 @@ nnoremap <M-l> L
 nnoremap <M-m> M
 
 " Project browser.
-function! ProjectBrowser()
-    NERDTree
-endfunction
-function! ToggleProjectBrowser()
-    NERDTreeToggle
-endfunction
-nnoremap <silent> <M-a> :call ProjectBrowser()<cr>
-nnoremap <silent> <M-A> :call ToggleProjectBrowser()<cr>
+"function! ProjectBrowser()
+"    NERDTree
+"endfunction
+"function! ToggleProjectBrowser()
+"    NERDTreeToggle
+"endfunction
+"nnoremap <silent> <M-a> :call ProjectBrowser()<cr>
+"nnoremap <silent> <M-A> :call ToggleProjectBrowser()<cr>
 
 " Tab line
 " :help tabline
