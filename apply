@@ -220,6 +220,8 @@ link_config_to_system "/run/udev" "systemd/@run@udev"
 # grub
 link_config_to_system "/boot/grub/grub.cfg" "grub/@boot@grub@grub.cfg"
 link_config_to_system "/etc/grub.d" "grub/@etc@grub.d"
+link_config_to_system "/etc/default/grub" "grub/@etc@default@grub"
+link_config_to_system "/etc/default/grub.d" "grub/@etc@default@grub.d"
 
 # Distribute "override" files to system directories.
 #--------------------------------------------------------------------------------

@@ -385,8 +385,10 @@ nnoremap <silent> <M-w><M-,> :tabm -1<cr>
 tnoremap <silent> <M-w><M-.>. <C-\><C-n>:tabm +1<cr>
 tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1<cr>
 " Scroll-wheel goes to terminal normal mode so can scroll in vim buffer.
-tnoremap <ScrollWheelUp> <C-\><C-n>
-tnoremap <ScrollWheelDown> <C-\><C-n>
+"TODO: This should only be in the shell prompt, still want scroll in other
+"programs e.g. man pages.
+"tnoremap <ScrollWheelUp> <C-\><C-n>
+"tnoremap <ScrollWheelDown> <C-\><C-n>
 
 " emacs-style keybindings.
 " C-u by default kills to start of a line restricted to the insert region.
@@ -1660,3 +1662,44 @@ endfunction
 nnoremap <silent> <M-F> :call ToggleReaderMode()<cr>
 
 let g:vimrc_loaded_state = "finished"
+
+"https://vi.stackexchange.com/questions/17262/iedit-behaviour-in-vim/17272#17272
+"--------------------------------------------------------------------------------
+function! GetTextObject(type, is_visual)
+    let sel_save = &selection
+    let &selection = "inclusive"
+    let reg_save = @@
+    if a:is_visual
+      silent execute "normal! gvy"
+    elseif a:type == 'line'
+      silent execute "normal! '[V']y"
+    else
+      silent execute "normal! `[v`]y"
+    endif
+    let text = @@
+    let &selection = sel_save
+    let @@ = reg_save
+    return text
+endfunction
+
+function! ReplaceOperator(type, ...)
+    let text = GetTextObject(a:type, a:0)
+    call feedkeys(":%s/".text."//g\<left>\<left>", "n")
+endfunction
+nnoremap gr :set opfunc=ReplaceOperator<cr>g@
+vnoremap gr :<C-u>call ReplaceOperator(visualmode(), 1)<cr>
+
+function! AppendReplaceOperator(type, ...)
+    let text = GetTextObject(a:type, a:0)
+    call feedkeys(":%s/".text."/".text."/g\<left>\<left>", "n")
+endfunction
+nnoremap gA :set opfunc=AppendReplaceOperator<cr>g@
+vnoremap gA :<C-u>call AppendReplaceOperator(visualmode(), 1)<cr>
+
+function! PrependReplaceOperator(type, ...)
+    let text = GetTextObject(a:type, a:0)
+    call feedkeys(":%s/".text."/".text."/g".repeat("\<left>", len(text) + 2), "n")
+endfunction
+nnoremap gI :set opfunc=PrependReplaceOperator<cr>g@
+vnoremap gI :<C-u>call PrependReplaceOperator(visualmode(), 1)<cr>
+"--------------------------------------------------------------------------------
