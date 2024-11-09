@@ -1,0 +1,4 @@
+#!/bin/sh
+# Resolves to system's XDG_STATE_HOME or default.
+#
+printf '%s' "${XDG_STATE_HOME:-$HOME/.local/state}"

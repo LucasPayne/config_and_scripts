@@ -1,0 +1,4 @@
+#!/bin/sh
+# Resolves to system's XDG_DATA_HOME or default.
+#
+printf '%s' "${XDG_DATA_HOME:-$HOME/.local/share}"

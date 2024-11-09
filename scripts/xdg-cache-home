@@ -1,0 +1,5 @@
+#!/bin/sh
+# Resolves to system's XDG_CACHE_HOME or default.
+#
+printf '%s' "${XDG_CACHE_HOME:-$HOME/.cache}"
+

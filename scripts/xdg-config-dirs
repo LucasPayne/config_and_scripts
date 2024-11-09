@@ -1,0 +1,4 @@
+#!/bin/sh
+# Resolves to system's XDG_CONFIG_DIRS or default.
+#
+printf '%s' "${XDG_CONFIG_DIRS:-/etc/xdg}"

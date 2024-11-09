@@ -1,0 +1,4 @@
+#!/bin/sh
+# Resolves to system's XDG_DATA_DIRS or default.
+#
+printf '%s' "${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"

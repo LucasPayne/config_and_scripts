@@ -1,0 +1,5 @@
+#!/bin/sh
+# Resolves to system's XDG_CONFIG_HOME or default.
+#
+printf '%s' "${XDG_CONFIG_HOME:-$HOME/.config}"
+
