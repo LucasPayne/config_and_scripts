@@ -165,19 +165,22 @@ link_config_to_system "$xdg_data_home/Trash" ./freedesktop.org/Trash
 create_xdg_dir_symlinks()
 {
     xdg_dirs_var="$1"
+    is_data_dirs="$2"
     while read -r dirpath
     do
         if [ $opt_generate_dangling_system_symlinks -eq 1 ] || [ -d "$dirpath" ]
         then
             mangled_path="$(echo -n "$dirpath" | tr '/' '_' | tr ' ' '_')"
             link_config_to_system "$dirpath" "./freedesktop.org/$xdg_dirs_var@$mangled_path"
+            # Collate xdg_data_dirs applications subdirectories under system_applications for convenience.
+            link_config_to_system "$dirpath/applications" "./freedesktop.org/system_applications/$mangled_path"
         else
             echo "$xdg_dirs_var: $dirpath not found. Not creating symlink."
         fi
     done < <(echo "${!xdg_dirs_var}" | tr ':' '\n')
 }
-create_xdg_dir_symlinks xdg_config_dirs
-create_xdg_dir_symlinks xdg_data_dirs
+create_xdg_dir_symlinks xdg_config_dirs 0
+create_xdg_dir_symlinks xdg_data_dirs 1
 
 echo
 echo "Creating general navigation symlinks..."
