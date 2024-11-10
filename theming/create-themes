@@ -11,4 +11,7 @@ then
     cp -r "$overriden_theme_dir" "$new_theme_dir"
 fi
 # override relevant files
+echo cp "${overridden_theme}-override_gtk.css" "$new_theme_dir/gtk-3.0/gtk.css"
 cp "${overridden_theme}-override_gtk.css" "$new_theme_dir/gtk-3.0/gtk.css"
+echo cp "${overridden_theme}-override_gtkrc" "$new_theme_dir/gtk-2.0/gtkrc"
+cp "${overridden_theme}-override_gtkrc" "$new_theme_dir/gtk-2.0/gtkrc"
