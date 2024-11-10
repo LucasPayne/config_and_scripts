@@ -17,12 +17,19 @@ export PATH="$PATH:$(realpath ~/go/bin)"
 
 # GTK
 # Force a custom dark theme for accessibility
-if [ -d $(xdg-data-home)/themes/Greybird-dark-override ] ; then
+#
+gtk_theme_dir="$(xdg-data-home)/themes/Greybird-dark-override"
+if [ -d "$gtk_theme_dir" ] ; then
     export GTK_THEME="Greybird-dark-override"
+    export GTK2_RC_FILES="$gtk_theme_dir/gtk-2.0/gtkrc"
+else
+    export GTK_THEME="Greybird-dark"
 fi
 # Qt
 # Force a custom dark theme for accessibility
 # Note on apt systems this is installed through the package "adwaita-qt".
+# Qt loads styles from a .so plugin. This style can be modified by building
+# adwaita-qt from source.
 export QT_STYLE_OVERRIDE=Adwaita-Dark
 
 # Man pages in synced config.
