@@ -102,7 +102,7 @@ fi
 
 # Determine the paths to be communicated to vim.
 paths=()
-for file in ${files[*]}
+for file in "${files[@]}"
 do
     if [[ $opt_open_scripts -eq 1 ]]
     then
@@ -129,13 +129,13 @@ done
 if [[ $opt_quickfix -eq 1 ]]
 then
     json='[]'
-    for path in ${paths[@]}
+    for path in "${paths[@]}"
     do
         json="$(echo "$json" | jq ". += [{\"path\": \"$path\", \"line\": 1, \"column\": 1}]")"
     done
     echo "$json" | vimjsonrpc QuickFixFromJSON
 else
-    for path in ${paths[@]}
+    for path in "${paths[@]}"
     do
         send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
         vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
