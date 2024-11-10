@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# pkg-file <package>
+# If a pkg-config package is matched, print it's .pc file.
+
+if [ "$#" -ne 1 ]
+then
+    echo "Usage: pkg-file <package>"
+    exit
+fi
+
+name="$1"
+if pkg-config --exists "$name"
+then
+    echo "$(pkg-config --variable pcfiledir "$name")/$name.pc"
+else
+    exit 1
+fi
