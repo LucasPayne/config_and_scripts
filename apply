@@ -256,12 +256,13 @@ houdini_dir="$HOME/houdini$houdini_version"
 echo "Houdini directory: $houdini_dir"
 if [ -d "$houdini_dir" ]
 then
-    # Install colour schemes
-    fd . -ehcs houdini/colorschemes | while read -r path
+    fd . -ehcs houdini/config | while read -r path
     do
         link_system_to_config "$path" "$houdini_dir/config/$(basename "$path")"
     done
 fi
+link_config_to_system "/opt/hfs$houdini_version/houdini/config houdini/system_config"
+
 
 # Configure XDG with e.g. an expected default web browser.
 #--------------------------------------------------------------------------------

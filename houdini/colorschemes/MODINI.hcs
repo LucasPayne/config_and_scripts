@@ -16,7 +16,7 @@ Scheme: MODINI
 
 ////////////////////////////////////////////////////////////////////////
 
-#define UNK		GREY(.2)
+#define UNK		GREY(.02)
 
 #define GREY(g)		g g g
 #define BLACK		GREY(0.02)
@@ -56,7 +56,7 @@ Scheme: MODINI
 #define TEXT			#949796
 #define TEXT_HIGHLIGHT  DRKBASE	
 
-#define EDIT_BG	#202020
+#define EDIT_BG	#030303
 #define EDIT_BG_HIGHLIGHT	DRKBASE	
 #define EDIT_BG_OUTLINE		DRKBASE	
 
@@ -124,8 +124,8 @@ ButtonPressedText2:	GREY(.01)
 ButtonPressedGradHi:	PRESSED_HIGH // 0.45 0.45 0.2
 ButtonPressedGradLow:	PRESSED_LOW // 0.45 0.45 0.2
 
-ButtonMenuArrowHi:	GREY(0.25)
-ButtonMenuArrowLow:	GREY(0.25)
+ButtonMenuArrowHi:	GREY(0.1)
+ButtonMenuArrowLow:	GREY(0.1)
 ButtonMenuArrow:	ARROW
 
 ButtonArrow:		ARROW
@@ -139,9 +139,9 @@ HiliteTextBG: #454B50
 SecondaryText:      GREY(0.5)
 LinkText:           #64ACFF
 
-MenuBG:			GREY(.26)
+MenuBG:			GREY(.08)
 MenuText:		TEXT
-MenuTextDisabled:	GREY(.4)
+MenuTextDisabled:	GREY(.7)
 MenuTextHotkey:		SHADOW2
 MenuHighlight:		SHADOW3
 MenuShadow:		SHADOW5
