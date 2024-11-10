@@ -246,6 +246,23 @@ echo "Distributing "override" files to system directories."
     find freedesktop.org/xdg_override_autostart/ -name '*.desktop' -exec bash -c 'distribute_override_file "$1" "$2"' -- {} "$xdg_config_home/autostart" \;
 )
 
+# Configure application software.
+# These are large-scale applications, e.g. DCC tools and game engines.
+#--------------------------------------------------------------------------------
+# Houdini
+echo
+houdini_version=20.5
+houdini_dir="$HOME/houdini$houdini_version"
+echo "Houdini directory: $houdini_dir"
+if [ -d "$houdini_dir" ]
+then
+    # Install colour schemes
+    fd . -ehcs houdini/colorschemes | while read -r path
+    do
+        link_system_to_config "$path" "$houdini_dir/config/$(basename "$path")"
+    done
+fi
+
 # Configure XDG with e.g. an expected default web browser.
 #--------------------------------------------------------------------------------
 apply_xdg_settings()

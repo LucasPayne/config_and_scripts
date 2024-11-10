@@ -3,31 +3,31 @@ Scheme: MODINI
 #include "basic_colors.inc"
 #include "NodeGraphDark.inc"
 
-#define DRKBASECLR	GREY(.15)
-#define DRKBASE		#484848
-#define DRKGRADHIGH	#484848
-#define DRKGRADLOWCLR	GREY(.15)
-#define DRKGRADLOW	#484848
-#define DRKGRADMID	GREY(.15)
-#define DRKBORDER	GREY(.15)
-#define WELL		#484848
+#define DRKBASECLR	GREY(.01)
+#define DRKBASE		#101010
+#define DRKGRADHIGH	#101010
+#define DRKGRADLOWCLR	GREY(.01)
+#define DRKGRADLOW	#101010
+#define DRKGRADMID	GREY(.01)
+#define DRKBORDER	GREY(.01)
+#define WELL		#101010
 #define LISTA		GREY(.26)
-#define LISTB		#484848
+#define LISTB		#101010
 
 ////////////////////////////////////////////////////////////////////////
 
 #define UNK		GREY(.2)
 
 #define GREY(g)		g g g
-#define BLACK		GREY(0.2)
+#define BLACK		GREY(0.02)
 #define WHITE		GREY(.9)
-#define DARK		GREY(.15)
+#define DARK		GREY(.01)
 #define ARROW		GREY(0.51608)
 #define PRESSED_ARROW	#F18805
 
 // Color Palette
 
-#define SHADOW1		GREY(.2)
+#define SHADOW1		GREY(.02)
 #define SHADOW1_5	SHADOW1	
 #define SHADOW2		SHADOW1	
 #define SHADOW3		SHADOW1	
@@ -38,12 +38,12 @@ Scheme: MODINI
 #define PRESSED_HIGH	#C37909
 #define PRESSED_LOW #C37909
 
-#define HELP_BG		GREY(.15)
-#define HELP_F1_BG	GREY(0.5)
+#define HELP_BG		GREY(.01)
+#define HELP_F1_BG	GREY(0.05)
 
 #define SELECTION_BASE		PRESSED_HIGH
 #define SELECTION_HIGHLIGHT2	PRESSED_HIGH
-#define SELECTION_SHADOW	GREY(.15)
+#define SELECTION_SHADOW	GREY(.01)
 
 #define ERROR			#9A381D
 
@@ -53,21 +53,21 @@ Scheme: MODINI
 
 #define EMPTY			DRKBASE
 
-#define TEXT			GREY (.75)
+#define TEXT			#949796
 #define TEXT_HIGHLIGHT  DRKBASE	
 
-#define EDIT_BG	#585858
+#define EDIT_BG	#202020
 #define EDIT_BG_HIGHLIGHT	DRKBASE	
 #define EDIT_BG_OUTLINE		DRKBASE	
 
 #define GRAD_HI			DRKBASE
 #define GRAD_LOW		DRKBASE
 
-#define BUTTON_DISABLE		GREY(.15)
+#define BUTTON_DISABLE		GREY(.01)
 #define BUTTON_SEL		SELECTION_BASE
 #define BUTTON_PRESS		SELECTION_BASE
 
-GraphBackground:		GREY(.15)
+GraphBackground:		GREY(.01)
 ////////////////////////////////////////////////////////////////////////
 
 ChannelEditorBackground:	    DRKBASECLR	    // Background of the graph same as network color
@@ -120,7 +120,7 @@ DialogBlendBG:		DRKBASE	// messages, etc
 
 ButtonText:		TEXT
 ButtonPressedText:	WHITE
-ButtonPressedText2:	GREY(.15)
+ButtonPressedText2:	GREY(.01)
 ButtonPressedGradHi:	PRESSED_HIGH // 0.45 0.45 0.2
 ButtonPressedGradLow:	PRESSED_LOW // 0.45 0.45 0.2
 
