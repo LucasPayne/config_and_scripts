@@ -256,12 +256,17 @@ houdini_dir="$HOME/houdini$houdini_version"
 echo "Houdini directory: $houdini_dir"
 if [ -d "$houdini_dir" ]
 then
-    fd . -ehcs houdini/config | while read -r path
+    # Houdini sometimes modifies the houdini user config directory, and want to
+    # keep those files, so instead of linking the whole config dir, create
+    # symlinks for each file/directory in it.
+    fd . houdini/config --max-depth=1 | while read -r path
     do
         link_system_to_config "$path" "$houdini_dir/config/$(basename "$path")"
     done
 fi
-link_config_to_system "/opt/hfs$houdini_version/houdini/config houdini/system_config"
+link_system_to_config ./houdini/houdini.env "$houdini_dir/houdini.env"
+# links to system files
+link_config_to_system "/opt/hfs$houdini_version/houdini/config" "./houdini/system_config"
 
 
 # Configure XDG with e.g. an expected default web browser.
