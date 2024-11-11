@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Create themes.
+# Create GTK themes.
 
 # GTK 3
 overridden_theme=Greybird-dark
@@ -15,3 +15,8 @@ echo cp "${overridden_theme}-override_gtk.css" "$new_theme_dir/gtk-3.0/gtk.css"
 cp "${overridden_theme}-override_gtk.css" "$new_theme_dir/gtk-3.0/gtk.css"
 echo cp "${overridden_theme}-override_gtkrc" "$new_theme_dir/gtk-2.0/gtkrc"
 cp "${overridden_theme}-override_gtkrc" "$new_theme_dir/gtk-2.0/gtkrc"
+
+# Note
+# GTK applications run as root will look for themes in the root home directory,
+# usually /root. e.g. at /root/.local/share/themes.
+# TODO: Workflow to do this automatically, that or point gtk at user themes somehow.
