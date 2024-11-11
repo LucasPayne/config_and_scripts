@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # pkg-file <package>
 # If a pkg-config package is matched, print it's .pc file.

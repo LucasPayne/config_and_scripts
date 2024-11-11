@@ -15,6 +15,10 @@ export PATH="$PATH:$(realpath ~/.cargo/bin)"
 # Go packages
 export PATH="$PATH:$(realpath ~/go/bin)"
 
+# dpkg
+# Disable paging
+export DPKG_PAGER=cat
+
 # GTK
 # Force a custom dark theme for accessibility
 #
