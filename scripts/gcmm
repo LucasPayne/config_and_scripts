@@ -1,3 +1,5 @@
 #!/bin/bash
-# gcmm:
+# gcmm: git add modified files then gcm
 
+git add -u
+gcm "$@"
