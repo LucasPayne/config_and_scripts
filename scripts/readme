@@ -223,7 +223,7 @@ sharedlib_info ()
 {
     library_path="$1"
     echo "libraries:"
-    ldd "$library_path" | sed 's/^\t//' | cutw 1 | sed 's/^/    /'
+    ldd "$library_path" | sed 's/^\t//' | cutw 1 | indent 1
 
 }
 
@@ -249,7 +249,8 @@ func_dpkg_information ()
         return 1
     fi
     echo "name: $package_name"
-    dpkg-query --show -f='status: ${Status} (${db:Status-Abbrev})\n' "$package_name"
+    #todo: Multiple architectures, which one?
+    dpkg-query --show -f='status: ${Status} (${db:Status-Abbrev})\n' "$package_name" | head -1
 
     # If not installed abort now, following information requires an installed package.
     do_check_dpkg_installed "$package_name" || return 1
@@ -264,15 +265,15 @@ func_dpkg_information ()
             then
                 echo "man$i: ${manpage_section_descriptions[$i]}"
                 echo "$section_manpages" | while read -r page ; do
-                    whatis "$page" | grep -E "^$page \($i\) " | sed 's/^/    /'
+                    whatis "$page" | grep -E "^$page \($i\) " | indent 1
                 done
             fi
         done
     fi
     echo "README:"
-    get_dpkg_readme_files "$package_name" '' '.md' | grep -v -E '^<none>$' | sed 's/^/    /'
+    get_dpkg_readme_files "$package_name" '' '.md' | grep -v -E '^<none>$' | indent 1
     echo "README.Debian:"
-    get_dpkg_readme_files "$package_name" '.Debian' | grep -v -E '^<none>$' | sed 's/^/    /'
+    get_dpkg_readme_files "$package_name" '.Debian' | grep -v -E '^<none>$' | indent 1
     echo "Description:"
     dpkgdesc "$package_name" | tail +2
 
@@ -283,9 +284,23 @@ func_dpkg_information ()
         printf '    %s: %s\n' "$f" "$mime"
         if [ "$mime" = "application/x-sharedlib" ]
         then
-            sharedlib_info "$f" | sed 's/^/        /'
+            sharedlib_info "$f" | indent 2
         fi
     done
+    # Show shared-library information.
+    # Assume non-executable, and with a .so... suffix.
+    echo "shared libraries:"
+    local shared_library_files="$(dpkg -L "$package_name" | xargs ls -d -l | grep -E '^-[-r][-w]-' | rcutw 1 | grep -E '\.so(\.[[:digit:]]+)?(\.[[:digit:]]+)?(\.[[:digit:]]+)?')"
+    while read -r f
+    do 
+        local mime="$(mimetype -b "$f")"
+        printf '    %s: %s\n' "$f" "$mime"
+        if [ "$mime" = "application/x-sharedlib" ]
+        then
+            sharedlib_info "$f" | indent 2
+        fi
+    done < <(echo "$shared_library_files")
+
 
     # Show xdg desktop files.
     #todo: This is VERY slow.
@@ -297,14 +312,14 @@ func_dpkg_information ()
         if [ "$mime" = "application/x-desktop" ]
         then
             echo "    $f"
-            cat "$f" | grep -m 1 -E '^[[:space:]]*Exec=' | sed 's/^[[:space:]]*/        /'
+            cat "$f" | grep -m 1 -E '^[[:space:]]*Exec=' | sed 's/^[[:space:]]*//' | indent 2
         fi
     done < <(dpkg -L "$package_name" | xargs mimetype)
 
     # pkg-config
     # (Assume .pc files are for pkg-config.)
     echo "pkg-config:"
-    dpkg -L "$package_name" | grep -E '\.pc$' | sed 's/^/    /'
+    dpkg -L "$package_name" | grep -E '\.pc$' | indent 1
 }
 
 func_$func "${func_args[@]}"
