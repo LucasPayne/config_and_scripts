@@ -73,9 +73,11 @@ func_help ()
     echo "    -D <package_name>: Print debian README.Debian file from /usr/share/doc/<package_name>."
 }
 
-func_dpkg_readme ()
+dpkg_readme_common ()
 {
-    local package_name="$1"
+    local extensions=()
+    [ "$1" = "normal" ] && extensions=("" ".md") || extensions=(".Debian")
+    local package_name="$2"
 
     if ! dpkg -l "$package_name" >/dev/null 2>&1
     then
@@ -90,21 +92,34 @@ func_dpkg_readme ()
         exit 1
     fi
 
-    if [ -f "$package_dir/README" ]
-    then
-        cat "$package_dir/README"
-    elif [ -f "$package_dir/README.gz" ]
-    then
-        gunzip -c "$package_dir/README.gz"
-    else
-        2>&1 echo "error: README file not found in $package_dir"
-        exit 1
-    fi
+    for extension in "${extensions[@]}"
+    do
+        if [ -f "$package_dir/README$extension" ]
+        then
+            cat "$package_dir/README$extension"
+            return 0
+        elif [ -f "$package_dir/README$extension.gz" ]
+        then
+            gunzip -c "$package_dir/README$extension.gz"
+            return 0
+        fi
+    done
+
+    for extension in "${extensions[@]}"
+    do
+        2>&1 echo "error: README$extension file not found in $package_dir"
+    done
+    return 1
+}
+
+func_dpkg_readme ()
+{
+    dpkg_readme_common normal "$@"
 }
 
 func_dpkg_readme_debian ()
 {
-    return
+    dpkg_readme_common debian "$@"
 }
 
 func_$func "${func_args[@]}"
