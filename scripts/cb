@@ -1,0 +1,3 @@
+#!/bin/sh
+# cb: xclip with clipboard default
+exec xclip -selection clipboard "$@"
