@@ -241,7 +241,10 @@ func_dpkg_information ()
         return 1
     fi
     echo "name: $package_name"
-    dpkg-query --show -f='status: ${Status}\nstatus-abbrev: "${db:Status-Abbrev}"\n' "$package_name"
+    dpkg-query --show -f='status: ${Status} (${db:Status-Abbrev})\n' "$package_name"
+
+    # If not installed abort now, following information requires an installed package.
+    do_check_dpkg_installed "$package_name" || return 1
 
     local manpages="$(func_dpkg_manpages "$package_name" 2>/dev/null)"
     if [ ! -z "$manpages" ]
@@ -258,10 +261,26 @@ func_dpkg_information ()
             fi
         done
     fi
-    printf "README files: "
-    get_dpkg_readme_files "$package_name" '' '.md' | grep -v -E '^<none>$' | head -1
-    printf "README.Debian file: "
-    get_dpkg_readme_files "$package_name" '.Debian' | grep -v -E '^<none>$' | head -1
+    echo "README:"
+    get_dpkg_readme_files "$package_name" '' '.md' | grep -v -E '^<none>$' | sed 's/^/    /'
+    echo "README.Debian:"
+    get_dpkg_readme_files "$package_name" '.Debian' | grep -v -E '^<none>$' | sed 's/^/    /'
+    echo "Description:"
+    dpkgdesc "$package_name" | tail +2
+
+    # Show xdg desktop files.
+    #todo: This is VERY slow.
+    echo "xdg desktop files:"
+    while read -r line
+    do
+        local f="$(echo "$line" | cutc 1)"
+        local mime="$(echo "$line" | rcutw 1)"
+        if [ "$mime" = "application/x-desktop" ]
+        then
+            echo "    $f"
+            cat "$f" | grep -m 1 -E '^[[:space:]]*Exec=' | sed 's/^[[:space:]]*/        /'
+        fi
+    done < <(dpkg -L "$package_name" | xargs mimetype)
 }
 
 func_$func "${func_args[@]}"
