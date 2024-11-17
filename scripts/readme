@@ -1,7 +1,9 @@
 #!/bin/bash
-# readme: Utility for readme files.
+# readme: Utility for readme files and other software information.
 # -d <package_name>: Output README for a dpkg package.
 # -D <package_name>: Output README.Debian for a dpkg package.
+# -p No pager
+# -m <package_name>: Output man pages for a dpkg package.
 
 usage ()
 {
@@ -27,17 +29,23 @@ set_func ()
         shift
     done
 }
-while getopts ":hd:D:-:" opt
+
+if [ -t 1 ]
+then
+    if [ ! -z "${PAGER+x}" ]
+    then
+        #todo: Check, can PAGER contain arguments?
+        pager_command="$PAGER"
+    else
+        pager_command=less
+    fi
+else
+    pager_command=cat
+fi
+
+while getopts ":hpd:D:m:-:" opt
 do
     case $opt in
-        #-)
-        #    case "$OPTARG" in
-        #        help)
-        #            ;;
-        #        *)
-        #            ;;
-        #    esac
-        #    ;;
         h)
             set_func help
             ;;
@@ -46,6 +54,12 @@ do
             ;;
         D)
             set_func dpkg_readme_debian "$OPTARG"
+            ;;
+        p)
+            pager_command=cat
+            ;;
+        m)
+            set_func dpkg_manpages "$OPTARG"
             ;;
         *)
             case $OPTARG in
@@ -73,34 +87,45 @@ func_help ()
     echo "    -D <package_name>: Print debian README.Debian file from /usr/share/doc/<package_name>."
 }
 
+do_check_dpkg_installed ()
+{
+    local package_name="$1"
+    if ! dpkg -l "$package_name" >/dev/null 2>&1
+    then
+        2>&1 echo "error: Package \"$package_name\" is not installed."
+        return 1
+    fi
+    if ! dpkg -l "$package_name" 2>/dev/null | tail -1 | grep -q -E '^ii '
+    then
+        2>&1 echo "error: Package \"$package_name\" is uninstalled."
+        return 1
+    fi
+}
+
 dpkg_readme_common ()
 {
     local extensions=()
     [ "$1" = "normal" ] && extensions=("" ".md") || extensions=(".Debian")
     local package_name="$2"
 
-    if ! dpkg -l "$package_name" >/dev/null 2>&1
-    then
-        2>&1 echo "error: Package \"$package_name\" is not installed."
-        exit 1
-    fi
+    do_check_dpkg_installed "$package_name" || return 1
 
     local package_dir="/usr/share/doc/$package_name"
     if [ ! -d "$package_dir" ]
     then
         2>&1 echo "error: Non-existant $package_dir."
-        exit 1
+        return 1
     fi
 
     for extension in "${extensions[@]}"
     do
         if [ -f "$package_dir/README$extension" ]
         then
-            cat "$package_dir/README$extension"
+            cat "$package_dir/README$extension" | $pager_command
             return 0
         elif [ -f "$package_dir/README$extension.gz" ]
         then
-            gunzip -c "$package_dir/README$extension.gz"
+            gunzip -c "$package_dir/README$extension.gz" | $pager_command
             return 0
         fi
     done
@@ -120,6 +145,40 @@ func_dpkg_readme ()
 func_dpkg_readme_debian ()
 {
     dpkg_readme_common debian "$@"
+}
+
+section_descriptions=(
+"1) Executable programs or shell commands"
+"2) System calls (functions provided by the kernel)"
+"3) Library calls (functions within program libraries)"
+"4) Special files (usually found in /dev)"
+"5) File formats and conventions, e.g. /etc/passwd"
+"6) Games"
+"7) Miscellaneous (including macro packages and conventions), e.g. man(7), groff(7)"
+"8) System administration commands (usually only for root)"
+"9) Kernel routines [Non standard]"
+)
+
+func_dpkg_manpages ()
+{
+    local package_name="$1"
+
+    do_check_dpkg_installed "$package_name" || return 1
+    dpkg_manpages_files="$(dpkg -L "$package_name" | grep -E '^/usr/share/man/man[[:digit:]]/' | xargs -r basename -a | sort | uniq)"
+    if [ -z "$dpkg_manpages_files" ]
+    then
+        return 0
+    fi
+    (
+        for i in {1..9}
+        do
+            section_manpages="$(echo "$dpkg_manpages_files" | grep -E '\.'$i'\.gz$' | xargs -r basename -s .$i.gz)"
+            if [ ! -z "$section_manpages" ]
+            then
+                echo "$section_manpages" | sed "s/^/$i /"
+            fi
+        done
+    ) | $pager_command
 }
 
 func_$func "${func_args[@]}"
