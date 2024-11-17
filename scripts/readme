@@ -219,6 +219,14 @@ func_dpkg_manpages ()
     )
 }
 
+sharedlib_info ()
+{
+    library_path="$1"
+    echo "libraries:"
+    ldd "$library_path" | sed 's/^\t//' | cutw 1 | sed 's/^/    /'
+
+}
+
 manpage_section_descriptions=(
 "<zero section doesn't exist>"
 "Executable programs or shell commands"
@@ -268,6 +276,17 @@ func_dpkg_information ()
     echo "Description:"
     dpkgdesc "$package_name" | tail +2
 
+    # Show executable information.
+    echo "executables:"
+    dpkg -L "$package_name" | xargs ls -d -l | grep ^-rwx | rcutw 1 | while read -r f ; do
+        local mime="$(mimetype -b "$f")"
+        printf '    %s: %s\n' "$f" "$mime"
+        if [ "$mime" = "application/x-sharedlib" ]
+        then
+            sharedlib_info "$f" | sed 's/^/        /'
+        fi
+    done
+
     # Show xdg desktop files.
     #todo: This is VERY slow.
     echo "xdg desktop files:"
@@ -281,6 +300,11 @@ func_dpkg_information ()
             cat "$f" | grep -m 1 -E '^[[:space:]]*Exec=' | sed 's/^[[:space:]]*/        /'
         fi
     done < <(dpkg -L "$package_name" | xargs mimetype)
+
+    # pkg-config
+    # (Assume .pc files are for pkg-config.)
+    echo "pkg-config:"
+    dpkg -L "$package_name" | grep -E '\.pc$' | sed 's/^/    /'
 }
 
 func_$func "${func_args[@]}"
