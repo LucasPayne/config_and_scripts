@@ -1,3 +1,6 @@
 #!/bin/bash
-# gcm:
-
+# gcm: git commit with message arg
+# This treats all arguments as a single string, each original argument separated by white space.
+# e.g. `gcm Updated readme` works.
+arg_string="$@"
+exec git commit -m "$arg_string"

@@ -27,7 +27,11 @@ export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
-# create script
+# scr: create script
+# Usage:
+#     scr script_name     Go to scripts, create, git add, chmod, ...
+#     ................... edit script in vim, write short description on the second line.
+#     scr                 Commit with script description.
 scr ()
 {
     if [ $# -ne 1 ]
