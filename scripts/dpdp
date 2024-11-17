@@ -1,0 +1,4 @@
+#!/bin/sh
+# dpdp: dpkg description and apt policy
+dpd "$1"
+acp "$1"
