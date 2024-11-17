@@ -27,6 +27,50 @@ export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
+# create script
+scr ()
+{
+    if [ $# -ne 1 ]
+    then
+        if [ ! -z ${LAST_SCRIPT_CREATED_WITH_SCR+x} ]
+        then
+            local description="$(cat "$CONFIG_DIR/scripts/$LAST_SCRIPT_CREATED_WITH_SCR" | sel 2)"
+            git commit -m "${description:2}"
+            unset LAST_SCRIPT_CREATED_WITH_SCR
+            return 0
+        else
+            echo "LAST_SCRIPT_CREATED_WITH_SCR is not set." 2>&1
+            return 1
+        fi
+    fi
+    cd ~/config/scripts
+    local name="$1"
+    if echo "$name" | grep -q '/'
+    then
+        echo "name must not contain forward slashes" 2>&1
+        return 1
+    fi
+    if [ -f "$name" ]
+    then
+        echo "script \"$name\" exists" 2>&1
+        return 1
+    fi
+    if [ -d "$name" ]
+    then
+        echo "\"$name\" is a directory" 2>&1
+        return 1
+    fi
+    cat > "$name" <<-EOF
+	#!/bin/bash
+	# $name:
+	
+	EOF
+    git add "$name"
+    chmod a+x "$name"
+    LAST_SCRIPT_CREATED_WITH_SCR="$name"
+    v "$name"
+    # todo: Go to last line in vim.
+}
 
 xdg-mime-set ()
 {

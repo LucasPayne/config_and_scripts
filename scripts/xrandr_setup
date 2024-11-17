@@ -1,5 +1,15 @@
 #!/bin/sh
 #
 # Set up xrandr for desktop.
-xrandr --output HDMI-0 --mode 1920x1080 --pos 0x0 --scale 1x1
-xrandr --output DP-0 --mode 3840x2160 --pos 1920x0
+xrandr \
+    --output DP-0 \
+    --primary \
+    --mode 3840x2160 \
+    --pos 1920x0
+
+xrandr \
+    --output HDMI-0 \
+    --rotate right \
+    --mode 1920x1080 \
+    --pos 0x0 \
+    --scale 1x1
