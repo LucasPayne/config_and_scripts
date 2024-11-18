@@ -1,3 +1,13 @@
 #!/bin/bash
-# apt-uris:
+# apt-uris: List the URIs which will be used to download a package available with apt (installed or not).
 
+if [ $# -ne 1 ]
+then
+    exit 1
+fi
+
+package_name="$1"
+apt-get install --print-uris --reinstall -y "$package_name" \
+    | cut -f 2 -d \' \
+    | sed -n '/^After this operation,/,$p' \
+    | tail +2

@@ -27,6 +27,7 @@ else
     # Otherwise `apt download` downloads a .tar.gz which contains a .deb.
     gunzip "$package.tar.gz"
     tar xf "$package.tar"
+    rm "$package.tar"
     cd "$package"
     dpkg-deb -R *.deb .
 fi

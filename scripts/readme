@@ -5,6 +5,8 @@
 # -p No pager
 # -m <package_name>: Output man pages for a package.
 # -i <package_name>: Information about what is available for this package.
+# -u <package_name>: Package project URLs (version control, homepage, debian/copyright Source entry)
+# -U <package_name>: Package project homepage URL
 
 usage ()
 {
@@ -44,7 +46,7 @@ else
     pager_command=cat
 fi
 
-while getopts ":hpd:i:D:m:-:" opt
+while getopts ":hpd:i:D:m:u:U:-:" opt
 do
     case $opt in
         h)
@@ -64,6 +66,12 @@ do
             ;;
         i)
             set_func dpkg_information "$OPTARG"
+            ;;
+        u)
+            set_func dpkg_urls "$OPTARG"
+            ;;
+        U)
+            set_func dpkg_homepage_url "$OPTARG"
             ;;
         *)
             case $OPTARG in
@@ -330,6 +338,29 @@ func_dpkg_information ()
     dpkg -L "$package_name" | grep -E '\.pc$' | indent 1
 
     #idea: systemd
+}
+
+func_dpkg_urls ()
+{
+    local package_name="$1"
+    if ! dpkg -l "$package_name" >/dev/null 2>&1
+    then
+        2>&1 echo "error: Package \"$package_name\" not found."
+        return 1
+    fi
+
+    # Homepage URL
+    dpkg -s "$package_name" | grep "^Homepage: " | cutw 2
+
+    # Copyright Source URL
+    local copyright_file="/usr/share/doc/$package_name/copyright"
+    if [ -f "$copyright_file" ]
+    then
+        cat "$copyright_file" | grep "^Source: " | cutw 2
+    fi
+
+    # Version control URLs
+    #https://www.debian.org/doc/debian-policy/ch-controlfields.html#version-control-system-vcs-fields
 }
 
 func_$func "${func_args[@]}"
