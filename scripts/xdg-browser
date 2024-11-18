@@ -1,3 +1,13 @@
 #!/bin/bash
-# xdg-browser:
+# xdg-browser: Run the default browser.
 
+browser="$(xdg-settings get default-web-browser 2>/dev/null)"
+if [ $? -ne 0 ]
+then
+    # xdg web browser setting failed.
+    # Maybe no .desktop file.
+    # Fallback to hardcoded browser.
+    firefox "$@"
+fi
+
+gtk-launch "$browser" "$@"

@@ -167,6 +167,26 @@ map <a-y> :yank-path
 map <a-j> :down
 map <a-k> :up
 
+# Open file
+cmd open-file ${{
+    # Manually resolve symlinks before passing to xdg-open.
+    # xdg-open follows symlinks for files, but not directories.
+    # Without resolving this manually, xdg-open would open a
+    # directory symlink with the inode/symlink handler, if any.
+    # (-Is this true?)
+    if [ "$(mimetype -b "$f")" = "inode/symlink" ]
+    then
+        file_to_open="$(readlink -f "$f")"
+    else
+        file_to_open="$f"
+    fi
+    >/dev/null 2>&1 xdg-open "$file_to_open" &
+}}
+map o :open-file
+#todo: O, open without window focus change.
+# Open file in web browser
+map <a-o> :open-file
+
 
 source ~/config/scripts/syncer_files/syncer-lf
 

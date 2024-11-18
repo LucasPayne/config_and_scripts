@@ -1244,7 +1244,7 @@ function! RefreshMagicCardPreview()
     let curline = getline(".")
     if len(curline) > 2 && curline[0] == "=" && curline[1] == " "
         let card_name = curline[2:]
-        let card_filename = "/home/lucas/drive/magic/images/".card_name.".jpg"
+        let card_filename = "/home/lucas/drive/dev/magic/images/".card_name.".jpg"
         if !filereadable(card_filename)
             echo "Magic card image not found: ".card_name
         else
@@ -1254,9 +1254,10 @@ function! RefreshMagicCardPreview()
             let height = 680
             let start_x = float2nr(floor(screen_width/2.0 - width/2.0))
             let start_y = float2nr(floor(screen_height/2.0 - height/2.0))
-            let cmd = "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." \"".card_filename."\" > /dev/null 2>&1 & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"
             let g:magic_card_was_hovering = 1
-            silent! call system(cmd)
+            let cmd = ["bash", "-c", "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." \"".card_filename."\" > /dev/null 2>&1 & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"]
+            "todo: Is this working async? Why is vim still taking a while?
+            call job_start(cmd)
             redraw!
         endif
     endif
@@ -1291,7 +1292,7 @@ function! MultipleMagicCardPreview(card_names)
     let card_filenames = []
     let card_filenames_argument = ""
     for card_name in a:card_names
-        let card_filename = "/home/lucas/drive/magic/images/".card_name.".jpg"
+        let card_filename = "/home/lucas/drive/dev/magic/images/".card_name.".jpg"
         if !filereadable(card_filename)
             echo "Magic card image not found: ".card_name
             return
