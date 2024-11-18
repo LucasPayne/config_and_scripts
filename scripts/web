@@ -1,4 +1,3 @@
 #!/bin/bash
 # web: alias to xdg-browser
 exec xdg-browser "$@"
-

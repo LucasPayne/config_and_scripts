@@ -1,3 +1,18 @@
 #!/bin/bash
-# drdep:
+# drdep: dpkg recursive dependencies. Flat list in comparison to apt-rdepends.
+# Usage
+#     drdep <package names...>
+# If multiple packages are passed, list their set-combined recursive dependencies.
 
+(
+    while [ $# -gt 0 ]
+    do
+        package_name="$1"
+        shift
+    
+        apt-rdepends "$package_name" 2>/dev/null \
+            | grep "^  Depends:" \
+            | cut -d: -f 2- \
+            | cut -d' ' -f 2
+    done
+) | sort | uniq
