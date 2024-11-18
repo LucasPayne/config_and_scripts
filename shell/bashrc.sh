@@ -31,14 +31,16 @@ export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 # Usage:
 #     scr script_name     Go to scripts, create, git add, chmod, ...
 #     ................... edit script in vim, write short description on the second line.
-#     scr                 Commit with script description.
+#     scr                 Git add again, commit with script description.
 scr ()
 {
     if [ $# -ne 1 ]
     then
         if [ ! -z ${LAST_SCRIPT_CREATED_WITH_SCR+x} ]
         then
-            local description="$(cat "$CONFIG_DIR/scripts/$LAST_SCRIPT_CREATED_WITH_SCR" | sel 2)"
+            local script="$CONFIG_DIR/scripts/$LAST_SCRIPT_CREATED_WITH_SCR"
+            local description="$(cat "$script" | sel 2)"
+            git add "$script"
             git commit -m "${description:2}"
             unset LAST_SCRIPT_CREATED_WITH_SCR
             return 0
@@ -47,7 +49,7 @@ scr ()
             return 1
         fi
     fi
-    cd ~/config/scripts
+    cd "$CONFIG_DIR/scripts"
     local name="$1"
     if echo "$name" | grep -q '/'
     then
@@ -567,7 +569,7 @@ fzf_dev_checkout () {
     fzf_checkout ~/drive/dev
 }
 fzf_config_checkout () {
-    fzf_checkout ~/config
+    fzf_checkout "$CONFIG_DIR"
 }
 
 #>>>
