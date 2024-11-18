@@ -183,9 +183,14 @@ cmd open-file ${{
     >/dev/null 2>&1 xdg-open "$file_to_open" &
 }}
 map o :open-file
-#todo: O, open without window focus change.
+
 # Open file in web browser
-map <a-o> :open-file
+cmd open-file-with-web-browser ${{
+    >/dev/null 2>&1 xdg-browser "$f" &
+}}
+map <a-o> :open-file-with-web-browser
+
+#todo: O, open without window focus change.
 
 
 source ~/config/scripts/syncer_files/syncer-lf

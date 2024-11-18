@@ -7,7 +7,7 @@ then
     # xdg web browser setting failed.
     # Maybe no .desktop file.
     # Fallback to hardcoded browser.
-    firefox "$@"
+    exec firefox "$@"
 fi
 
-gtk-launch "$browser" "$@"
+exec gtk-launch "$browser" "$@"
