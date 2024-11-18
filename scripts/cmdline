@@ -11,7 +11,7 @@ else
     while [ $# -gt 0 ] ; do
         re='^[0-9]+$'
         if ! [[ $1 =~ $re ]] ; then
-            2>&1 printf 'bad pid: %s' "$1"
+            >&2 printf 'bad pid: %s' "$1"
             exit 1
         fi
         pids+=($1)

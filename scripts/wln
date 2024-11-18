@@ -1,0 +1,19 @@
+#!/bin/bash
+# wln: "web ln", create a URL link as an html stub.
+
+if [ $# -ne 2 ]
+then
+    >&2 echo "Usage: wln <web URL> <link name>"
+    exit 1
+fi
+url="$1"
+link_name="$2"
+
+#todo: Does the URL ever need escaping?
+stub="<meta http-equiv=\"refresh\" content=\"0;url=$url\">"
+if [ -e "$link_name" ]
+then
+    >&2 echo "Cannot create \"$line_name\": already in use."
+    exit 1
+fi
+echo "$stub" > "$link_name"

@@ -36,6 +36,6 @@ if [[ $do_eject -eq 1 ]]
 then
     if ! eject "$DIR"
     then
-        2>&1 echo "Failed to eject kindle. Make sure to eject with correct privileges before unplugging."
+        >&2 echo "Failed to eject kindle. Make sure to eject with correct privileges before unplugging."
     fi
 fi

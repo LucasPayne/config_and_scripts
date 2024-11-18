@@ -1,0 +1,41 @@
+#!/bin/bash
+# xdg-launch: Launches a desktop entry of any type from its file.
+# This should emulate what happens when typical GUI programs have a file double clicked.
+
+if [ $# -ne 1 ]
+then
+    >&2 echo "Usage: xdg-launch <desktop entry file>"
+    exit 1
+fi
+path="$1"
+
+if [ ! -f "$path" ]
+then
+    >&2 echo "Not a file"
+    exit 1
+fi
+type="$(cat "$path" | grep "^Type=" | cut -d= -f 2-)"
+if [ -z "$type" ]
+then
+    >&2 echo "No Type entry"
+    exit 1
+fi
+case $type in
+    Application)
+        gtk-launch "$path"
+        ;;
+    Link)
+        url="$(cat "$path" | grep "^URL=" | cut -d= -f 2-)"
+        if [ -z "$url" ]
+        then
+            >&2 echo "No URL entry"
+            esit 1
+        fi
+        xdg-browser "$url"
+        ;;
+    *)
+        #todo: Directory?
+        >&2 echo "Cannot handle type"
+        exit 1
+        ;;
+esac

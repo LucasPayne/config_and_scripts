@@ -11,7 +11,7 @@
 usage ()
 {
     local exit_code="$1"
-    2>&1 echo "Try 'readme --help' or 'readme -h' for more information."
+    >&2 echo "Try 'readme --help' or 'readme -h' for more information."
     exit "$exit_code"
 }
 
@@ -76,13 +76,13 @@ do
         *)
             case $OPTARG in
                 d)
-                    [ -n "$func" ] && usage 1 || 2>&1 echo "Usage: -d <package name> "
+                    [ -n "$func" ] && usage 1 || >&2 echo "Usage: -d <package name> "
                     ;;
                 D)
-                    [ -n "$func" ] && usage 1 || 2>&1 echo "Usage: -D <package name> "
+                    [ -n "$func" ] && usage 1 || >&2 echo "Usage: -D <package name> "
                     ;;
                 *)
-                    [ -n "$func" ] && usage 1 || 2>&1 echo "Unknown flag -$OPTARG"
+                    [ -n "$func" ] && usage 1 || >&2 echo "Unknown flag -$OPTARG"
                     ;;
             esac
             exit 1
@@ -104,12 +104,12 @@ do_check_dpkg_installed ()
     local package_name="$1"
     if ! dpkg -l "$package_name" >/dev/null 2>&1
     then
-        2>&1 echo "error: Package \"$package_name\" is not found."
+        >&2 echo "error: Package \"$package_name\" is not found."
         return 1
     fi
     if ! dpkg -l "$package_name" 2>/dev/null | tail -1 | grep -q -E '^ii '
     then
-        2>&1 echo "error: Package \"$package_name\" is uninstalled."
+        >&2 echo "error: Package \"$package_name\" is uninstalled."
         return 1
     fi
 }
@@ -153,7 +153,7 @@ dpkg_readme_common ()
     local package_dir="/usr/share/doc/$package_name"
     if [ ! -d "$package_dir" ]
     then
-        2>&1 echo "error: Non-existant $package_dir."
+        >&2 echo "error: Non-existant $package_dir."
         return 1
     fi
 
@@ -180,7 +180,7 @@ dpkg_readme_common ()
     # no readme was found
     for extension in "${extensions[@]}"
     do
-        2>&1 echo "error: README$extension file not found in $package_dir"
+        >&2 echo "error: README$extension file not found in $package_dir"
     done
 
     return 1

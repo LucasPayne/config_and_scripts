@@ -184,12 +184,6 @@ cmd open-file ${{
 }}
 map o :open-file
 
-# Open file in web browser
-cmd open-file-with-web-browser ${{
-    >/dev/null 2>&1 xdg-browser "$f" &
-}}
-map <a-o> :open-file-with-web-browser
-
 #todo: O, open without window focus change.
 
 

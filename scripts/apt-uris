@@ -3,7 +3,7 @@
 
 if [ $# -ne 1 ]
 then
-    2>&1 echo "Usage: apt-uris <package name>"
+    >&2 echo "Usage: apt-uris <package name>"
     exit 1
 fi
 
