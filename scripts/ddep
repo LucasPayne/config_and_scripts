@@ -1,0 +1,12 @@
+#!/bin/bash
+# ddep: dpkg dependencies
+# todo: Flag for addition of other kinds of depends.
+
+if [ "$#" -ne 1 ]
+then
+    >&2 echo "Usage: ddep <package_name>"
+    exit 1
+fi
+package_name="$1"
+
+apt-cache depends "$package_name" 2>/dev/null | grep "^  Depends: " | cut -d: -f 2- | cut -d' ' -f 2
