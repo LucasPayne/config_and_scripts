@@ -1,5 +1,7 @@
 #!/bin/bash
-# wln: "web ln", create a URL link as an html stub.
+# wln: "web ln", create a URL link as an XDG desktop entry.
+# 
+# todo: Resolve name to protocol, e.g. can just write duckduckgo.com.
 
 if [ $# -ne 2 ]
 then
@@ -9,11 +11,36 @@ fi
 url="$1"
 link_name="$2"
 
-#todo: Does the URL ever need escaping?
-stub="<meta http-equiv=\"refresh\" content=\"0;url=$url\">"
+stub="[Desktop Entry]
+Type=Link
+Name=test_link
+URL=$url
+"
 if [ -e "$link_name" ]
 then
-    >&2 echo "Cannot create \"$line_name\": already in use."
+    >&2 echo "Cannot create \"$link_name\": already in use."
     exit 1
 fi
 echo "$stub" > "$link_name"
+
+
+# Variant which creates an HTML stub instead.
+# #!/bin/bash
+# # wln: "web ln", create a URL link as an html stub.
+# 
+# if [ $# -ne 2 ]
+# then
+#     >&2 echo "Usage: wln <web URL> <link name>"
+#     exit 1
+# fi
+# url="$1"
+# link_name="$2"
+# 
+# #todo: Does the URL ever need escaping?
+# stub="<meta http-equiv=\"refresh\" content=\"0;url=$url\">"
+# if [ -e "$link_name" ]
+# then
+#     >&2 echo "Cannot create \"$line_name\": already in use."
+#     exit 1
+# fi
+# echo "$stub" > "$link_name"
