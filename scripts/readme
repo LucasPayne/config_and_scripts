@@ -139,7 +139,7 @@ dpkg_readme_common ()
 {
     local extensions_mode="$1"
     local extensions=()
-    [ "$extensions_mode" = "normal" ] && extensions=("" ".md") || extensions=(".Debian")
+    [ "$extensions_mode" = "normal" ] && extensions=("" ".md" ".txt" ".rst") || extensions=(".Debian")
     local package_name="$2"
 
     local package_dir="/usr/share/doc/$package_name"
@@ -222,9 +222,8 @@ func_dpkg_manpages ()
 sharedlib_info ()
 {
     library_path="$1"
-    echo "libraries:"
+    echo "dynamic links:"
     ldd "$library_path" | sed 's/^\t//' | cutw 1 | indent 1
-
 }
 
 manpage_section_descriptions=(
@@ -255,6 +254,8 @@ func_dpkg_information ()
     # If not installed abort now, following information requires an installed package.
     do_check_dpkg_installed "$package_name" || return 1
 
+    local package_dir="/usr/share/doc/$package_name"
+
     local manpages="$(func_dpkg_manpages "$package_name" 2>/dev/null)"
     if [ ! -z "$manpages" ]
     then
@@ -270,12 +271,19 @@ func_dpkg_information ()
             fi
         done
     fi
+    echo "Description:"
+    dpkgdesc "$package_name" | tail +2
     echo "README:"
     get_dpkg_readme_files "$package_name" '' '.md' | grep -v -E '^<none>$' | indent 1
     echo "README.Debian:"
     get_dpkg_readme_files "$package_name" '.Debian' | grep -v -E '^<none>$' | indent 1
-    echo "Description:"
-    dpkgdesc "$package_name" | tail +2
+    # Changelogs.
+    # Assuming each of these is installed at /usr/share/doc not under any subdirectory.
+    echo "changelogs:"
+    if [ -d "$package_dir" ]
+    then
+        fd -d 1 changelog "$package_dir" | indent 1
+    fi
 
     # Show executable information.
     echo "executables:"
@@ -320,6 +328,8 @@ func_dpkg_information ()
     # (Assume .pc files are for pkg-config.)
     echo "pkg-config:"
     dpkg -L "$package_name" | grep -E '\.pc$' | indent 1
+
+    #idea: systemd
 }
 
 func_$func "${func_args[@]}"
