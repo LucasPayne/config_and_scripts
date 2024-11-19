@@ -27,6 +27,9 @@ export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
+#https://www.imagemagick.org/include/resources.php#environment
+export MAGICK_CONFIGURE_PATH="$CONFIG_DIR/imagemagick/user_config"
+
 # scr: create script
 # Usage:
 #     scr script_name     Go to scripts, create, git add, chmod, ...
