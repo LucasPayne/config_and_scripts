@@ -1,0 +1,3 @@
+#!/bin/bash
+# mtb: alias for mimetype -b
+exec mimetype -b "$@"
