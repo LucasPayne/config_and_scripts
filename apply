@@ -3,6 +3,10 @@
 # configuration application script.
 # See the README for details.
 #
+# todo:
+#  This doesn't work first-time on a new distro install yet, have had to manually set
+#  some things and run it again. Fix this.
+#
 #--------------------------------------------------------------------------------
 # Configuration settings
 #--------------------------------------------------------------------------------

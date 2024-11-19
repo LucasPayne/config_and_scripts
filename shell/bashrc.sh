@@ -542,24 +542,37 @@ fzf_checkout () {
         fzf --preview="$preview_string" \
             --preview-window=right:$preview_percent% \
             --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
-            --bind='alt-l:execute(echo "__OPEN_FILE_BROWSER")+accept' \
+            --bind='ctrl-alt-l:execute(echo "__OPEN_FILE_BROWSER")+accept' \
+            --bind='alt-l:execute(echo "__OPEN_FILE_BROWSER_NO_CD")+accept' \
             --ansi \
             --layout=reverse \
             --border=none
     )
     # Try to extract command from first line of output of lf.
-    command="$(echo "$selected" | head -n 1)"
-    opt_open_file_browser=0
-    if [[ $command == __OPEN_FILE_BROWSER ]] ; then
+    local command="$(echo "$selected" | head -n 1)"
+    local opt_open_file_browser=0
+    local opt_no_cd=0
+    if [[ $command == __OPEN_FILE_BROWSER* ]] ; then
         opt_open_file_browser=1
         selected="$(echo "$selected" | tail +2)"
-    fi
-    if [ ! -z "$selected" ] ; then
-        echo NICE >> ~/test/watch
-        cd $dir/$selected
-    fi
-    if [[ $opt_open_file_browser -eq 1 ]] ; then
-        lfcd
+        if [[ $command == "__OPEN_FILE_BROWSER_NO_CD" ]] ; then
+            opt_no_cd=1
+        fi
+        if [ ! -z "$selected" ]
+        then
+            if [ $opt_open_file_browser -eq 1 ]
+            then
+                if [ $opt_no_cd -eq 1 ]
+                then
+                    lf "$dir/$selected"
+                else
+                    cd "$dir/$selected"
+                    lfcd
+                fi
+            else
+                cd "$dir/$selected"
+            fi
+        fi
     fi
 }
 fzf_code_checkout () {
