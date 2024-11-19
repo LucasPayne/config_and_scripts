@@ -341,12 +341,22 @@ onoremap H ^
 onoremap L $
 command! -nargs=0 Sv source ~/.vimrc
 
-" Search under cursor
+" Search for selected text with search engine in web browser
 let g:browser_query_prefix = "https://duckduckgo.com/?t=lm&q="
 function! SearchSelected()
-    call system("xdg-browser ".shellescape(g:browser_query_prefix.@*)." &")
+    call system("xdg-browser "..shellescape(g:browser_query_prefix..@*).." &")
 endfunction
 vnoremap gs :<c-u>call SearchSelected()<cr>
+
+" Open a scratch buffer with selected text.
+" This can be useful for modifying text before copying it.
+function! SendSelectedToScratchBuffer()
+    let l:tmp = @*
+    tabnew
+    execute "normal! O".l:tmp
+    normal! gg
+endfunction
+vnoremap ge :<c-u>call SendSelectedToScratchBuffer()<cr>
 
 inoremap <tab> <space><space><space><space>
 nnoremap j gj
