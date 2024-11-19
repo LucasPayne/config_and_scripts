@@ -341,6 +341,13 @@ onoremap H ^
 onoremap L $
 command! -nargs=0 Sv source ~/.vimrc
 
+" Search under cursor
+let g:browser_query_prefix = "https://duckduckgo.com/?t=lm&q="
+function! SearchSelected()
+    call system("xdg-browser ".shellescape(g:browser_query_prefix.@*)." &")
+endfunction
+vnoremap gs :<c-u>call SearchSelected()<cr>
+
 inoremap <tab> <space><space><space><space>
 nnoremap j gj
 nnoremap k gk
