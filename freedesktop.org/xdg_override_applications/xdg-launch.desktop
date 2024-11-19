@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=XDG Launch
+Comment=Launch an XDG desktop entry of any type as if it were double clicked
+Exec=xdg-launch %F
+Type=Application
+MimeType=application/x-desktop
