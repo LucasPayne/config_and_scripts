@@ -1,3 +1,3 @@
 #!/bin/bash
-# mt: alias for mimetype
+# mim: alias for mimetype
 exec mimetype "$@"
