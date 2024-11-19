@@ -78,6 +78,34 @@ scr ()
     # todo: Go to last line in vim.
 }
 
+newconfig ()
+{
+    # newconfig: Create a new config subdirectory.
+    # If already exists, just go to it.
+    
+    if [ $# -ne 1 ]
+    then
+        >&2 echo "Usage: newconfig <config name>"
+        return 1
+    fi
+    local name="$1"
+    local newconfig_path="$CONFIG_DIR/$name"
+    if [ -d "$newconfig_path" ]
+    then
+        cd "$newconfig_path"
+    elif [ -e "$newconfig_path" ]
+    then
+        >&2 echo "FIle \"$name\" already exists in config."
+        return 1
+    else
+        cd "$CONFIG_DIR"
+        mkdir "$name"
+        ./make_ascii_readmes.sh
+        cd "$name"
+    fi
+}
+
+
 xdg-mime-set ()
 {
     xdg-mime default feh.desktop image/jpeg
