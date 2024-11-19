@@ -118,6 +118,10 @@ link_system_to_config ./git/tigrc "$xdg_config_home/tig/config"
 mkdir -p "$xdg_config_home/gdb"
 link_system_to_config ./gdb/gdbinit.gdb "$xdg_config_home/gdb/gdbinit"
 
+# mpv
+mkdir -p "$xdg_config_home/mpv"
+link_system_to_config ./mpv/mpv.conf "$xdg_config_home/mpv/mpv.conf"
+
 link_system_to_config ./i3 "$xdg_config_home/i3"
 link_system_to_config ./zathura "$xdg_config_home/zathura"
 link_system_to_config ./scripts ~/scripts
@@ -157,6 +161,9 @@ link_config_to_system /etc/dpkg/dpkg.cfg ./debian/@etc@dpkg@dpkg.cfg
 link_config_to_system /etc/dpkg/dpkg.cfg.d ./debian/@etc@dpkg@dpkg.cfg.d
 link_config_to_system /var/lib/dpkg/available ./debian/@var@lib@dpkg@available
 link_config_to_system /var/lib/dpkg/status ./debian/@var@lib@dpkg@status
+
+# mpv
+link_config_to_system "$xdg_config_home/mpv/scripts" "./mpv/scripts"
 
 # system xdg symlinks
 echo

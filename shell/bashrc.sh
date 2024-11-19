@@ -603,14 +603,31 @@ fzf_checkout () {
         fi
     fi
 }
-fzf_code_checkout () {
+fzf_code_checkout ()
+{
     fzf_checkout ~/code
 }
-fzf_dev_checkout () {
+fzf_dev_checkout ()
+{
     fzf_checkout ~/drive/dev
 }
-fzf_config_checkout () {
+fzf_config_checkout ()
+{
     fzf_checkout "$CONFIG_DIR"
+}
+fzf_select_notes ()
+{
+    local preview_string=$(cat <<- 'EOT'
+	cat {}
+	EOT
+    )
+    fd . -ens ~/notes/notes.d \
+        | fzf --preview="$preview_string" \
+              --preview-window=right:80% \
+              --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
+              --ansi \
+              --layout=reverse \
+              --border=none
 }
 
 #>>>
@@ -694,6 +711,10 @@ bind -m vi-insert '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
 # fzf_config_checkout
 bind -m vi-command '"\ei": "\C-u\C-lfzf_config_checkout\n"'
 bind -m vi-insert '"\ei": "\C-u\C-lfzf_config_checkout\n"'
+#
+# fzf open notes file
+bind -m vi-command '"\en": "\C-u\C-lfzf_select_notes | x v\n"'
+bind -m vi-insert '"\en": "\C-u\C-lfzf_select_notes | x v\n"'
 
 # checkout branch
 bind -m vi-command '"\eo": "\C-ugcb\n"'

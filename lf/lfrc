@@ -125,7 +125,7 @@ cmd yank-path ${{
 
 # Set wallpaper
 cmd wp ${{
-    wp $f
+    wp "$f"
 }}
 
 # Make a directory
@@ -166,6 +166,7 @@ map e &{{
 map <a-y> :yank-path
 map <a-j> :down
 map <a-k> :up
+map <a-l> :open; quit
 
 # Open file
 cmd open-file ${{
