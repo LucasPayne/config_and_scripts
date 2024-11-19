@@ -292,7 +292,9 @@ func_dpkg_information ()
     then
         fd -d 1 changelog "$package_dir" | indent 1
     fi
-
+    # URLs
+    func_dpkg_urls "$package_name"
+    
     # Show executable information.
     echo "executables:"
     dpkg -L "$package_name" | xargs ls -d -l | grep ^-rwx | rcutw 1 | while read -r f ; do
@@ -356,14 +358,26 @@ func_dpkg_urls ()
     fi
 
     # Homepage URL
-    func_dpkg_homepage_url "$package_name"
+    printf 'Homepage URL:'
+    local homepage_url="$(func_dpkg_homepage_url "$package_name")"
+    if [ ! -z "$homepage_url" ]
+    then
+        printf '\n    %s' "$homepage_url"
+    fi
+    printf '\n'
 
     # Copyright Source URL
     local copyright_file="/usr/share/doc/$package_name/copyright"
+    printf 'Copyright URL:'
     if [ -f "$copyright_file" ]
     then
-        cat "$copyright_file" | grep "^Source: " | cutw 2
+        local copyright_url="$(cat "$copyright_file" | grep "^Source: " | cutw 2)"
+        if [ ! -z "$copyright_url" ]
+        then
+            printf '\n    %s' "$copyright_url"
+        fi
     fi
+    printf '\n'
 
     # Version control URLs
     #https://www.debian.org/doc/debian-policy/ch-controlfields.html#version-control-system-vcs-fields
