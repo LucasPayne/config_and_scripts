@@ -168,6 +168,9 @@ link_config_to_system "$xdg_config_home/mpv/scripts" "./mpv/scripts"
 # imagemagick
 link_config_to_system /etc/ImageMagick-6 ./imagemagick/@etc@ImageMagick-6
 
+# firefox
+link_config_to_system /home/lucas/.mozilla/firefox ./firefox/firefox_user_directory
+
 # system xdg symlinks
 echo
 echo "Creating debian xdg navigation symlinks in ./freedesktop.org/..."

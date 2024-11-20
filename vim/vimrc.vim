@@ -42,9 +42,9 @@ augroup filetype_qf
     autocmd Filetype qf nnoremap <buffer> <C-t> <C-w><cr><C-w>T
 augroup END
 
-" Yank file path and line number.
+" Yank file path and line number to system clipboard.
 function! YankFilePath()
-    let @" = expand("%:p")." ".line(".")."\n"
+    let @+ = expand("%:p")." ".line(".")."\n"
 endfunction
 " Yank file path and line number to the system clipboard, in gdb breakpoint syntax.
 function! YankBreakPoint()
@@ -60,15 +60,15 @@ function! YankWordAndFilePath()
     let l:word = @"
     let @" = l:tmp
 
-    let @" = "    ".l:word."\n".expand("%:p")." ".line(".")."\n"
+    let @+ = "    ".l:word."\n".expand("%:p")." ".line(".")."\n"
 endfunction
 function! YankSelectionAndFilePath()
-    let @" = "    ".@*."\n".expand("%:p")." ".line(".")."\n"
+    let @+ = "    ".@*."\n".expand("%:p")." ".line(".")."\n"
 endfunction
-"nnoremap .cp :call YankFilePath()<cr>
-"nnoremap .CP :call YankWordAndFilePath()<cr>
-"vnoremap .cp :call YankSelectionAndFilePath()<cr>
-"nnoremap .cb :call YankBreakPoint()<cr>
+nnoremap <space>cp :call YankFilePath()<cr>
+nnoremap <space>CP :call YankWordAndFilePath()<cr>
+vnoremap <space>cp :call YankSelectionAndFilePath()<cr>
+nnoremap <space>cb :call YankBreakPoint()<cr>
 
 " Settings
 "    syntax on
@@ -347,6 +347,14 @@ function! SearchSelected()
     call system("xdg-browser "..shellescape(g:browser_query_prefix..@*).." &")
 endfunction
 vnoremap gs :<c-u>call SearchSelected()<cr>
+" Search for line under cursor.
+"todo: Operator, e.g. gsiw.
+nnoremap gss V:<c-u>call SearchSelected()<cr>
+" Search for whole file.
+" Useful for opening a scratch buffer to edit a search term.
+" Then close the buffer.
+" todo: Cleanup buffer from list.
+nnoremap gS ggVG:<c-u>call SearchSelected()<cr>gg:close<cr>
 
 " Open a scratch buffer with selected text.
 " This can be useful for modifying text before copying it.
@@ -356,7 +364,15 @@ function! SendSelectedToScratchBuffer()
     execute "normal! O".l:tmp
     normal! gg
 endfunction
-vnoremap ge :<c-u>call SendSelectedToScratchBuffer()<cr>
+vnoremap <M-t> :<c-u>call SendSelectedToScratchBuffer()<cr>
+" Open scratch buffer and start insert.
+" For editing text by itself.
+nnoremap <M-t> :tabnew<cr>
+" Copy text to system clipboard and close.
+" Workflow intended for scratch buffer, quickly edit text to send to use
+" elsewhere.
+"todo: Why space at end?
+nnoremap <M-T> ggVG"+y:close<cr>
 
 inoremap <tab> <space><space><space><space>
 nnoremap j gj
@@ -1350,10 +1366,10 @@ augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
     autocmd WinScrolled *.ns :call RefreshNotesTextLink()
-    "autocmd Filetype notes nnoremap <buffer> ./ :call NotesFollowLinkUnderCursor(0)<cr>
+    autocmd Filetype notes nnoremap <buffer> <space>/ :call NotesFollowLinkUnderCursor(0)<cr>
     autocmd Filetype notes nnoremap <buffer> <enter> :call NotesFollowLinkUnderCursor(0)<cr>
-    "autocmd Filetype notes nnoremap <buffer> .? :call NotesFollowLinkUnderCursor(1)<cr>
-    "autocmd Filetype notes nnoremap <buffer> >? :call NotesFollowLinkUnderCursor(1)<cr>
+    "todo: Shift-enter, tabnew
+    autocmd Filetype notes nnoremap <buffer> <space>? :call NotesFollowLinkUnderCursor(1)<cr>
     " It is convenient to not have to have notes open on only one vim.
     " Currently want this as keep switching between screen tabs, but each vim
     " should have a notes buffer anyway. It is nice to synchronize them.
