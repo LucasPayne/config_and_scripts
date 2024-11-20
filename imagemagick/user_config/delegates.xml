@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE delegatemap [
+  <!ELEMENT delegatemap (delegate)+>
+  <!ATTLIST delegatemap xmlns CDATA #FIXED ''>
+  <!ELEMENT delegate EMPTY>
+  <!ATTLIST delegate xmlns CDATA #FIXED '' command CDATA #REQUIRED
+    decode NMTOKEN #IMPLIED encode NMTOKEN #IMPLIED mode NMTOKEN #IMPLIED
+    spawn NMTOKEN #IMPLIED stealth NMTOKEN #IMPLIED>
+]>
+<!--
+  Delegate command file.
+
+  Commands which specify
+
+    decode="in_format" encode="out_format"
+
+  specify the rules for converting from in_format to out_format.  Use these
+  rules to translate directly between formats.
+
+  Commands which specify only
+
+    decode="in_format"
+
+  specify the rules for converting from in_format to some format that
+  ImageMagick automatically recognizes. Use these rules to decode formats.
+
+  Commands which specify only
+
+   encode="out_format"
+
+  specify the rules for an "encoder" which may accept any input format.
+
+  The substitution rules are as follows:
+
+    %a  authentication passphrase
+    %b  image file size in bytes
+    %g  image geometry
+    %h  image rows (height)
+    %i  input image filename
+    %#  input image signature
+    %m  input image format
+    %o  output image filename
+    %p  page number
+    %q  input image depth
+    %s  scene number
+    %u  unique temporary filename
+    %w  image columns (width)
+    %x  input image x resolution
+    %y  input image y resolution
+
+  Set option delegate:bimodal=true to process bimodal delegates otherwise they
+  are ignored.
+
+  If stealth="True" the delegate is not listed in user requested
+  "-list delegate" listings. These are typically special internal delegates.
+
+  If spawn="True", ImageMagick does not wait for the delegate to finish, nor
+  will it read any output image.
+-->
+<delegatemap>
+    <!-- Pseudo-format example -->
+    <!-- -Why doesn't xc: work? Even if routed through a shell script. -->
+    <delegate decode="test_red" command="convert -size 512x512 xc:red '%o'"/>
+</delegatemap>
+
