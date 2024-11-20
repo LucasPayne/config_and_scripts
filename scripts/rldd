@@ -1,7 +1,8 @@
 #!/bin/bash
 # rldd: "Reverse ldd". List shared libraries on ldconfig path for which ldd lists thie passed library.
 #
-# notes: Lists particular versions. Should it?
+# notes:
+#  Lists particular versions. Should it?
 #  Logic is not perfect, todo.
 #  This takes a long time.
 #  Symlink logic like ldd?
@@ -11,6 +12,9 @@
 #  ldd doesn't list these only because executables aren't linked to,
 #  but executables do use shared libraries with the same mechanism
 #  (e.g. `ldd /path/to/executable` works).
+#
+# resources/related:
+#  https://superuser.com/questions/701253/finding-all-files-that-link-to-a-particular-library-on-linux
 
 if [ $# -eq 0 ]
 then

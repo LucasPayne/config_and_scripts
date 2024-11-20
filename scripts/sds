@@ -1,0 +1,17 @@
+#!/bin/bash
+# sds: alias and helper for systemctl, mnemonic "systemd systemctl"
+
+# Shortcuts
+if [ $# -ge 1 ]
+then
+    case "$1" in
+        lsu)
+            set -- "list-units" "${@:2}"
+            ;;
+        lsuf)
+            set -- "list-unit-files" "${@:2}"
+            ;;
+    esac
+fi
+
+exec systemctl "$@"
