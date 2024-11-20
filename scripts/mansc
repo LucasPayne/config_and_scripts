@@ -1,0 +1,5 @@
+#!/bin/bash
+# mansc: alias for `man -s 2 -k .`, for searching system calls
+[ $# -eq 0 ] || ( >&2 echo "takes no args" ; exit 1 )
+exec man -s 2 -k .
+
