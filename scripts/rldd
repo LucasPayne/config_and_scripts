@@ -1,0 +1,41 @@
+#!/bin/bash
+# rldd: "Reverse ldd". List shared libraries on ldconfig path for which ldd lists thie passed library.
+#
+# notes: Lists particular versions. Should it?
+#  Logic is not perfect, todo.
+#  This takes a long time.
+#  Symlink logic like ldd?
+#
+# ideas:
+#  Reverse dependencies may usefully include executables.
+#  ldd doesn't list these only because executables aren't linked to,
+#  but executables do use shared libraries with the same mechanism
+#  (e.g. `ldd /path/to/executable` works).
+
+if [ $# -eq 0 ]
+then
+    >&2 echo "rldd: missing file arguments"
+    exit 1
+fi
+
+libs="$(ldconfig -p | tail +2 | rcutw 1 | xargs realpath | sort | uniq)"
+
+index=0
+while [ $# -gt 0 ]
+do
+    lib_filename="$(realpath "$1")"
+    if ! ( [ $index -eq 0 ] && [ $# -eq 1 ] )
+    then
+        echo "$lib_filename:"
+    fi
+    while read -r other_lib
+    do
+        if ldd "$other_lib" | tail +2 | rcutw 2 | xargs -r realpath | grep -q -E "^$lib_filename$"
+        then
+            echo "        $other_lib"
+        fi
+    done < <(echo "$libs")
+    ((index++))
+    shift
+done
+

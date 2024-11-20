@@ -358,7 +358,7 @@ endfunction
 
 " Search for selected text
 vnoremap gs :<c-u>call SearchSelectedBrowser()<cr>
-vnoremap ga :<c-u>call SearchSelectedChatGPT<cr>
+vnoremap ga :<c-u>call SearchSelectedChatGPT()<cr>
 " Search for line under cursor.
 "todo: Operator, e.g. gsiw.
 nnoremap gss V:<c-u>call SearchSelectedBrowser()<cr>
