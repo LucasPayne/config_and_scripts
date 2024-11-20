@@ -1,0 +1,5 @@
+#!/bin/bash
+# mans: Get dpkg source for man page.
+# Passes all flags, might not work with some flags.
+man -w "$@" | x dpkg -S
+
