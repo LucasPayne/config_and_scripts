@@ -341,12 +341,14 @@ onoremap H ^
 onoremap L $
 command! -nargs=0 Sv source ~/.vimrc
 
-" Search for selected text with search engine in web browser
+" Search for selected text
 let g:browser_query_prefix = "https://duckduckgo.com/?t=lm&q="
-function! SearchSelected()
-    call system("xdg-browser "..shellescape(g:browser_query_prefix..@*).." &")
+let g:chatgpt_query_prefix = "https://chat.openai.com/?q="
+function! SearchSelected(prefix)
+    call system("xdg-browser "..shellescape(a:prefix..@*).." &")
 endfunction
-vnoremap gs :<c-u>call SearchSelected()<cr>
+vnoremap gs :<c-u>call SearchSelected(g:browser_query_prefix)<cr>
+vnoremap ga :<c-u>call SearchSelected(g:chatgpt_query_prefix)<cr>
 " Search for line under cursor.
 "todo: Operator, e.g. gsiw.
 nnoremap gss V:<c-u>call SearchSelected()<cr>
