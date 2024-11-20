@@ -5,11 +5,34 @@
 if [ $# -ge 1 ]
 then
     case "$1" in
+        # ls: mnemonic for "list"
         lsu)
             set -- "list-units" "${@:2}"
             ;;
+        lss)
+            set -- "list-sockets" "${@:2}"
+            ;;
+        lst)
+            set -- "list-timers" "${@:2}"
+            ;;
+        lsd)
+            set -- "list-dependencies" "${@:2}"
+            ;;
         lsuf)
             set -- "list-unit-files" "${@:2}"
+            ;;
+        # q: Mnemonic for "query"
+        qf)
+            set -- "is-failed" "${@:2}"
+            ;;
+        qe)
+            set -- "is-enabled" "${@:2}"
+            ;;
+        qa)
+            set -- "is-active" "${@:2}"
+            ;;
+        qsr)
+            set -- "is-system-running" "${@:2}"
             ;;
     esac
 fi

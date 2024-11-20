@@ -1,5 +1,13 @@
 #!/bin/bash
-# mansc: alias for `man -s 2 -k .`, for searching system calls
-[ $# -eq 0 ] || ( >&2 echo "takes no args" ; exit 1 )
-exec man -s 2 -k .
-
+# mansc: alias and helper for `man -s 2 -k .`, for searching system calls
+if [ $# -gt 1 ]
+then
+    >&2 echo "Usage: mansc [optional search]"
+    exit 1
+fi
+if [ $# -eq 1 ]
+then
+    exec man -s 2 -k . | grep -i "$@"
+else
+    exec man -s 2 -k .
+fi

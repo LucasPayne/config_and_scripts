@@ -1,3 +1,4 @@
 #!/bin/bash
-# sdj:
+# sdj: alias and helper for journalctl, mnemonic "systemd journalctl"
 
+exec journalctl "$@"
