@@ -1,0 +1,3 @@
+#!/bin/bash
+# stracev: Pipe strace with both program stdout and strace stderr to vim.
+strace 2>&1 "$@" | v
