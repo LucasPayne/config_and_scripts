@@ -342,21 +342,33 @@ onoremap L $
 command! -nargs=0 Sv source ~/.vimrc
 
 " Search for selected text
-let g:browser_query_prefix = "https://duckduckgo.com/?t=lm&q="
-let g:chatgpt_query_prefix = "https://chat.openai.com/?q="
 function! SearchSelected(prefix)
     call system("xdg-browser "..shellescape(a:prefix..@*).." &")
 endfunction
-vnoremap gs :<c-u>call SearchSelected(g:browser_query_prefix)<cr>
-vnoremap ga :<c-u>call SearchSelected(g:chatgpt_query_prefix)<cr>
+
+let g:browser_query_prefix = "https://duckduckgo.com/?t=lm&q="
+function! SearchSelectedBrowser()
+    call system("xdg-browser "..shellescape(g:browser_query_prefix..@*).." &")
+endfunction
+
+let g:chatgpt_query_prefix = "https://chat.openai.com/?q="
+function! SearchSelectedChatGPT()
+    call system("xdg-browser "..shellescape(g:chatgpt_query_prefix..@*).." &")
+endfunction
+
+" Search for selected text
+vnoremap gs :<c-u>call SearchSelectedBrowser()<cr>
+vnoremap ga :<c-u>call SearchSelectedChatGPT<cr>
 " Search for line under cursor.
 "todo: Operator, e.g. gsiw.
-nnoremap gss V:<c-u>call SearchSelected()<cr>
+nnoremap gss V:<c-u>call SearchSelectedBrowser()<cr>
+nnoremap gaa V:<c-u>call SearchSelectedChatGPT()<cr>
 " Search for whole file.
 " Useful for opening a scratch buffer to edit a search term.
 " Then close the buffer.
 " todo: Cleanup buffer from list.
-nnoremap gS ggVG:<c-u>call SearchSelected()<cr>gg:close<cr>
+nnoremap gS ggVG:<c-u>call SearchSelectedBrowser()<cr>gg:close<cr>
+nnoremap gA ggVG:<c-u>call SearchSelectedChatGPT()<cr>gg:close<cr>
 
 " Open a scratch buffer with selected text.
 " This can be useful for modifying text before copying it.
@@ -1701,41 +1713,41 @@ let g:vimrc_loaded_state = "finished"
 
 "https://vi.stackexchange.com/questions/17262/iedit-behaviour-in-vim/17272#17272
 "--------------------------------------------------------------------------------
-function! GetTextObject(type, is_visual)
-    let sel_save = &selection
-    let &selection = "inclusive"
-    let reg_save = @@
-    if a:is_visual
-      silent execute "normal! gvy"
-    elseif a:type == 'line'
-      silent execute "normal! '[V']y"
-    else
-      silent execute "normal! `[v`]y"
-    endif
-    let text = @@
-    let &selection = sel_save
-    let @@ = reg_save
-    return text
-endfunction
-
-function! ReplaceOperator(type, ...)
-    let text = GetTextObject(a:type, a:0)
-    call feedkeys(":%s/".text."//g\<left>\<left>", "n")
-endfunction
-nnoremap gr :set opfunc=ReplaceOperator<cr>g@
-vnoremap gr :<C-u>call ReplaceOperator(visualmode(), 1)<cr>
-
-function! AppendReplaceOperator(type, ...)
-    let text = GetTextObject(a:type, a:0)
-    call feedkeys(":%s/".text."/".text."/g\<left>\<left>", "n")
-endfunction
-nnoremap gA :set opfunc=AppendReplaceOperator<cr>g@
-vnoremap gA :<C-u>call AppendReplaceOperator(visualmode(), 1)<cr>
-
-function! PrependReplaceOperator(type, ...)
-    let text = GetTextObject(a:type, a:0)
-    call feedkeys(":%s/".text."/".text."/g".repeat("\<left>", len(text) + 2), "n")
-endfunction
-nnoremap gI :set opfunc=PrependReplaceOperator<cr>g@
-vnoremap gI :<C-u>call PrependReplaceOperator(visualmode(), 1)<cr>
+"function! GetTextObject(type, is_visual)
+"    let sel_save = &selection
+"    let &selection = "inclusive"
+"    let reg_save = @@
+"    if a:is_visual
+"      silent execute "normal! gvy"
+"    elseif a:type == 'line'
+"      silent execute "normal! '[V']y"
+"    else
+"      silent execute "normal! `[v`]y"
+"    endif
+"    let text = @@
+"    let &selection = sel_save
+"    let @@ = reg_save
+"    return text
+"endfunction
+"
+"function! ReplaceOperator(type, ...)
+"    let text = GetTextObject(a:type, a:0)
+"    call feedkeys(":%s/".text."//g\<left>\<left>", "n")
+"endfunction
+"nnoremap gr :set opfunc=ReplaceOperator<cr>g@
+"vnoremap gr :<C-u>call ReplaceOperator(visualmode(), 1)<cr>
+"
+"function! AppendReplaceOperator(type, ...)
+"    let text = GetTextObject(a:type, a:0)
+"    call feedkeys(":%s/".text."/".text."/g\<left>\<left>", "n")
+"endfunction
+"nnoremap gA :set opfunc=AppendReplaceOperator<cr>g@
+"vnoremap gA :<C-u>call AppendReplaceOperator(visualmode(), 1)<cr>
+"
+"function! PrependReplaceOperator(type, ...)
+"    let text = GetTextObject(a:type, a:0)
+"    call feedkeys(":%s/".text."/".text."/g".repeat("\<left>", len(text) + 2), "n")
+"endfunction
+"nnoremap gI :set opfunc=PrependReplaceOperator<cr>g@
+"vnoremap gI :<C-u>call PrependReplaceOperator(visualmode(), 1)<cr>
 "--------------------------------------------------------------------------------
