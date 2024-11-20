@@ -12,12 +12,6 @@ then
     stty -ixon
 fi
 
-# Strace helpers
-stracev ()
-{
-    strace 2>&1 "$@" | less
-}
-
 # Explicit terminfo needed for some reason, when using built-from-source ncurses.
 export TERMINFO=/lib/terminfo
 
