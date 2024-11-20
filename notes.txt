@@ -1,0 +1,12 @@
+ideas
+------------------------------------------------------------
+Should metadata in config subdir, sourced by the apply script.
+
+Some config isn't very powerful.
+Since already managing config here, what about schematics?
+e.g. then if a config can't reference env variables can reference them at apply time
+using a substitution.
+
+todo
+------------------------------------------------------------
+Not applying correctly to new system.
