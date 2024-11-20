@@ -1,0 +1,49 @@
+#!/bin/bash
+# libtrw: libtree variant with command arguments instead of filename arguments.
+# https://github.com/haampie/libtree
+# 
+# note: This is very unwieldy for a simple filter operation on arguments.
+#  Just because they aren't typed, have to duplicate argument parsing logic.
+#  Is there a better way? Someones probably addressed this problem before.
+#
+# todo: rest of libtree args
+
+# Filter arguments
+filtered_args=()
+rest_is_filename=0
+bad_arg=0
+filter_arg ()
+{
+    filename="$(which "$1" 2>/dev/null)"
+    if [ $? -ne 0 ]
+    then
+        # skip this argument and show error
+        bad_arg=1
+        >&2 echo "Path not found for command \"$1\"."
+    else
+        filtered_args+=("$filename")
+    fi
+}
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        -v|-vv|-vvv|-h|--help|--version|-p|--path)
+            if [ $rest_is_filename -eq 1 ]
+            then
+                filter_arg "$1"
+            else
+                filtered_args+=("$1")
+            fi
+            ;;
+        --)
+            rest_is_filename=1
+            filtered_args+=("$1")
+            ;;
+        *)
+            filter_arg "$1"
+            ;;
+    esac
+    shift
+done
+
+libtree "${filtered_args[@]}"
