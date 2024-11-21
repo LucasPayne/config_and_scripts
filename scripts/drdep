@@ -3,6 +3,7 @@
 # Usage
 #     drdep <package names...>
 # If multiple packages are passed, list their set-combined recursive dependencies.
+# todo: Considering Predepends, ...
 
 (
     while [ $# -gt 0 ]

@@ -620,8 +620,8 @@ fzf_checkout () {
         fzf --preview="$preview_string" \
             --preview-window=right:$preview_percent% \
             --color=16,gutter:-1,hl:yellow:regular,hl+:yellow:regular,bg+:-1,fg+:-1:regular \
-            --bind='ctrl-alt-l:execute(echo "__OPEN_FILE_BROWSER")+accept' \
-            --bind='alt-l:execute(echo "__OPEN_FILE_BROWSER_NO_CD")+accept' \
+            --bind='alt-l:execute(echo "__OPEN_FILE_BROWSER")+accept' \
+            --bind='ctrl-alt-l:execute(echo "__OPEN_FILE_BROWSER_NO_CD")+accept' \
             --ansi \
             --layout=reverse \
             --border=none

@@ -135,7 +135,6 @@ nnoremap <M-l> L
 nnoremap <M-m> M
 
 " alt+search: Search for starts of lines, skipping whitespace.
-" TODO: Need greedy, this doesn't work.
 " TODO: M-? doesn't work.
 nnoremap <M-/> /^\s*
 nnoremap <M-?> ?^\s*
