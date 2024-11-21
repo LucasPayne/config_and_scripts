@@ -102,6 +102,47 @@ newconfig ()
     fi
 }
 
+# Check out git project to code directory.
+gitget ()
+{
+    local name=""
+    if [ $# -eq 1 ]
+    then
+        local url="$1"
+    elif $[ $# -eq 2 ]
+    then
+        local name="$1"
+        local url="$2"
+    else
+        >&2 echo "Usage:"
+        >&2 echo "    gitget <url>"
+        >&2 echo "    gitget <name> <url>"
+        return 1
+    fi
+    if [ -z "$name" ]
+    then
+        name="$(basename --suffix=.git "$url")"
+        if [ $? -ne 0 ]
+        then
+            >&2 echo "error: Couldn't determine name of project"
+            return 1
+        fi
+    fi
+
+    cd ~/code
+    if [ -d "$name" ]
+    then
+        echo "$name already exists, cd'ing to it..."
+        cd "$name"
+        return 0
+    elif [ -e "$name" ]
+    then
+        >&2 echo "error: File \"$name\" exists in code directory."
+        return 1
+    fi
+    git clone "$url" "$name"
+    cd "$name"
+}
 
 xdg-mime-set ()
 {

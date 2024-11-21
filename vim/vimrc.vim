@@ -134,6 +134,10 @@ nnoremap <M-l> L
 " Define M this way too for consistency.
 nnoremap <M-m> M
 
+" alt+search: Search for starts of lines, skipping whitespace.
+nnoremap <M-/> /^\s*
+nnoremap <M-?> ?^\s*
+
 " Project browser.
 "function! ProjectBrowser()
 "    NERDTree
@@ -293,7 +297,7 @@ nnoremap <silent> G :call EndOfFileNavigate()<cr>
 " If terminal is sending modifiers as esc-key.
 " For some reason, the below works!
 " TODO: Do this without autocmds, setlocal not working?
-let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-"
+let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?"
 function! ResetAltKeyMappings()
     call system("echo reset >> /tmp/vimlog")
     for char in g:alphabet
