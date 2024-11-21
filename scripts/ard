@@ -1,0 +1,4 @@
+#!/bin/bash
+# ard: alias for apt-rdepends
+exec apt-rdepends "$@"
+
