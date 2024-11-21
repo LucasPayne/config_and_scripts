@@ -1,0 +1,24 @@
+#!/bin/bash
+# gcc-inc: Find headers.
+# .h is optional. (-ambiguous?)
+
+lang="$1"
+header="$2"
+# add missing .h to query
+if [[ $header != *.h ]]
+then
+    header="$header.h"
+fi
+
+ret=1
+while read -r path
+do
+    found="$(find "$path" -name '*.h' -printf '%P\n' | grep -E "^$header$" 2>/dev/null)"
+    if [ $? -eq 0 ]
+    then
+        echo "$found" | xargs -i printf '%s/%s\n' "$path" {}
+        ret=0
+    fi
+done < <(gcc-path "$lang" i)
+
+exit $ret
