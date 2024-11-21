@@ -334,6 +334,7 @@ function! UnsetAltKeyMappings()
     execute "set <M-L>=\eL"
     " Allow system paste.
     execute "set <M-p>=\ep"
+    execute "set <M-P>=\eP"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -1585,6 +1586,14 @@ function! SystemPasteLine()
 endfunction
 nnoremap <silent> <M-p> :call SystemPasteLine()<cr>
 inoremap <silent> <M-p> <C-r>+
+" Helper for pasting and indenting text for notes.
+function! SystemPasteLineAndFormatNote()
+    call SystemPasteLine()
+    normal! `[V`]gq
+    normal! `[V`]>
+    "todo: Add - breaks.
+endfunction
+nnoremap <silent> <M-P> :call SystemPasteLineAndFormatNote()<cr>
 " wipe the selection's lines then paste a line.
 " Note that this doesn't care about column-level selection precision, it just
 " wipes all of the lines which the selection spans.
@@ -1593,8 +1602,6 @@ inoremap <silent> <M-p> <C-r>+
 vnoremap <silent> <M-p> <C-c>'<V'>"_c<Esc>:call SystemPasteLine()<cr>V<Esc>
 " paste in terminal job mode
 tnoremap <silent> <M-p> <C-w>"+
-" paste at cursor
-nnoremap <silent> <M-P> "+p
 " register "+ yank
 "------todo: Apparently doesn't allow <M-y>... to be mapped. Thought this would work.
 "nnoremap <silent> <M-y> "+y
