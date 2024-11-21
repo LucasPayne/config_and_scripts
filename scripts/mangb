@@ -1,0 +1,3 @@
+#!/bin/bash
+# mangb: mang then manb (grep browse)
+exec mang "$@" | manb
