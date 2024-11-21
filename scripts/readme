@@ -282,7 +282,7 @@ func_dpkg_information ()
     echo "Description:"
     dpkgdesc "$package_name" | tail +2
     echo "README:"
-    get_dpkg_readme_files "$package_name" '' '.md' | grep -v -E '^<none>$' | indent 1
+    get_dpkg_readme_files "$package_name" '' '.md' '.txt' '.rst' | grep -v -E '^<none>$' | indent 1
     echo "README.Debian:"
     get_dpkg_readme_files "$package_name" '.Debian' | grep -v -E '^<none>$' | indent 1
     # Changelogs.
