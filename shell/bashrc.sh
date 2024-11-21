@@ -144,6 +144,18 @@ gitget ()
     cd "$name"
 }
 
+# bash history with default, no numbers
+hist ()
+{
+    local n=10
+    if [ $# -gt 0 ]
+    then
+        n="$1"
+        shift
+    fi
+    history "$n" "$@" | sed 's/^ [0-9]\+  //'
+}
+
 xdg-mime-set ()
 {
     xdg-mime default feh.desktop image/jpeg
