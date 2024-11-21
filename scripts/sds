@@ -13,6 +13,18 @@ check_usage ()
     fi
 }
 
+# Implements own user flag for convenience.
+user=system
+if [ $# -ge 1 ] && [ "$1" = "--user" ]
+then
+    user=user
+    shift
+fi
+
+# Call systemctl with the correct --system or --user.
+# Below, call this instead of systemctl, otherwise the sds flag won't be respected.
+systemctl_command="systemctl --$user"
+
 # Shortcuts
 if [ $# -ge 1 ]
 then
@@ -38,12 +50,12 @@ then
             # systemctl is referencing @.service file with @service.
             # Skipping unfound unit files. Not sure why some aren't found, should this be the case?
             # e.g. blockdev@.target, `show blockdev@target` works but not status.
-            systemctl list-unit-files \
+            $systemctl_command list-unit-files \
                 | head -n -2 \
                 | tail +2 \
                 | cutw 1 \
                 | sed 's/@\./@/g' \
-                | xargs -i systemctl show -p FragmentPath -- {} \
+                | xargs -i $systemctl_command show -p FragmentPath -- {} \
                 | cut -d= -f 2- \
                 | grep -v -E '^$'
             exit 0
@@ -78,9 +90,9 @@ then
             if [[ "$1" =~ ^s.*$ ]]
             then
                 # Optionally show status as well
-                systemctl status "$2"
+                $systemctl_command status "$2"
             fi
-            path="$(exec systemctl show -p FragmentPath -- "$2" | cut -d= -f 2-)"
+            path="$(systemctl_command show -p FragmentPath -- "$2" | cut -d= -f 2-)"
             echo "$path"
             if [[ "$1" =~ ^.*c$ ]]
             then
@@ -92,4 +104,4 @@ then
     esac
 fi
 
-exec systemctl "$@"
+$systemctl_command "$@"
