@@ -2,9 +2,11 @@
 \ep quit
 \eq quit
 \eF forw-search (\^\\s\+-|, -)-?
-\eG forw-search \^       
 \ef noaction g\eF
+\eG forw-search \^       
 \eg noaction g\eG
+\eS forw-search \^
+\es noaction g\eS
 w back-scroll
 r back-line
 f forw-line

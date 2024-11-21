@@ -53,11 +53,25 @@ then
         h)
             set -- "show" "${@:2}"
             ;;
-        p)
+        c)
+            set -- "cat" "${@:2}"
+            ;;
+        p|sp|pc|spc)
             # Show path of unit file
             # Note: -P in newer versions removes prefix.
             check_usage 2 "sds p <unit>" "$@"
-            exec systemctl show -p FragmentPath "$2" | cut -d= -f 2-
+            if [[ "$1" =~ ^s.*$ ]]
+            then
+                # Optionally show status as well
+                systemctl status "$2"
+            fi
+            path="$(exec systemctl show -p FragmentPath "$2" | cut -d= -f 2-)"
+            echo "$path"
+            if [[ "$1" =~ ^.*c$ ]]
+            then
+                # Optionally cat path as well
+                cat "$path"
+            fi
             exit 0
             ;;
     esac

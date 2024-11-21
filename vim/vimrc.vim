@@ -70,6 +70,15 @@ nnoremap <space>CP :call YankWordAndFilePath()<cr>
 vnoremap <space>cp :call YankSelectionAndFilePath()<cr>
 nnoremap <space>cb :call YankBreakPoint()<cr>
 
+"" Go to header
+"function! OpenHeader()
+"    "todo: these envvars should already be set in !-shell.
+"    let l:header_path = "/tmp/a"
+"    let l:cmd = "env VIMSERVER_ID="..$VIMSERVER_ID.." v "..l:header_path
+"    echo l:cmd
+"    call system(l:cmd)
+"endfunction
+
 " Settings
 "    syntax on
 "    ...

@@ -32,6 +32,14 @@ cmd open &{{
             feh $files
             exit
             ;;
+        image/gif)
+            # feh doesn't play animated formats, only static images
+            mpv --loop-file=inf "$f"
+            ;;
+        image/*)
+            #todo: Gallery for other types as well
+            feh "$f"
+            ;;
     esac
 
     while read -r file ; do

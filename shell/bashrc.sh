@@ -724,6 +724,12 @@ bind -m vi-insert '"\eo": "\C-ugcb\n"'
 bind -m vi-command '"\ea": "\C-utig\n"'
 bind -m vi-insert '"\ea": "\C-utig\n"'
 
+# Job control
+bind -m vi-command '"\C-z": "\C-ufg-next\n"'
+bind -m vi-insert '"\C-z": "\C-ufg-next\n"'
+bind -m vi-command '"\ez": "\C-ufg-next\n"'
+bind -m vi-insert '"\ez": "\C-ufg-next\n"'
+
 #>>>
 
 # Prompt
@@ -733,6 +739,69 @@ bind -m vi-insert '"\ea": "\C-utig\n"'
 PS1=''
 PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]$(prompt)\n\$ '
 #>>>
+
+# Job control
+#    ...
+
+_fg-job ()
+{
+    local indicator_symbol="$1"
+    while read -r job_line
+    do 
+        # `jobs -l` outputs [N]+ for the next foreground job.
+        # Search for this and capture the pid (printed with -l).
+        if [[ $job_line =~ ^\[[0-9]+\]"$indicator_symbol"[[:space:]]*([0-9]+)[[:space:]] ]]
+        then
+            local pid="${BASH_REMATCH[1]}"
+            echo "$pid"
+            return 0
+        fi
+    done < <(jobs -l)
+
+    >&2 echo "no job found"
+    return 1
+}
+
+# Get the job which will be next under the "fg" command.
+# This is not yet a foreground job (the shell is), until fg is run.
+fg-job ()
+{
+    _fg-job +
+}
+# Get the job second in line for the fg command.
+fg-job-second ()
+{
+    _fg-job -
+}
+
+# Get the job number next in the job list.
+# This is not the same as the "second" job indicated by -.
+# This is useful for cycling through jobs.
+fg-next-job-spec ()
+{
+    local current
+    current="$(fg-job)"
+    [ $? -ne 0 ] && return $?
+    # job number start at 1,
+    # but "index" here starts at 0.
+    local index=$(("$(jobs -p | grep -n -E "^$current$" | cutc 1)" - 1))
+    local num_jobs=$(jobs -p | wc -l)
+    local next_index=$(((index + 1) % num_jobs))
+    if [[ $(jobs | sel $((next_index + 1))) =~ \[([0-9]+)\] ]]
+    then
+        echo "${BASH_REMATCH[1]}"
+    else
+        return 1
+    fi
+}
+
+fg-next ()
+{
+    local job_spec
+    job_spec="$(fg-next-job-spec)"
+    [ $? -ne 0 ] && return $?
+    fg "$job_spec"
+}
 
 
 lfcd ()

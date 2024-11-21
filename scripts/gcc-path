@@ -3,6 +3,11 @@
 # List the default gcc system include directories or library directories.
 # No args: all filetypes.
 # Args: filetypes. If specified, must also use -i/-l flags to specifiy include paths and/or library paths.
+#
+# ideas
+# Also involve build system.
+# Would make more complex, but most normal projects use base gcc system
+# includes so just extending from this logic.
 
 opt_include=0
 opt_library=0
@@ -14,7 +19,7 @@ while [[ $# -gt 0 ]]; do
     # Case insensitive.
     opt="${1,,}"
     case $opt in
-    c++|cpp|cxx)
+    c++|cpp|cxx|cc)
         opt_cxx=1
         language_specified=1
         shift

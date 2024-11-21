@@ -7,7 +7,8 @@ unset MYVIMRC
 unset VIM
 unset VIMRUNTIME
 unset VIM_TERMINAL
-unset VIM_SERVERNAME
+#...
+#unset VIM_SERVERNAME
 unset NVIM_LISTEN_ADDRESS
 
 "$@"
