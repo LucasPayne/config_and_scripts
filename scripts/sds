@@ -33,6 +33,21 @@ then
         lsuf)
             set -- "list-unit-files" "${@:2}"
             ;;
+        lsufp)
+            # List unit file paths.
+            # systemctl is referencing @.service file with @service.
+            # Skipping unfound unit files. Not sure why some aren't found, should this be the case?
+            # e.g. blockdev@.target, `show blockdev@target` works but not status.
+            systemctl list-unit-files \
+                | head -n -2 \
+                | tail +2 \
+                | cutw 1 \
+                | sed 's/@\./@/g' \
+                | xargs -i systemctl show -p FragmentPath -- {} \
+                | cut -d= -f 2- \
+                | grep -v -E '^$'
+            exit 0
+            ;;
         # q: Mnemonic for "query"
         qf)
             set -- "is-failed" "${@:2}"
@@ -65,7 +80,7 @@ then
                 # Optionally show status as well
                 systemctl status "$2"
             fi
-            path="$(exec systemctl show -p FragmentPath "$2" | cut -d= -f 2-)"
+            path="$(exec systemctl show -p FragmentPath -- "$2" | cut -d= -f 2-)"
             echo "$path"
             if [[ "$1" =~ ^.*c$ ]]
             then
