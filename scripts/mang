@@ -1,8 +1,8 @@
 #!/bin/bash
-# mansec: alias and helper for `man -s 2 -k .`
+# mang: alias and helper for `man -s 2 -k .`
 usage ()
 {
-    >&2 echo "Usage: mansec <section number 1-9> [optional search]"
+    >&2 echo "Usage: mang <section number 1-9> [optional search]"
 }
 
 if [ $# -eq 0 ]
@@ -13,8 +13,7 @@ fi
 section_number="$1"
 shift
 # validate this is a manpage section number
-re='^[1-9]$'
-if ! [[ $section_number =~ $re ]]
+if ! [[ $section_number =~ ^[1-9]$ ]]
 then
     >&2 echo "error: Unknown section number \"$section_number\"."
     usage

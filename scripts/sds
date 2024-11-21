@@ -1,6 +1,18 @@
 #!/bin/bash
 # sds: alias and helper for systemctl, mnemonic "systemd systemctl"
 
+check_usage ()
+{
+    local num_args="$1"
+    local usage_message="$2"
+    local actual_num_args="$(($#-2))"
+    if [ $num_args -ne $actual_num_args ]
+    then
+        >&2 echo "Usage: $usage_message"
+        exit 1
+    fi
+}
+
 # Shortcuts
 if [ $# -ge 1 ]
 then
@@ -33,6 +45,20 @@ then
             ;;
         qsr)
             set -- "is-system-running" "${@:2}"
+            ;;
+        # Other
+        s)
+            set -- "status" "${@:2}"
+            ;;
+        h)
+            set -- "show" "${@:2}"
+            ;;
+        p)
+            # Show path of unit file
+            # Note: -P in newer versions removes prefix.
+            check_usage 2 "sds p <unit>" "$@"
+            exec systemctl show -p FragmentPath "$2" | cut -d= -f 2-
+            exit 0
             ;;
     esac
 fi

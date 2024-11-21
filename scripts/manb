@@ -1,3 +1,33 @@
 #!/bin/bash
-# manb:
+# manb: man page fzf browser
+#
+# Given a man page name per line.
+# This line can have trailing arguments,
+# so can pass outputs of e.g. `man -s 2 -k mod`.
+#
+# todo:
+# Preview
+# Send man pages elsewhere, detach. Launch job?
 
+if [ $# -ne 0 ]
+then
+    >&2 echo "Usage: <stdin> | manb"
+    exit 1
+fi
+
+manpages_args="$(cat | cutw 1)"
+manpages=""
+# Filter to manpages which exist.
+while read -r manpage
+do
+    if man -w "$manpage" >/dev/null 2>&1
+    then
+        manpages="$manpages"$'\n'"$manpage"
+    fi
+done < <(echo "$manpages_args")
+
+echo "$manpages" | fzf -i \
+                       --preview="man {}" \
+                       --preview-window=right:80% \
+                       --ansi \
+                       --border=none
