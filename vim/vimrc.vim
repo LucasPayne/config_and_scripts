@@ -385,6 +385,52 @@ nnoremap gaa V:<c-u>call SearchSelectedChatGPT()<cr>
 nnoremap gS ggVG:<c-u>call SearchSelectedBrowser()<cr>gg:close<cr>
 nnoremap gA ggVG:<c-u>call SearchSelectedChatGPT()<cr>gg:close<cr>
 
+" "Smart unindent", don't flatten different preceding whitespaces.
+" e.g. fully unindenting
+" ```
+"         def foo():
+"             print("hi")
+" ```
+" becomes
+" ```
+" def foo():
+"     print("hi")
+" ```
+" rather than
+" ```XXX
+" def foo():
+" print("hi")
+" ```XXX
+function! SmartUnindent(max_unindent)
+    let from_line = getpos("'<")[1]
+    let to_line = getpos("'>")[1]
+    let lines = getline(from_line, to_line)
+    let unindent_amount = 9999
+    for line in lines
+        if line !~# '^\s*$'
+            let len = strlen(matchstr(line, '^\s*'))
+            if len < unindent_amount
+                let unindent_amount = len
+            endif
+        endif
+    endfor
+    if unindent_amount >= a:max_unindent
+        let unindent_amount = a:max_unindent
+    endif
+    " Remove this much whitespace from the beginning of each line.
+    let line_number = from_line
+    for line in lines
+        if line !~# '^\s*$'
+            call setline(line_number, line[unindent_amount:])
+        endif
+        let line_number += 1
+    endfor
+endfunction
+"vnoremap g< :<c-u>call SmartUnindent(4)<cr>
+"Unindent fully, useful for formatting copy-pastes into notes.
+vnoremap g< :<c-u>call SmartUnindent(9999)<cr>
+"todo: text object, operator.
+
 " Open a scratch buffer with selected text.
 " This can be useful for modifying text before copying it.
 function! SendSelectedToScratchBuffer()

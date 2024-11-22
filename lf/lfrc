@@ -4,6 +4,7 @@
 # Resources:
 #    man 1 lf
 #    https://github.com/gokcehan/lf
+#    https://github.com/gokcehan/lf/wiki/
 #    https://wiki.archlinux.org/title/Lf
 
 # Include "lfrc_lib" header.
@@ -33,6 +34,11 @@ set previewer ~/.config/lf/previewer.sh
 
 # MAPPINGS
 #<<<
+# System mappings<<<
+# Make Ctrl-Z work as SIGTSTP as usual.
+#https://github.com/gokcehan/lf/issues/357
+map <c-z> $ kill -TSTP $PPID
+#>>>
 # z mappings <<<
 #
 # Defaults:

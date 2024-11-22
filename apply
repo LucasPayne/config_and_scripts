@@ -122,6 +122,10 @@ link_system_to_config ./gdb/gdbinit.gdb "$xdg_config_home/gdb/gdbinit"
 mkdir -p "$xdg_config_home/mpv"
 link_system_to_config ./mpv/mpv.conf "$xdg_config_home/mpv/mpv.conf"
 
+# mpd
+mkdir -p "$xdg_config_home/mpd"
+link_system_to_config ./mpd/mpd.conf "$xdg_config_home/mpd/mpd.conf"
+
 # xmonad
 mkdir -p ~/.xmonad
 link_system_to_config ./xmonad/xmonad.hs ~/.xmonad/xmonad.hs
