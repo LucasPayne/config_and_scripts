@@ -1,0 +1,49 @@
+# Open all images in the directory into the gallery view.
+# The first image will be the selected one.
+
+cmd func-open &{{
+    case $(file --mime-type -Lb $f) in
+        image/jpeg|image/png)
+            #NOTE: Code here depends on no spaces in filenames.
+            files=$(
+                printf "$f "
+                find . -mindepth 1 -maxdepth 1 | cut -d/ -f2- | while read -r file ; do
+                    mime=$(file --mime-type -Lb $file)
+                    if [[ "$file" != "$(basename $f)" ]] && ( [[ "$mime" == "image/jpeg" ]] || [[ "$mime" == "image/png" ]] ) ; then
+                        printf "$file "
+                    fi
+                done
+            )
+            feh $files
+            exit
+            ;;
+        image/gif)
+            # feh doesn't play animated formats, only static images
+            mpv --loop-file=inf "$f"
+            ;;
+        image/*)
+            #todo: Gallery for other types as well
+            feh "$f"
+            ;;
+    esac
+
+    while read -r file ; do
+        case $(file --mime-type -Lb "$file") in
+            text/*|application/json|application/xml|inode/x-empty)
+                v --nostdin "$file"
+                ;;
+            video/*|application/pdf)
+                xdg-open "$file"
+                ;;
+            audio/*)
+                xdg-open "$file"
+                ;;
+            application/zip)
+                v --nostdin "$file"
+                ;;
+            *)
+                # Don't try to open it.
+                ;;
+        esac
+    done < <(echo "$fx")
+}}

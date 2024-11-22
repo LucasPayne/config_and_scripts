@@ -1,0 +1,15 @@
+# Manually resolve symlinks before passing to xdg-open.
+# xdg-open follows symlinks for files, but not directories.
+# Without resolving this manually, xdg-open would open a
+# directory symlink with the inode/symlink handler, if any.
+# (-Is this true?)
+
+cmd open-file ${{
+    if [ "$(mimetype -b "$f")" = "inode/symlink" ]
+    then
+        file_to_open="$(readlink -f "$f")"
+    else
+        file_to_open="$f"
+    fi
+    >/dev/null 2>&1 xdg-open "$file_to_open" &
+}}

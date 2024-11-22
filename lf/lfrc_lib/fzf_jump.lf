@@ -1,0 +1,17 @@
+cmd fzf_jump ${{
+    is_recursive="$1"
+    if [ "$is_recursive" -eq 1 ] ; then
+        find_args=""
+    else
+        find_args="-mindepth 1 -maxdepth 1"
+    fi
+    res="$(find . $find_args | fzf --ansi --border=none --reverse --color=no | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    if [ -d "$res" ] ; then
+        cmd="cd"
+    elif [ -f "$res" ] ; then
+        cmd="select"
+    else
+        exit 0
+    fi
+    lf -remote "send $id $cmd \"$res\""
+}}

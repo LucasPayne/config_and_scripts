@@ -1,0 +1,21 @@
+cmd unarchive ${{
+    case $f in
+        *.zip)
+            unzip "$f"
+            ;;
+        *.tar.gz)
+            tar xzvf "$f"
+            ;;
+        *.tar.bz2)
+            echo "zip"
+            tar xjvf "$f"
+            ;;
+        *.tar)
+            echo "tar"
+            tar xvf "$f"
+            ;;
+        *)
+            echo "Unhandled format"
+            ;;
+    esac
+}}

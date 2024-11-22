@@ -1,0 +1,10 @@
+cmd touch %{{
+    if [ "$#" -eq 0 ] ; then
+        printf "File name: "
+        read ans
+        touch "$ans"
+    else
+        touch "$@"
+    fi
+}}
+

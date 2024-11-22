@@ -1,0 +1,9 @@
+cmd mkdir %{{
+    if [ "$#" -eq 0 ] ; then
+        printf "Directory name: "
+        read ans
+        mkdir "$ans"
+    else
+        mkdir "$@"
+    fi
+}}
