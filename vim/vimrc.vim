@@ -334,7 +334,6 @@ function! UnsetAltKeyMappings()
     execute "set <M-L>=\eL"
     " Allow system paste.
     execute "set <M-p>=\ep"
-    execute "set <M-P>=\eP"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -401,12 +400,9 @@ nnoremap gA ggVG:<c-u>call SearchSelectedChatGPT()<cr>gg:close<cr>
 " def foo():
 " print("hi")
 " ```XXX
-function! SmartUnindent(max_unindent)
-    let from_line = getpos("'<")[1]
-    let to_line = getpos("'>")[1]
-    let lines = getline(from_line, to_line)
+function! SmartUnindent(lines, max_unindent)
     let unindent_amount = 9999
-    for line in lines
+    for line in a:lines
         if line !~# '^\s*$'
             let len = strlen(matchstr(line, '^\s*'))
             if len < unindent_amount
@@ -418,18 +414,35 @@ function! SmartUnindent(max_unindent)
         let unindent_amount = a:max_unindent
     endif
     " Remove this much whitespace from the beginning of each line.
+    let unindented_lines = []
+    for line in a:lines
+        if line !~# '^\s*$'
+            call add(unindented_lines, line[unindent_amount:])
+        else
+            call add(unindented_lines, line)
+        endif
+    endfor
+    return unindented_lines
+endfunction
+function! SmartUnindentSelection(max_unindent)
+    let from_line = getpos("'<")[1]
+    let to_line = getpos("'>")[1]
+    let lines = getline(from_line, to_line)
+    let unindented_lines = SmartUnindent(lines, a:max_unindent)
     let line_number = from_line
     for line in lines
         if line !~# '^\s*$'
-            call setline(line_number, line[unindent_amount:])
+            call setline(line_number, unindented_lines[line_number - from_line])
         endif
         let line_number += 1
     endfor
 endfunction
-"vnoremap g< :<c-u>call SmartUnindent(4)<cr>
+"vnoremap g< :<c-u>call SmartUnindentSelection(4)<cr>
 "Unindent fully, useful for formatting copy-pastes into notes.
-vnoremap g< :<c-u>call SmartUnindent(9999)<cr>
+vnoremap g< :<c-u>call SmartUnindentSelection(9999)<cr>
 "todo: text object, operator.
+"Copy text to system clipboard with smart unindent.
+vnoremap <M-Y> "+y:let @+ = join(SmartUnindent(getline(getpos("'<")[1], getpos("'>")[1]), 9999), "\n")<cr>
 
 " Open a scratch buffer with selected text.
 " This can be useful for modifying text before copying it.
