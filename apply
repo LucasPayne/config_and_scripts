@@ -122,6 +122,14 @@ link_system_to_config ./gdb/gdbinit.gdb "$xdg_config_home/gdb/gdbinit"
 mkdir -p "$xdg_config_home/mpv"
 link_system_to_config ./mpv/mpv.conf "$xdg_config_home/mpv/mpv.conf"
 
+# xmonad
+mkdir -p ~/.xmonad
+link_system_to_config ./xmonad/xmonad.hs ~/.xmonad/xmonad.hs
+
+# elinks
+mkdir -p ~/.elinks
+link_system_to_config ./elinks/elinks.conf ~/.elinks/elinks.conf
+
 link_system_to_config ./i3 "$xdg_config_home/i3"
 link_system_to_config ./zathura "$xdg_config_home/zathura"
 link_system_to_config ./scripts ~/scripts
