@@ -2,7 +2,6 @@
 # wln: "web ln", create a URL link as an XDG desktop entry.
 # 
 # todo:
-#  Resolve name to protocol, e.g. can just write duckduckgo.com.
 #  Why does caja only work with .desktop extension? Maybe want to use .link, or no extension.
 
 if [ $# -ne 2 ]
@@ -12,6 +11,13 @@ then
 fi
 url="$1"
 link_name="$2"
+
+# prefix http
+# todo: Make sure works for all urls
+if ! [[ $url =~ ^([A-Za-z])+:.*$ ]]
+then
+    url="https://$url"
+fi
 
 stub="[Desktop Entry]
 Type=Link
