@@ -1,32 +1,26 @@
-# lf - Terminal file manager
 # lfrc - lf configuration file
+# lf - Terminal file manager
 #
-# https://github.com/gokcehan/lf
+# Resources:
+#    man 1 lf
+#    https://github.com/gokcehan/lf
 
-# Include "lfrc_lib".
+# Include "lfrc_lib" header.
+# This allows lf config to be spread across multiple files.
+# lfrc_lib/Makefile will generate this header from .lf files.
 source ~/config/lf/lfrc_lib/header
 
 # OPTIONS
 #<<<
-
-# Shell and unix
 set shell bash
 #todo:?
 set ifs ' '
-
-# Display options
 set nodrawbox
 set noicons
-
-# General options
 set ignorecase
 set mouse
-
-# Sorting and info
 set sortby natural
 set info
-
-# Configuration files
 set previewer ~/.config/lf/previewer.sh
 #lfimg
 # set ratios 1:2:3
@@ -108,5 +102,7 @@ map <a-l> :open; quit
 map o :open-file
 
 #todo: O, open without window focus change.
+#>>>
 
+# Source auto-generated config
 source ~/config/scripts/syncer_files/syncer-lf
