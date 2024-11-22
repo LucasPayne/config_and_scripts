@@ -21,6 +21,10 @@ opt_filelist=0
 opt_open_scripts=0
 # option: Load the files into the quickfix list.
 opt_quickfix=0
+# option: Use the files as the arglist (this works alongside other options).
+opt_arglist=0
+# option: Regardless of other options, prevent opening files.
+opt_no_open=0
 
 files=()
 while [[ $# -gt 0 ]]
@@ -49,6 +53,15 @@ do
         ;;
     -q|--quickfix)
         opt_quickfix=1
+        shift
+        ;;
+    -a|--arglist)
+        opt_arglist=1
+        shift
+        ;;
+    -A|--arglist-no-open)
+        opt_arglist=1
+        opt_no_open=1
         shift
         ;;
     *)
@@ -135,9 +148,25 @@ then
     done
     echo "$json" | vimjsonrpc QuickFixFromJSON
 else
+    if [[ $opt_no_open -eq 0 ]]
+    then
+        for path in "${paths[@]}"
+        do
+            send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+            vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
+        done 
+    fi
+fi
+
+if [[ $opt_arglist -eq 1 ]]
+then
+    # Clear the argument list
+    send_string='<C-\><C-n>:%argd<cr>'
+    vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
+    # Add the paths to the argument list
     for path in "${paths[@]}"
     do
-        send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+        send_string='<C-\><C-n>:argadd '"$path"'<cr>'
         vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
     done 
 fi

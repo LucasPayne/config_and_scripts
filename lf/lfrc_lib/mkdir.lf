@@ -1,3 +1,4 @@
+# vim:ft=lf
 cmd mkdir %{{
     if [ "$#" -eq 0 ] ; then
         printf "Directory name: "

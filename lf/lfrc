@@ -4,10 +4,12 @@
 # Resources:
 #    man 1 lf
 #    https://github.com/gokcehan/lf
+#    https://wiki.archlinux.org/title/Lf
 
 # Include "lfrc_lib" header.
 # This allows lf config to be spread across multiple files.
 # lfrc_lib/Makefile will generate this header from .lf files.
+# note: If lf language had wildcards with would be easier.
 source ~/config/lf/lfrc_lib/header
 
 # OPTIONS

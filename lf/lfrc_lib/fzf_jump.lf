@@ -1,3 +1,4 @@
+# vim:ft=lf
 cmd fzf_jump ${{
     is_recursive="$1"
     if [ "$is_recursive" -eq 1 ] ; then

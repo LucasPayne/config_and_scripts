@@ -1,3 +1,4 @@
+# vim:ft=lf
 # Manually resolve symlinks before passing to xdg-open.
 # xdg-open follows symlinks for files, but not directories.
 # Without resolving this manually, xdg-open would open a

@@ -1,3 +1,4 @@
+# vim:ft=lf
 cmd touch %{{
     if [ "$#" -eq 0 ] ; then
         printf "File name: "

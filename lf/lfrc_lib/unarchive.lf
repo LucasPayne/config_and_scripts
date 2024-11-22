@@ -1,3 +1,4 @@
+# vim:ft=lf
 cmd unarchive ${{
     case $f in
         *.zip)

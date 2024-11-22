@@ -1,3 +1,4 @@
+# vim:ft=lf
 # Open all images in the directory into the gallery view.
 # The first image will be the selected one.
 
