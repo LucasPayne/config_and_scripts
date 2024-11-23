@@ -1,0 +1,18 @@
+#!/bin/bash
+# lff: lf focus, tool for working with lf's synchronized focus file.
+
+lff ()
+{
+    local lf_runtime_dir="$XDG_RUNTIME_DIR/lf"
+    local focus_file="$lf_runtime_dir/primary_focus"
+
+    if [ ! -f "$focus_file" ]
+    then
+        >&2 "error: no focus file"
+        return 1
+    fi
+
+    cat "$focus_file"
+}
+
+lff "$@"
