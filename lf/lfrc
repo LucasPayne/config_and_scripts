@@ -47,6 +47,11 @@ cmd options ${{
 }}
 # Load selection from a file
 cmd load-selection ${{
+    if [ $# -ne 1 ]
+    then
+        lf -remote "send $id echoerr \"Usage: load-selection <selection_file>\""
+        exit 1
+    fi
     lf -remote "send $id unselect"
     selection_file="$1"
     while read -r line
@@ -55,6 +60,20 @@ cmd load-selection ${{
         #todo: This is very slow, any way to just set the selection directly?
         lf -remote "send $id toggle \"$line\""
     done < <(cat "$selection_file")
+}}
+# Save selection to a file
+cmd save-selection ${{
+    if [ $# -ne 1 ]
+    then
+        lf -remote "send $id echoerr \"Usage: save-selection <selection_file>\""
+        exit 1
+    fi
+    selection_file="$1"
+    >"$selection_file"
+    while read -r entry
+    do
+        realpath "$entry" >> "$selection_file"
+    done < <(echo "$fx")
 }}
 #>>>
 
@@ -94,6 +113,7 @@ set incfilter
 # Filtering <<<
 map f :set user_filter_mode "filter"; filter
 map F :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
+map U setfilter
 
 cmap <enter> &{{
     if [ "$lf_mode" = filter ]
@@ -110,6 +130,10 @@ cmap <enter> &{{
         lf -remote "send $id cmd-enter"
     fi
 }}
+
+# View selection in a pager.
+#TODO: Use -selection-file. This doesn't appear to be an option made available in lf-language.
+map <a-s> $cat $XDG_RUNTIME_DIR/lf/primary_selection | $PAGER
 
 # Select filtered files.
 # Overrides filter mode.
@@ -186,7 +210,7 @@ cmap <a-h> :cmd-end; cmd-delete-home; LFRC::execute-from-history
 #>>>
 # General mappings
 map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
-map <enter> LFRC::open
+map <enter> open
 map D LFRC::mkdir
 map T LFRC::touch
 
@@ -226,6 +250,25 @@ map <a-l> :open; quit
 map o :LFRC::open-file
 
 #todo: O, open without window focus change.
+#>>>
+
+# SELECTION
+#<<<
+set user_selection_file ""
+
+cmd on-select ${{
+    selection_file="$lf_user_selection_file"
+    if [ ! -z "$selection_file" ]
+    then
+        if [ ! -f "$selection_file" ]
+        then
+            lf -remote "send $id echoerr \"error: Selection file \\\"$selection_file\\\" doesn't exist.\""
+            exit 1
+        fi
+        echo "$fx" > "$selection_file"
+    fi
+}}
+
 #>>>
 
 # Source auto-generated config
