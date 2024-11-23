@@ -56,7 +56,11 @@ cmd options ${{
 # Load selection from selection file
 cmd load-selection ${{
     selection_file="$lf_user_runtime_dir/$lf_user_selection_file"
-
+    if [ ! -f "$selection_file" ]
+    then
+        lf -remote "send $id echoerr \"No selection file\""
+        exit 1
+    fi
     lf -remote "send $id unselect"
     if [ -s "$selection_file" ]
     then
@@ -82,6 +86,21 @@ cmd save-selection ${{
         done < <(echo "$fs")
     fi
 }}
+# Load focus from focus file.
+cmd load-focus ${{
+    focus_file="$lf_user_runtime_dir/$lf_user_focus_file"
+    if [ ! -f "$focus_file" ]
+    then
+        lf -remote "send $id echoerr \"No focus file\""
+        exit 1
+    fi
+    focus="$(cat "$focus_file")"
+    if [ ! -z "$focus" ]
+    then
+        ls -remote "send $id select "
+    fi
+}}
+
 #>>>
 
 # LF-LANGUAGE LIBRARIES
@@ -90,6 +109,7 @@ cmd save-selection ${{
 # This allows lf config to be spread across multiple files.
 # lfrc_lib/Makefile will generate this "library" from .lf files.
 # note: If lf language had wildcards this would be easier.
+# note: This is currently run async so functions might not be loaded in initialization...
 eval source "$CONFIG_DIR/lf/lfrc_lib/build/lfrc_lib.lfso"
 #>>>
 
@@ -260,8 +280,11 @@ map o :LFRC::open-file
 
 # SELECTION
 #<<<
+# Track selection.
 # Default to primary selection
 set user_selection_file "primary_selection"
+# Track cursor focus. This is sometimes called "selection" in the docs/discussions, but this is a confusion.
+set user_focus_file "primary_focus"
 
 # Workaround for no on-selection-changed.
 # (on-select is really "on-focus-cursor-changed", see https://github.com/gokcehan/lf/issues/1332)
@@ -270,14 +293,20 @@ cmd on-selection-changed :{{
 }}
 map u :unselect; on-selection-changed
 map v :invert; on-selection-changed
-map <space> :toggle; down; on-selection-changed
-
+#map <space> :toggle; down; on-selection-changed
+#no moving down
+map <space> :toggle; on-selection-changed
 #Waiting for release 34 for on-init
 #cmd on-init ${{
 #    load-selection
+#    load-focus
 #}}
+cmd on-select :{{
+    save-focus
+}}
 cmd on-quit :{{
     save-selection
+    save-focus
 }}
 
 #>>>
@@ -285,16 +314,7 @@ cmd on-quit :{{
 # Source auto-generated config
 eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
 
-# Source custom profile
-# ${{
-#     if [ -z ${LF_PROFILE+x} ]
-#     then
-#         export LF_PROFILE=default
-#     fi
-# }}
-# 
-# ${{
-#     echo $LF_PROFILE
-# }}
-
+# Waiting for release 34 for on-init
+# Running here for now.
 load-selection
+load-focus

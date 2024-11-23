@@ -8,8 +8,13 @@
 
 if [ $# -eq 0 ]
 then
-    >&2 echo "Usage: lfx command <args...>"
-    exit 1
+    # Error on no args.
+    #>&2 echo "Usage: lfx command <args...>"
+    #exit 1
+
+    # Show selection on no args.
+    lfs
+    exit 0
 fi
 
 # Validate that the first argument
@@ -38,6 +43,8 @@ then
 else
     lfs | xargs echo "$@"
 fi
+
+#https://stackoverflow.com/questions/3231804/in-bash-how-to-add-are-you-sure-y-n-to-any-command-or-alias
 >&2 read -r -p "Are you sure? [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY]) 
