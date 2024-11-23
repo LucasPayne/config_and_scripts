@@ -77,12 +77,46 @@ eval set previewer "$CONFIG_DIR/lf/previewer.sh"
 
 # MAPPINGS
 #<<<
+# Basic mappings<<<
+map f :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
+map F :set user_filter_mode "filter"; filter
+
+cmap <enter> &{{
+    if [ "$lf_mode" = filter ]
+    then
+        case "$lf_user_filter_mode" in
+            filter-find)
+                lf -remote "send $id :cmd-enter; setfilter; open"
+                ;;
+            filter)
+                lf -remote "send $id :cmd-enter"
+                ;;
+        esac
+    else
+        lf -remote "send $id cmd-enter"
+    fi
+}}
+
+cmap <a-j> &{{
+    if [ "$lf_mode" = filter ]
+    then
+        lf -remote "send $id down"
+    fi
+}}
+cmap <a-k> &{{
+    if [ "$lf_mode" = filter ]
+    then
+        lf -remote "send $id up"
+    fi
+}}
+
+#>>>
 # System mappings<<<
 # Make Ctrl-Z work as SIGTSTP as usual.
 #https://github.com/gokcehan/lf/issues/357
 map <c-z> $ kill -TSTP $PPID
 #>>>
-# z mappings <<<
+# z (info and ordering) mappings <<<
 #
 # Defaults:
 # z a: map za set info size:time
@@ -93,7 +127,7 @@ map <c-z> $ kill -TSTP $PPID
 # z t: map zt set info time
 # Own
 #>>>
-# s mappings <<<
+# s (sorting) mappings <<<
 # Defaults
 # s n: set sortby natural; set info
 # s s: set sortby size; set info size
@@ -163,8 +197,8 @@ map e &{{
     done
 }}
 map <a-y> :yank-path
-map <a-j> :down
-map <a-k> :up
+#map <a-j> :down
+#map <a-k> :up
 map <a-l> :open; quit
 
 # Open file

@@ -319,8 +319,11 @@ function! UnsetAltKeyMappings()
     " Allow universal navigation modifier <M-w>.
     execute "set <M-w>=\ew"
     " Allow escape
-    execute "set <M-j>=\ej"
-    execute "set <M-k>=\ek"
+    "--These are useful bindings for terminal programs,
+    " probably don't want to override them.
+    " Just use <M-J><M-K> to escape.
+    "execute "set <M-j>=\ej"
+    "execute "set <M-k>=\ek"
     " Allow tab switching
     execute "set <M-1>=\e1"
     execute "set <M-2>=\e2"
@@ -482,10 +485,11 @@ nnoremap <M-L> <C-w>l
 " Use shift when in job mode.
 " M-h,j,k,l are useful for bash prompt mappings,
 " and M-H,J,K,L are less likely to be used by terminal programs.
-tnoremap <M-H> <C-w>h
-tnoremap <M-J> <C-w>j
-tnoremap <M-K> <C-w>k
-tnoremap <M-L> <C-w>l
+"todo: M-J M-K is being used to exit.
+"tnoremap <M-H> <C-w>h
+"tnoremap <M-J> <C-w>j
+"tnoremap <M-K> <C-w>k
+"tnoremap <M-L> <C-w>l
 " Close window
 nnoremap <silent> <M-w><M-x> :quit<cr>
 nnoremap <silent> <M-x> :quit<cr>
@@ -1211,7 +1215,7 @@ function! CtrlCHandler()
     endif
 endfunction
 
-tnoremap <M-j><M-k> <C-\><C-n>
+tnoremap <M-J><M-K> <C-\><C-n>
 tnoremap <M-w><M-w> <C-\><C-n>
 tnoremap <silent> <M-w><M-j> <C-\><C-n>:normal! gT<cr>
 tnoremap <silent> <M-w><M-k> <C-\><C-n>:normal! gt<cr>
