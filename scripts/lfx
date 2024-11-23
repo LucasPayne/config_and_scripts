@@ -1,5 +1,10 @@
 #!/bin/bash
-# lfx:
+# lfx: xargs for lf selection, with y/n prompt to avoid mistakes.
+#
+# For example, use lf to build a selection,
+# then exit and run
+#     $ lfx rm
+# to remove the files.
 
 if [ $# -eq 0 ]
 then
