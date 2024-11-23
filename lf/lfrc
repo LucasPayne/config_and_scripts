@@ -52,6 +52,7 @@ cmd load-selection ${{
     while read -r line
     do
         #todo: Quoting
+        #todo: This is very slow, any way to just set the selection directly?
         lf -remote "send $id toggle \"$line\""
     done < <(cat "$selection_file")
 }}
