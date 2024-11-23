@@ -21,7 +21,7 @@ $(LIB): $(OBJS)
 	@>$@
 	@echo "# NOTE: This file is auto-generated. Do not edit." >> $@
 	@for lfo in $^ ; do \
-	    printf 'source %s\n' "$$lfo" >> $@ ; \
+	    printf 'source %s\n' "$$(realpath $$lfo)" >> $@ ; \
 	done
 
 clean:
