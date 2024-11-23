@@ -176,7 +176,7 @@ map <a-s> $cat "$lf_user_runtime_dir/$lf_user_selection_file" | $PAGER
 cmap <a-s> &{{
     if [ "$lf_mode" = filter ]
     then
-        lf -remote "send $id :cmd-enter; glob-select *; setfilter"
+        lf -remote "send $id :cmd-enter; glob-select *; on-selection-changed; setfilter"
     fi
 }}
 
