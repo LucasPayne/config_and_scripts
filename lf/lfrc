@@ -59,6 +59,7 @@ eval source "$CONFIG_DIR/lf/lfrc_lib/build/lfrc_lib.lfso"
 # OPTIONS
 #<<<
 set shell bash
+eval set previewer "$CONFIG_DIR/lf/previewer.sh"
 #todo:?
 set ifs ' '
 set nodrawbox
@@ -69,17 +70,19 @@ set sortby natural
 set info
 # Jump to the next search match while typing.
 set incsearch
-# Show results during :filter command.
+# Show results in filter mode.
 set incfilter
-eval set previewer "$CONFIG_DIR/lf/previewer.sh"
+# Use globs in filter mode.
+#-Why is this normal searches fail? Shouldn't searches with non-glob chars be the same as before?
+#set globfilter
 
 #>>>
 
 # MAPPINGS
 #<<<
-# Basic mappings<<<
-map f :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
-map F :set user_filter_mode "filter"; filter
+# Filtering <<<
+map f :set user_filter_mode "filter"; filter
+map F :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
 
 cmap <enter> &{{
     if [ "$lf_mode" = filter ]
@@ -94,6 +97,15 @@ cmap <enter> &{{
         esac
     else
         lf -remote "send $id cmd-enter"
+    fi
+}}
+
+# Select filtered files.
+# Overrides filter mode.
+cmap <a-s> &{{
+    if [ "$lf_mode" = filter ]
+    then
+        lf -remote "send $id :cmd-enter; glob-select *; setfilter"
     fi
 }}
 
@@ -179,8 +191,6 @@ cmd wp ${{
     wp "$f"
 }}
 
-#map f :fzf_jump 0
-#map F :fzf_jump 1
 map <a-f> :LFRC::fzf_jump 0
 map <a-r> :LFRC::fzf_jump 1
 map x :LFRC::unarchive
