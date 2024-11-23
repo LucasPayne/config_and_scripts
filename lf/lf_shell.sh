@@ -79,15 +79,18 @@ lfs ()
             append_mode=0
         fi
 
-        if [ $append_mode -eq 0 ]
+        local selection
+        if [ $append_mode -eq 1 ]
         then
-            >"$selection_file"
+            selection="$(cat "$selection_file")"
+        else
+            selection=""
         fi
 
         # This block is only to help when handling lf's newline behaviour
         # when writing the selection file.
         local initial_empty=0
-        if [ ! -s "$selection_file" ]
+        if [ -z "$selection" ]
         then
             initial_empty=1
         fi
@@ -102,14 +105,18 @@ lfs ()
                 if [ $initial_empty -eq 0 ] && [ $out_index -eq 0 ]
                 then
                     # Handle lf's newline behaviour when writing the selection file.
-                    echo >> "$selection_file"
+                    selection="$selection"$'\n'
                 fi
 
                 local out_line="$(realpath "$line")"
-                echo "$out_line" >> "$selection_file"
+                selection="$selection"$'\n'"$out_line"
                 ((out_index++))
             fi
         done < <(cat)
+
+        # Write to selection file.
+        echo "$selection" > "$selection_file"
+        
         # Remove last newline from selection file.
         # (lf does this when it writes selection files itself.)
         # This has no effect if the file is empty.
