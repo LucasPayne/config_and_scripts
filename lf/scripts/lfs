@@ -33,40 +33,19 @@ lfs ()
             selection=""
         fi
 
-        # This block is only to help when handling lf's newline behaviour
-        # when writing the selection file.
-        local initial_empty=0
-        if [ -z "$selection" ]
-        then
-            initial_empty=1
-        fi
-
-        local out_index=0
         while read -r line
         do
             if [ ! -e "$line" ]
             then
                 >&2 echo "File \"$line\" doesn't exist, ignoring."
             else
-                if [ $initial_empty -eq 0 ] && [ $out_index -eq 0 ]
-                then
-                    # Handle lf's newline behaviour when writing the selection file.
-                    selection="$selection"$'\n'
-                fi
-
                 local out_line="$(realpath "$line")"
                 selection="$selection"$'\n'"$out_line"
-                ((out_index++))
             fi
         done < <(cat)
 
         # Write to selection file.
         echo "$selection" > "$selection_file"
-        
-        # Remove last newline from selection file.
-        # (lf does this when it writes selection files itself.)
-        # This has no effect if the file is empty.
-        truncate -s -1 "$selection_file"
         
         exit 0
     fi
@@ -76,8 +55,6 @@ lfs ()
         if [ -s "$selection_file" ]
         then
             cat "$selection_file"
-            # lf is not adding a new-line
-            echo
         fi
     elif [ $# -eq 1 ]
     then

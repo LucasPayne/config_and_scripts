@@ -6,7 +6,7 @@
 
 lfcd ()
 {
-    local debug=1
+    local debug=0
 
     local lf_runtime_dir="$XDG_RUNTIME_DIR/lf"
     mkdir -p "$lf_runtime_dir"
@@ -22,6 +22,7 @@ lfcd ()
 
     if [ $debug -eq 1 ]
     then
+        echo "runtime: $lf_runtime_dir"
         echo "$selection_file"
         echo '--------------------------------------------------------------------------------'
         lfs
@@ -30,8 +31,7 @@ lfcd ()
 
     local tmp="$(mktemp)"
     # `command` is needed in case `lfcd` is aliased to `lf`
-    #command lf -command="set user_selection_file \"$selection_file\"; load-selection \"$selection_file\"" -last-dir-path="$tmp" "$@"
-    command lf -command="set user_selection_file \"$selection_file\";  \"$selection_file\"" -last-dir-path="$tmp" "$@"
+    command lf -command="set user_runtime_dir \"$lf_runtime_dir\"" -last-dir-path="$tmp" "$@"
 
     if [ -f "$tmp" ]; then
         dir="$(cat "$tmp")"
@@ -51,5 +51,3 @@ lfcd ()
         echo '--------------------------------------------------------------------------------'
     fi
 }
-
-# lf selection command

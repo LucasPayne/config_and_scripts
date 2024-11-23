@@ -8,6 +8,11 @@
 #    https://github.com/gokcehan/lf/wiki/Tips
 #    https://wiki.archlinux.org/title/Lf
 
+# Default runtime directory (for e.g. selection files).
+# Caller can set this manually when running lf with `lf --command=`.
+#NOTE: Would prefer to get this from envvar but having trouble with eval and async.
+set user_runtime_dir "/run/user/1000/lf"
+
 # LF-LANGUAGE UTILITIES
 #<<<
 #https://github.com/gokcehan/lf/wiki/Tips
@@ -17,6 +22,9 @@
 # and subshells can send commands to lf.
 # So, routing a command line through a subshell
 # has the effect of expanding environment variables.
+#NOTE: This is run as an async command.
+#      It is useless(?) to run blocking as the lf -remote is async itself.
+#      So can only use this to spawn "jobs", 
 cmd eval &{{
     cmd="send $id"
     for arg; do
@@ -45,35 +53,34 @@ cmd options ${{
         fi
     done | $PAGER
 }}
-# Load selection from a file
+# Load selection from selection file
 cmd load-selection ${{
-    if [ $# -ne 1 ]
-    then
-        lf -remote "send $id echoerr \"Usage: load-selection <selection_file>\""
-        exit 1
-    fi
+    selection_file="$lf_user_runtime_dir/$lf_user_selection_file"
+
     lf -remote "send $id unselect"
-    selection_file="$1"
-    while read -r line
-    do
-        #todo: Quoting
-        #todo: This is very slow, any way to just set the selection directly?
-        lf -remote "send $id toggle \"$line\""
-    done < <(cat "$selection_file")
-}}
-# Save selection to a file
-cmd save-selection ${{
-    if [ $# -ne 1 ]
+    if [ -s "$selection_file" ]
     then
-        lf -remote "send $id echoerr \"Usage: save-selection <selection_file>\""
-        exit 1
+        remote_cmd="send $id toggle"
+        while read -r line
+        do
+            #todo: Quoting
+            remote_cmd="$remote_cmd \"$line\""
+        done < <(cat "$selection_file")
+        lf -remote "$remote_cmd"
     fi
-    selection_file="$1"
+}}
+# Save selection from selection file
+cmd save-selection ${{
+    selection_file="$lf_user_runtime_dir/$lf_user_selection_file"
+
     >"$selection_file"
-    while read -r entry
-    do
-        realpath "$entry" >> "$selection_file"
-    done < <(echo "$fx")
+    if [ ! -z "$fs" ]
+    then
+        while read -r entry
+        do
+            realpath "$entry" >> "$selection_file"
+        done < <(echo "$fs")
+    fi
 }}
 #>>>
 
@@ -132,8 +139,7 @@ cmap <enter> &{{
 }}
 
 # View selection in a pager.
-#TODO: Use -selection-file. This doesn't appear to be an option made available in lf-language.
-map <a-s> $cat $XDG_RUNTIME_DIR/lf/primary_selection | $PAGER
+map <a-s> $cat "$lf_user_runtime_dir/$lf_user_selection_file" | $PAGER
 
 # Select filtered files.
 # Overrides filter mode.
@@ -254,23 +260,25 @@ map o :LFRC::open-file
 
 # SELECTION
 #<<<
-set user_selection_file ""
+# Default to primary selection
+set user_selection_file "primary_selection"
 
-cmd on-select ${{
-    selection_file="$lf_user_selection_file"
-    if [ ! -z "$selection_file" ]
-    then
-        if [ ! -f "$selection_file" ]
-        then
-            lf -remote "send $id echoerr \"error: Selection file \\\"$selection_file\\\" doesn't exist.\""
-            exit 1
-        fi
-        echo "$fx" > "$selection_file"
-    fi
+# Workaround for no on-selection-changed.
+# (on-select is really "on-focus-cursor-changed", see https://github.com/gokcehan/lf/issues/1332)
+cmd on-selection-changed :{{
+    save-selection
 }}
-# Workaround for bug, :unselect is not triggering on-select.
-# on-select is intended for any selection change, so this is a bug.
-map u :unselect; on-select
+map u :unselect; on-selection-changed
+map v :invert; on-selection-changed
+map <space> :toggle; down; on-selection-changed
+
+#Waiting for release 34 for on-init
+#cmd on-init ${{
+#    load-selection
+#}}
+cmd on-quit :{{
+    save-selection
+}}
 
 #>>>
 
@@ -288,3 +296,5 @@ eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
 # ${{
 #     echo $LF_PROFILE
 # }}
+
+load-selection
