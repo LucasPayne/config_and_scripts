@@ -26,6 +26,27 @@ cmd eval &{{
 }}
 #>>>
 
+# BASIC COMMANDS
+#<<<
+# Add more state pagers like the builtins maps, cmaps, and cmds.
+# query server-command can request history and jumps.
+cmd history $lf -remote "query $id history" | $PAGER
+cmd jumps $lf -remote "query $id jumps" | $PAGER
+# query server-command does not currently have an "options" option, so do this using lf_* envvars.
+cmd options ${{
+    env | grep ^lf_ | while read -r line ;
+    do
+        # Convert lf_<option>=<value> env output to a more readable form.
+        if [[ $line =~ ^lf_([^=]+)=(.*)$ ]]
+        then
+            option="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            printf '%s = %s\n' "$option" "$value"
+        fi
+    done | $PAGER
+}}
+#>>>
+
 # LF-LANGUAGE LIBRARIES
 #<<<
 # "Link" to lfrc_lib.lfso "library".
@@ -48,6 +69,8 @@ set sortby natural
 set info
 # Jump to the next search match while typing.
 set incsearch
+# Show results during :filter command.
+set incfilter
 eval set previewer "$CONFIG_DIR/lf/previewer.sh"
 
 #>>>
@@ -97,13 +120,11 @@ map \\b :set drawbox!
 map <a-m> maps
 map <a-M> cmaps
 map <a-c> cmds
-cmd history $lf -remote "query $id history" | $PAGER
-cmd jumps $lf -remote "query $id jumps" | $PAGER
-#map <a-h> $lf -remote "query $id history" | $PAGER
-##-This is set correctly, why isn't it working? <a-M> works.
-#map <a-H> $lf -remote "query $id jumps" | $PAGER
+map <a-C> options
+
 map <a-h> LFRC::execute-from-history
-cmap <a-h> LFRC::execute-from-history
+# Clear command first.
+cmap <a-h> :cmd-end; cmd-delete-home; LFRC::execute-from-history
 
 #>>>
 # General mappings
