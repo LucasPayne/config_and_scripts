@@ -5,13 +5,35 @@
 #    man 1 lf
 #    https://github.com/gokcehan/lf
 #    https://github.com/gokcehan/lf/wiki/
+#    https://github.com/gokcehan/lf/wiki/Tips
 #    https://wiki.archlinux.org/title/Lf
 
+# LF-LANGUAGE UTILITIES
+#<<<
+#https://github.com/gokcehan/lf/wiki/Tips
+# eval: Run an lf command after expanding $ shell syntax (envvars and command substitution).
+# lf-language doesn't have an env-var syntax.
+# However it can access env-vars from subshells,
+# and subshells can send commands to lf.
+# So, routing a command line through a subshell
+# has the effect of expanding environment variables.
+cmd eval &{{
+    cmd="send $id"
+    for arg; do
+        cmd="$cmd $(eval "printf '%s' \"$arg\"" | sed 's/\\/\\\\/g;s/ /\\ /g;s/"/\\"/g')"
+    done
+    lf -remote "$cmd"
+}}
+#>>>
+
+# LF-LANGUAGE LIBRARIES
+#<<<
 # "Link" to lfrc_lib.lfso "library".
 # This allows lf config to be spread across multiple files.
 # lfrc_lib/Makefile will generate this "library" from .lf files.
 # note: If lf language had wildcards this would be easier.
-source ~/config/lf/lfrc_lib/build/lfrc_lib.lfso
+eval source "$CONFIG_DIR/lf/lfrc_lib/build/lfrc_lib.lfso"
+#>>>
 
 # OPTIONS
 #<<<
@@ -26,11 +48,7 @@ set sortby natural
 set info
 # Jump to the next search match while typing.
 set incsearch
-set previewer ~/.config/lf/previewer.sh
-#lfimg
-# set ratios 1:2:3
-# set previewer ~/.config/lf/preview_lfimg
-# set cleaner ~/.config/lf/clean_lfimg
+eval set previewer "$CONFIG_DIR/lf/previewer.sh"
 
 #>>>
 
@@ -44,24 +62,24 @@ map <c-z> $ kill -TSTP $PPID
 # z mappings <<<
 #
 # Defaults:
-#    z a: map za set info size:time
-#    z h: map zh set hidden!
-#    z n: map zn set info
-#    z r: map zr set reverse!
-#    z s: map zs set info size
-#    z t: map zt set info time
+# z a: map za set info size:time
+# z h: map zh set hidden!
+# z n: map zn set info
+# z r: map zr set reverse!
+# z s: map zs set info size
+# z t: map zt set info time
 # Own
 #>>>
 # s mappings <<<
 # Defaults
-#    s n: map sn :set sortby natural; set info
-#    s s: map ss :set sortby size; set info size
-#    s t: map st :set sortby time; set info time
-#    s a: map sa :set sortby atime; set info atime
-#    s c: map sc :set sortby ctime; set info ctime
-#    s e: map se :set sortby ext; set info
+# s n: set sortby natural; set info
+# s s: set sortby size; set info size
+# s t: set sortby time; set info time
+# s a: set sortby atime; set info atime
+# s c: set sortby ctime; set info ctime
+# s e: set sortby ext; set info
 # Own
-#    s N:
+# s N:
 map sN set sortby name; set info
 #>>>
 # leader-\ mappings <<<
@@ -70,11 +88,14 @@ map \\b :set drawbox!
 #>>>
 # Mouse mappings<<<
 # Middle click
-map <m-3> :select
+#todo: middle click to select and toggle
+#    Why doesn't this push work? Might be special logic for working with mouse position
+#    which no longer works when <m-1> is routed through push.
+#map <m-3> push <m-1><space>
 #>>>
 # General mappings
-map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' less -R $f
-map <enter> :LFRC::func-open
+map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
+map <enter> LFRC::open
 map D LFRC::mkdir
 map T LFRC::touch
 
@@ -119,4 +140,16 @@ map o :LFRC::open-file
 #>>>
 
 # Source auto-generated config
-source ~/config/scripts/syncer_files/syncer-lf
+eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
+
+# Source custom profile
+# ${{
+#     if [ -z ${LF_PROFILE+x} ]
+#     then
+#         export LF_PROFILE=default
+#     fi
+# }}
+# 
+# ${{
+#     echo $LF_PROFILE
+# }}
