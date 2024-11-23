@@ -52,5 +52,7 @@ lfcd ()
     fi
 
     # Save lf focus in an envvar for convenience.
-    export LFF="$(lff)"
+    # This can have the same name as the lf-focus command.
+    # https://unix.stackexchange.com/questions/382660/shell-functions-and-variables-with-the-same-name
+    export lff="$(lff)"
 }
