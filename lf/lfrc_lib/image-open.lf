@@ -2,7 +2,7 @@
 # Open all images in the directory into the gallery view.
 # The first image will be the selected one.
 
-cmd open &{{
+cmd image-open &{{
     case $(file --mime-type -Lb $f) in
         image/jpeg|image/png)
             #NOTE: Code here depends on no spaces in filenames.

@@ -856,8 +856,7 @@ fg-next ()
     fg "$job_spec"
 }
 
-source "$CONFIG_DIR/lf/lfcd.sh"
-
+source "$CONFIG_DIR/lf/lf_shell.sh"
 
 # MISC
 #--------------------------------------------------------------------------------

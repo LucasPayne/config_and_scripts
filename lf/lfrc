@@ -45,6 +45,16 @@ cmd options ${{
         fi
     done | $PAGER
 }}
+# Load selection from a file
+cmd load-selection ${{
+    lf -remote "send $id unselect"
+    selection_file="$1"
+    while read -r line
+    do
+        #todo: Quoting
+        lf -remote "send $id toggle \"$line\""
+    done < <(cat "$selection_file")
+}}
 #>>>
 
 # LF-LANGUAGE LIBRARIES
