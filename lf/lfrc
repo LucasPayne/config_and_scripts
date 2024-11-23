@@ -97,7 +97,17 @@ cmd load-focus ${{
     focus="$(cat "$focus_file")"
     if [ ! -z "$focus" ]
     then
-        ls -remote "send $id select "
+        ls -remote "send $id select \"$focus\""
+    fi
+}}
+# Save focus to focus file.
+cmd save-focus ${{
+    focus_file="$lf_user_runtime_dir/$lf_user_focus_file"
+    if [ ! -z "$f" ]
+    then
+        echo "$f" > "$focus_file"
+    else
+        >"$focus_file"
     fi
 }}
 
@@ -299,7 +309,7 @@ map <space> :toggle; on-selection-changed
 #Waiting for release 34 for on-init
 #cmd on-init ${{
 #    load-selection
-#    load-focus
+#    #load-focus
 #}}
 cmd on-select :{{
     save-focus
@@ -317,4 +327,5 @@ eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
 # Waiting for release 34 for on-init
 # Running here for now.
 load-selection
-load-focus
+#Don't load the focus automatically, as that would break UX (you want to be newly focused on new lf window).
+#load-focus
