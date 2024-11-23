@@ -1,5 +1,7 @@
 #!/bin/bash
 # Install a particular release of lf.
+# note: man page is not on release page, not installing it here.
+
 release_number="$1"
 if [ $# -ne 1 ] || ! [[ $release_number =~ [0-9]+ ]]
 then

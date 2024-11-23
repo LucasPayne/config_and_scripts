@@ -1,0 +1,17 @@
+# From man page example.
+cmd execute-from-history ${{
+    #-Why clear?
+    clear
+
+    # Use fzf preview window as UI panel to show which files
+    # are being operated on.
+    fzf_preview_string='echo "$f" ; echo ; echo "$fx"'
+
+    cmd=$(
+        lf -remote "query $id history" |
+        awk -F'\t' 'NR > 1 { print $NF}' |
+        sort -u |
+        fzf --prompt='Execute command: ' --preview="$fzf_preview_string"
+    )
+    lf -remote "send $id $cmd"
+}}

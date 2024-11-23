@@ -93,6 +93,19 @@ map \\b :set drawbox!
 #    which no longer works when <m-1> is routed through push.
 #map <m-3> push <m-1><space>
 #>>>
+# Alt mappings <<<
+map <a-m> maps
+map <a-M> cmaps
+map <a-c> cmds
+cmd history $lf -remote "query $id history" | $PAGER
+cmd jumps $lf -remote "query $id jumps" | $PAGER
+#map <a-h> $lf -remote "query $id history" | $PAGER
+##-This is set correctly, why isn't it working? <a-M> works.
+#map <a-H> $lf -remote "query $id jumps" | $PAGER
+map <a-h> LFRC::execute-from-history
+cmap <a-h> LFRC::execute-from-history
+
+#>>>
 # General mappings
 map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
 map <enter> LFRC::open
