@@ -50,4 +50,7 @@ lfcd ()
         lfs
         echo '--------------------------------------------------------------------------------'
     fi
+
+    # Save lf focus in an envvar for convenience.
+    export LFF="$(lff)"
 }
