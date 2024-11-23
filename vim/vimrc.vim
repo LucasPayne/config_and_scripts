@@ -318,6 +318,7 @@ function! UnsetAltKeyMappings()
     " Allow these to act normally as they are detected in terminal mode.
     " Allow universal navigation modifier <M-w>.
     execute "set <M-w>=\ew"
+    execute "set <M-W>=\eW"
     " Allow escape
     "--These are useful bindings for terminal programs,
     " probably don't want to override them.
@@ -493,14 +494,15 @@ nnoremap <M-L> <C-w>l
 " Close window
 nnoremap <silent> <M-w><M-x> :quit<cr>
 nnoremap <silent> <M-x> :quit<cr>
-tnoremap <silent> <M-w><M-x> :quit<cr>
+tnoremap <silent> <M-W><M-x> :quit<cr>
 " Close tab
 nnoremap <silent> <M-w><M-X> :tabclose<cr>
 nnoremap <silent> <M-X> :tabclose<cr>
-tnoremap <silent> <M-w><M-X> :tabclose<cr>
+tnoremap <silent> <M-W><M-X> :tabclose<cr>
 " Quick new empty tab.
 nnoremap <silent> <M-w><M-n> :tabnew<cr>
-tnoremap <silent> <M-w><M-n> :tabnew<cr>
+tnoremap <silent> <M-W><M-n> :tabnew<cr>
+tnoremap <silent> <M-W><M-N> :tabnew<cr>
 " Copy file path
 "nnoremap .cp :let @" = expand("%:p")<cr>
 " Copy file directory
@@ -511,8 +513,8 @@ tnoremap <silent> <M-w><M-n> :tabnew<cr>
 nnoremap <silent> <M-w><M-.> :tabm +1<cr>
 nnoremap <silent> <M-w><M-,> :tabm -1<cr>
 " todo: Shouldn't leave the terminal tab entered in command mode.
-tnoremap <silent> <M-w><M-.>. <C-\><C-n>:tabm +1<cr>
-tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1<cr>
+tnoremap <silent> <M-W><M-.>. <C-\><C-n>:tabm +1<cr>
+tnoremap <silent> <M-W><M-,> <C-\><C-n>:tabm -1<cr>
 " Scroll-wheel goes to terminal normal mode so can scroll in vim buffer.
 "TODO: This should only be in the shell prompt, still want scroll in other
 "programs e.g. man pages.
@@ -615,7 +617,7 @@ if g:vim_laptop_number_broken_workaround == "off"
         execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
         " Move window to tab
         execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
-        execute "tnoremap <silent> <M-w><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+        execute "tnoremap <silent> <M-W><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
     endfor
 else
     " laptop 1,2,3 keys are not working.
@@ -664,9 +666,9 @@ function! MoveCurrentWindowToNewTab(background)
     endif
 endfunction
 nnoremap <silent> <M-w><M-t> :call MoveCurrentWindowToNewTab(0)<cr>
-tnoremap <silent> <M-w><M-t> <cmd>call MoveCurrentWindowToNewTab(0)<cr>
+tnoremap <silent> <M-W><M-t> <cmd>call MoveCurrentWindowToNewTab(0)<cr>
 nnoremap <silent> <M-w><M-T> :call MoveCurrentWindowToNewTab(1)<cr>
-tnoremap <silent> <M-w><M-T> <cmd>call MoveCurrentWindowToNewTab(1)<cr>
+tnoremap <silent> <M-W><M-T> <cmd>call MoveCurrentWindowToNewTab(1)<cr>
 
 " Create splits
 nnoremap <silent> <M-\> :vsp<cr>
@@ -1216,9 +1218,9 @@ function! CtrlCHandler()
 endfunction
 
 tnoremap <M-J><M-K> <C-\><C-n>
-tnoremap <M-w><M-w> <C-\><C-n>
-tnoremap <silent> <M-w><M-j> <C-\><C-n>:normal! gT<cr>
-tnoremap <silent> <M-w><M-k> <C-\><C-n>:normal! gt<cr>
+tnoremap <M-W><M-W> <C-\><C-n>
+tnoremap <silent> <M-W><M-J> <C-\><C-n>:normal! gT<cr>
+tnoremap <silent> <M-W><M-K> <C-\><C-n>:normal! gt<cr>
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 nnoremap <M-w><M-j> gT
 nnoremap <M-w><M-k> gt
@@ -1619,7 +1621,7 @@ if exists("&cmdheight") == 1
         endif
     endfunction
     nnoremap <silent> <M-w><M-c> :call ToggleCmdHeight()<cr>
-    tnoremap <silent> <M-w><M-c> <C-\><C-n>:call ToggleCmdHeight()<cr>
+    tnoremap <silent> <M-W><M-C> <C-\><C-n>:call ToggleCmdHeight()<cr>
 endif
 
 set wincolor=Window
