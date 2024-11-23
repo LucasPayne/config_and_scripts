@@ -7,11 +7,11 @@
 #    https://github.com/gokcehan/lf/wiki/
 #    https://wiki.archlinux.org/title/Lf
 
-# Include "lfrc_lib" header.
+# "Link" to lfrc_lib.lfso "library".
 # This allows lf config to be spread across multiple files.
-# lfrc_lib/Makefile will generate this header from .lf files.
-# note: If lf language had wildcards with would be easier.
-source ~/config/lf/lfrc_lib/header
+# lfrc_lib/Makefile will generate this "library" from .lf files.
+# note: If lf language had wildcards this would be easier.
+source ~/config/lf/lfrc_lib/build/lfrc_lib.lfso
 
 # OPTIONS
 #<<<
@@ -24,6 +24,8 @@ set ignorecase
 set mouse
 set sortby natural
 set info
+# Jump to the next search match while typing.
+set incsearch
 set previewer ~/.config/lf/previewer.sh
 #lfimg
 # set ratios 1:2:3
@@ -66,11 +68,15 @@ map sN set sortby name; set info
 # Leader key: \
 map \\b :set drawbox!
 #>>>
+# Mouse mappings<<<
+# Middle click
+map <m-3> :select
+#>>>
 # General mappings
 map i $LESSOPEN='| ~/.config/lf/previewer.sh %s' less -R $f
-map <enter> :func-open
-map D mkdir
-map T touch
+map <enter> :LFRC::func-open
+map D LFRC::mkdir
+map T LFRC::touch
 
 cmd yank-dirname ${{
     dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
@@ -84,11 +90,11 @@ cmd wp ${{
     wp "$f"
 }}
 
-map f :fzf_jump 0
-map F :fzf_jump 1
-map <a-f> :fzf_jump 0
-map <a-r> :fzf_jump 1
-map x :unarchive
+#map f :fzf_jump 0
+#map F :fzf_jump 1
+map <a-f> :LFRC::fzf_jump 0
+map <a-r> :LFRC::fzf_jump 1
+map x :LFRC::unarchive
 map g :top
 map w
 # Just open a text file.
@@ -107,7 +113,7 @@ map <a-k> :up
 map <a-l> :open; quit
 
 # Open file
-map o :open-file
+map o :LFRC::open-file
 
 #todo: O, open without window focus change.
 #>>>

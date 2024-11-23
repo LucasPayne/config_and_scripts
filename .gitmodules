@@ -40,3 +40,6 @@
 [submodule "vim/__tmp/goyo.vim"]
 	path = vim/repos/goyo.vim
 	url = https://github.com/junegunn/goyo.vim
+[submodule "vim/__tmp/vim-highlightedyank"]
+	path = vim/repos/vim-highlightedyank
+	url = git@github.com:machakann/vim-highlightedyank.git

@@ -70,6 +70,10 @@ nnoremap <space>CP :call YankWordAndFilePath()<cr>
 vnoremap <space>cp :call YankSelectionAndFilePath()<cr>
 nnoremap <space>cb :call YankBreakPoint()<cr>
 
+" System yank.
+" Overrides Y default of yy synonym.
+nnoremap Y "+y
+
 "" Go to header
 "function! OpenHeader()
 "    "todo: these envvars should already be set in !-shell.
@@ -683,6 +687,11 @@ if PluginEnabled("vim-surround") == 1
     vmap s S
 endif
 
+if PluginEnabled("vim-highlightedyank") == 1
+    " measured in milliseconds
+    let g:highlightedyank_highlight_duration = 200
+endif
+
 if PluginEnabled("tagbar") == 1
     "nnoremap <leader>t :Tagbar<cr>
 endif
@@ -897,6 +906,7 @@ function! ToggleQuickFix()
     if empty(filter(getwininfo(), 'v:val.quickfix'))
         botright copen
         let l:quickfix_list_length = len(getqflist())
+        # Limit quickfix window size.
         let l:quickfix_window_height = min([l:quickfix_list_length, 12])
         execute "resize ".l:quickfix_window_height
     else

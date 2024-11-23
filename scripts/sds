@@ -92,7 +92,7 @@ then
                 # Optionally show status as well
                 $systemctl_command status "$2"
             fi
-            path="$(systemctl_command show -p FragmentPath -- "$2" | cut -d= -f 2-)"
+            path="$($systemctl_command show -p FragmentPath -- "$2" | cut -d= -f 2-)"
             echo "$path"
             if [[ "$1" =~ ^.*c$ ]]
             then
