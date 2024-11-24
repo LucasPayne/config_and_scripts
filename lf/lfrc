@@ -220,6 +220,10 @@ cmap <a-k> &{{
 # Make Ctrl-Z work as SIGTSTP as usual.
 #https://github.com/gokcehan/lf/issues/357
 map <c-z> $ kill -TSTP $PPID
+cmap <c-z> $ kill -TSTP $PPID
+# Ctrl-C to quit.
+map <c-c> quit
+cmap <c-c> quit
 #>>>
 # z (info and ordering) mappings <<<
 #

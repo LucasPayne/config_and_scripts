@@ -137,6 +137,7 @@ link_system_to_config ./elinks/elinks.conf ~/.elinks/elinks.conf
 # lf
 mkdir -p "$xdg_config_home/lf"
 link_system_to_config ./lf/lfrc "$xdg_config_home/lf/lfrc"
+link_system_to_config ./lf/icons "$xdg_config_home/lf/icons"
 
 link_system_to_config ./i3 "$xdg_config_home/i3"
 link_system_to_config ./zathura "$xdg_config_home/zathura"
