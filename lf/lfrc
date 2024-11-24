@@ -58,10 +58,13 @@ cmd on-quit :{{
     save-selection
     save-focus
 }}
-cmd on-focus-gained :{{
-    $echo bean
-    load-selection
-}}
+#-This doesn't appear to be working in my usual setup.
+# In VS code terminal, it looks like it is continuously called...
+# Also combined with flickering, is load-selection causing a flicker
+# which also causes focus to gain again?
+#cmd on-focus-gained :{{
+#    load-selection
+#}}
 
 #>>>
 
@@ -232,7 +235,7 @@ map <c-z> $ kill -TSTP $PPID
 cmap <c-z> $ kill -TSTP $PPID
 # Ctrl-C to quit.
 map <c-c> quit
-cmap <c-c> quit
+# Default: Ctrl-C in command mode cancels the command.
 #>>>
 # z (info and ordering) mappings <<<
 #
@@ -285,6 +288,9 @@ map <enter> open
 map l open
 map D LFRC::mkdir
 map T LFRC::touch
+# move faster
+map J :down; down; down; down
+map K :up; up; up; up
 
 cmd yank-dirname ${{
     dirname -- "$f" | head -c-1 | xclip -i -selection clipboard

@@ -848,6 +848,20 @@ fg-next ()
     fg "$job_spec"
 }
 
+# List jobs
+# Also save jobs in environment vars j1, j2, ...
+# (Any better way to sync these envvars?)
+jl ()
+{
+    jobs -l
+    for i in $(seq 1 "$(jobs | wc -l)")
+    do
+        echo j$i="$(jobs -p "$i")"
+        local cmd=j$i="$(jobs -p "$i")"
+        eval "$(printf %q "$cmd")"
+    done
+}
+
 # SIGKILL a job number.
 j9 ()
 {

@@ -1238,7 +1238,8 @@ endfunction
 nnoremap <silent> <M-c> <cmd>call LowerTerminal()<cr>
 " Open a terminal in the current window.
 nnoremap <silent> <M-C> :set termwinsize=0x0 \| term ++curwin<cr>
-nnoremap <silent> <M-q> :call GoToPrimaryShell(1)<cr>
+"TODO: fix this, too broken
+"nnoremap <silent> <M-q> :call GoToPrimaryShell(1)<cr>
 ">>>
 
 " Notes system

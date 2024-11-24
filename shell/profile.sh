@@ -30,6 +30,7 @@ else
     export GTK_THEME="Greybird-dark"
 fi
 # Qt
+export QT_SCALE_FACTOR=1
 # Force a custom dark theme for accessibility
 # Note on apt systems this is installed through the package "adwaita-qt".
 # Qt loads styles from a .so plugin. This style can be modified by building
