@@ -42,9 +42,18 @@ cmd eval &{{
 #    load-selection
 #    #load-focus
 #}}
+
+#todo: Reduce flicker, command is run when cursor moves,
+#      when scrolling the display issues are prominent.
 cmd on-select :{{
     save-focus
+    #-useful at all?
+    redraw
 }}
+#-doesn't appear to help
+#cmd on-select &{{
+#    lf -remote "send $id save-focus; redraw"
+#}}
 cmd on-quit :{{
     save-selection
     save-focus

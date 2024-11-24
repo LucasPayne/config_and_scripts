@@ -848,6 +848,23 @@ fg-next ()
     fg "$job_spec"
 }
 
+# SIGKILL a job number.
+j9 ()
+{
+    if [ $# -ne 1 ]
+    then
+        >&2 echo "usage: j9 <pid>"
+        return 1
+    fi
+    if ! [[ $1 =~ ^[0-9]+$ ]]
+    then
+        >&2 echo "bad pid"
+        >&2 echo "usage: j9 <pid>"
+        return 1
+    fi
+    kill -9 %$1
+}
+
 source "$CONFIG_DIR/lf/lf_shell.sh"
 
 # MISC
