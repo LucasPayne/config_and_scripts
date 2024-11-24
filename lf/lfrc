@@ -34,6 +34,28 @@ cmd eval &{{
 }}
 #>>>
 
+# EVENT HOOKS
+#<<<
+
+#Waiting for release 34 for on-init
+#cmd on-init ${{
+#    load-selection
+#    #load-focus
+#}}
+cmd on-select :{{
+    save-focus
+}}
+cmd on-quit :{{
+    save-selection
+    save-focus
+}}
+cmd on-focus-gained :{{
+    $echo bean
+    load-selection
+}}
+
+#>>>
+
 # BASIC COMMANDS
 #<<<
 # Add more state pagers like the builtins maps, cmaps, and cmds.
@@ -247,6 +269,7 @@ cmap <a-h> :cmd-end; cmd-delete-home; LFRC::execute-from-history
 # General mappings
 map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
 map <enter> open
+map l open
 map D LFRC::mkdir
 map T LFRC::touch
 
@@ -280,7 +303,11 @@ map e &{{
 map <a-y> :yank-path
 #map <a-j> :down
 #map <a-k> :up
-map <a-l> :open; quit
+
+#todo
+cmd open ${{
+    v "$f" &
+}}
 
 # Open file
 map o :LFRC::open-file
@@ -306,18 +333,6 @@ map v :invert; on-selection-changed
 #map <space> :toggle; down; on-selection-changed
 #no moving down
 map <space> :toggle; on-selection-changed
-#Waiting for release 34 for on-init
-#cmd on-init ${{
-#    load-selection
-#    #load-focus
-#}}
-cmd on-select :{{
-    save-focus
-}}
-cmd on-quit :{{
-    save-selection
-    save-focus
-}}
 
 #>>>
 

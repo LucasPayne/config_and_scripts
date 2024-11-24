@@ -109,10 +109,10 @@ gitget ()
     if [ $# -eq 1 ]
     then
         local url="$1"
-    elif $[ $# -eq 2 ]
+    elif [ $# -eq 2 ]
     then
-        local name="$1"
-        local url="$2"
+        local url="$1"
+        local name="$2"
     else
         >&2 echo "Usage:"
         >&2 echo "    gitget <url>"
@@ -735,53 +735,45 @@ preview_git_log () {
 #    ...
 #<<<
 
-# Navigate forward
-#bind -m vi-command '"\el": "\C-u\C-lfzf_navigate './'\n"'
-#bind -m vi-insert '"\el": "\C-u\C-lfzf_navigate './'\n"'
-bind -m vi-command '"\el": "\C-u\C-llfcd\n"'
-bind -m vi-insert '"\el": "\C-u\C-llfcd\n"'
-# Navigate forward, begin in recursive mode.
-bind -m vi-command '"\er": "\C-u\C-lfzf_navigate './' --recursive\n"'
-bind -m vi-insert '"\er": "\C-u\C-lfzf_navigate './' --recursive\n"'
-# Navigate backward
-bind -m vi-command '"\eh": "\C-ucd ..\n"'
-bind -m vi-insert '"\eh": "\C-ucd ..\n"'
+vi_bind ()
+{
+    bind -m vi-command "$@"
+    bind -m vi-insert "$@"
+}
 
-bind -m vi-command '"\ef": "\C-u\C-lfzf_find\n"'
-bind -m vi-insert '"\ef": "\C-u\C-lfzf_find\n"'
+# Navigation
+vi_bind '"\el": "\C-ulfcd\n"'
+# search
+vi_bind '"\er": "\C-ulfcd -command=\"set preview; set ratios 1:2; push f\"\n"'
+# Navigate backward
+vi_bind '"\eh": "\C-ucd ..\n"'
+
+vi_bind '"\ef": "\C-u\C-lfzf_find\n"'
 
 # fzf_code_checkout
-bind -m vi-command '"\eq": "\C-u\C-lfzf_code_checkout\n"'
-bind -m vi-insert '"\eq": "\C-u\C-lfzf_code_checkout\n"'
+vi_bind '"\eq": "\C-u\C-lfzf_code_checkout\n"'
 
 # fzf_dev_checkout
-bind -m vi-command '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
-bind -m vi-insert '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
+vi_bind '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
 
 # fzf_config_checkout
-bind -m vi-command '"\ei": "\C-u\C-lfzf_config_checkout\n"'
-bind -m vi-insert '"\ei": "\C-u\C-lfzf_config_checkout\n"'
+vi_bind '"\ei": "\C-u\C-lfzf_config_checkout\n"'
 #
 # fzf open notes file
-bind -m vi-command '"\en": "\C-u\C-lfzf_select_notes | x v\n"'
-bind -m vi-insert '"\en": "\C-u\C-lfzf_select_notes | x v\n"'
+vi_bind '"\en": "\C-u\C-lfzf_select_notes | x v\n"'
 
 # checkout branch
-bind -m vi-command '"\eo": "\C-ugcb\n"'
-bind -m vi-insert '"\eo": "\C-ugcb\n"'
+vi_bind '"\eo": "\C-ugcb\n"'
 
 # preview git log
 #bind -m vi-command '"\ea": "\C-upreview_git_log HEAD\n"'
 #bind -m vi-insert '"\ea": "\C-upreview_git_log HEAD\n"'
 # tig
-bind -m vi-command '"\ea": "\C-utig\n"'
-bind -m vi-insert '"\ea": "\C-utig\n"'
+vi_bind '"\ea": "\C-utig\n"'
 
 # Job control
-bind -m vi-command '"\C-z": "\C-ufg-next\n"'
-bind -m vi-insert '"\C-z": "\C-ufg-next\n"'
-bind -m vi-command '"\ez": "\C-ufg-next\n"'
-bind -m vi-insert '"\ez": "\C-ufg-next\n"'
+vi_bind '"\C-z": "\C-ufg-next\n"'
+vi_bind '"\ez": "\C-ufg-next\n"'
 
 #>>>
 
