@@ -17,20 +17,25 @@ fi
 # If a command is not found, an absolute filename will go to a subdir if there is one.
 shopt -s autocd
 # shopt helpers
+# shoptp: shopt but more readable.
 shoptp ()
 {
-    local filter
-    if [ $# -eq 0 ]
-    then
-        filter="cat"
-    elif [ $# -eq 1 ]
-    then
-        #-arbitrary command execution...
-        filter="grep \"$1\""
-    fi
-    >&3 shopt -p | grep '\-s' | cutw 3 | sed 's/^/yes /'
-    >&3 shopt -p | grep '\-u' | cutw 3 | sed 's/^/no  /'
-    cat <3 | $filter
+    shopt -p | grep '\-s' | cutw 3 | sed 's/^/yes /'
+    shopt -p | grep '\-u' | cutw 3 | sed 's/^/no  /'
+
+    #todo: Proper redirection so shopt doesn't run in subshell?
+    #local filter
+    #if [ $# -eq 0 ]
+    #then
+    #    filter="cat"
+    #elif [ $# -eq 1 ]
+    #then
+    #    #-arbitrary command execution...
+    #    filter="grep \"$1\""
+    #fi
+    #>&3 shopt -p | grep '\-s' | cutw 3 | sed 's/^/yes /'
+    #>&3 shopt -p | grep '\-u' | cutw 3 | sed 's/^/no  /'
+    #cat <3 | $filter
 }
 
 # Explicit terminfo needed for some reason, when using built-from-source ncurses.
