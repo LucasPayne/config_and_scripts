@@ -1,0 +1,4 @@
+#!/bin/bash
+# pulsek: alias for pulseaudio -k
+exec pulseaudio -k
+
