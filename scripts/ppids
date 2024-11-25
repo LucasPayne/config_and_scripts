@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# ppids p ...
+# Show ps output of ppids. 
+ps_mode=0
+if [ $# -gt 0 ] && [ "$1" = "p" ]
+then
+    ps_mode=1
+    shift
+fi
+
 ppid_ignore_next=0
 if [[ $# -eq 0 ]]
 then
@@ -27,4 +36,9 @@ do
     fi
 done
 
-echo "${ppids[@]}"
+if [ $ps_mode -eq 1 ]
+then
+    echo "${ppids[@]}" | x ps
+else
+    echo "${ppids[@]}"
+fi
