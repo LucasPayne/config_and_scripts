@@ -9,7 +9,7 @@
 #    exec zathura "$@"
 # ```
 
-alias man='COLUMNS=120 man'
+alias man='COLUMNS=140 man'
 alias .sb="source ~/.bashrc"
 # https://superuser.com/questions/1551566/why-does-sudo-env-path-path-do-anything-at-all
 alias sudo='sudo env PATH=$PATH'

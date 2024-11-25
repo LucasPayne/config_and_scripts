@@ -12,6 +12,27 @@ then
     stty -ixon
 fi
 
+# shopt, bash-specific shell options
+# autocd, e.g. type /bin to go to /bin.
+# If a command is not found, an absolute filename will go to a subdir if there is one.
+shopt -s autocd
+# shopt helpers
+shoptp ()
+{
+    local filter
+    if [ $# -eq 0 ]
+    then
+        filter="cat"
+    elif [ $# -eq 1 ]
+    then
+        #-arbitrary command execution...
+        filter="grep \"$1\""
+    fi
+    >&3 shopt -p | grep '\-s' | cutw 3 | sed 's/^/yes /'
+    >&3 shopt -p | grep '\-u' | cutw 3 | sed 's/^/no  /'
+    cat <3 | $filter
+}
+
 # Explicit terminfo needed for some reason, when using built-from-source ncurses.
 export TERMINFO=/lib/terminfo
 
@@ -854,7 +875,18 @@ fg-next ()
 jl ()
 {
     jobs -l
-    for i in $(seq 1 "$(jobs | wc -l)")
+
+    # Clean up previously defined j<n> variables.
+    # todo: nicer solution, could technically leave j99 defined.
+    local assumed_max_jobs=20
+    for i in $(seq 1 $assumed_max_jobs)
+    do
+        unset j$i
+    done
+
+    # Define new j<n> variables.
+    readarray -t job_ids < <(jobs | sed -E 's/^\[([[:digit:]]+)\].*$/\1/')
+    for i in "${job_ids[@]}"
     do
         echo j$i="$(jobs -p "$i")"
         local cmd=j$i="$(jobs -p "$i")"
@@ -862,20 +894,38 @@ jl ()
     done
 }
 
-# SIGKILL a job number.
-j9 ()
+_check_job_id ()
 {
+    local name="$1"
+    shift
+    # Verify the arguments passed is just one job identifier.
     if [ $# -ne 1 ]
     then
-        >&2 echo "usage: j9 <pid>"
+        >&2 echo "usage: $name <job id>"
         return 1
     fi
     if ! [[ $1 =~ ^[0-9]+$ ]]
     then
-        >&2 echo "bad pid"
+        >&2 echo "bad job id"
         >&2 echo "usage: j9 <pid>"
         return 1
     fi
+}
+# Show environment of job.
+jenv ()
+{
+    _check_job_id jenv "$@" || return 1
+    local pid
+    pid="$(jobs -p %$1)"
+    if $? -eq 0
+    then
+        cat "/proc/$pid/environ"
+    fi
+}
+# SIGKILL a job number.
+j9 ()
+{
+    _check_job_id k9 "$@" || return 1
     kill -9 %$1
 }
 
