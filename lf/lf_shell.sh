@@ -1,4 +1,8 @@
-#
+# lf_shell.sh
+# This is to be sourced by the user's shell,
+# e.g. the shell session which lf is going to be launched in.
+# 
+# Not to be  confused with lf_bashrc.sh, which is source'd by bash subprocesses which lf launches itself.
 #
 # todo:
 # Silence job control.
@@ -30,8 +34,8 @@ lfcd ()
     fi
 
     local tmp="$(mktemp)"
-    # `command` is needed in case `lfcd` is aliased to `lf`
-    command lf -command="set user_runtime_dir \"$lf_runtime_dir\"" -last-dir-path="$tmp" "$@"
+    # note: If env is not used, `command` is needed in case `lfcd` is aliased to `lf`
+    env BASH_ENV="$CONFIG_DIR/lf/lf_bashrc.sh" lf -command="set user_runtime_dir \"$lf_runtime_dir\"" -last-dir-path="$tmp" "$@"
 
     if [ -f "$tmp" ]; then
         dir="$(cat "$tmp")"

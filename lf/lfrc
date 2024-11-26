@@ -39,8 +39,8 @@ cmd eval &{{
 
 #Waiting for release 34 for on-init
 #cmd on-init ${{
-#    load-selection
-#    #load-focus
+#    $load-selection
+#    #$load-focus
 #}}
 
 #todo: Reduce flicker, command is run when cursor moves,
@@ -55,7 +55,7 @@ cmd on-select :{{
 #    lf -remote "send $id save-focus; redraw"
 #}}
 cmd on-quit :{{
-    save-selection
+    $save-selection
     save-focus
 }}
 #-This doesn't appear to be working in my usual setup.
@@ -63,7 +63,7 @@ cmd on-quit :{{
 # Also combined with flickering, is load-selection causing a flicker
 # which also causes focus to gain again?
 #cmd on-focus-gained :{{
-#    load-selection
+#    &load-selection
 #}}
 
 #>>>
@@ -86,63 +86,6 @@ cmd options ${{
             printf '%s = %s\n' "$option" "$value"
         fi
     done | $PAGER
-}}
-# Load selection from selection file
-cmd load-selection ${{
-    selection_file="$lf_user_runtime_dir/$lf_user_selection_file"
-    if [ ! -f "$selection_file" ]
-    then
-        lf -remote "send $id echoerr \"No selection file\""
-        exit 1
-    fi
-    lf -remote "send $id unselect"
-    if [ -s "$selection_file" ]
-    then
-        remote_cmd="send $id toggle"
-        while read -r line
-        do
-            #todo: Quoting
-            remote_cmd="$remote_cmd \"$line\""
-        done < <(cat "$selection_file")
-        lf -remote "$remote_cmd"
-    fi
-}}
-# Save selection from selection file
-cmd save-selection ${{
-    selection_file="$lf_user_runtime_dir/$lf_user_selection_file"
-
-    >"$selection_file"
-    if [ ! -z "$fs" ]
-    then
-        while read -r entry
-        do
-            realpath "$entry" >> "$selection_file"
-        done < <(echo "$fs")
-    fi
-}}
-# Load focus from focus file.
-cmd load-focus ${{
-    focus_file="$lf_user_runtime_dir/$lf_user_focus_file"
-    if [ ! -f "$focus_file" ]
-    then
-        lf -remote "send $id echoerr \"No focus file\""
-        exit 1
-    fi
-    focus="$(cat "$focus_file")"
-    if [ ! -z "$focus" ]
-    then
-        ls -remote "send $id select \"$focus\""
-    fi
-}}
-# Save focus to focus file.
-cmd save-focus ${{
-    focus_file="$lf_user_runtime_dir/$lf_user_focus_file"
-    if [ ! -z "$f" ]
-    then
-        echo "$f" > "$focus_file"
-    else
-        >"$focus_file"
-    fi
 }}
 
 #>>>
@@ -345,7 +288,7 @@ set user_focus_file "primary_focus"
 # Workaround for no on-selection-changed.
 # (on-select is really "on-focus-cursor-changed", see https://github.com/gokcehan/lf/issues/1332)
 cmd on-selection-changed :{{
-    save-selection
+    &save-selection
 }}
 map u :unselect; on-selection-changed
 map v :invert; on-selection-changed
@@ -360,6 +303,6 @@ eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
 
 # Waiting for release 34 for on-init
 # Running here for now.
-load-selection
+$load-selection
 #Don't load the focus automatically, as that would break UX (you want to be newly focused on new lf window).
-#load-focus
+#$load-focus
