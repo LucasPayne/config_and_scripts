@@ -68,6 +68,11 @@ cmd on-quit :{{
 
 #>>>
 
+# LF COMMAND OVERRIDES (open, etc.)
+#<<<
+cmd open :LFRC::open-file
+#>>>
+
 # BASIC COMMANDS
 #<<<
 # Add more state pagers like the builtins maps, cmaps, and cmds.
@@ -126,15 +131,17 @@ set incfilter
 #<<<
 # Filtering <<<
 map f :set user_filter_mode "filter"; filter
+map <a-/> :set user_filter_mode "filter"; filter
 map F :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
 map U setfilter
+cmap <a-l> :cmd-enter; setfilter; LFRC::open-file
 
 cmap <enter> &{{
     if [ "$lf_mode" = filter ]
     then
         case "$lf_user_filter_mode" in
             filter-find)
-                lf -remote "send $id :cmd-enter; setfilter; open"
+                lf -remote "send $id :cmd-enter; setfilter; LFRC::open-file"
                 ;;
             filter)
                 lf -remote "send $id :cmd-enter"

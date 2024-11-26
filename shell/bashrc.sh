@@ -784,9 +784,12 @@ vi_bind '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
 
 # fzf_config_checkout
 vi_bind '"\ei": "\C-u\C-lfzf_config_checkout\n"'
-#
+
 # fzf open notes file
 vi_bind '"\en": "\C-u\C-lfzf_select_notes | x v\n"'
+
+# fzf open documentation
+vi_bind '"\ed": "\C-u\C-lfzf_checkout ~/drive/dev/documentation\n"'
 
 # checkout branch
 vi_bind '"\eo": "\C-ugcb\n"'
