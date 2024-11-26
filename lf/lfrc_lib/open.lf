@@ -1,0 +1,10 @@
+# vim:ft=lf
+
+cmd open ${{
+    if [ -d "$f" ]
+    then
+        lf -remote "send $id open"
+    else
+        lf -remote "send $id LFRC::open-file"
+    fi
+}}
