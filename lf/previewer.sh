@@ -8,17 +8,20 @@ vertical_position=$5
 
 if [ -d "$f" ]
 then
-    # Display readme if any.
-    readmes=("readme.md" "readme.txt" "readme")
-    for readme in "${readmes[@]}"
-    do
-        found="$(fd -i -p "$f/$readme" .)"
-        if [ $? -eq 0 ]
-        then
-            cat "$(echo "$found" | head -1)"
-            break
-        fi
-    done
+    if [ "$lf_user_readmes" -eq 1 ]
+    then
+        # Display readme if any.
+        readmes=("readme.md" "readme.txt" "readme")
+        for readme in "${readmes[@]}"
+        do
+            found="$(fd -i -p "$f/$readme" .)"
+            if [ $? -eq 0 ]
+            then
+                cat "$(echo "$found" | head -1)"
+                break
+            fi
+        done
+    fi
     # # Todo: Match lf usual output.
     ls "$f"
     exit 0

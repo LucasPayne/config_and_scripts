@@ -13,6 +13,13 @@
 #NOTE: Would prefer to get this from envvar but having trouble with eval and async.
 set user_runtime_dir "/run/user/1000/lf"
 
+# Whether to preview readmes when in the focus directory.
+set user_readmes 1
+# Disable "directory caching".
+# Prevents lf from caching preview results, so preview options can change dynamically.
+#todo: Does this have other implications?
+set nodircache
+
 # LF-LANGUAGE UTILITIES
 #<<<
 #https://github.com/gokcehan/lf/wiki/Tips
@@ -225,6 +232,15 @@ map \\c ${{
     else
         lf -remote "send $id set ratios 1:2:3"
     fi
+}}
+# Toggle readme previews
+#note: Not sure if user_ options are toggleable, and since lf-language has no control flow,
+#      am using a subshell with remote commands.
+map \\r ${{
+    [ "$lf_user_readmes" -eq 1 ] \
+        && lf -remote "send $id set user_readmes 0" \
+        || lf -remote "send $id set user_readmes 1"
+    lf -remote "send $id redraw"
 }}
 #>>>
 # Mouse mappings<<<
