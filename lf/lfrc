@@ -134,14 +134,15 @@ map f :set user_filter_mode "filter"; filter
 map <a-/> :set user_filter_mode "filter"; filter
 map F :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
 map U setfilter
-cmap <a-l> :cmd-enter; setfilter; LFRC::open-file
+cmap <a-l> :cmd-enter; setfilter; LFRC::open
+map <a-l> :LFRC::open
 
 cmap <enter> &{{
     if [ "$lf_mode" = filter ]
     then
         case "$lf_user_filter_mode" in
             filter-find)
-                lf -remote "send $id :cmd-enter; setfilter; LFRC::open-file"
+                lf -remote "send $id :cmd-enter; setfilter; LFRC::open"
                 ;;
             filter)
                 lf -remote "send $id :cmd-enter"
