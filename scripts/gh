@@ -1,0 +1,84 @@
+#!/bin/bash
+# gh: github helper for checkouts in ~/code
+#
+# todo:
+# Option for implicit project name in git project subdirectory.
+
+if [ $# -eq 0 ]
+then
+    >&2 echo "bad args"
+    exit 1
+fi
+
+cmd="$1"
+shift
+
+get_project_path ()
+{
+    local project_path="$HOME/code/$1"
+    if [ ! -d "$project_path" ]
+    then
+        >&2 echo "No checked out project \"$1\" at \"$project_path\"."
+        return 1
+    fi
+    echo "$project_path"
+}
+
+get_github_url ()
+{
+    if [ $# -ne 1 ]
+    then
+        >&2 echo "Usage: gh url <project>"
+        exit 1
+    fi
+    local project="$1"
+    local project_path
+    project_path="$(get_project_path "$project")"
+    local remote_url="$(git -C "$project_path" config --get remote.origin.url)"
+    if [[ "$remote_url" =~ ^.*github.com:([^/]+)/([^\.]+).git$ ]]
+    then
+        local user="${BASH_REMATCH[1]}"
+        local project_name="${BASH_REMATCH[2]}"
+        echo "https://github.com/$user/$project_name"
+    else
+        >&2 echo "Could not find github URL for project \"$1\"."
+        return 1
+    fi
+}
+
+cmd_issue ()
+{
+    if [ $# -eq 0 ]
+    then
+        >&2 echo "Usage:"
+        >&2 echo "    Print issue url:"
+        >&2 echo "        gh issue <project>"
+        >&2 echo "    Search issues:"
+        >&2 echo "        gh issue <project> <search>"
+        exit 1
+    fi
+    local project="$1"
+    local issue_url
+    issue_url="$(get_github_url "$project")/issues?q=is%3Aissue"
+    [ $? -eq 0 ] || return $?
+    if [ $# -eq 1 ]
+    then
+        echo "$issue_url"
+    else
+        local search="${@:2}"
+        xdg-browser "$issue_url+$search"
+    fi
+}
+
+case "$cmd" in
+    issue)
+        cmd_issue "$@"
+        ;;
+    url)
+        get_github_url "$@"
+        ;;
+    *)
+        >&2 echo "error: Unknown subcommand \"$cmd\"."
+        exit 1
+        ;;
+esac
