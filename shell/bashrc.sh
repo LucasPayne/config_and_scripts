@@ -770,7 +770,7 @@ vi_bind ()
 # Navigation
 vi_bind '"\el": "\C-ulfcd\n"'
 # search
-vi_bind '"\er": "\C-ulfcd -command=\"set preview; set ratios 1:2; push f\"\n"'
+vi_bind '"\e/": "\C-ulfcd -command=\"set preview; set ratios 1:2; push f\"\n"'
 # Navigate backward
 vi_bind '"\eh": "\C-ucd ..\n"'
 
