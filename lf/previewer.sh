@@ -6,7 +6,25 @@ height=$3
 horizontal_position=$4
 vertical_position=$5
 
-case "$1" in
+if [ -d "$f" ]
+then
+    # Display readme if any.
+    readmes=("readme.md" "readme.txt" "readme")
+    for readme in "${readmes[@]}"
+    do
+        found="$(fd -i -p "$f/$readme" .)"
+        if [ $? -eq 0 ]
+        then
+            cat "$(echo "$found" | head -1)"
+            break
+        fi
+    done
+    # # Todo: Match lf usual output.
+    ls "$f"
+    exit 0
+fi
+
+case "$f" in
     *.tar*)
         tar tf "$f"
         ;;

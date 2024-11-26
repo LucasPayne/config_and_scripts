@@ -124,7 +124,8 @@ set incfilter
 # Use globs in filter mode.
 #-Why is this normal searches fail? Shouldn't searches with non-glob chars be the same as before?
 #set globfilter
-
+# Preview directories
+set dirpreviews
 #>>>
 
 # MAPPINGS

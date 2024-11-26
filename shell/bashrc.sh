@@ -679,6 +679,7 @@ fzf_checkout () {
         fi
     fi
 }
+
 fzf_code_checkout ()
 {
     fzf_checkout ~/code
@@ -776,20 +777,18 @@ vi_bind '"\eh": "\C-ucd ..\n"'
 
 vi_bind '"\ef": "\C-u\C-lfzf_find\n"'
 
-# fzf_code_checkout
-vi_bind '"\eq": "\C-u\C-lfzf_code_checkout\n"'
 
-# fzf_dev_checkout
-vi_bind '"\ee": "\C-u\C-lfzf_dev_checkout\n"'
+lf-checkout-find ()
+{
+    local checkout_root_path="$1"
+    lfcd -command="set preview; set ratios 1:2; push f" "$checkout_root_path"
+}
+vi_bind '"\eq": "\C-u\C-llf-checkout-find ~/code\n"'
+vi_bind '"\ee": "\C-u\C-llf-checkout-find ~/drive/dev\n"'
+vi_bind '"\ei": "\C-u\C-llf-checkout-find ~/config\n"'
+vi_bind '"\ed": "\C-u\C-llf-checkout-find ~/drive/dev/documentation\n"'
 
-# fzf_config_checkout
-vi_bind '"\ei": "\C-u\C-lfzf_config_checkout\n"'
-
-# fzf open notes file
 vi_bind '"\en": "\C-u\C-lfzf_select_notes | x v\n"'
-
-# fzf open documentation
-vi_bind '"\ed": "\C-u\C-lfzf_checkout ~/drive/dev/documentation\n"'
 
 # checkout branch
 vi_bind '"\eo": "\C-ugcb\n"'
