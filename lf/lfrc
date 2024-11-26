@@ -215,6 +215,17 @@ map sN set sortby name; set info
 # leader-\ mappings <<<
 # Leader key: \
 map \\b :set drawbox!
+# Toggle ratios
+# note: This should be in-line with where ratios are set elsewhere.
+# idea: Maybe should have a different ratio setting which those functions call.
+map \\c ${{
+    if [ "$lf_ratios" = "1:2:3" ]
+    then
+        lf -remote "send $id set ratios 1:2"
+    else
+        lf -remote "send $id set ratios 1:2:3"
+    fi
+}}
 #>>>
 # Mouse mappings<<<
 # Middle click
