@@ -275,6 +275,19 @@ map <a-y> :yank-path
 #map <a-j> :down
 #map <a-k> :up
 
+# Checkout navigation, should have same effect as from shell, but uses this existing lf session.
+cmd lf-checkout-find-config &lf-checkout-find ~/config
+map <a-i> :lf-checkout-find-config
+
+cmd lf-checkout-find-dev &lf-checkout-find ~/drive/dev
+map <a-e> :lf-checkout-find-dev
+
+cmd lf-checkout-find-code &lf-checkout-find ~/code
+map <a-q> :lf-checkout-find-code
+
+cmd lf-checkout-find-documentation &lf-checkout-find ~/drive/dev/documentation
+map <a-d> :lf-checkout-find-documentation
+
 #todo
 cmd open ${{
     v "$f" &

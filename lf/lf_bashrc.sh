@@ -66,3 +66,12 @@ load-focus ()
         ls -remote "send $id select \"$focus\""
     fi
 }
+
+# Should duplicate behaviour in ~/.bashrc,
+# but using the current lf session.
+# note: Don't have to override UI, can keep it more in flow with current lf session.
+lf-checkout-find ()
+{
+    local checkout_root_path="$1"
+    lf -remote "send $id :cd \"$checkout_root_path\"; set preview; push f"
+}
