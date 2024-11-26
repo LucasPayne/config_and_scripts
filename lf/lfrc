@@ -46,7 +46,7 @@ cmd eval &{{
 #todo: Reduce flicker, command is run when cursor moves,
 #      when scrolling the display issues are prominent.
 cmd on-select :{{
-    save-focus
+    $save-focus
     #-useful at all?
     redraw
 }}
@@ -56,7 +56,7 @@ cmd on-select :{{
 #}}
 cmd on-quit :{{
     $save-selection
-    save-focus
+    $save-focus
 }}
 #-This doesn't appear to be working in my usual setup.
 # In VS code terminal, it looks like it is continuously called...
