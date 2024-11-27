@@ -24,8 +24,8 @@ endfunction
 "    set colorscheme ...
 "    ...
 "<<<
-"colorscheme solarized
-colorscheme default
+colorscheme solarized
+"colorscheme default
 set background=dark
 hi LineNr ctermbg=None
 "hi Normal ctermfg=White
@@ -34,7 +34,7 @@ set enc=utf8
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
 set signcolumn=auto
 hi SignColumn ctermbg=none
-" todo: Find a good unintrusive styling for thgis line.
+" todo: Find a good unintrusive styling for this line.
 hi debugPC ctermbg=none
 ">>>
 

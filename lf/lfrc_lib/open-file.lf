@@ -12,5 +12,12 @@ cmd open-file ${{
     else
         file_to_open="$f"
     fi
+    if [ "$(mimetype -b "$f")" = "application/x-sharedlib" ] && [ -x "$f" ]
+    then
+        # Execute executable ELF files.
+        #todo: Check ELF?
+        "$f"
+        
+    fi
     >/dev/null 2>&1 xdg-open "$file_to_open" &
 }}

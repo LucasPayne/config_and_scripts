@@ -50,12 +50,8 @@ cmd eval &{{
 #    #$load-focus
 #}}
 
-#todo: Reduce flicker, command is run when cursor moves,
-#      when scrolling the display issues are prominent.
 cmd on-select :{{
-    $save-focus
-    #-useful at all?
-    redraw
+    &save-focus
 }}
 #-doesn't appear to help
 #cmd on-select &{{
@@ -352,7 +348,7 @@ set user_focus_file "primary_focus"
 
 # Workaround for no on-selection-changed.
 # (on-select is really "on-focus-cursor-changed", see https://github.com/gokcehan/lf/issues/1332)
-cmd on-selection-changed :{{
+cmd on-selection-changed &{{
     &save-selection
 }}
 map u :unselect; on-selection-changed
