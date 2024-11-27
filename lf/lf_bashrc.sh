@@ -2,6 +2,23 @@
 # (This is not a default lf feature, can for example use BASH_ENV when
 #  launching lf to tell bash subprocesses to load this file.)
 
+get_readme ()
+{
+    local f="$1"
+    local readmes=("readme.md" "readme.txt" "readme")
+    for readme in "${readmes[@]}"
+    do
+        local found
+        found="$(fd -d2 -i -p "$f/$readme" .)"
+        if [ $? -eq 0 ]
+        then
+            echo "$found" | head -1
+            return 0
+        fi
+    done
+    return 1
+}
+
 # Save selection to selection file
 save-selection ()
 {

@@ -194,7 +194,11 @@ map <c-z> $ kill -TSTP $PPID
 cmap <c-z> $ kill -TSTP $PPID
 # Ctrl-C to quit.
 map <c-c> quit
+# Also Alt-x to quit.
+map <a-x> quit
 # Default: Ctrl-C in command mode cancels the command.
+# Also Alt-x to cancel command.
+cmap <a-x> cmd-interrupt
 #>>>
 # z (info and ordering) mappings <<<
 #
@@ -241,6 +245,18 @@ map \\r ${{
         && lf -remote "send $id set user_readmes 0" \
         || lf -remote "send $id set user_readmes 1"
     lf -remote "send $id redraw"
+}}
+# Preview readme
+map \\p ${{
+    readme="$(get_readme ".")"
+    if [ $? -eq 0 ]
+    then
+        cat "$readme" | $PAGER
+        exit 0
+    else
+        lf -remote "send $id echoerr \"Could not find readme file in this directory.\""
+        exit 1
+    fi
 }}
 #>>>
 # Mouse mappings<<<

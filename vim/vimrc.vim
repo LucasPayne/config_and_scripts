@@ -24,7 +24,8 @@ endfunction
 "    set colorscheme ...
 "    ...
 "<<<
-colorscheme solarized
+"colorscheme solarized
+colorscheme default
 set background=dark
 hi LineNr ctermbg=None
 "hi Normal ctermfg=White

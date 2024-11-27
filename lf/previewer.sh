@@ -11,16 +11,12 @@ then
     if [ "$lf_user_readmes" -eq 1 ]
     then
         # Display readme if any.
-        readmes=("readme.md" "readme.txt" "readme")
-        for readme in "${readmes[@]}"
-        do
-            found="$(fd -i -p "$f/$readme" .)"
-            if [ $? -eq 0 ]
-            then
-                cat "$(echo "$found" | head -1)"
-                break
-            fi
-        done
+        local readme
+        readme="$(get_readme "$f")"
+        if [ $? -eq 0 ]
+        then
+            cat "$readme"
+        fi
     fi
     # # Todo: Match lf usual output.
     ls "$f"
