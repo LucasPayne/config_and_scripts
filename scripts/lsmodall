@@ -1,0 +1,5 @@
+#!/bin/bash
+# lsmodall: list all active modules including builtins
+lsmodpaths
+cat /lib/modules/$(uname -r)/modules.builtin | sed 's/^/@/'
+
