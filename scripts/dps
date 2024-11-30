@@ -1,4 +1,4 @@
 #!/bin/bash
 # dps: dpkg status
 
-dpkg -s "$@"
+exec dpkg -s "$@"

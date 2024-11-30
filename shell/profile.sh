@@ -7,6 +7,9 @@ export SCREENDIR=~/.screen
 
 export EDITOR=vim
 
+# Linux source code (not necessarily the current kernel's source).
+export LSRC=/home/lucas/code/linux
+
 export PATH="$PATH:$CONFIG_DIR/scripts"
 export PATH="$PATH:$NOTES_REPO_DIR:$PATH"
 export PATH="$PATH:$(realpath ~/.local/bin)"

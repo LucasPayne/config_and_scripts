@@ -8,19 +8,14 @@ then
 fi
 pass=installed
 fail=no
-if [ $# -ge 2 ]
-then
-    pass="$2"
-fi
-if [ $# -ge 3 ]
-then
-    fail="$3"
-fi
 
-if dpkg -s "$1" >/dev/null 2>&1
-then
-    printf '%s\n' "$pass"
-else
-    printf '%s\n' "$fail"
-fi
-
+while [ $# -gt 0 ]
+do
+    if dpkg -s "$1" >/dev/null 2>&1
+    then
+        printf '%s^%s\n' "$1" "$pass"
+    else
+        printf '%s^%s\n' "$1" "$fail"
+    fi
+    shift
+done | column -t -s '^'

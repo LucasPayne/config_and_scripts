@@ -1,3 +1,9 @@
 #!/bin/sh
-exec apt-cache rdepends "$@"
+#acrd: reverse dependencies
 
+result="$(apt-cache rdepends "$@")"
+if [ $? -eq 0 ]
+then
+    echo "$result" | head -1
+    echo "$result" | tail +3 | x dpi | sed 's/^/    /'
+fi
