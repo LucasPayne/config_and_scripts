@@ -1,5 +1,11 @@
 #!/bin/bash
 # mans: Get dpkg source for man page.
 # Passes all flags, might not work with some flags.
-man -w "$@" | x dpkg -S
+result="$(man -w "$@" | x dpkg -S)"
+echo "$result"
+if [ $? -eq 0 ]
+then
+    # Also show dpkg description.
+    echo "$result" | cutc 1 | x dpd | tail +2
+fi
 

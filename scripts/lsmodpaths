@@ -2,4 +2,3 @@
 # lsmodpaths: Like lsmod but output .ko paths.
 
 lsmod | tail +2 | cutw 1 | xi sh -c "modinfo {} | head -1 | rcutw 1"
-

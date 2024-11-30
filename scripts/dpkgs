@@ -12,6 +12,11 @@ while [ "$#" -gt 0 ] ; do
         echo "$(whereis "$1")"
         c16 --reset
     ) >&2
-    dpkg -S "$(realpath "$(which "$1")")"
+    result="$(dpkg -S "$(realpath "$(which "$1")")")"
+    echo "$result"
+    if [ $? -eq 0 ]
+    then
+        echo "$result" | cutc 1 | x dpd | tail +2
+    fi
     shift
 done
