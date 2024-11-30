@@ -38,7 +38,7 @@ done
 
 if [ $ps_mode -eq 1 ]
 then
-    echo "${ppids[@]}" | x ps
+    echo "${ppids[@]}" | x ps -o pid,user,group,tty,stat,time,command
 else
     echo "${ppids[@]}"
 fi
