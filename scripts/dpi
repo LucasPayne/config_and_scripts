@@ -1,0 +1,26 @@
+#!/bin/bash
+# dpi: check if package is installed
+#
+# todo: Other install states?
+if [ $# -eq 0 ]
+then
+    exit 0
+fi
+pass=installed
+fail=no
+if [ $# -ge 2 ]
+then
+    pass="$2"
+fi
+if [ $# -ge 3 ]
+then
+    fail="$3"
+fi
+
+if dpkg -s "$1" >/dev/null 2>&1
+then
+    printf '%s\n' "$pass"
+else
+    printf '%s\n' "$fail"
+fi
+
