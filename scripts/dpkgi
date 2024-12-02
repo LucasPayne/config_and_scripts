@@ -1,0 +1,5 @@
+#!/bin/bash
+# dpkgi: dpkgw then filter to 'ii' installed.
+
+dpkgw "$@" | grep ^ii | cutw 2
+
