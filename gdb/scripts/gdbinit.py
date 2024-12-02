@@ -49,7 +49,7 @@ def gdb_define_command(name, commands, arg_definitions=None, documentation=""):
  
 def main():
     # Command to source .gdbinit file.
-    gdb_define_command("sg", ["source ~/.gdbinit"], [], "Source the .gdbinit file.")
+    gdb_define_command("sg", ["source ~/.config/gdb/gdbinit"], [], "Source the gdbinit file.")
     # Command to list user-defined commands (only those created through this python interface).
     gdb_define_command("user_commands", ["python print(USER_COMMANDS)"], [], "List user-defined commands created through the gdbinit.py python interface.")
 

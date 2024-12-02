@@ -886,6 +886,7 @@ jl ()
     # Clean up previously defined j<n> variables.
     # todo: nicer solution, could technically leave j99 defined.
     local assumed_max_jobs=20
+    local i
     for i in $(seq 1 $assumed_max_jobs)
     do
         unset j$i
@@ -893,9 +894,20 @@ jl ()
 
     # Define new j<n> variables.
     readarray -t job_ids < <(jobs | sed -E 's/^\[([[:digit:]]+)\].*$/\1/')
+    if [ "${#job_ids[@]}" -gt 0 ]
+    then
+        printf "Defined variables: "
+    fi
+    local i
     for i in "${job_ids[@]}"
     do
-        echo j$i="$(jobs -p "$i")"
+        #echo j$i="$(jobs -p "$i")"
+        if [ "$i" = "${job_ids[-1]}" ]
+        then
+            printf '%s\n' "j$i"
+        else
+            printf '%s, ' "j$i"
+        fi
         local cmd=j$i="$(jobs -p "$i")"
         eval "$(printf %q "$cmd")"
     done
@@ -934,6 +946,12 @@ j9 ()
 {
     _check_job_id k9 "$@" || return 1
     kill -9 %$1
+}
+
+# show shell variables
+shvars ()
+{
+    declare -p | grep "^declare --"
 }
 
 source "$CONFIG_DIR/lf/lf_shell.sh"

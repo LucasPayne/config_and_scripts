@@ -13,6 +13,12 @@ set nocompatible
 let g:mapleader = "<C-\>"
 let g:maplocalleader = "<C-\>"
 
+" Prevent loading of netrw.
+"todo: Why is netrw sometimes appearing in terminal buffers? And how would
+"this be fixed if a problem during a vim session?
+let g:loaded_netrw       = 1
+let g:loaded_netrwPlugin = 1
+
 execute pathogen#infect()
 execute pathogen#helptags()
 function! PluginEnabled(plugin_name)
@@ -70,6 +76,11 @@ nnoremap <space>cp :call YankFilePath()<cr>
 nnoremap <space>CP :call YankWordAndFilePath()<cr>
 vnoremap <space>cp :call YankSelectionAndFilePath()<cr>
 nnoremap <space>cb :call YankBreakPoint()<cr>
+
+" toggle syntax highlighting
+" Useful if highlighting is failing for some reason and making it hard to read.
+" (as of writing, .rst in kernel docs does this)
+nnoremap \s :if &syntax == "off" \| setlocal syntax=on \| else \| setlocal syntax=off \| endif<cr>
 
 " System yank.
 " Overrides Y default of yy synonym.
@@ -458,6 +469,7 @@ vnoremap <M-Y> "+y:let @+ = join(SmartUnindent(getline(getpos("'<")[1], getpos("
 function! SendSelectedToScratchBuffer()
     let l:tmp = @*
     tabnew
+    set buftype=nofile
     execute "normal! O".l:tmp
     normal! gg
 endfunction
