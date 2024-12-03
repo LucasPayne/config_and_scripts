@@ -1,0 +1,8 @@
+#!/bin/bash
+# dpds: dpkg description from file
+result="$(dpkg -S "$@")"
+if [ $? -eq 0 ]
+then
+    echo "$result" | cutc 1 | x dpd
+fi
+
