@@ -1,5 +1,6 @@
 #!/bin/bash
 # dpds: dpkg description from file
+# note: Same as dpkgs?
 result="$(dpkg -S "$@")"
 if [ $? -eq 0 ]
 then

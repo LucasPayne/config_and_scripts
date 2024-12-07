@@ -1,4 +1,3 @@
 #!/bin/bash
 # pkg-list-paths: list all pkgconfig .pc file paths
 pkg-list | cutw 1 | xi pkg-file {}
-
