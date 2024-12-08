@@ -82,6 +82,9 @@ nnoremap <space>cb :call YankBreakPoint()<cr>
 " (as of writing, .rst in kernel docs does this)
 nnoremap \s :if &syntax == "off" \| setlocal syntax=on \| else \| setlocal syntax=off \| endif<cr>
 
+" make executable
+nnoremap \x :!chmod a+x %<cr>
+
 " System yank.
 " Overrides Y default of yy synonym.
 nnoremap Y "+y

@@ -878,19 +878,19 @@ fg-next ()
 
 # List jobs
 # Also save jobs in environment vars j1, j2, ...
-# (Any better way to sync these envvars?)
+declare -a _jl_job_varnames
 jl ()
 {
     jobs -l
 
     # Clean up previously defined j<n> variables.
-    # todo: nicer solution, could technically leave j99 defined.
-    local assumed_max_jobs=20
-    local i
-    for i in $(seq 1 $assumed_max_jobs)
+    local job_varname
+    for job_varname in "${_jl_job_varnames[@]}"
     do
-        unset j$i
+        echo unset "$job_varname"
+        unset "$job_varname"
     done
+    _jl_job_varnames=()
 
     # Define new j<n> variables.
     readarray -t job_ids < <(jobs | sed -E 's/^\[([[:digit:]]+)\].*$/\1/')
@@ -910,6 +910,7 @@ jl ()
         fi
         local cmd=j$i="$(jobs -p "$i")"
         eval "$(printf %q "$cmd")"
+        _jl_job_varnames+=("j$i")
     done
 }
 
