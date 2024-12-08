@@ -94,9 +94,18 @@ done
 
 func_help ()
 {
+    local commands
+    read -r -d '' commands <<-EOF
+	-d <package_name>: Output README for a package.
+	-D <package_name>: Output README.Debian for a package.
+	-p No pager
+	-m <package_name>: Output man pages for a package.
+	-i <package_name>: Information about what is available for this package.
+	-u <package_name>: Package project URLs (version control, homepage, debian/copyright Source entry)
+	-U <package_name>: Package project homepage URL
+	EOF
     echo "readme:"
-    echo "    -d <package_name>: Print debian README file from /usr/share/doc/<package_name>."
-    echo "    -D <package_name>: Print debian README.Debian file from /usr/share/doc/<package_name>."
+    echo "$commands" | sed 's/^/    /'
 }
 
 do_check_dpkg_installed ()
