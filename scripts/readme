@@ -95,7 +95,7 @@ done
 func_help ()
 {
     local commands
-    read -r -d '' commands <<-EOF
+    read -r -d '' commands <<-'EOF'
 	-d <package_name>: Output README for a package.
 	-D <package_name>: Output README.Debian for a package.
 	-p No pager
