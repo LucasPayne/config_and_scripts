@@ -887,7 +887,6 @@ jl ()
     local job_varname
     for job_varname in "${_jl_job_varnames[@]}"
     do
-        echo unset "$job_varname"
         unset "$job_varname"
     done
     _jl_job_varnames=()
