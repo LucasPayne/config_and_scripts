@@ -1,0 +1,4 @@
+#!/bin/bash
+# afl: apt-file list
+exec apt-file list "$@"
+
