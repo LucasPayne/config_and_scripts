@@ -1,0 +1,22 @@
+#!/bin/bash
+# rlddexe: Like rldd but list executables on PATH which use the given library.
+
+libstring="$1"
+
+echo "$PATH" | tr ':' '\n' | while read -r dir
+do
+    [ ! -d "$dir" ] && continue
+    find "$dir" -type f -executable | while read -r exe
+    do
+        out="$(ldd "$exe" 2>/dev/null)"
+        if [ $? -eq 0 ]
+        then
+            if echo "$out" | grep -q "$libstring"
+            then
+                echo "$exe"
+                echo "$out" | grep "$libstring" | sed 's/^/    /'
+            fi
+        fi
+    done
+done
+
