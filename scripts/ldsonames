@@ -1,0 +1,11 @@
+#!/bin/bash
+# ldsonames: list SONAMEs from ldpaths output
+# Note this can have duplicates.
+
+ldpaths | xi sh -c "readelf -d {} | grep SONAME" | while read -r line
+do
+    if [[ $line =~ \[(.*)\]$ ]]
+    then
+        echo "${BASH_REMATCH[1]}"
+    fi
+done
