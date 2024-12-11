@@ -5,5 +5,5 @@ result="$(apt-cache rdepends "$@")"
 if [ $? -eq 0 ]
 then
     echo "$result" | head -1
-    echo "$result" | tail +3 | x dpi | sed 's/^/    /'
+    echo "$result" | tail +3 | sort | uniq | x dpi | sort -k2,2 | sed 's/^/    /'
 fi
