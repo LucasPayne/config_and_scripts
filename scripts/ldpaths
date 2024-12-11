@@ -1,0 +1,4 @@
+#!/bin/bash
+# ldpaths: list libraries available through ldconfig
+ldconfig -p | tail +2 | rcutw 1 | x realpath | sort | uniq
+
