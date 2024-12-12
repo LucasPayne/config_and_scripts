@@ -1,0 +1,11 @@
+#!/bin/bash
+# catw: cat which, cat a command script
+
+if [ $# -lt 1 ]
+then
+    >&2 echo "Usage: catw <command> [optional cat args]"
+    exit 1
+fi
+cmd="$1"
+cat "$@" "$(which "$cmd")"
+
