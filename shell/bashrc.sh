@@ -191,6 +191,28 @@ xdg-mime-set ()
     xdg-mime default org.pwmt.zathura.desktop application/pdf
 }
 
+# catw: Wrapper for command catw which checks if the first argument is a bash function.
+#       catw command cannot handle this itself as functions are internal bash state.
+catw ()
+{
+    if [ $# -lt 1 ]
+    then
+        command catw "$@"
+        return 0
+    fi
+    local cmd="$1"
+    if type "$cmd" &>/dev/null
+    then
+        if [[ "$(type "$cmd" | head -1)" =~ "is a function"$ ]]
+        then
+            echo "[bash function]"
+            type "$cmd" | tail +2
+            return 0
+        fi
+    fi
+    command catw "$@"
+}
+
 
 # Small utilities
 #    ...

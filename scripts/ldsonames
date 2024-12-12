@@ -1,6 +1,8 @@
 #!/bin/bash
 # ldsonames: list SONAMEs from ldpaths output
-# Note this can have duplicates.
+# Notes:
+#     This can have duplicates.
+#     This may be better computed directly from ldconfig -p.
 
 ldpaths | xi sh -c "readelf -d {} | grep SONAME" | while read -r line
 do

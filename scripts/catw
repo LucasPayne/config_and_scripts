@@ -1,5 +1,11 @@
 #!/bin/bash
 # catw: cat which, cat a command script
+# note: This is intended only for interactive use. e.g. it may do different things for differnt file types.
+# note: Optional cat args can also be extra files.
+# note: Can be called from a bashrc wrapper which is aware of bash functions and can "cat" them.
+
+# Don't cat these mimetypes.
+binary_mimes=("application/x-sharedlib" "application/x-executable")
 
 if [ $# -lt 1 ]
 then
@@ -7,5 +13,18 @@ then
     exit 1
 fi
 cmd="$1"
-cat "$@" "$(which "$cmd")"
+shift
+if ! which "$cmd" &>/dev/null
+then
+    >&2 echo "error: Cannot find command \"$cmd\"."
+    exit 1
+fi
 
+mime="$(which "$cmd" | x realpath | x mimetype -b)"
+if [[ " ${binary_mimes[@]} " =~ " $mime " ]]
+then
+    >&2 echo "error: Binary executable, probably don't want to cat this."
+    exit 1
+fi
+
+cat "$(which "$cmd")" "$@"
