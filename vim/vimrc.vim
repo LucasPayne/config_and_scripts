@@ -1785,6 +1785,7 @@ augroup QFClose
   autocmd WinEnter * if winnr('$') == 1 && &buftype == "quickfix" | q | endif
 augroup END
 
+" Reader mode
 " helpful when reading.
 " todo: More robust.
 function! ToggleReaderMode()
