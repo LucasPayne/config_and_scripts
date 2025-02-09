@@ -1,0 +1,13 @@
+#!/bin/bash
+# br2: brightness of second monitor
+if [ $# -ne 1 ]
+then
+    >&2 echo "usage: br2 0.7"
+    exit 1
+fi
+level="$1"
+xrandr \
+    --output HDMI-0 \
+    --brightness "$level"
+
+
