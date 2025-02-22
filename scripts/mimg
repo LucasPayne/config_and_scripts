@@ -6,4 +6,7 @@ then
     exit 1
 fi
 pattern="$1"
-xargs mimetype | grep -E " *[^ ]*$pattern[^ ]*$" | rev | cut -d: -f 2- | rev
+while read -r line
+do
+    mimetype "$line"| grep -E " *[^ ]*$pattern[^ ]*$" | rev | cut -d: -f 2- | rev
+done

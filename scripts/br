@@ -9,7 +9,3 @@ level="$1"
 xrandr \
     --output DP-0 \
     --brightness "$level"
-xrandr \
-    --output HDMI-0 \
-    --brightness "$level"
-
