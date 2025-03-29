@@ -1,0 +1,4 @@
+#!/bin/bash
+# wacom: tablet defaults
+xsetwacom set 11 MapToOutput HEAD-1
+xsetwacom set 11 Area 0 0 15000 26666
