@@ -1,0 +1,5 @@
+#!/bin/bash
+# dimmm: brightness
+br 1
+br2 1
+
