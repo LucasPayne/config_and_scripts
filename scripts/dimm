@@ -1,0 +1,5 @@
+#!/bin/bash
+# dimm: Make screen un-dim
+br 1
+br2 1
+
