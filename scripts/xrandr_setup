@@ -5,7 +5,7 @@ xrandr \
     --output DP-0 \
     --primary \
     --mode 3840x2160 \
-    --pos 1920x0
+    --pos 1080x0
 
 xrandr \
     --output HDMI-0 \
