@@ -1865,3 +1865,6 @@ let g:vimrc_loaded_state = "finished"
 "nnoremap gI :set opfunc=PrependReplaceOperator<cr>g@
 "vnoremap gI :<C-u>call PrependReplaceOperator(visualmode(), 1)<cr>
 "--------------------------------------------------------------------------------
+"
+
+nnoremap <M-N> :!nsup<cr><cr>
