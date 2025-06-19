@@ -1,0 +1,18 @@
+#!/bin/bash
+# djvupdf: convert djvu to pdf
+
+if [ $# -ne 1 ]
+then
+    >&2 echo "Usage: djvupdf [file]"
+    exit 1
+fi
+
+file="$1"
+
+if [[ mimetype -b "$file" = *djvu* ]]
+then
+    djvups "$file" | ps2pdf - "${file%.djvu}.pdf"
+else
+    >&2 echo "Not a djvu"
+    exit 1
+fi
