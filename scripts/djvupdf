@@ -9,7 +9,7 @@ fi
 
 file="$1"
 
-if [[ mimetype -b "$file" = *djvu* ]]
+if [[ "$(mimetype -b "$file")" = *djvu* ]]
 then
     djvups "$file" | ps2pdf - "${file%.djvu}.pdf"
 else
