@@ -1,0 +1,19 @@
+#!/bin/bash
+# dlmp3: download mp3 from youtube
+
+url="$1"
+name="$2"
+
+if [ $# -ne 2 ]
+then
+    >&2 echo "give good args"
+    exit 1
+fi
+
+if yt-dlp -f 233 "$url" -o "$name.mp4"
+then
+    ffmpeg -i "$name.mp4" -q:a 0 -map a "$name.mp3"
+else
+    >&2 echo "failed download"
+    exit 1
+fi
