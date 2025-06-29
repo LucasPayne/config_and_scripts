@@ -1,0 +1,14 @@
+#!/bin/bash
+# upmp3: copy audio to phone if mounted
+# upside-down-cat emojimove 
+
+file="$1"
+phone_music_folder="/run/user/1000/gvfs/mtp:host=OPPO_CPH2591_LBPNBIDQIVTS7TE6/Internal shared storage/Music"
+
+if [ ! -d "$phone_music_folder" ]
+then
+    >&2 echo "can't find music folder"
+    exit 1
+fi
+
+cp "$file" "$phone_music_folder"
