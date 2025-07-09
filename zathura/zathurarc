@@ -3,11 +3,17 @@ set recolor true
 #dark
 #set recolor-darkcolor \#6B530F
 #medium
-#set recolor-darkcolor \#AB914F
+set recolor-darkcolor \#AB914F
 #bright
 #set recolor-darkcolor \#E8DF9B
 set recolor-lightcolor \#000000
 set guioptions ""
 
 # Grey
-set recolor-darkcolor \#6F6F6F
+#set recolor-darkcolor \#6F6F6F
+
+# Green
+#set recolor-darkcolor \#537A59
+
+# Blue
+#set recolor-darkcolor \#3465A4
