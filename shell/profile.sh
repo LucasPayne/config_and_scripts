@@ -3,6 +3,16 @@ export CONFIG_DIR=~/config
 export DRIVE_DIR=~/drive
 export NOTES_REPO_DIR=~/notes
 
+# Dev paths
+export ACADEMIA="$HOME/drive/dev/academia"
+export COMPUTER="$HOME/drive/dev/computer"
+export DOCUMENTATION="$HOME/drive/dev/documentation"
+export FILMS="$HOME/drive/dev/films"
+export LITERATURE="$HOME/drive/dev/literature"
+export MAGIC="$HOME/drive/dev/magic"
+export PERSON="$HOME/drive/dev/person"
+export VISUAL_EFFECTS="$HOME/drive/dev/visual_effects"
+
 export SCREENDIR=~/.screen
 
 export EDITOR=vim

@@ -16,6 +16,7 @@ bind j prev
 bind k next
 bind ^j prev
 bind ^k next
+bind ^a focus
 
 # TODO: Can Ctrl-apostrophe be bound? Ctrl-V Ctrl-' gives ' in shell and vim.
 # bindkey -t ^' windowlist
