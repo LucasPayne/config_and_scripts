@@ -3,11 +3,88 @@
 "--------------------------------------------------------------------------------/
 let g:vimrc_loaded_state = "start"
 
-" workaround for broken laptop keys
-"todo: Do this at a higher level, like through X or something, to convert
-"keys.
-"let g:vim_laptop_number_broken_workaround = "on"
-let g:vim_laptop_number_broken_workaround = "off"
+" Alt key mappings
+" If terminal is sending modifiers as esc-key.
+" For some reason, the below works!
+" TODO: Do this without autocmds, setlocal not working?
+let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?;:"
+function! ResetAltKeyMappings()
+    call system("echo reset >> /tmp/vimlog")
+    for char in g:alphabet
+        execute "set <M-".char.">=\e".char
+    endfor
+endfunction
+function! UnsetAltKeyMappings()
+    call system("echo unset >> /tmp/vimlog")
+    for char in g:alphabet
+        execute "set <M-".char.">="
+    endfor
+    " OVERRIDE
+    " Allow these to act normally as they are detected in terminal mode.
+    " Allow universal navigation modifier <M-w>.
+    execute "set <M-w>=\ew"
+    execute "set <M-W>=\eW"
+    " Allow escape
+    "--These are useful bindings for terminal programs,
+    " probably don't want to override them.
+    " Just use <M-J><M-K> to escape.
+    execute "set <M-j>=\ej"
+    execute "set <M-k>=\ek"
+    execute "set <M-h>=\eh"
+    execute "set <M-l>=\el"
+    " Allow tab switching
+    execute "set <M-1>=\e1"
+    execute "set <M-2>=\e2"
+    execute "set <M-3>=\e3"
+    execute "set <M-4>=\e4"
+    execute "set <M-5>=\e5"
+    execute "set <M-6>=\e6"
+    execute "set <M-7>=\e7"
+    execute "set <M-8>=\e8"
+    execute "set <M-9>=\e9"
+    " Allow tab moving
+    execute "set <M-.>=\e."
+    execute "set <M-,>=\e,"
+    " Allow navigation
+    execute "set <M-H>=\eH"
+    execute "set <M-J>=\eJ"
+    execute "set <M-K>=\eK"
+    execute "set <M-L>=\eL"
+    " Allow system paste.
+    execute "set <M-p>=\ep"
+endfunction
+autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
+autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
+
+" Use l; for left/right motions instead of hl.
+noremap l h
+noremap ; l
+noremap L H
+noremap : L
+" Use h for : and ;.
+"noremap h ;
+"noremap H :
+noremap H ;
+noremap h :
+noremap <M-h> :
+" Beginning and end of line.
+noremap L ^
+noremap : $
+" Close command prompt
+cnoremap <M-H> <C-c>
+" Run command
+cnoremap <M-H> <cr>
+" Insert mode to normal mode
+inoremap <M-h> <Esc>
+" Normal mode 
+inoremap <M-H> <Esc>:
+" Move windows
+nnoremap <C-w><C-l> <C-w><C-h>
+nnoremap <C-w><C-;> <C-w><C-l>
+nnoremap <C-w>l <C-w>h
+nnoremap <C-w>; <C-w>l
+nnoremap <C-w>L <C-w>H
+nnoremap <C-w>: <C-w>L
 
 set nocompatible
 let g:mapleader = "<C-\>"
@@ -18,6 +95,7 @@ let g:maplocalleader = "<C-\>"
 "this be fixed if a problem during a vim session?
 let g:loaded_netrw       = 1
 let g:loaded_netrwPlugin = 1
+
 
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -146,10 +224,6 @@ set noequalalways
 " Press enter after executing external keywordprg pages.
 nnoremap K K<cr>
 vnoremap K K<cr>
-" H and L are useful in their default mappings, but I am very used to H and L
-" for ^ and $. So <M-h> and <M-l> are the originals.
-nnoremap <M-h> H
-nnoremap <M-l> L
 " Define M this way too for consistency.
 nnoremap <M-m> M
 
@@ -313,55 +387,6 @@ function! EndOfFileNavigate()
 endfunction
 nnoremap <silent> G :call EndOfFileNavigate()<cr>
 
-" Alt key mappings
-" If terminal is sending modifiers as esc-key.
-" For some reason, the below works!
-" TODO: Do this without autocmds, setlocal not working?
-let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?"
-function! ResetAltKeyMappings()
-    call system("echo reset >> /tmp/vimlog")
-    for char in g:alphabet
-        execute "set <M-".char.">=\e".char
-    endfor
-endfunction
-function! UnsetAltKeyMappings()
-    call system("echo unset >> /tmp/vimlog")
-    for char in g:alphabet
-        execute "set <M-".char.">="
-    endfor
-    " OVERRIDE
-    " Allow these to act normally as they are detected in terminal mode.
-    " Allow universal navigation modifier <M-w>.
-    execute "set <M-w>=\ew"
-    execute "set <M-W>=\eW"
-    " Allow escape
-    "--These are useful bindings for terminal programs,
-    " probably don't want to override them.
-    " Just use <M-J><M-K> to escape.
-    execute "set <M-j>=\ej"
-    execute "set <M-k>=\ek"
-    execute "set <M-h>=\eh"
-    execute "set <M-l>=\el"
-    " Allow tab switching
-    execute "set <M-1>=\e1"
-    execute "set <M-2>=\e2"
-    execute "set <M-3>=\e3"
-    execute "set <M-4>=\e4"
-    execute "set <M-5>=\e5"
-    execute "set <M-6>=\e6"
-    execute "set <M-7>=\e7"
-    execute "set <M-8>=\e8"
-    execute "set <M-9>=\e9"
-    " Allow navigation
-    execute "set <M-H>=\eH"
-    execute "set <M-J>=\eJ"
-    execute "set <M-K>=\eK"
-    execute "set <M-L>=\eL"
-    " Allow system paste.
-    execute "set <M-p>=\ep"
-endfunction
-autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
-autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
 
 ">>>
 
@@ -371,13 +396,7 @@ autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
 "<<<
 inoremap jk <esc>
 let mapleader = "."
-nnoremap Q @q
-nnoremap H ^
-nnoremap L $
-vnoremap H ^
-vnoremap L $
-onoremap H ^
-onoremap L $
+nmap Q @q
 command! -nargs=0 Sv source ~/.vimrc
 
 " Search for selected text
@@ -496,11 +515,6 @@ nnoremap gk gt
 " Write
 nnoremap <M-s> :w<cr>
 inoremap <M-s> <Esc>:w<cr>a
-" Navigate windows
-nnoremap <M-H> <C-w>h
-nnoremap <M-J> <C-w>j
-nnoremap <M-K> <C-w>k
-nnoremap <M-L> <C-w>l
 " Use shift when in job mode.
 " M-h,j,k,l are useful for bash prompt mappings,
 " and M-H,J,K,L are less likely to be used by terminal programs.
@@ -530,9 +544,8 @@ tnoremap <silent> <M-W><M-N> :tabnew<cr>
 " Move tab left and right.
 nnoremap <silent> <M-w><M-.> :tabm +1<cr>
 nnoremap <silent> <M-w><M-,> :tabm -1<cr>
-" todo: Shouldn't leave the terminal tab entered in command mode.
-tnoremap <silent> <M-W><M-.>. <C-\><C-n>:tabm +1<cr>
-tnoremap <silent> <M-W><M-,> <C-\><C-n>:tabm -1<cr>
+tnoremap <silent> <M-w><M-.> <C-\><C-n>:tabm +1 \| call feedkeys("i", 'n')<cr>
+tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1 \| call feedkeys("i", 'n')<cr>
 " Scroll-wheel goes to terminal normal mode so can scroll in vim buffer.
 "TODO: This should only be in the shell prompt, still want scroll in other
 "programs e.g. man pages.
@@ -652,7 +665,8 @@ for index in [1,2,3,4,5,6,7,8,9]
     "execute "tnoremap <silent> <M-W><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
 endfor
 
-autocmd BufEnter * if &buftype ==# 'terminal' | call CheckSwitchToTerminalMode() | endif
+"TODO: This is very slow.
+"autocmd BufEnter * if &buftype ==# 'terminal' | call CheckSwitchToTerminalMode() | endif
 
 " Move window to new tab.
 function! MoveCurrentWindowToNewTab(background)
@@ -1265,18 +1279,94 @@ function! SpaceMoveHorizontal(amount, skip_splits)
     call CheckSwitchToTerminalMode()
 endfunction
 " Vertical: Up-down splits movement, dirspaces
+function! SpaceMoveVertical(amount, skip_splits)
+    if a:amount < 0
+        let l:winkey = "j"
+        let l:winotherkey = "k"
+        let l:absolute_amount = -a:amount
+    elseif a:amount > 0
+        let l:winkey = "k"
+        let l:winotherkey = "j"
+        let l:absolute_amount = a:amount
+    else
+        return
+    endif
+    if a:skip_splits == 1
+        " change dirspace
+
+        " for now just doing splits anyway
+        for i in range(l:absolute_amount)
+            execute "wincmd ".l:winkey
+        endfor
+    else
+        for i in range(l:absolute_amount)
+            execute "wincmd ".l:winkey
+        endfor
+    endif
+    call CheckSwitchToTerminalMode()
+endfunction
 
 tnoremap <M-J><M-K> <C-\><C-n>
 tnoremap <M-W><M-W> <C-\><C-n>
-tnoremap <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
-tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
-tnoremap <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
-tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
-nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-nnoremap <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
-nnoremap <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
-nnoremap <M-W><M-H> :call SpaceMoveHorizontal(-1, 1)<cr>
-nnoremap <M-W><M-L> :call SpaceMoveHorizontal(1, 1)<cr>
+if 1
+    " Switch jk and lh for space movement.
+    " Horizontal is jk, vertical is lh.
+    tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <M-w><M-;> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <M-W><M-:> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
+    nnoremap <M-w><M-l> :call SpaceMoveHorizontal(-1, 0)<cr>
+    nnoremap <M-w><M-;> :call SpaceMoveHorizontal(1, 0)<cr>
+    nnoremap <M-W><M-L> :call SpaceMoveHorizontal(-1, 1)<cr>
+    nnoremap <M-W><M-:> :call SpaceMoveHorizontal(1, 1)<cr>
+    nnoremap <M-w><M-j> :call SpaceMoveVertical(-1, 0)<cr>
+    nnoremap <M-w><M-k> :call SpaceMoveVertical(1, 0)<cr>
+    nnoremap <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
+    nnoremap <M-W><M-K> :call SpaceMoveVertical(1, 1)<cr>
+elseif 1
+    " Switch jk and lh for space movement.
+    " Horizontal is jk, vertical is lh.
+    tnoremap <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
+    nnoremap <M-w><M-j> :call SpaceMoveHorizontal(-1, 0)<cr>
+    nnoremap <M-w><M-k> :call SpaceMoveHorizontal(1, 0)<cr>
+    nnoremap <M-W><M-J> :call SpaceMoveHorizontal(-1, 1)<cr>
+    nnoremap <M-W><M-K> :call SpaceMoveHorizontal(1, 1)<cr>
+    nnoremap <M-w><M-l> :call SpaceMoveVertical(-1, 0)<cr>
+    nnoremap <M-w><M-h> :call SpaceMoveVertical(1, 0)<cr>
+    nnoremap <M-W><M-L> :call SpaceMoveVertical(-1, 1)<cr>
+    nnoremap <M-W><M-H> :call SpaceMoveVertical(1, 1)<cr>
+else
+    tnoremap <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
+    nnoremap <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
+    nnoremap <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
+    nnoremap <M-W><M-H> :call SpaceMoveHorizontal(-1, 1)<cr>
+    nnoremap <M-W><M-L> :call SpaceMoveHorizontal(1, 1)<cr>
+    nnoremap <M-w><M-j> :call SpaceMoveVertical(-1, 0)<cr>
+    nnoremap <M-w><M-k> :call SpaceMoveVertical(1, 0)<cr>
+    nnoremap <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
+    nnoremap <M-W><M-K> :call SpaceMoveVertical(1, 1)<cr>
+endif
 " Open a terminal below.
 function! LowerTerminal()
     if v:count == 0
@@ -1291,8 +1381,8 @@ endfunction
 nnoremap <silent> <M-c> <cmd>call LowerTerminal()<cr>
 " Open a terminal in the current window.
 nnoremap <silent> <M-C> :set termwinsize=0x0 \| term ++curwin<cr>
-"TODO: fix this, too broken
-"nnoremap <silent> <M-q> :call GoToPrimaryShell(1)<cr>
+
+nnoremap <silent> <M-Q> :call GoToPrimaryShell(0)<cr>
 ">>>
 
 " Notes system
