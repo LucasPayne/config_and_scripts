@@ -261,16 +261,35 @@ cursor_row () {
 # termdesk and vim servers
 #    ...
 #<<<
-cd ()
+# cd with change of vim working directory
+#cd ()
+#{
+#    builtin cd "$@"
+#    if [ ! -z "$VIMSERVER_ID" ] && [ ! -z "$TERMDESK_PRIMARY_SHELL" ] ; then
+#        vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
+#    fi
+#    # Store the directory in the id temporary file.
+#    # This is used in vim, which otherwise can't access non-symlink-resolved paths.
+#    if [ ! -z "$VIMSERVER_ID" ] ; then
+#        pwd > "$VIMSERVER_ID"
+#    fi
+#}
+
+# cd to vim working diretory
+vcd ()
 {
-    builtin cd "$@"
-    if [ ! -z "$VIMSERVER_ID" ] && [ ! -z "$TERMDESK_PRIMARY_SHELL" ] ; then
-        vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
-    fi
-    # Store the directory in the id temporary file.
-    # This is used in vim, which otherwise can't access non-symlink-resolved paths.
-    if [ ! -z "$VIMSERVER_ID" ] ; then
-        pwd > "$VIMSERVER_ID"
+    if [ ! -z "$VIMSERVER_ID" ]
+    then
+        vim --servername "$VIMSERVER_ID" --remote-send '<C-\><C-n>:call writefile([getcwd()], "/tmp/vimcwd")<cr>A'
+        # Wait for vim's file to to be modified or timeout.
+        inotifywait -t 2 -e modify /tmp/vimcwd >/dev/null 2>&1
+        local targetdir="$(cat /tmp/vimcwd)"
+        if [ "$(pwd)" != "$targetdir" ]
+        then
+            cd "$targetdir"
+        fi
+    else
+        >&2 echo "No vim server."
     fi
 }
 
@@ -789,6 +808,10 @@ vi_bind ()
     bind -m vi-command "$@"
     bind -m vi-insert "$@"
 }
+
+# cd to vim's working directory
+vi_bind '"\ec": "\C-u\C-lvcd\n"'
+vi_bind '"\eC": "\C-u\C-lcd -\n"'
 
 # Navigation
 vi_bind '"\el": "\C-ulfcd\n"'
