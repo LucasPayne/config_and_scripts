@@ -1,4 +1,4 @@
 #!/bin/bash
-# mv.: mv to this directory.
+# mvv: mv to this directory.
 # Useful for quick xargs, as moved files can then follow instead of ending with the target.
 exec mv -t . "$@"

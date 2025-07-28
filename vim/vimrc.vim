@@ -338,8 +338,10 @@ function! UnsetAltKeyMappings()
     "--These are useful bindings for terminal programs,
     " probably don't want to override them.
     " Just use <M-J><M-K> to escape.
-    "execute "set <M-j>=\ej"
-    "execute "set <M-k>=\ek"
+    execute "set <M-j>=\ej"
+    execute "set <M-k>=\ek"
+    execute "set <M-h>=\eh"
+    execute "set <M-l>=\el"
     " Allow tab switching
     execute "set <M-1>=\e1"
     execute "set <M-2>=\e2"
@@ -1231,13 +1233,50 @@ function! CtrlCHandler()
     endif
 endfunction
 
+" 2D movement.
+" Horizontal: Left-right splits movement, tabs
+function! SpaceMoveHorizontal(amount, skip_splits)
+    if a:amount < 0
+        let l:winkey = "h"
+        let l:winotherkey = "l"
+        let l:tabcmd = "tabprevious"
+        let l:absolute_amount = -a:amount
+    elseif a:amount > 0
+        let l:winkey = "l"
+        let l:winotherkey = "h"
+        let l:tabcmd = "tabnext"
+        let l:absolute_amount = a:amount
+    else
+        return
+    endif
+    if a:skip_splits == 1
+    else
+        let l:prev_wingetid = win_getid()
+        for i in range(l:absolute_amount)
+            execute "wincmd ".l:winkey
+            if win_getid() == l:prev_wingetid
+                if a:amount < 0 && tabpagenr() > 1 || a:amount > 0 && tabpagenr() < tabpagenr('$')
+                    execute l:tabcmd
+                    " Go to the left-or-rightmost split, so e.g. navigation to the right 
+                    let l:prev_winnr = -1
+                    while l:prev_winnr != winnr()
+                        let l:prev_winnr = winnr()
+                        execute "wincmd ".l:winotherkey
+                    endwhile
+                endif
+            endif
+        endfor
+    endif
+endfunction
+" Vertical: Up-down splits movement, dirspaces
+
 tnoremap <M-J><M-K> <C-\><C-n>
 tnoremap <M-W><M-W> <C-\><C-n>
-tnoremap <silent> <M-W><M-J> <C-\><C-n>:normal! gT<cr>
-tnoremap <silent> <M-W><M-K> <C-\><C-n>:normal! gt<cr>
+tnoremap <M-w><M-h> <C-\><C-n>:normal! gT<cr>
+tnoremap <M-w><M-l> <C-\><C-n>:normal! gt<cr>
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-nnoremap <M-w><M-j> gT
-nnoremap <M-w><M-k> gt
+nnoremap <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
+nnoremap <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
 " Open a terminal below.
 function! LowerTerminal()
     if v:count == 0
