@@ -625,42 +625,34 @@ endfunction
 nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
 nnoremap <silent> <M-n> :set number!<cr>
 
+function! SwitchTab(number)
+    execute "normal! ".a:number."gt"
+    if exists("b:switch_to_terminal_mode") && b:switch_to_terminal_mode
+        call feedkeys("i", 'n')
+        unlet b:switch_to_terminal_mode
+    endif
+endfunction
+function! SwitchTabFromTerminal(number)
+    if &buftype ==# 'terminal'
+        let b:switch_to_terminal_mode = 1
+        call SwitchTab(a:number)
+    else
+        echo "Not a terminal"
+    endif
+endfunction
+
 " Tab metakeys.
-if g:vim_laptop_number_broken_workaround == "off"
-    for index in [1,2,3,4,5,6,7,8,9]
-        " Go to tab
-        execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
-        execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
-        " Move window to tab
-        execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
-        execute "tnoremap <silent> <M-W><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
-    endfor
-else
-    " laptop 1,2,3 keys are not working.
-    " Map to alt-4, alt-5, alt-6 (also allowing shift modifier).
-    map <M-4> 1
-    map <M-5> 2
-    map <M-6> 3
-    map! <M-4> 1
-    map! <M-5> 2
-    map! <M-6> 3
-    tmap <M-4> 1
-    tmap <M-5> 2
-    tmap <M-6> 3
-    execute "set <S-F35>=\e$"
-    execute "set <S-F36>=\e%"
-    execute "set <S-F37>=\e^"
-    " !@#
-    map <S-F35> !
-    map <S-F36> @
-    map <S-F37> #
-    map! <S-F35> !
-    map! <S-F36> @
-    map! <S-F37> #
-    tmap <S-F35> !
-    tmap <S-F36> @
-    tmap <S-F37> #
-endif
+for index in [1,2,3,4,5,6,7,8,9]
+    " Go to tab
+    "execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
+    "execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+    execute "nnoremap <silent> <M-".index."> :call SwitchTab(".index.")<cr>"
+    execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:call SwitchTabFromTerminal(".index.")<cr>"
+    " Move window to tab
+    "TODO
+    "execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
+    "execute "tnoremap <silent> <M-W><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
+endfor
 
 " Move window to new tab.
 function! MoveCurrentWindowToNewTab(background)
@@ -1798,23 +1790,7 @@ function! ToggleReaderMode()
         nunmap i
     else
         set t_ve=
-        " reading with right hand keys (left hand thinking pose)
-        " 
-        " ⠀⠀⠀⠀⠀⠀⡀⣤⢖⠫⠚⠙⠉⠉⠈⠉⠉⠉⠋⠛⠿⡾⣠⢀⠀⠀⠀⠀⠀⠀
-        " ⠀⠀⠀⠀⣄⢶⠛⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠟⡴⢀⠀⠀⠀⠀
-        " ⠀⠀⠀⣦⠹⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠁⠟⣴⠀⠀⠀
-        " ⠀⡀⡷⠘⠀⠀⠀⠀⠀⠀⡀⣀⠀⠀⠀⠀⠀⡄⣿⣿⣾⠀⠀⠀⠀⠀⠃⡾⢀⠀
-        " ⠀⢷⠘⠀⠀⠀⠀⠀⠀⣷⣿⣿⢸⠀⠀⠀⠀⠃⡿⣿⠿⠀⠀⠀⠀⠀⠀⠋⣾⢀
-        " ⣧⠈⠀⠀⠀⠀⠀⠀⠀⠋⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡏⣾
-        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿
-        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣄⣦⣷⢿⠿⠿⠿⡿⣿⠰⠀⡀⣦⢶⡶⣴⠀⠀⣧
-        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣷⢿⠙⠈⠀⠀⠀⠀⠀⠀⠀⠀⣷⢹⠀⡅⣿⠀⠀⣿
-        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⣦⢷⠿⠶⣶⣶⣴⣤⣤⣤⣤⣿⠘⠀⡇⣿⠀⠀⣿
-        " ⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⣿⣠⣀⢀⠀⠀⠀⠀⠉⠉⠉⠈⠀⠀⠁⡿⢰⠀⣿
-        " ⠟⠾⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠋⠛⡟⣿⠛⠀⠀⠀⠀⠀⠀⠀⠀⡇⣼⢷⠙
-        " ⠀⠀⠀⠉⠛⠾⠶⡴⣤⣤⣄⣠⣀⣀⣀⣁⣿⢰⠀⠀⠀⠀⠀⠀⠀⠀⣇⣿⢸⠀
-        " ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠉⠉⠉⠉⡏⣿⣾⢀⠀⠀⠀⠀⠀⡀⣆⣻⢿⠈⠀
-        "               ⠀⠀⠈⠋⣽⣿⣿⣶⣾⣷⣿⣛⣿⠟⠀⠀
+        " reading with right hand keys
         nnoremap j <C-e>
         nnoremap k <C-y>
         nnoremap u <C-d>
