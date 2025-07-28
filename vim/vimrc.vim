@@ -638,14 +638,6 @@ function! SwitchTab(number)
     execute "normal! ".a:number."gt"
     call CheckSwitchToTerminalMode()
 endfunction
-function! SwitchTabFromTerminal(number)
-    if &buftype ==# 'terminal'
-        let b:switch_to_terminal_mode = 1
-        call SwitchTab(a:number)
-    else
-        echo "Not a terminal"
-    endif
-endfunction
 
 " Tab metakeys.
 for index in [1,2,3,4,5,6,7,8,9]
@@ -653,7 +645,7 @@ for index in [1,2,3,4,5,6,7,8,9]
     "execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
     "execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
     execute "nnoremap <silent> <M-".index."> :call SwitchTab(".index.")<cr>"
-    execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:call SwitchTabFromTerminal(".index.")<cr>"
+    execute 'tnoremap <silent> <M-'.index.'> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SwitchTab('.index.')<cr>'
     " Move window to tab
     "TODO
     "execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
@@ -1250,6 +1242,9 @@ function! SpaceMoveHorizontal(amount, skip_splits)
         return
     endif
     if a:skip_splits == 1
+        if a:amount < 0 && tabpagenr() > 1 || a:amount > 0 && tabpagenr() < tabpagenr('$')
+            execute l:tabcmd
+        endif
     else
         let l:prev_wingetid = win_getid()
         for i in range(l:absolute_amount)
@@ -1267,16 +1262,21 @@ function! SpaceMoveHorizontal(amount, skip_splits)
             endif
         endfor
     endif
+    call CheckSwitchToTerminalMode()
 endfunction
 " Vertical: Up-down splits movement, dirspaces
 
 tnoremap <M-J><M-K> <C-\><C-n>
 tnoremap <M-W><M-W> <C-\><C-n>
-tnoremap <M-w><M-h> <C-\><C-n>:normal! gT<cr>
-tnoremap <M-w><M-l> <C-\><C-n>:normal! gt<cr>
+tnoremap <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
+tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
+tnoremap <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
+tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
 nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
 nnoremap <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
 nnoremap <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
+nnoremap <M-W><M-H> :call SpaceMoveHorizontal(-1, 1)<cr>
+nnoremap <M-W><M-L> :call SpaceMoveHorizontal(1, 1)<cr>
 " Open a terminal below.
 function! LowerTerminal()
     if v:count == 0
