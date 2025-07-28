@@ -827,11 +827,11 @@ vi_bind '"\ec": "\C-u\C-lvcd\n"'
 vi_bind '"\eC": "\C-u\C-lcd -\n"'
 
 # Navigation
-vi_bind '"\el": "\C-ulfcd\n"'
+vi_bind '"\e;": "\C-ulfcd\n"'
 # search
 vi_bind '"\e/": "\C-ulfcd -command=\"set preview; set ratios 1:2; push f\"\n"'
 # Navigate backward
-vi_bind '"\eh": "\C-ucd ..\n"'
+vi_bind '"\el": "\C-ucd ..\n"'
 
 vi_bind '"\ef": "\C-u\C-lfzf_find\n"'
 

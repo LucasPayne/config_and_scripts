@@ -138,8 +138,8 @@ map f :set user_filter_mode "filter"; filter
 map <a-/> :set user_filter_mode "filter"; filter
 map F :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
 map U setfilter
-cmap <a-l> :cmd-enter; setfilter; LFRC::open
-map <a-l> :LFRC::open
+cmap <a-\;> :cmd-enter; setfilter; LFRC::open
+map <a-\;> :LFRC::open
 
 cmap <enter> &{{
     if [ "$lf_mode" = filter ]
@@ -276,7 +276,9 @@ cmap <a-h> :cmd-end; cmd-delete-home; LFRC::execute-from-history
 # General mappings
 map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
 map <enter> open
-map l open
+map h
+map \; open
+map l updir
 map D LFRC::mkdir
 map T LFRC::touch
 # move faster
