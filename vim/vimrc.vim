@@ -625,12 +625,16 @@ endfunction
 nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
 nnoremap <silent> <M-n> :set number!<cr>
 
-function! SwitchTab(number)
-    execute "normal! ".a:number."gt"
+
+function! CheckSwitchToTerminalMode()
     if exists("b:switch_to_terminal_mode") && b:switch_to_terminal_mode
         call feedkeys("i", 'n')
         unlet b:switch_to_terminal_mode
     endif
+endfunction
+function! SwitchTab(number)
+    execute "normal! ".a:number."gt"
+    call CheckSwitchToTerminalMode()
 endfunction
 function! SwitchTabFromTerminal(number)
     if &buftype ==# 'terminal'
@@ -653,6 +657,8 @@ for index in [1,2,3,4,5,6,7,8,9]
     "execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
     "execute "tnoremap <silent> <M-W><M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
 endfor
+
+autocmd BufEnter * if &buftype ==# 'terminal' | call CheckSwitchToTerminalMode() | endif
 
 " Move window to new tab.
 function! MoveCurrentWindowToNewTab(background)
