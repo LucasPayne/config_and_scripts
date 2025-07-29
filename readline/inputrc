@@ -29,14 +29,16 @@ $if mode=vi
     "ci\"": "F\"lct\""
     "ci(": "F(ldt)i"
     "ci)": "F(ldt)i"
-    "dH": "d^"
-    "dL": "d$"
-    "cH": "c^"
-    "cL": "c$"
+    "dL": "d^"
+    "d:": "d$"
+    "cL": "c^"
+    "c:": "c$"
+    "l": backward-char
+    ";": forward-char
 
     # Match line-editing from vimrc
-    "H": "^"
-    "L": "$"
+    "L": "^"
+    ":": "$"
     # Vim-surround
     "siw\"": "wbi\"jkea\"jkwbh"
     "siw'": "wbi'jkea'jkwbh"
@@ -47,14 +49,14 @@ $if mode=vi
     "ds(": "F(mtxf)x`t"
     "ds)": "F(mtxf)x`t"
 
-    "sL\"": "mti\"jkLa\"jk`t"
-    "sH\"": "mti\"jkHa\"jk`t"
-    "sL'": "mti'jkLa'jk`t"
-    "sH'": "mti'jkHa'jk`t"
-    "sL(": "mti(jkLa)jk`t"
-    "sH(": "mti(jkHa)jk`t"
-    "sL)": "mti(jkLa)jk`t"
-    "sH)": "mti(jkHa)jk`t"
+    "s:\"": "mti\"jkLa\"jk`t"
+    "sL\"": "mti\"jkHa\"jk`t"
+    "s:'": "mti'jkLa'jk`t"
+    "sL'": "mti'jkHa'jk`t"
+    "s:(": "mti(jkLa)jk`t"
+    "sL(": "mti(jkHa)jk`t"
+    "s:)": "mti(jkLa)jk`t"
+    "sL)": "mti(jkHa)jk`t"
 
     "ss\"": "A\"jkI\"jkH"
     "ss'": "A'jkI'jkH"
@@ -63,10 +65,10 @@ $if mode=vi
     "ss$": "A)jkI$(jkH"
     # Surround with $().
     "siw$": "wbi$(jkea)jkwbhh"
-    "sL$": "mti$(jkLa)jk`t"
-    "sH$": "mti$(jkHa)jk`t"
-    "sL$": "mti$(jkLa)jk`t"
-    "sH$": "mti$(jkHa)jk`t"
+    "s:$": "mti$(jkLa)jk`t"
+    "sL$": "mti$(jkHa)jk`t"
+    "s:$": "mti$(jkLa)jk`t"
+    "sL$": "mti$(jkHa)jk`t"
     # Todo: This isn't accurate, need to back-search for $(.
     "ds$": "F$mtxxf)x`t"
     # Add a preceding $ to parenthesis.
