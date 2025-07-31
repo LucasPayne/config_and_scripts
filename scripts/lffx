@@ -28,11 +28,19 @@ do
     fi
 done
 
+focus="$(lff | tr -d '\n')"
+if [ -z "$focus" ]
+then
+    exit 1
+fi
+
+XARGS="xargs -0"
+
 if [ $xargs_replace_str_mode -eq 1 ]
 then
-    lff | xargs -i echo "$@"
+    echo -n "$focus" | $XARGS -i echo "$@"
 else
-    lff | xargs echo "$@"
+    echo -n "$focus" | $XARGS echo "$@"
 fi
 
 #https://stackoverflow.com/questions/3231804/in-bash-how-to-add-are-you-sure-y-n-to-any-command-or-alias
@@ -47,7 +55,7 @@ case "$response" in
 esac
 if [ $xargs_replace_str_mode -eq 1 ]
 then
-    lff | xargs -i "$@"
+    echo -n "$focus" | $XARGS -i "$@"
 else
-    lff | xargs "$@"
+    echo -n "$focus" | $XARGS "$@"
 fi
