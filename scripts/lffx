@@ -1,0 +1,53 @@
+#!/bin/bash
+# lffx: execute with lf focus
+
+if [ $# -eq 0 ]
+then
+    # Show focus on no args.
+    lff
+    exit 0
+fi
+
+# Validate that the first argument
+# is a command name.
+# Otherwise, command echo may accidentally intepret a flag.
+command_name="$1"
+if [[ $command_name =~ ^\s*-.*$ ]]
+then
+    >&2 echo "Invalid command name \"$command_name\"."
+    exit 1
+fi
+
+xargs_replace_str_mode=0
+for arg in "$@"
+do
+    if echo "$arg" | grep -q '{}'
+    then
+        xargs_replace_str_mode=1
+        break
+    fi
+done
+
+if [ $xargs_replace_str_mode -eq 1 ]
+then
+    lff | xargs -i echo "$@"
+else
+    lff | xargs echo "$@"
+fi
+
+#https://stackoverflow.com/questions/3231804/in-bash-how-to-add-are-you-sure-y-n-to-any-command-or-alias
+>&2 read -r -p "Are you sure? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY]) 
+        ;;
+    *)
+        >&2 echo "aborted"
+        exit 1
+        ;;
+esac
+if [ $xargs_replace_str_mode -eq 1 ]
+then
+    lff | xargs -i "$@"
+else
+    lff | xargs "$@"
+fi
