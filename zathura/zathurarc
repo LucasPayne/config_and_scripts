@@ -1,9 +1,9 @@
 set recolor true
 # Amber
 #dark
-#set recolor-darkcolor \#6B530F
+set recolor-darkcolor \#6B530F
 #medium
-set recolor-darkcolor \#AB914F
+#set recolor-darkcolor \#AB914F
 #bright
 #set recolor-darkcolor \#E8DF9B
 set recolor-lightcolor \#000000
