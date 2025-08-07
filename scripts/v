@@ -37,9 +37,9 @@ add_file()
     if [ -z "$line" ] ; then line=NONE ; fi
     local path="$3"
     if [ -z "$path" ] ; then path=NONE ; fi
-    echo "add_file \"$1\" \"$2\" \"$3\""
+    #echo "add_file \"$1\" \"$2\" \"$3\""
     files_json="$(echo "$files_json" | jq ". += [{\"file\": \"$file\", \"line\": "$line", \"path\": \"$path\"}]")"
-    echo "$files_json"
+    #echo "$files_json"
 }
 iterfiles()
 {
@@ -95,12 +95,16 @@ do
     esac
 done
 
-unsigned_integer_regex='^[0-9]+$'
-if ! [[ $opt_line =~ $unsigned_integer_regex ]]
-then
-    echo "error: Line number given is not valid" >&2
-    exit 1
-fi
+#debug
+# if false
+# then
+#     unsigned_integer_regex='^[0-9]+$'
+#     if ! [[ $opt_line =~ $unsigned_integer_regex ]]
+#     then
+#         echo "error: Line number given is not valid" >&2
+#         exit 1
+#     fi
+# fi
 
 # Check if accepting and receiving stdin.
 if [[ $opt_nostdin -ne 1 ]]
@@ -116,7 +120,7 @@ then
                 do
                     line="${input##* }"
                     file="${input% $line}"
-                    add_file "$file" 1 ""
+                    add_file "$file" "$line" ""
                 done
             else
                 # Interpret stdin as a list of files to open in new tabs.
@@ -147,12 +151,6 @@ if [[ $opt_cd -eq 1 ]]
 then
     vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
 fi
-
-# while IFS=$'\t' read -r file line path index
-# do
-#     echo "$file @ $line -> $path : $index"
-# done < <(iterfiles)
-# exit
 
 # Determine the paths to be communicated to vim.
 while IFS=$'\t' read -r file line path index
@@ -193,7 +191,6 @@ else
     then
         while IFS=$'\t' read -r file line path index
         do
-            echo "$file @ $line -> $path : $index"
             if [ "$opt_line" -ne 0 ]
             then
                 # Override the line of each file.
@@ -201,7 +198,6 @@ else
                 line="$opt_line"
             fi
             send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$line"'ggzOzz<cr>'
-            echo "$send_string"
             vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
         done < <(iterfiles)
     fi
