@@ -1,0 +1,4 @@
+#!/bin/bash
+# xwip: xwi and runs xprop -id with the id
+xprop -id "$(xwi)"
+
