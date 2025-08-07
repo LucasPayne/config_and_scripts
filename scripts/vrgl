@@ -1,0 +1,11 @@
+#!/bin/bash
+# vrgl: ripgrep and output as a list of vim links
+
+rg_json="$(rg --json "$@")"
+if [ $? -ne 0 ]
+    exit 1
+fi
+echo "$rg_json" jq -r '
+  select(.type=="match") |
+  "\(.data.path.text) \(.data.line_number)"
+'
