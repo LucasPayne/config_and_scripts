@@ -28,8 +28,24 @@ opt_arglist=0
 # option: Regardless of other options, prevent opening files.
 opt_no_open=0
 
-files=()
-lines=()
+files_json="[]"
+add_file()
+{
+    local file="$1"
+    if [ -z "$file" ] ; then file=NONE ; fi
+    local line="$2"
+    if [ -z "$line" ] ; then line=NONE ; fi
+    local path="$3"
+    if [ -z "$path" ] ; then path=NONE ; fi
+    echo "add_file \"$1\" \"$2\" \"$3\""
+    files_json="$(echo "$files_json" | jq ". += [{\"file\": \"$file\", \"line\": "$line", \"path\": \"$path\"}]")"
+    echo "$files_json"
+}
+iterfiles()
+{
+    jq -r 'to_entries[] | [.value.file, .value.line, .value.path, .key] | @tsv' <<< "$files_json"
+}
+
 while [[ $# -gt 0 ]]
 do
     case $1 in
@@ -73,8 +89,7 @@ do
         shift
         ;;
     *)
-        files+=("$1")
-        lines+=("1")
+        add_file "$1" 1 ""
         shift
         ;;
     esac
@@ -101,15 +116,13 @@ then
                 do
                     line="${input##* }"
                     file="${input% $line}"
-                    files+=("$file")
-                    lines+=("$line")
+                    add_file "$file" 1 ""
                 done
             else
                 # Interpret stdin as a list of files to open in new tabs.
                 while read -r input
                 do
-                    files+=("$input")
-                    lines+=("1")
+                    add_file "$input" 1 ""
                 done
             fi
         else
@@ -123,8 +136,7 @@ then
             else
                 temporary_filename=$(tempfile 2>/dev/null)
                 cat > "$temporary_filename"
-                files+=("$temporary_filename")
-                lines+=("1")
+                add_file "$temporary_filename" 1 ""
             fi
         fi
     fi
@@ -136,9 +148,14 @@ then
     vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:cd '"$(pwd)"'<cr>'
 fi
 
+# while IFS=$'\t' read -r file line path index
+# do
+#     echo "$file @ $line -> $path : $index"
+# done < <(iterfiles)
+# exit
+
 # Determine the paths to be communicated to vim.
-paths=()
-for file in "${files[@]}"
+while IFS=$'\t' read -r file line path index
 do
     if [[ $opt_open_scripts -eq 1 ]]
     then
@@ -158,30 +175,25 @@ do
         # It is expected that files referenced in the shell are relative to the shell working directory.
         # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
         path="$(realpath "$file")"
+        files_json=$(echo "$files_json" | jq --arg path "$path" '.['$index'].path = $path')
     fi
-    paths+=("$path")
-done
+done < <(iterfiles)
 
 # Send the necessary commands to the vim server.
 if [[ $opt_quickfix -eq 1 ]]
 then
     json='[]'
-    for ((i=0; i < ${#files[@]}; i++))
+    while IFS=$'\t' read -r file line path index
     do
-        file="${files[i]}"
-        line="${lines[i]}"
-        path="${paths[i]}"
         json="$(echo "$json" | jq ". += [{\"path\": \"$path\", \"line\": "$line", \"column\": 1}]")"
-    done
+    done < <(iterfiles)
     echo "$json" | vimjsonrpc QuickFixFromJSON
 else
     if [[ $opt_no_open -eq 0 ]]
     then
-        for ((i=0; i < ${#files[@]}; i++))
+        while IFS=$'\t' read -r file line path index
         do
-            file="${files[i]}"
-            line="${lines[i]}"
-            path="${paths[i]}"
+            echo "$file @ $line -> $path : $index"
             if [ "$opt_line" -ne 0 ]
             then
                 # Override the line of each file.
@@ -189,8 +201,9 @@ else
                 line="$opt_line"
             fi
             send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$line"'ggzOzz<cr>'
+            echo "$send_string"
             vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
-        done 
+        done < <(iterfiles)
     fi
 fi
 
@@ -200,12 +213,9 @@ then
     send_string='<C-\><C-n>:%argd<cr>'
     vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
     # Add the paths to the argument list
-    for ((i=0; i < ${#files[@]}; i++))
+    while IFS=$'\t' read -r file line path index
     do
-        file="${files[i]}"
-        line="${lines[i]}"
-        path="${paths[i]}"
         send_string='<C-\><C-n>:argadd '"$path"'<cr>'
         vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
-    done 
+    done < <(iterfiles)
 fi
