@@ -1,0 +1,3 @@
+#!/bin/bash
+# xwi: xwininfo but just outputs the id
+xwininfo | awk '/Window id:/ {print $4}'
