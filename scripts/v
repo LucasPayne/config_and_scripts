@@ -17,6 +17,8 @@ opt_cd=0
 opt_line=0
 # option: Interpret stdin as a list of files to open in new tabs.
 opt_filelist=0
+# option: When parsing file names, parse appended line number.
+opt_filelist_lines=0
 # option: Interpret filenames instead as command names, and attempt to edit the corresponding script.
 opt_open_scripts=0
 # option: Load the files into the quickfix list.
@@ -27,6 +29,7 @@ opt_arglist=0
 opt_no_open=0
 
 files=()
+lines=()
 while [[ $# -gt 0 ]]
 do
     case $1 in
@@ -45,6 +48,10 @@ do
         ;;
     -f|--filelist)
         opt_filelist=1
+        shift
+        ;;
+    -F|--filelist-lines)
+        opt_filelist_lines=1
         shift
         ;;
     -s|--scripts)
@@ -66,6 +73,7 @@ do
         ;;
     *)
         files+=("$1")
+        lines+=("1")
         shift
         ;;
     esac
@@ -85,11 +93,24 @@ then
     then
         if [[ $opt_filelist -eq 1 ]]
         then
-            # Interpret stdin as a list of files to open in new tabs.
-            while read -r line
-            do
-                files+=("$line")
-            done
+            if [[ $opt_filelist_lines -eq 1 ]]
+            then
+                # Interpret stdin as a list of files and lines to open in new tabs.
+                while read -r line
+                do
+                    line="${line##* }"
+                    file="${line% $line}"
+                    files+=("$file")
+                    lines+=("$line")
+                done
+            else
+                # Interpret stdin as a list of files to open in new tabs.
+                while read -r line
+                do
+                    files+=("$line")
+                    lines+=("1")
+                done
+            fi
         else
             # Open a temporary file from stdin.
             if [[ "$(readlink -f /proc/self/fd/0 2>/dev/null)" = "/dev/null" ]]
@@ -102,6 +123,7 @@ then
                 temporary_filename=$(tempfile 2>/dev/null)
                 cat > "$temporary_filename"
                 files+=("$temporary_filename")
+                lines+=("1")
             fi
         fi
     fi
@@ -142,17 +164,29 @@ done
 if [[ $opt_quickfix -eq 1 ]]
 then
     json='[]'
-    for path in "${paths[@]}"
+    for ((i=0; i < ${#files[@]}; i++))
     do
-        json="$(echo "$json" | jq ". += [{\"path\": \"$path\", \"line\": 1, \"column\": 1}]")"
+        file="${files[i]}"
+        line="${lines[i]}"
+        path="${path[i]}"
+        json="$(echo "$json" | jq ". += [{\"path\": \"$path\", \"line\": "$line", \"column\": 1}]")"
     done
     echo "$json" | vimjsonrpc QuickFixFromJSON
 else
     if [[ $opt_no_open -eq 0 ]]
     then
-        for path in "${paths[@]}"
+        for ((i=0; i < ${#files[@]}; i++))
         do
-            send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$opt_line"'ggzOzz<cr>'
+            file="${files[i]}"
+            line="${lines[i]}"
+            path="${path[i]}"
+            if [ "$opt_line" -ne 0 ]
+            then
+                # Override the line of each file.
+                # (opt_line is mainly useful when there is only one file.)
+                line="$opt_line"
+            fi
+            send_string='<C-\><C-n>:tabnew '"$path"'<cr>:silent! normal! '"$line"'ggzOzz<cr>'
             vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
         done 
     fi
@@ -164,8 +198,11 @@ then
     send_string='<C-\><C-n>:%argd<cr>'
     vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
     # Add the paths to the argument list
-    for path in "${paths[@]}"
+    for ((i=0; i < ${#files[@]}; i++))
     do
+        file="${files[i]}"
+        line="${lines[i]}"
+        path="${path[i]}"
         send_string='<C-\><C-n>:argadd '"$path"'<cr>'
         vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
     done 

@@ -3,9 +3,10 @@
 
 rg_json="$(rg --json "$@")"
 if [ $? -ne 0 ]
+then
     exit 1
 fi
-echo "$rg_json" jq -r '
+echo "$rg_json" | jq -r '
   select(.type=="match") |
   "\(.data.path.text) \(.data.line_number)"
 '

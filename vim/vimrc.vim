@@ -86,6 +86,12 @@ nnoremap <C-w>; <C-w>l
 nnoremap <C-w>L <C-w>H
 nnoremap <C-w>: <C-w>L
 
+set textwidth=80
+" change textwidth by tab, useful for formatting
+" indented text with gq.
+nnoremap <space>3 :let &textwidth = &textwidth - 4 \| echo &textwidth<cr>
+nnoremap <space>4 :let &textwidth = &textwidth + 4 \| echo &textwidth<cr>
+
 set nocompatible
 let g:mapleader = "<C-\>"
 let g:maplocalleader = "<C-\>"
@@ -638,7 +644,7 @@ function! ToggleDetailView()
     call SetDetailView(g:detail_view_active)
 endfunction
 nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
-nnoremap <silent> <M-n> :set number!<cr>
+nnoremap <silent> <M-m> :set number!<cr>
 
 
 function! CheckSwitchToTerminalMode()
@@ -1525,7 +1531,7 @@ function! RefreshMagicCardPreview()
     let curline = getline(".")
     if len(curline) > 2 && curline[0] == "=" && curline[1] == " "
         let card_name = curline[2:]
-        let card_filename = "/home/lucas/drive/dev/magic/images/".card_name.".jpg"
+        let card_filename = "/home/lucas/drive/dev/magic_the_gathering/images/".card_name.".jpg"
         if !filereadable(card_filename)
             echo "Magic card image not found: ".card_name
         else
@@ -1573,7 +1579,7 @@ function! MultipleMagicCardPreview(card_names)
     let card_filenames = []
     let card_filenames_argument = ""
     for card_name in a:card_names
-        let card_filename = "/home/lucas/drive/dev/magic/images/".card_name.".jpg"
+        let card_filename = "/home/lucas/drive/dev/magic_the_gathering/images/".card_name.".jpg"
         if !filereadable(card_filename)
             echo "Magic card image not found: ".card_name
             return
@@ -1877,9 +1883,6 @@ function! VimTerminalEditor(filename, requesting_pid)
     augroup END
 endfunction
 
-function! QuickfixDeserialize()
-endfunction
-
 " Tags
 nnoremap <C-[> <C-t>
 
@@ -1977,4 +1980,9 @@ let g:vimrc_loaded_state = "finished"
 "vnoremap gI :<C-u>call PrependReplaceOperator(visualmode(), 1)<cr>
 "--------------------------------------------------------------------------------
 
+nnoremap <M-n> :!nsup -n<cr><cr>
 nnoremap <M-N> :!nsup<cr><cr>
+
+" temporary-----
+" Because xterm colors have light background which hurts my eyes
+nnoremap <C-9> :hi Normal ctermbg=0<cr>
