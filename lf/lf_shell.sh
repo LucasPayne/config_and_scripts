@@ -8,8 +8,11 @@
 # Silence job control.
 # https://stackoverflow.com/questions/11097761/is-there-a-way-to-make-bash-job-control-quiet
 
-lfcd ()
+__lfcd ()
 {
+    if [ $# -ne 1 ] ; then >&2 echo "error: __lfcd()" ; exit 1 ; fi
+    local do_cd="$1"
+
     local debug=0
 
     local lf_runtime_dir="$XDG_RUNTIME_DIR/lf"
@@ -37,12 +40,15 @@ lfcd ()
     # note: If env is not used, `command` is needed in case `lfcd` is aliased to `lf`
     env BASH_ENV="$CONFIG_DIR/lf/lf_bashrc.sh" lf -command="set user_runtime_dir \"$lf_runtime_dir\"" -last-dir-path="$tmp" "$@"
 
-    if [ -f "$tmp" ]; then
-        dir="$(cat "$tmp")"
-        rm -f "$tmp"
-        if [ -d "$dir" ]; then
-            if [ "$dir" != "$(pwd)" ]; then
-                cd "$dir"
+    if [ "$do_cd" -eq 1 ]
+    then
+        if [ -f "$tmp" ]; then
+            dir="$(cat "$tmp")"
+            rm -f "$tmp"
+            if [ -d "$dir" ]; then
+                if [ "$dir" != "$(pwd)" ]; then
+                    cd "$dir"
+                fi
             fi
         fi
     fi
@@ -59,4 +65,14 @@ lfcd ()
     # This can have the same name as the lf-focus command.
     # https://unix.stackexchange.com/questions/382660/shell-functions-and-variables-with-the-same-name
     export lff="$(lff)"
+}
+
+lf ()
+{
+    __lfcd 0
+}
+
+lfcd ()
+{
+    __lfcd 1
 }

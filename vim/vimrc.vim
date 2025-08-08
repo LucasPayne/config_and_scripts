@@ -86,11 +86,15 @@ nnoremap <C-w>; <C-w>l
 nnoremap <C-w>L <C-w>H
 nnoremap <C-w>: <C-w>L
 
-set textwidth=80
+nnoremap <M-d> ddj
+
+set textwidth=0
 " change textwidth by tab, useful for formatting
 " indented text with gq.
 nnoremap <space>3 :let &textwidth = &textwidth - 4 \| echo &textwidth<cr>
 nnoremap <space>4 :let &textwidth = &textwidth + 4 \| echo &textwidth<cr>
+nnoremap <space>1 :set textwidth&<cr>
+nnoremap <space>2 :set textwidth=80<cr>
 
 set nocompatible
 let g:mapleader = "<C-\>"
@@ -1152,8 +1156,6 @@ function! BreakpointsQuickfixSyncGdb()
     call BreakpointsQuickfix()
 endfunction
 
-nnoremap <M-d><M-B> :call BreakpointsQuickfixSyncGdb()<cr>
-
 
 ">>>
 
@@ -1620,10 +1622,8 @@ augroup Notes
     autocmd!
     autocmd CursorMoved *.ns :call RefreshNotesTextLink()
     autocmd WinScrolled *.ns :call RefreshNotesTextLink()
-    autocmd Filetype notes nnoremap <buffer> <space>/ :call NotesFollowLinkUnderCursor(0)<cr>
-    autocmd Filetype notes nnoremap <buffer> <enter> :call NotesFollowLinkUnderCursor(0)<cr>
-    "todo: Shift-enter, tabnew
-    autocmd Filetype notes nnoremap <buffer> <space>? :call NotesFollowLinkUnderCursor(1)<cr>
+    autocmd Filetype notes nnoremap <buffer> <M-w><M-w><cr> :call NotesFollowLinkUnderCursor(0)<cr>
+    autocmd Filetype notes nnoremap <buffer> <M-w><cr> :call NotesFollowLinkUnderCursor(1)<cr>
     " It is convenient to not have to have notes open on only one vim.
     " Currently want this as keep switching between screen tabs, but each vim
     " should have a notes buffer anyway. It is nice to synchronize them.
