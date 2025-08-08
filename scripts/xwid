@@ -1,0 +1,3 @@
+#!/bin/bash
+# xwid: xdotool with window selection
+exec xdotool "$@" $(xwi)
