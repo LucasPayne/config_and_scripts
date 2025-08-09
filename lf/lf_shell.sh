@@ -10,8 +10,9 @@
 
 __lfcd ()
 {
-    if [ $# -ne 1 ] ; then >&2 echo "error: __lfcd()" ; exit 1 ; fi
+    if [ $# -lt 1 ] ; then >&2 echo "error: __lfcd()" ; exit 1 ; fi
     local do_cd="$1"
+    shift
 
     local debug=0
 
@@ -69,10 +70,10 @@ __lfcd ()
 
 lf ()
 {
-    __lfcd 0
+    __lfcd 0 "$@"
 }
 
 lfcd ()
 {
-    __lfcd 1
+    __lfcd 1 "$@"
 }

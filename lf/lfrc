@@ -301,17 +301,9 @@ map <a-f> :LFRC::fzf_jump 0
 map <a-r> :LFRC::fzf_jump 1
 map x :LFRC::unarchive
 map g :top
+# Unmap w. w's default is to close lf.
 map w
-# Just open a text file.
-map e &{{
-    for file in $fx ; do
-        case $(file --mime-type -Lb $file) in
-            text/*)
-                v --nostdin "$file"
-            ;;
-        esac
-    done
-}}
+
 map <a-y> :yank-path
 #map <a-j> :down
 #map <a-k> :up
@@ -329,9 +321,14 @@ map <a-q> :lf-checkout-find-code
 cmd lf-checkout-find-documentation &lf-checkout-find ~/drive/dev/documentation
 map <a-d> :lf-checkout-find-documentation
 
-#todo
-cmd open ${{
-    v "$f" &
+cmd open &{{
+    v "$f"
+}}
+
+# Open a text file and go to the end.
+map A &{{
+    # Using -l because it is easy. Assuming the file is < 100000 lines long.
+    v "$f" -l 100000
 }}
 
 # Open file
