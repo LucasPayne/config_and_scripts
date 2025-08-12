@@ -56,6 +56,10 @@ endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
 
+" Allow editing in block mode adding whitespace at the end of misaligned lines.
+"todo: "block" doesn't work for inserts
+"set virtualedit=all
+
 " Use l; for left/right motions instead of hl.
 noremap l h
 noremap ; l

@@ -175,8 +175,8 @@ do
         # It is expected that files referenced in the shell are relative to the shell working directory.
         # It would be unintuitive to specify paths in shell which are meant to be interpreted in vim's working directory.
         path="$(realpath "$file")"
-        files_json=$(echo "$files_json" | jq --arg path "$path" '.['$index'].path = $path')
     fi
+    files_json=$(echo "$files_json" | jq --arg path "$path" '.['$index'].path = $path')
 done < <(iterfiles)
 
 # Send the necessary commands to the vim server.

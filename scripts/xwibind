@@ -1,0 +1,7 @@
+#!/bin/bash
+# xwibind: Unfree (un-xwifree) target X window. This unapplies override_redirect to bring it back to the window manager.
+
+id="$(xwi)"
+xdotool set_window --overrideredirect 0 "$id"
+xdotool windowunmap $winid "$id"
+xdotool windowmap $winid "$id"
