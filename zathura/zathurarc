@@ -19,8 +19,8 @@ set recolor true
 #set recolor-darkcolor \#3465A4
 
 # Calibrated for keratoconus
-set recolor-lightcolor \#2e2b00
-set recolor-darkcolor \#c9bb91
+#set recolor-lightcolor \#2e2b00
+#set recolor-darkcolor \#c9bb91
 
 
 #todo: apparently not working
@@ -28,3 +28,7 @@ set recolor-darkcolor \#c9bb91
 #unmap normal ;
 #map normal l scroll left
 #map normal ; scroll right
+
+#set recolor-darkcolor \#c9bb91
+set recolor-darkcolor \#AB914F
+set recolor-lightcolor \#0a0a00
