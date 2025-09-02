@@ -194,7 +194,11 @@ nnoremap Y "+y
 "    syntax on
 "    ...
 "<<<
-syntax on
+"syntax on
+" Syntax off, eye problems.
+"todo: Would prefer to at least have the comment highlight group.
+"      Perhaps rather a very muted palette with comments, and possibly keywords, a different colour.
+syntax off
 set path=.,,
 filetype indent on
 filetype plugin on
@@ -270,19 +274,25 @@ function! TabLine()
         let tab_tag = gettabvar(i, "tab_tag", "")
         let tab_label = TabLabel(i)
 
-        if i == tabpagenr()
-            let s ..= '%#TabLineTagSel#'
-        else
-            let s ..= '%#TabLineTag#'
-        endif
-
         " Display tab number.
+        if i == tabpagenr()
+            let s ..= '%#TabLineNumberSel#'
+        else
+            let s ..= '%#TabLineNumber#'
+        endif
         let s ..= ' ' .. string(i) .. ' '
 
+        " Display tab tag if there is any.
         if !empty(tab_tag)
+            if i == tabpagenr()
+                let s ..= '%#TabLineTagSel#'
+            else
+                let s ..= '%#TabLineTag#'
+            endif
             let s ..= tab_tag
         endif
 
+        " Display the rest of the tab.
         if i == tabpagenr()
             let s ..= '%#TabLineSel#'
         else
@@ -380,12 +390,14 @@ endfunction
 highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
-highlight TabLine cterm=underline ctermfg=white ctermbg=black
-highlight TabLineSel cterm=underline ctermfg=black ctermbg=white
-highlight TabLineFill cterm=underline ctermfg=white ctermbg=black
+highlight TabLine cterm=underline ctermfg=gray ctermbg=black
+highlight TabLineSel cterm=underline ctermfg=white ctermbg=black
+highlight TabLineFill cterm=underline ctermfg=gray ctermbg=black
 " custom
-highlight TabLineTag cterm=underline ctermfg=blue ctermbg=black
-highlight TabLineTagSel cterm=underline ctermfg=darkblue ctermbg=white
+highlight TabLineNumber cterm=underline ctermfg=blue ctermbg=black
+highlight TabLineNumberSel cterm=underline ctermfg=blue ctermbg=black
+highlight TabLineTag cterm=underline ctermfg=gray ctermbg=black
+highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
 
 " Nice to have center-scroll when going to end of file.
 function! EndOfFileNavigate()

@@ -3,11 +3,11 @@ set recolor true
 #dark
 #set recolor-darkcolor \#6B530F
 #medium
-set recolor-darkcolor \#AB914F
+#set recolor-darkcolor \#AB914F
 #bright
 #set recolor-darkcolor \#E8DF9B
-set recolor-lightcolor \#000000
-set guioptions ""
+#set recolor-lightcolor \#000000
+#set guioptions ""
 
 # Grey
 #set recolor-darkcolor \#6F6F6F
@@ -17,6 +17,11 @@ set guioptions ""
 
 # Blue
 #set recolor-darkcolor \#3465A4
+
+# Calibrated for keratoconus
+set recolor-lightcolor \#2e2b00
+set recolor-darkcolor \#c9bb91
+
 
 #todo: apparently not working
 #unmap normal l

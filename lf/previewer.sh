@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# options
+syntax_highlighting=0 
+
 f=$1
 width=$2
 height=$3
@@ -36,12 +39,30 @@ case "$f" in
     *.7z)
         7z l "$f"
         ;;
+    *) cat "$f"
+        ;;
     *ChangeLog|*changelog) 
-        source-highlight --failsafe -f esc --lang-def=changelog.lang --style-file=esc.style -i "$f"
+        if [ $syntax_highlighting -eq 1 ]
+        then
+            source-highlight --failsafe -f esc --lang-def=changelog.lang --style-file=esc.style -i "$f"
+        else
+            cat "$f"
+        fi
         ;;
     *Makefile|*makefile) 
-        source-highlight --failsafe -f esc --lang-def=makefile.lang --style-file=esc.style -i "$f"
+        if [ $syntax_highlighting -eq 1 ]
+        then
+            source-highlight --failsafe -f esc --lang-def=makefile.lang --style-file=esc.style -i "$f"
+        else
+            cat "$f"
+        fi
         ;;
-    *) source-highlight --failsafe --infer-lang -f esc --style-file=esc.style -i "$f"
+    *)
+        if [ $syntax_highlighting -eq 1 ]
+        then
+            source-highlight --failsafe --infer-lang -f esc --style-file=esc.style -i "$f"
+        else
+            cat "$f"
+        fi
         ;;
 esac
