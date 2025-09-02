@@ -20,6 +20,19 @@ set user_readmes 1
 #todo: Does this have other implications?
 set nodircache
 
+# White background, black text
+#set cursoractivefmt "\033[0;30;47m"
+#set cursorparentfmt "\033[0;30;47m"
+#set cursorpreviewfmt "\033[0;30;47m"
+# Underlined, white text.
+#set cursoractivefmt "\033[4;37;40m%s\033[0m"
+#set cursorparentfmt "\033[4;37;40m%s\033[0m"
+#set cursorpreviewfmt "\033[4;37;40m%s\033[0m"
+# Underlined, keep text color.
+set cursoractivefmt "\033[4;40m%s\033[0m"
+set cursorparentfmt "\033[4;40m%s\033[0m"
+set cursorpreviewfmt "\033[4;40m%s\033[0m"
+
 # LF-LANGUAGE UTILITIES
 #<<<
 #https://github.com/gokcehan/lf/wiki/Tips
