@@ -1,0 +1,16 @@
+#!/bin/bash
+# error_summary: show a summary of the error code
+err="$1"
+if [ err -eq 0 ]
+then
+    c16 -bg green
+    c16 white
+    echo "SUCCESS: $err"
+    c16 -r
+else
+    c16 -bg red
+    c16 black
+    echo "FAIL: $err"
+    c16 -r
+fi
+
