@@ -89,6 +89,9 @@ $if mode=vi
     Control-l: clear-screen
     "jk": vi-movement-mode
     "\e.": yank-last-arg
+
+    # Run command prepending "dt", the "detach terminal" command.
+    "\e\r": "jk0idt jk$\r"
     
     # Ctrl-P, Ctrl-N history search.
     Control-p: previous-history
