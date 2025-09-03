@@ -1,16 +1,32 @@
 #!/bin/bash
 # error_summary: show a summary of the error code
 err="$1"
-if [ err -eq 0 ]
-then
-    c16 -bg green
-    c16 white
-    echo "SUCCESS: $err"
-    c16 -r
-else
-    c16 -bg red
-    c16 black
-    echo "FAIL: $err"
-    c16 -r
-fi
 
+UNDERLINE_GREEN='\033[32;4m'
+UNDERLINE_RED='\033[31;4m'
+RESET='\033[0m'
+
+#options
+# Fit to terminal width
+fit_terminal_width=0
+
+if [ "$err" -eq 0 ]
+then
+    echo -e -n "$UNDERLINE_GREEN"
+    if [ $fit_terminal_width -eq 1 ]
+    then
+        printf '%-*s\n' "$(tput cols)" "SUCCESS: $err"
+    else
+        echo "SUCCESS: $err"
+    fi
+    echo -e -n "$RESET"
+else
+    echo -e -n "$UNDERLINE_RED"
+    if [ $fit_terminal_width -eq 1 ]
+    then
+        printf '%-*s\n' "$(tput cols)" "FAILURE: $err"
+    else
+        echo "FAILURE: $err"
+    fi
+    echo -e -n "$RESET"
+fi

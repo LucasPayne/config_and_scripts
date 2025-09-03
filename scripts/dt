@@ -1,0 +1,37 @@
+#!/bin/bash
+# dt:
+
+RED_UNDERLINE='\033[31;4m'
+NC='\033[0m' # no color / reset
+
+tmp_time="$(mktemp)"
+tmp_stdout="$(mktemp)"
+tmp_stderr="$(mktemp)"
+command time -p --output="$tmp_time" "$@" \
+    > >(tee "$tmp_stdout") \
+    2> >(tee "$tmp_stderr" | \
+        while IFS= read -r line; do
+            echo -e "${RED_UNDERLINE}${line}${NC}"
+            echo "$line" >> stderr.log
+        done)
+
+error_summary $?
+printf "command: "
+echo "$@"
+if [ -f "$tmp_time" ]
+then
+    seconds="$(cat "$tmp_time" | grep ^real | awk '{print $2}')"
+    printf 'seconds: %s\n' "$seconds"
+    rm "$tmp_time"
+else
+    echo "[timing failed]"
+fi
+
+num_stdout_lines="$(wc -l < "$tmp_stdout")"
+printf 'stdout:  %s lines\n' "$num_stdout_lines"
+num_stderr_lines="$(wc -l < "$tmp_stderr")"
+if [ "$num_stderr_lines" -gt 0 ]
+then
+    printf 'stderr:  %s lines\n' "$num_stderr_lines"
+fi
+
