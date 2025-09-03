@@ -1,5 +1,20 @@
 #!/bin/bash
 # dt:
+#
+
+stat ()
+{
+    stat_heading_width=9
+    printf '%'$stat_heading_width's ' "$1"
+    #printf '\033[4m%'$stat_heading_width's\033[0m ' "$1"
+}
+
+stat command
+echo "$@"
+stat date
+date +"%H:%M:%S %-d/%-m/%y"
+
+printf '\033[4m%80s\033[0m\n' ""
 
 RED_UNDERLINE='\033[31;4m'
 NC='\033[0m' # no color / reset
@@ -15,23 +30,28 @@ command time -p --output="$tmp_time" "$@" \
             echo "$line" >> stderr.log
         done)
 
+printf '\033[4m%80s\033[0m\n' ""
+
 error_summary $?
-printf "command: "
+stat command
 echo "$@"
 if [ -f "$tmp_time" ]
 then
     seconds="$(cat "$tmp_time" | grep ^real | awk '{print $2}')"
-    printf 'seconds: %s\n' "$seconds"
+    stat seconds
+    echo "$seconds"
     rm "$tmp_time"
 else
     echo "[timing failed]"
 fi
 
 num_stdout_lines="$(wc -l < "$tmp_stdout")"
-printf 'stdout:  %s lines\n' "$num_stdout_lines"
+stat stdout
+printf '%s lines\n' "$num_stdout_lines"
 num_stderr_lines="$(wc -l < "$tmp_stderr")"
 if [ "$num_stderr_lines" -gt 0 ]
 then
-    printf 'stderr:  %s lines\n' "$num_stderr_lines"
+    stat stderr
+    printf '%s lines\n' "$num_stderr_lines"
 fi
 
