@@ -1,57 +1,13 @@
 #!/bin/bash
 # dt:
-#
 
-stat ()
-{
-    stat_heading_width=9
-    printf '%'$stat_heading_width's ' "$1"
-    #printf '\033[4m%'$stat_heading_width's\033[0m ' "$1"
-}
-
-stat command
-echo "$@"
-stat date
-date +"%H:%M:%S %-d/%-m/%y"
-
-printf '\033[4m%80s\033[0m\n' ""
-
-RED_UNDERLINE='\033[31;4m'
-NC='\033[0m' # no color / reset
-
-tmp_time="$(mktemp)"
-tmp_stdout="$(mktemp)"
-tmp_stderr="$(mktemp)"
-command time -p --output="$tmp_time" "$@" \
-    > >(tee "$tmp_stdout") \
-    2> >(tee "$tmp_stderr" | \
-        while IFS= read -r line; do
-            echo -e "${RED_UNDERLINE}${line}${NC}"
-            echo "$line" >> stderr.log
-        done)
-
-printf '\033[4m%80s\033[0m\n' ""
-
-error_summary $?
-stat command
-echo "$@"
-if [ -f "$tmp_time" ]
+if [ -z "$VIM_SERVERNAME" ]
 then
-    seconds="$(cat "$tmp_time" | grep ^real | awk '{print $2}')"
-    stat seconds
-    echo "$seconds"
-    rm "$tmp_time"
-else
-    echo "[timing failed]"
+    >&2 echo "Not in a vim server."
+    exit 1
 fi
 
-num_stdout_lines="$(wc -l < "$tmp_stdout")"
-stat stdout
-printf '%s lines\n' "$num_stdout_lines"
-num_stderr_lines="$(wc -l < "$tmp_stderr")"
-if [ "$num_stderr_lines" -gt 0 ]
-then
-    stat stderr
-    printf '%s lines\n' "$num_stderr_lines"
-fi
-
+cmd=("$@")
+command_string="$(printf '%q ' "${cmd[@]}")"
+send_string='<C-\><C-n>:tab term runsummary '"$command_string"'<cr>'
+vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
