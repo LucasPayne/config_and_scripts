@@ -43,3 +43,6 @@
 [submodule "vim/__tmp/vim-highlightedyank"]
 	path = vim/repos/vim-highlightedyank
 	url = git@github.com:machakann/vim-highlightedyank.git
+[submodule "vim/__tmp/bufexplorer"]
+	path = vim/repos/bufexplorer
+	url = git@github.com:LucasPayne/bufexplorer.git

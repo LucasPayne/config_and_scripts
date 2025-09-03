@@ -92,6 +92,8 @@ $if mode=vi
 
     # Run command prepending "dt", the "detach terminal" command.
     "\e\r": "jk0idt jk$\r"
+    # Run command prepending "dtf", the "detach terminal fullscreen" command.
+    "\et": "jk0idtf jk$\r"
     
     # Ctrl-P, Ctrl-N history search.
     Control-p: previous-history

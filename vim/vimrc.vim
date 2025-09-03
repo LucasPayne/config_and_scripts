@@ -363,17 +363,23 @@ function! TabLabel(tabnr)
             " anyway.
             let str = ""
         else
-            let l:job = buf->term_getjob()
-            if l:job == v:null
-                let str = "[no-job-found terminal]"
+            if getbufvar(l:buf, "custom_terminal_buffer_name", 0) == 1
+                " If a custom terminal buffer name is signified, then use that.
+                let str  = buf_name
             else
-                let l:job_info = job->job_info()
-
-                let cmd = get(l:job_info, "cmd")
-                if len(cmd) == 0
-                    let str = "[empty terminal]"
+                " Otherwise, display the command name.
+                let l:job = buf->term_getjob()
+                if l:job == v:null
+                    let str = "[no-job-found terminal]"
                 else
-                    let str = cmd[0]
+                    let l:job_info = job->job_info()
+
+                    let cmd = get(l:job_info, "cmd")
+                    if len(cmd) == 0
+                        let str = "[empty terminal]"
+                    else
+                        let str = cmd[0]
+                    endif
                 endif
             endif
         endif
@@ -693,6 +699,7 @@ endfor
 
 "TODO: This is very slow.
 "autocmd BufEnter * if &buftype ==# 'terminal' | call CheckSwitchToTerminalMode() | endif
+"autocmd TabEnter * if &buftype ==# 'terminal' | call CheckSwitchToTerminalMode() | endif
 
 " Move window to new tab.
 function! MoveCurrentWindowToNewTab(background)
@@ -748,6 +755,11 @@ endif
 
 if PluginEnabled("tagbar") == 1
     "nnoremap <leader>t :Tagbar<cr>
+endif
+
+if PluginEnabled("bufexplorer") == 1
+    nnoremap <silent> <C-p> :ToggleBufExplorer<CR>
+    "nnoremap <silent> <C-p> :BufExplorerHorizontalSplit<CR>
 endif
 
 "if PluginEnabled("quickpeek") == 1
@@ -2002,3 +2014,30 @@ nnoremap <M-N> :!nsup<cr><cr>
 " temporary-----
 " Because xterm colors have light background which hurts my eyes
 nnoremap <C-9> :hi Normal ctermbg=0<cr>
+
+function! DTCommand(command)
+    if &buftype ==# 'terminal'
+        let b:switch_to_terminal_mode = 1
+    endif
+    tabnew
+    let l:options = {
+        \ 'term_name': a:command,
+        \ 'curwin': 1
+        \ }
+    call term_start("runsummary "..a:command, l:options)
+    let b:custom_terminal_buffer_name = 1
+endfunction
+
+function! DTFCommand(command)
+    if &buftype ==# 'terminal'
+        let b:switch_to_terminal_mode = 1
+    endif
+    tabnew
+    let l:options = {
+        \ 'term_name': a:command,
+        \ 'curwin': 1,
+        \ 'term_finish': 'close'
+        \ }
+    call term_start(a:command, l:options)
+    let b:custom_terminal_buffer_name = 1
+endfunction

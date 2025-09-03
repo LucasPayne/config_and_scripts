@@ -835,9 +835,6 @@ vi_bind '"\el": "\C-ucd ..\n"'
 
 vi_bind '"\ef": "\C-u\C-lfzf_find\n"'
 
-#bind -m vi-insert '"\e\r": "\C-adt \C-e\n"'
-#bind -m vi-insert '"\e\r": vi-movement-mode'
-
 lf-checkout-find ()
 {
     local checkout_root_path="$1"

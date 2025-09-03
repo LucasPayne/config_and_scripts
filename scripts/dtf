@@ -8,6 +8,10 @@ then
 fi
 
 cmd=("$@")
-command_string="$(printf '%q ' "${cmd[@]}")"
-send_string='<C-\><C-n>:tab term '"$command_string"'<cr>'
+# Double the escapes for vim. --
+command_string="$(printf '%q ' "${cmd[@]}" | sed 's/\\/\\\\/g')"
+
+send_string='<C-\><C-n>:call DTFCommand("'"$command_string"'")<cr>'
+
 vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
+
