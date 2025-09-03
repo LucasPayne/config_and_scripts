@@ -1,0 +1,13 @@
+#!/bin/bash
+# dtf:
+
+if [ -z "$VIM_SERVERNAME" ]
+then
+    >&2 echo "Not in a vim server."
+    exit 1
+fi
+
+cmd=("$@")
+command_string="$(printf '%q ' "${cmd[@]}")"
+send_string='<C-\><C-n>:tab term '"$command_string"'<cr>'
+vim --servername "$VIM_SERVERNAME" --remote-send "$send_string"
