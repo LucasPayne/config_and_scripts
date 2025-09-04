@@ -349,6 +349,15 @@ function! TabLabel(tabnr)
         " Focused window will be displayed.
         let l:buf = buflist[winnr - 1]
     endif
+
+    let rename_bufexplorer = 0
+    if getbufvar(l:buf, "bufexplorer", 0)
+        if get(g:, "bufexplorer_from_bufnr", -1) != -1
+            let l:buf = g:bufexplorer_from_bufnr
+            let rename_bufexplorer = 1
+        endif
+    endif
+
     let buf_info = l:buf->getbufinfo()
     let buf_type = getbufvar(l:buf, "&buftype", "")
 
@@ -392,6 +401,10 @@ function! TabLabel(tabnr)
         let str = "[qf ".buf_basename."]"
     else
         let str = buf_basename
+    endif
+
+    if rename_bufexplorer
+        let str = "<".str.">"
     endif
 
     return str
