@@ -8,7 +8,7 @@
 
 stat ()
 {
-    stat_heading_width=9
+    stat_heading_width=10
     printf '%'$stat_heading_width's ' "$1"
     #printf '\033[4m%'$stat_heading_width's\033[0m ' "$1"
 }
@@ -16,7 +16,12 @@ stat ()
 stat command
 echo "$@"
 stat date
-date +"%H:%M:%S %-d/%-m/%y"
+date_string()
+{
+    date +"%H:%M:%S %-d/%-m/%y"
+}
+start_date="$(date_string)"
+echo "$start_date"
 
 printf '\033[4m%80s\033[0m\n' "_._._._"
 
@@ -40,10 +45,11 @@ unbuffer time -p --output="$tmp_time" "$@" \
     #         echo -e "${RED_UNDERLINE}**${NC} ${line}"
     #         echo "$line" >> stderr.log
     #     done)
+error_code="$?"
 
 printf '\033[4m%80s\033[0m\n' ".._._._"
 
-error_summary $?
+error_summary "$error_code"
 stat command
 echo "$@"
 if [ -f "$tmp_time" ]
@@ -55,6 +61,10 @@ then
 else
     echo "[timing failed]"
 fi
+stat start_date
+echo "$start_date"
+stat end_date
+echo "$(date_string)"
 
 num_stdout_lines="$(wc -l < "$tmp_stdout")"
 stat stdout

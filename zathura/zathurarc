@@ -30,5 +30,10 @@ set recolor true
 #map normal ; scroll right
 
 #set recolor-darkcolor \#c9bb91
+
+#Lighter greenish background, but still dark
+#set recolor-darkcolor \#AB914F
+#set recolor-lightcolor \#0a0a00
+
 set recolor-darkcolor \#AB914F
-set recolor-lightcolor \#0a0a00
+set recolor-lightcolor \#000000

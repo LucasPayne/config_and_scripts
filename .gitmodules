@@ -35,8 +35,8 @@
 	path = vim/repos/targets.vim
 	url = https://github.com/wellle/targets.vim
 [submodule "vim/__tmp/nerdtree"]
-	path = vim/repos/nerdtree
-	url = git@github.com:preservim/nerdtree.git
+	path = vim/repos/nerdtree/nerdtree
+	url = git@github.com:LucasPayne/nerdtree.git
 [submodule "vim/__tmp/goyo.vim"]
 	path = vim/repos/goyo.vim
 	url = https://github.com/junegunn/goyo.vim
@@ -49,3 +49,6 @@
 [submodule "vim/__tmp/vim-bbye"]
 	path = vim/repos/vim-bbye
 	url = git@github.com:LucasPayne/vim-bbye.git
+[submodule "vim/__tmp/vim-nerdtree-tabs"]
+	path = vim/repos/vim-nerdtree-tabs
+	url = git@github.com:LucasPayne/vim-nerdtree-tabs.git
