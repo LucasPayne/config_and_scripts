@@ -365,7 +365,7 @@ function! TabLabel(tabnr)
         else
             if getbufvar(l:buf, "custom_terminal_buffer_name", 0) == 1
                 " If a custom terminal buffer name is signified, then use that.
-                let str  = buf_name
+                let str = buf_name
             else
                 " Otherwise, display the command name.
                 let l:job = buf->term_getjob()
@@ -559,6 +559,8 @@ inoremap <M-s> <Esc>:w<cr>a
 nnoremap <silent> <M-w><M-x> :quit<cr>
 nnoremap <silent> <M-x> :quit<cr>
 tnoremap <silent> <M-W><M-x> :quit<cr>
+" Force quit vim
+nnoremap <silent> <M-w><M-w><M-x> :qa!<cr>
 " Close tab
 nnoremap <silent> <M-w><M-X> :tabclose<cr>
 nnoremap <silent> <M-X> :tabclose<cr>
