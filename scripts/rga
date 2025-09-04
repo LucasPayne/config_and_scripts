@@ -1,0 +1,4 @@
+#!/bin/bash
+# rga: rg but all files (e.g. don't skip .gitignore)
+rg --no-ignore "$@"
+

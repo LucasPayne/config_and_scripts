@@ -46,3 +46,6 @@
 [submodule "vim/__tmp/bufexplorer"]
 	path = vim/repos/bufexplorer
 	url = git@github.com:LucasPayne/bufexplorer.git
+[submodule "vim/__tmp/vim-bbye"]
+	path = vim/repos/vim-bbye
+	url = git@github.com:LucasPayne/vim-bbye.git
