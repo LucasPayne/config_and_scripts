@@ -56,6 +56,9 @@ endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
 
+" Make help buffers listed
+autocmd FileType help setlocal buflisted
+
 " Allow editing in block mode adding whitespace at the end of misaligned lines.
 "todo: "block" doesn't work for inserts
 "set virtualedit=all
