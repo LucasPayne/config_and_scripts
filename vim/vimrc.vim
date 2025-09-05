@@ -1,7 +1,19 @@
 " vimrc
 "--------------------------------------------------------------------------------/
+
+"------------------------------------------------------------
+" Load defaults.vim.
+" (:help usr_05.txt)
+" (:help defaults.vim)
+unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
+" option: display
+" =lastline: Show @@@ rightmost, can see more of the last line versus =truncate.
+set display=lastline
+
+" option: mouse
+set mouse=a
 
 let g:vimrc_loaded_state = "start"
 
@@ -2089,5 +2101,3 @@ function! s:track_window_focus()
         endfor
     endif
 endfunction
-
-
