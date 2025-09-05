@@ -15,6 +15,9 @@ set display=lastline
 " option: mouse
 set mouse=a
 
+" option: incsearch?
+set noincsearch
+
 let g:vimrc_loaded_state = "start"
 
 " Alt key mappings

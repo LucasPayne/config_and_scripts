@@ -135,6 +135,10 @@ link_system_to_config ./xmonad/xmonad.hs ~/.xmonad/xmonad.hs
 mkdir -p ~/.elinks
 link_system_to_config ./elinks/elinks.conf ~/.elinks/elinks.conf
 
+# sxhkd
+mkdir -p "$xdg_config_home/sxhkd"
+link_system_to_config ./sxhkd/sxhkdrc "$xdg_config_home/sxhkd/sxhkdrc"
+
 # lf
 mkdir -p "$xdg_config_home/lf"
 link_system_to_config ./lf/lfrc "$xdg_config_home/lf/lfrc"

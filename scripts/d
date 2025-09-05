@@ -4,4 +4,6 @@
 # e.g., run a pdf viewer as a desktop program, dissociate it from the terminal.
 
 nohup "$@" &>/dev/null &
+pid=$!
 disown
+echo "$pid"

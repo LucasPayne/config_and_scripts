@@ -1,0 +1,5 @@
+# ctrl + e
+#     notify-send "nice"
+# 
+# ctrl + d
+#     pgrep sxhkd | x kill -SIGUSR1

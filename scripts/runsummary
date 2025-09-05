@@ -13,8 +13,11 @@ stat ()
     #printf '\033[4m%'$stat_heading_width's\033[0m ' "$1"
 }
 
+__cmd=("$@")
+command_string="$(printf '%q ' "${__cmd[@]}")"
+
 stat command
-echo "$@"
+echo "$command_string"
 stat directory
 pwd
 stat date
@@ -53,7 +56,7 @@ printf '\033[4m%80s\033[0m\n' ".._._._"
 
 error_summary "$error_code"
 stat command
-echo "$@"
+echo "$command_string"
 stat directory
 pwd
 if [ -f "$tmp_time" ]
@@ -86,4 +89,9 @@ fi
 if [ -f "$tmp_stderr" ]
 then
     rm "$tmp_stderr"
+fi
+
+if command -v notify-send
+then
+    notify-send "Command finished" "command: $command_string\ndirectory: $(pwd)"
 fi
