@@ -2059,3 +2059,30 @@ function! DTFCommand(command)
     call term_start(a:command, l:options)
     let b:custom_terminal_buffer_name = 1
 endfunction
+
+
+let g:window_focus_history_max_length = 10
+if !exists('g:window_focus_history')
+    let g:window_focus_history = []
+endif
+
+augroup WindowFocusHistory
+    autocmd!
+    autocmd WinEnter * call s:track_window_focus()
+augroup END
+
+function! s:track_window_focus()
+    let id = win_getid()
+    if empty(g:window_focus_history) || g:window_focus_history[-1] != id
+        call add(g:window_focus_history, id)
+    endif
+    let length = len(g:window_focus_history)
+    if length > g:window_focus_history_max_length
+        for i in range(length - g:window_focus_history_max_length)
+            call remove(g:window_focus_history, 0)
+        endfor
+    endif
+    echo g:window_focus_history
+endfunction
+
+
