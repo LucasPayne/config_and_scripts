@@ -1,6 +1,8 @@
-
 " vimrc
 "--------------------------------------------------------------------------------/
+source $VIMRUNTIME/defaults.vim
+
+
 let g:vimrc_loaded_state = "start"
 
 " Alt key mappings
@@ -772,7 +774,7 @@ if PluginEnabled("vim-highlightedyank") == 1
 endif
 
 if PluginEnabled("tagbar") == 1
-    "nnoremap <leader>t :Tagbar<cr>
+    nnoremap <leader>t :Tagbar<cr>
 endif
 
 if PluginEnabled("bufexplorer") == 1
@@ -1365,61 +1367,61 @@ tnoremap <M-W><M-W> <C-\><C-n>
 if 1
     " Switch jk and lh for space movement.
     " Horizontal is jk, vertical is lh.
-    tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
-    tnoremap <M-w><M-;> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
-    tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
-    tnoremap <M-W><M-:> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
-    tnoremap <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
-    tnoremap <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
-    tnoremap <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
-    tnoremap <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    tnoremap <silent> <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-;> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <silent> <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-:> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <silent> <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <silent> <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
     nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-    nnoremap <M-w><M-l> :call SpaceMoveHorizontal(-1, 0)<cr>
-    nnoremap <M-w><M-;> :call SpaceMoveHorizontal(1, 0)<cr>
-    nnoremap <M-W><M-L> :call SpaceMoveHorizontal(-1, 1)<cr>
-    nnoremap <M-W><M-:> :call SpaceMoveHorizontal(1, 1)<cr>
-    nnoremap <M-w><M-j> :call SpaceMoveVertical(-1, 0)<cr>
-    nnoremap <M-w><M-k> :call SpaceMoveVertical(1, 0)<cr>
-    nnoremap <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
-    nnoremap <M-W><M-K> :call SpaceMoveVertical(1, 1)<cr>
+    nnoremap <silent> <M-w><M-l> :call SpaceMoveHorizontal(-1, 0)<cr>
+    nnoremap <silent> <M-w><M-;> :call SpaceMoveHorizontal(1, 0)<cr>
+    nnoremap <silent> <M-W><M-L> :call SpaceMoveHorizontal(-1, 1)<cr>
+    nnoremap <silent> <M-W><M-:> :call SpaceMoveHorizontal(1, 1)<cr>
+    nnoremap <silent> <M-w><M-j> :call SpaceMoveVertical(-1, 0)<cr>
+    nnoremap <silent> <M-w><M-k> :call SpaceMoveVertical(1, 0)<cr>
+    nnoremap <silent> <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
+    nnoremap <silent> <M-W><M-K> :call SpaceMoveVertical(1, 1)<cr>
 elseif 1
     " Switch jk and lh for space movement.
     " Horizontal is jk, vertical is lh.
-    tnoremap <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
-    tnoremap <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
-    tnoremap <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
-    tnoremap <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
-    tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
-    tnoremap <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
-    tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
-    tnoremap <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    tnoremap <silent> <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <silent> <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <silent> <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <silent> <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
     nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-    nnoremap <M-w><M-j> :call SpaceMoveHorizontal(-1, 0)<cr>
-    nnoremap <M-w><M-k> :call SpaceMoveHorizontal(1, 0)<cr>
-    nnoremap <M-W><M-J> :call SpaceMoveHorizontal(-1, 1)<cr>
-    nnoremap <M-W><M-K> :call SpaceMoveHorizontal(1, 1)<cr>
-    nnoremap <M-w><M-l> :call SpaceMoveVertical(-1, 0)<cr>
-    nnoremap <M-w><M-h> :call SpaceMoveVertical(1, 0)<cr>
-    nnoremap <M-W><M-L> :call SpaceMoveVertical(-1, 1)<cr>
-    nnoremap <M-W><M-H> :call SpaceMoveVertical(1, 1)<cr>
+    nnoremap <silent> <M-w><M-j> :call SpaceMoveHorizontal(-1, 0)<cr>
+    nnoremap <silent> <M-w><M-k> :call SpaceMoveHorizontal(1, 0)<cr>
+    nnoremap <silent> <M-W><M-J> :call SpaceMoveHorizontal(-1, 1)<cr>
+    nnoremap <silent> <M-W><M-K> :call SpaceMoveHorizontal(1, 1)<cr>
+    nnoremap <silent> <M-w><M-l> :call SpaceMoveVertical(-1, 0)<cr>
+    nnoremap <silent> <M-w><M-h> :call SpaceMoveVertical(1, 0)<cr>
+    nnoremap <silent> <M-W><M-L> :call SpaceMoveVertical(-1, 1)<cr>
+    nnoremap <silent> <M-W><M-H> :call SpaceMoveVertical(1, 1)<cr>
 else
-    tnoremap <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
-    tnoremap <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
-    tnoremap <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
-    tnoremap <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
-    tnoremap <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
-    tnoremap <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
-    tnoremap <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
-    tnoremap <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    tnoremap <silent> <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <silent> <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <silent> <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <silent> <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
     nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-    nnoremap <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
-    nnoremap <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
-    nnoremap <M-W><M-H> :call SpaceMoveHorizontal(-1, 1)<cr>
-    nnoremap <M-W><M-L> :call SpaceMoveHorizontal(1, 1)<cr>
-    nnoremap <M-w><M-j> :call SpaceMoveVertical(-1, 0)<cr>
-    nnoremap <M-w><M-k> :call SpaceMoveVertical(1, 0)<cr>
-    nnoremap <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
-    nnoremap <M-W><M-K> :call SpaceMoveVertical(1, 1)<cr>
+    nnoremap <silent> <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
+    nnoremap <silent> <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
+    nnoremap <silent> <M-W><M-H> :call SpaceMoveHorizontal(-1, 1)<cr>
+    nnoremap <silent> <M-W><M-L> :call SpaceMoveHorizontal(1, 1)<cr>
+    nnoremap <silent> <M-w><M-j> :call SpaceMoveVertical(-1, 0)<cr>
+    nnoremap <silent> <M-w><M-k> :call SpaceMoveVertical(1, 0)<cr>
+    nnoremap <silent> <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
+    nnoremap <silent> <M-W><M-K> :call SpaceMoveVertical(1, 1)<cr>
 endif
 " Open a terminal below.
 function! LowerTerminal()
@@ -2060,8 +2062,12 @@ function! DTFCommand(command)
     let b:custom_terminal_buffer_name = 1
 endfunction
 
+"TODO: Quote correctly
+"command! -nargs=* DTCommand call DTCommand(<q-args>)
+"command! -nargs=* DTFCommand call DTFCommand(<q-args>)
 
-let g:window_focus_history_max_length = 10
+" Window focus history
+let g:window_focus_history_max_length = 100
 if !exists('g:window_focus_history')
     let g:window_focus_history = []
 endif
@@ -2082,7 +2088,6 @@ function! s:track_window_focus()
             call remove(g:window_focus_history, 0)
         endfor
     endif
-    echo g:window_focus_history
 endfunction
 
 
