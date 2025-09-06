@@ -1,0 +1,63 @@
+#!/bin/bash
+# waitwindow: wait until the PID has windows, then print the first window ID.
+# This assumes _NET_WM_PID is set on the window.
+#
+# Possible bugs:
+# If the process creates multiple windows quickly, only one will be returned.
+# Todo: Return the first created one, is there a way to check when an X window was created?
+
+usage ()
+{
+    >&2 echo "Usage:"
+    >&2 echo "    waitwindow <PID>"
+}
+
+if [ $# -ne 1 ]
+then
+    >&2 usage
+    exit 1
+fi
+
+# Options
+opt_parent=0
+if [ "$1" == "--parent" ]
+then
+    opt_parent=1
+fi
+
+# Arguments
+pidarg="$1"
+if [[ ! "$pidarg" =~ ^[0-9]+$ ]]
+then
+    >&2 echo "invalid pid: $pidarg"
+    exit 1
+fi
+
+while true
+do
+    if [ $opt_parent -eq 1 ]
+    then
+        pids="$(ppids "$pidarg")"
+    else
+        pids="$pidarg"
+    fi
+    for pid in "$(pids)"
+    do
+        window_ids="$(xdotool search --pid "$pid" 2>/dev/null)"
+        if [ $? -eq 0 ] && [ ! -z "$window_ids" ]
+        then
+            wid="$(echo "$window_ids" | head -1)"
+            # Sanity check that the window exists.
+            # (Might not be necessary, todo check if xdotool search output is always window IDs.)
+            if xdotool getwindowname "$wid" >/dev/null 2>&1
+            then
+                echo "$wid"
+                exit 0
+            fi
+        fi
+    endif
+    sleep 0.1
+done
+
+# Shouldn't get here.
+exit 1
