@@ -8,9 +8,22 @@
 
 usage ()
 {
-    >&2 echo "Usage:"
-    >&2 echo "    waitwindow <PID>"
+    echo "Usage:"
+    echo "    Wait for any window on given pid:"
+    echo "        waitwindow <PID>"
+    echo "    Wait for any window on any parent or parent-of-parent etc. process of this pid:"
+    echo "        waitwindow --parent/-r <PID>"
+    echo "    Print help:"
+    echo "        waitwindow --help/-h"
 }
+
+# Options
+opt_parent=0
+if [ $# -eq 2 ] && [[ "$1" =~ ^(--parent|-r)$ ]]
+then
+    opt_parent=1
+    shift
+fi
 
 if [ $# -ne 1 ]
 then
@@ -18,11 +31,10 @@ then
     exit 1
 fi
 
-# Options
-opt_parent=0
-if [ "$1" == "--parent" ]
+if [[ "$1" =~ ^(--help|-h)$ ]]
 then
-    opt_parent=1
+    usage
+    exit 0
 fi
 
 # Arguments
@@ -41,7 +53,7 @@ do
     else
         pids="$pidarg"
     fi
-    for pid in "$(pids)"
+    for pid in $pids
     do
         window_ids="$(xdotool search --pid "$pid" 2>/dev/null)"
         if [ $? -eq 0 ] && [ ! -z "$window_ids" ]
@@ -55,7 +67,7 @@ do
                 exit 0
             fi
         fi
-    endif
+    done
     sleep 0.1
 done
 

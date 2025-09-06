@@ -2,4 +2,13 @@
 #     notify-send "nice"
 # 
 # ctrl + d
+#     # SIGUSR1 reloads sxhkdrc
 #     pgrep sxhkd | x kill -SIGUSR1
+
+ctrl + 9
+    pgrep sxhkd | x kill -SIGUSR1
+
+ctrl + 1
+    notify-send xwifree "Click a window to free it from the window manager" ; xwifree
+ctrl + 2
+    notify-send xwibind "Click a window to bind it to the window manager" ; xwibind
