@@ -1,0 +1,20 @@
+#!/bin/bash
+# mpvalt: launch mpv in fullscreen on secondary monitor, and free from the window manager
+
+pid="$(d mpv "$@")"
+wid="$(waitwindow "$pid")"
+
+monitor_geometry="$(xrandr | grep " connected " | grep ^DP-0 | cut -d' ' -f 3)"
+if [[ ! $monitor_geometry =~ ^([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+)$ ]]
+then
+    echo "monitor_geometry failed"
+    exit 1
+fi
+WIDTH=${BASH_REMATCH[1]}
+HEIGHT=${BASH_REMATCH[2]}
+X=${BASH_REMATCH[3]}
+Y=${BASH_REMATCH[4]}
+wmctrl -i -r "$wid" -e 0,$X,$Y,$WIDTH,$HEIGHT
+wmctrl -i -r "$wid" -b add,fullscreen
+wmctrl -i -r "$wid" -b add,sticky
+xwifree "$wid"
