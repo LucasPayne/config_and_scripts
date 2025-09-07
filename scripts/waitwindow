@@ -5,6 +5,11 @@
 # Possible bugs:
 # If the process creates multiple windows quickly, only one will be returned.
 # Todo: Return the first created one, is there a way to check when an X window was created?
+#
+# Notes:
+# --parent option doesn't seem useful for the blocking case.
+# If anything it might get an unexpected parent window.
+# But waitwindow is also a general "get window" command, it is not just for when blocking is expected.
 
 usage ()
 {
