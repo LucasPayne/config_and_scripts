@@ -1,0 +1,3 @@
+#!/bin/bash
+# spin: spinning bar
+while true ; do for v in \\ \| / - ; do echo -en "\r$v" ; sleep 0.1 ; done ; done
