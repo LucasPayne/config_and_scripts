@@ -1,0 +1,7 @@
+#!/bin/bash
+# desktop-prev-wrap: go to the previous virtual desktop, wrap around at first desktop
+
+count="$(desktop-get-count)" || exit 1
+focus="$(desktop-get-focus)" || exit 1
+
+echo wmctrl -s "$(( ( focus + count - 1 ) % count ))"
