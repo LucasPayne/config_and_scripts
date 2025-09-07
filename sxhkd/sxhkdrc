@@ -12,3 +12,11 @@ ctrl + 1
     notify-send xwifree "Click a window to free it from the window manager" ; xwifree
 ctrl + 2
     notify-send xwibind "Click a window to bind it to the window manager" ; xwibind
+ctrl + 3
+    notify-send "disable window border" ; xprop -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "2, 0, 0, 0, 0" -id $(xwi)
+ctrl + 4
+    notify-send "enable window border" ; xprop -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "2, 1, 1, 0, 0" -id $(xwi)
+ctrl + 5
+    notify-send "disable window above" ; wmctrl -i -r $(xwi) -b remove,above
+ctrl + 6
+    notify-send "enable window above" ; wmctrl -i -r $(xwi) -b add,above
