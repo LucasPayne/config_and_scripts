@@ -20,3 +20,7 @@ ctrl + 5
     notify-send "disable window above" ; wmctrl -i -r $(xwi) -b remove,above
 ctrl + 6
     notify-send "enable window above" ; wmctrl -i -r $(xwi) -b add,above
+ctrl + 7
+    notify-send "disable window sticky" ; wmctrl -i -r $(xwi) -b remove,sticky
+ctrl + 8
+    notify-send "enable window sticky" ; wmctrl -i -r $(xwi) -b add,sticky

@@ -1,3 +1,12 @@
 #!/bin/bash
-# desktop-next:
+# desktop-next: go to the next virtual desktop
 
+count="$(desktop-get-count)" || exit 1
+focus="$(desktop-get-focus)" || exit 1
+if [ $focus -lt $((count - 1)) ]
+then
+    wmctrl -s "$((focus + 1))"
+else
+    # Fail silently.
+    .
+fi

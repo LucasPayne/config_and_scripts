@@ -1,3 +1,11 @@
 #!/bin/bash
-# desktop-prev:
+# desktop-prev: go to the previous virtual desktop
 
+count="$(desktop-get-count)" || exit 1
+if [ $focus -gt 1 ]
+then
+    wmctrl -s "$((focus - 1))"
+else
+    # Fail silently.
+    .
+fi

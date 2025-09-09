@@ -90,7 +90,7 @@ noremap : L
 "noremap H :
 noremap H ;
 noremap h :
-noremap <M-h> :
+noremap <M-h> :tab help 
 " Beginning and end of line.
 noremap L ^
 noremap : $
@@ -919,7 +919,7 @@ endif
 " Debugging
 " ...
 "<<<
-"packadd termdebug
+packadd termdebug
 
 let g:termdebug_config = {
             \ 'winbar' : 0,

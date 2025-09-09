@@ -1,3 +1,10 @@
 #!/bin/bash
-# desktop-focus:
+# desktop-focus: get current desktop number
 
+out="$(wmctrl -d | awk '$2 == "*" {print $1}')"
+if [ -z "$out" ]
+then
+    >&2 echo "error: Could not determine active desktop"
+    exit 1
+fi
+echo "$out"

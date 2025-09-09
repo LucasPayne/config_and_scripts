@@ -1,6 +1,9 @@
 #!/bin/bash
 # getcol: use awk to print n'th column
+
+# parse arguments
 [ $# -eq 1 ] || exit 1
 [[ "$1" =~ ^[0-9]+$ ]] || exit 1
 [ "$1" -ne 0 ] || exit 1
+
 exec awk '{print $'"$1"'}'

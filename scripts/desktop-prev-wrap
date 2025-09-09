@@ -4,4 +4,4 @@
 count="$(desktop-get-count)" || exit 1
 focus="$(desktop-get-focus)" || exit 1
 
-echo wmctrl -s "$(( ( focus + count - 1 ) % count ))"
+wmctrl -s "$(( ( focus + count - 1 ) % count ))"
