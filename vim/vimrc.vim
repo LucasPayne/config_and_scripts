@@ -2126,5 +2126,19 @@ function! InsertExCommand(...)
 endfunction
 command! -nargs=* ClipExCommand call ClipExCommand(<f-args>)
 command! -nargs=* InsertExCommand call InsertExCommand(<f-args>)
-cnoremap <C-y> <C-\>e"ClipExCommand ".getcmdline()<cr><cr>
-cnoremap <C-i> <C-\>e"InsertExCommand ".getcmdline()<cr><cr>
+cnoremap <M-y> <C-\>e"ClipExCommand ".getcmdline()<cr><cr>
+cnoremap <M-i> <C-\>e"InsertExCommand ".getcmdline()<cr><cr>
+
+" System paste in command mode.
+cnoremap <M-p> <C-r>=@+<cr>
+
+" Print runtimepath
+command! -bar -nargs=0 Runtimepath echo substitute(&runtimepath, ",", "\n", "g")
+" Print packpath
+command! -bar -nargs=0 Packpath echo substitute(&packpath, ",", "\n", "g")
+" Print both runtimepath and packpath
+command! -bar -nargs=0 Vimpath echo "runtimepath" | Runtimepath | echo "packpath" | Packpath
+command! -bar -nargs=0 Vimpath
+            \   echo join(map(split(substitute(&runtimepath, ",", "\n", "g"), "\n"), {_, v -> "runtimepath: " . v}), "\n")
+            \ | echo join(map(split(substitute(&packpath, ",", "\n", "g"), "\n"), {_, v -> "packpath: " . v}), "\n")
+
