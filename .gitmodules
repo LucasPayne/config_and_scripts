@@ -46,9 +46,6 @@
 [submodule "vim/__tmp/bufexplorer"]
 	path = vim/repos/bufexplorer
 	url = git@github.com:LucasPayne/bufexplorer.git
-[submodule "vim/__tmp/vim-bbye"]
-	path = vim/repos/vim-bbye
-	url = git@github.com:LucasPayne/vim-bbye.git
 [submodule "vim/__tmp/vim-nerdtree-tabs"]
 	path = vim/repos/vim-nerdtree-tabs
 	url = git@github.com:LucasPayne/vim-nerdtree-tabs.git

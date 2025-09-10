@@ -18,6 +18,16 @@ set mouse=a
 " option: incsearch?
 set noincsearch
 
+" option: jumpoptions
+" stack: Act like tag list.
+"        e.g., the jumplist behaviour is now:
+"        1 2 3 4 [5] Starting jump list of lines 1,2,3,4,5 in one file
+"        1 2 3 [4] 5 <C-o>
+"        1 2 [3] 4 5 <C-o>
+"        1 2 3 [9]   Jump to line 9
+"        (Introduced in neovim and implemented in vim 9.0.1921.)
+set jumpoptions=stack
+
 let g:vimrc_loaded_state = "start"
 
 " Alt key mappings
@@ -706,8 +716,24 @@ function! ToggleDetailView()
     call SetDetailView(g:detail_view_active)
 endfunction
 nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
-nnoremap <silent> <M-m> :set number!<cr>
-
+" Toggle numbers and relative numberrs.
+" <M-m> : Toggle numbers, default to non-relative.
+" <M-M> : Toggle relative. If no numbers are shown, show them first, then switch to relative.
+nnoremap <silent> <M-m> :if &number == 1
+                     \ \|    set nonumber
+                     \ \|    set norelativenumber
+                     \ \| else
+                     \ \|    set number
+                     \ \|    set norelativenumber
+                     \ \| endif
+                     \ <cr>
+nnoremap <silent> <M-M> :if &number == 1
+                     \ \|    set relativenumber!
+                     \ \| else
+                     \ \|    set number
+                     \ \|    set relativenumber
+                     \ \| endif
+                     \ <cr>
 
 function! CheckSwitchToTerminalMode()
     if exists("b:switch_to_terminal_mode") && b:switch_to_terminal_mode
@@ -1918,8 +1944,8 @@ source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
 
 " jump list
 " center cursor after jumping
-nnoremap <C-o> <C-o>zz
-nnoremap <C-i> <C-i>zz
+"nnoremap <C-o> <C-o>zz
+"nnoremap <C-i> <C-i>zz
 
 " Select the last inserted text.
 "todo: Seems to not be accurate.
