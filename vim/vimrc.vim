@@ -810,6 +810,53 @@ if PluginEnabled("vim-surround") == 1
     vmap s S
 endif
 
+if PluginEnabled("vim-easymotion") == 1
+    " EasyMotion search utilities.
+    "
+    " Feature: Search in visible part of buffer, then jump.
+    " This is basically a rudimentary version of https://github.com/ggandor/leap.nvim hacked from EasyMotion.
+    " Unlike leap.nvim, this can search arbitrary strings and regexes.
+    function! __EasyMotionSearchJump()
+        nohlsearch
+        call EasyMotion#Search(0,2,0)
+    endfunction
+    function! __EasyMotionSearchFinished()
+        let &hlsearch = g:easymotion_tmp_hlsearch
+        unlet g:easymotion_tmp_hlsearch
+        let &incsearch = g:easymotion_tmp_incsearch
+        unlet g:easymotion_tmp_incsearch
+        execute "cnoremap <M-/> ".g:easymotion_tmp_maparg
+        unlet g:easymotion_tmp_maparg
+        let &scrolloff = g:easymotion_tmp_scrolloff
+        unlet g:easymotion_tmp_scrolloff
+        " (gotten from bd-n specification/test)
+        call timer_start(10, {-> __EasyMotionSearchJump()})
+
+        "failed attempts
+        " execute "normal! \<Plug>(easymotion-bd-n)"
+        " call timer_start(10, {-> execute('normal! \<Plug>(easymotion-bd-n)')})
+        " call EasyMotion#Search(0,2,0)
+    endfunction
+    " search_char: '/' or '?'
+    function! __EasyMotionSearch(search_char)
+        let g:easymotion_tmp_hlsearch = &hlsearch 
+        let g:easymotion_tmp_incsearch = &incsearch 
+        let g:easymotion_tmp_scrolloff = &scrolloff
+        let g:easymotion_tmp_maparg = maparg('<M-/>', 'c')
+        autocmd CmdlineLeave /,\? ++once call __EasyMotionSearchFinished()
+        cnoremap <M-/> <C-c>\<Plug>(easymotion-bd-n)
+        set hlsearch
+        set incsearch
+        nohlsearch
+        set scrolloff=0
+        let @/ = ""
+        let search_prefix = "\\%>".(line('w0')-1)."l\\%<".(line('w$')+1)."l"
+        call feedkeys(a:search_char . search_prefix, 'n')
+    endfunction
+    nnoremap <M-/> :call __EasyMotionSearch('/')<cr>
+    nnoremap <M-?> :call __EasyMotionSearch('?')<cr>
+endif
+
 if PluginEnabled("vim-highlightedyank") == 1
     " measured in milliseconds
     let g:highlightedyank_highlight_duration = 200

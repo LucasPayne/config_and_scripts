@@ -49,3 +49,6 @@
 [submodule "vim/__tmp/vim-nerdtree-tabs"]
 	path = vim/repos/vim-nerdtree-tabs
 	url = git@github.com:LucasPayne/vim-nerdtree-tabs.git
+[submodule "vim/__tmp/vim-easymotion"]
+	path = vim/repos/vim-easymotion
+	url = https://github.com/easymotion/vim-easymotion.git
