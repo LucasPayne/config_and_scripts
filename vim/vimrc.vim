@@ -130,7 +130,8 @@ let g:maplocalleader = "<C-\>"
 let g:loaded_netrw       = 1
 let g:loaded_netrwPlugin = 1
 
-
+" Pathogen
+let g:pathogen_blacklist = []
 execute pathogen#infect()
 execute pathogen#helptags()
 function! PluginEnabled(plugin_name)
@@ -2104,3 +2105,26 @@ function! s:track_window_focus()
         endfor
     endif
 endfunction
+
+" Easier redir use.
+" Keybindings in command mode to insert or system yank (clip) the output.
+" Commands are run with :silent.
+function! ClipExCommand(...)
+    redir @+>
+    silent execute join(a:000, ' ')
+    redir END
+endfunction
+function! InsertExCommand(...)
+    " Note: Having problems with using redirection to local variables. Bug?
+    " Workaround: Using @+ redirection instead.
+    let l:tmp = @+
+    redir @+
+    silent execute join(a:000, ' ')
+    redir END
+    put +
+    let @+ = l:tmp
+endfunction
+command! -nargs=* ClipExCommand call ClipExCommand(<f-args>)
+command! -nargs=* InsertExCommand call InsertExCommand(<f-args>)
+cnoremap <C-y> <C-\>e"ClipExCommand ".getcmdline()<cr><cr>
+cnoremap <C-i> <C-\>e"InsertExCommand ".getcmdline()<cr><cr>
