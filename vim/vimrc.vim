@@ -815,12 +815,18 @@ if PluginEnabled("vim-easymotion") == 1
     "
     " Feature: Search in visible part of buffer, then jump.
     " This is basically a rudimentary version of https://github.com/ggandor/leap.nvim hacked from EasyMotion.
-    " Unlike leap.nvim, this can search arbitrary strings and regexes.
     function! __EasyMotionSearchJump()
         nohlsearch
         call EasyMotion#Search(0,2,0)
     endfunction
     function! __EasyMotionSearchFinished()
+        "TODO: Bug workaround here, ++once autocmd is called multiple times.
+        if !exists("g:easymotion_tmp_do_call")
+            return
+        endif
+        unlet g:easymotion_tmp_do_call
+        "call system("date >> /tmp/a")
+
         let &hlsearch = g:easymotion_tmp_hlsearch
         unlet g:easymotion_tmp_hlsearch
         let &incsearch = g:easymotion_tmp_incsearch
@@ -843,6 +849,8 @@ if PluginEnabled("vim-easymotion") == 1
         let g:easymotion_tmp_incsearch = &incsearch 
         let g:easymotion_tmp_scrolloff = &scrolloff
         let g:easymotion_tmp_maparg = maparg('<M-/>', 'c')
+        "TODO: Bug workaround here, ++once autocmd is called multiple times.
+        let g:easymotion_tmp_do_call = 1
         autocmd CmdlineLeave /,\? ++once call __EasyMotionSearchFinished()
         cnoremap <M-/> <C-c>\<Plug>(easymotion-bd-n)
         set hlsearch
@@ -850,6 +858,8 @@ if PluginEnabled("vim-easymotion") == 1
         nohlsearch
         set scrolloff=0
         let @/ = ""
+        " Search only the visible lines in the window.
+        " (Using line number regex matching.)
         let search_prefix = "\\%>".(line('w0')-1)."l\\%<".(line('w$')+1)."l"
         call feedkeys(a:search_char . search_prefix, 'n')
     endfunction
