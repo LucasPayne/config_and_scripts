@@ -995,6 +995,55 @@ if PluginEnabled("vim-easymotion") == 1
     endif
 endif
 
+function! DEBUG(str)
+    call system("date '+%H:%M:%S ' | tr -d '\n' >> /tmp/a")
+    call system("cat >> /tmp/a", a:str)
+    call system("echo >> /tmp/a")
+endfunction
+
+" Rebindings for the search (/ and ?) command line.
+"
+" Note:
+"     This pattern of save and restore with maparg is useful, should move to a
+"     general utility.
+augroup SearchMappings
+    autocmd!
+
+    let g:__SearchMappings_mappings = {}
+    function! __SearchMappings_Save(lhs)
+        let g:__SearchMappings_mappings[a:lhs] =  [a:lhs, maparg(a:lhs, 'c', 0, 1)]
+    endfunction
+
+    function! __SearchMappings_Restore()
+        call DEBUG(JsonEncodePretty(g:__SearchMappings_mappings))
+        for [key, val] in items(g:__SearchMappings_mappings)
+            let lhs = val[0]
+            let dict = val[1]
+            if dict != {}
+                call DEBUG("mapset")
+                call mapset('c', 0, dict)
+            else
+                call DEBUG("Reset")
+                execute "silent! cunmap "..lhs
+            endif
+        endfor
+    endfunction
+
+    function! __SearchMappings_CmdlineEnter()
+        call DEBUG("Enter")
+        call __SearchMappings_Save('<M-d>')
+        cnoremap <M-d> \d\+\(\.\d\+\)\?
+    endfunction
+
+    function! __SearchMappings_CmdlineLeave()
+        call DEBUG("Leave")
+        call __SearchMappings_Restore()
+    endfunction
+
+    autocmd CmdlineEnter /,\? call __SearchMappings_CmdlineEnter()
+    autocmd CmdlineLeave /,\? call __SearchMappings_CmdlineLeave()
+augroup END
+
 if PluginEnabled("vim-highlightedyank") == 1
     " measured in milliseconds
     let g:highlightedyank_highlight_duration = 200
