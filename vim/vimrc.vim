@@ -840,6 +840,7 @@ if PluginEnabled("vim-easymotion") == 1
     "
     " Feature: Search in visible part of buffer, then jump.
     " This is basically a rudimentary version of https://github.com/ggandor/leap.nvim hacked from EasyMotion.
+
     function! __EasyMotionSearchJump()
         nohlsearch
         " (gotten from bd-n specification/test)
@@ -858,29 +859,42 @@ if PluginEnabled("vim-easymotion") == 1
         endif
         let g:easymotion_EasyMotionFirstCmdlineChange_counter += 1
     endfunction
+
     function! __EasyMotionSearchFinished()
+
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
         if !exists("g:easymotion_tmp_easymotionsearchfinished_to_trigger")
             return
         endif
         unlet g:easymotion_tmp_easymotionsearchfinished_to_trigger
 
-        call system("date >> /tmp/a")
-
+        " Restore settings.
         let &hlsearch = g:easymotion_tmp_hlsearch
         unlet g:easymotion_tmp_hlsearch
         let &incsearch = g:easymotion_tmp_incsearch
         unlet g:easymotion_tmp_incsearch
-        execute "cnoremap <M-/> ".g:easymotion_tmp_maparg
-        unlet g:easymotion_tmp_maparg
         let &scrolloff = g:easymotion_tmp_scrolloff
         unlet g:easymotion_tmp_scrolloff
 
+        " Restore mappings
+        if g:easymotion_tmp_cancel_cmap != {}
+            call mapset('c', 0, g:easymotion_tmp_cancel_cmap)
+        else
+            silent! cunmap "<C-c>"
+        endif
+        unlet g:easymotion_tmp_cancel_cmap
+        if g:easymotion_tmp_search_previous_cmap != {}
+            call mapset('c', 0, g:easymotion_tmp_search_previous_cmap)
+        else
+            silent! cunmap "<M-/>"
+        endif
+        unlet g:easymotion_tmp_search_previous_cmap
+
+        " Handle cancel
         if exists("g:easymotion_search_cancelled")
-            call system('echo "cancelled $(date)" >> /tmp/a')
+            unlet g:easymotion_search_cancelled
             return
         endif
-        cunmap <C-c>
 
         " NOTE: Hacky
         "     Call asynchronously after 10ms.
@@ -896,19 +910,25 @@ if PluginEnabled("vim-easymotion") == 1
         "         call EasyMotion#Search(0,2,0)
         call timer_start(10, {-> __EasyMotionSearchJump()})
     endfunction
-    " search_char: '/' or '?'
+
     function! __EasyMotionSearch(search_char)
+        " Args:
+        "     search_char: '/' or '?'
+
+        " Save settings to restore.
         let g:easymotion_tmp_hlsearch = &hlsearch 
         let g:easymotion_tmp_incsearch = &incsearch 
         let g:easymotion_tmp_scrolloff = &scrolloff
-        let g:easymotion_tmp_maparg = maparg('<M-/>', 'c')
+        let g:easymotion_tmp_search_previous_cmap = maparg('<M-/>', 'c', 0, 1)
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
         let g:easymotion_tmp_easymotionsearchfinished_to_trigger = 1
         autocmd CmdlineLeave /,\? ++once call __EasyMotionSearchFinished()
         set scrolloff=0
         let @/ = ""
-        " Search only the visible lines in the window.
-        " (Using line number regex matching.)
+
+        " Search only the visible lines in the window
+        " using line number regex matching.
+        " This will be feedkey'd into the search command prompt.
         let search_prefix = "\\%>".(line('w0')-1)."l\\%<".(line('w$')+1)."l"
 
         " NOTE: Ungodly hack to make hlsearch activate only when the actual
@@ -921,10 +941,21 @@ if PluginEnabled("vim-easymotion") == 1
             autocmd!
             autocmd CmdlineChanged /,\? call __EasyMotionFirstCmdlineChange()
         augroup END
-        let g:easymotion_tmp_cancel_cmap = maparg('<C-c>', 'n')
+
+        " Bind Ctrl-C in the search command to set a global indicator
+        " that the search was cancelled.
+        " This means the CmdlineLeave handler can handle command line leaving
+        " for cancellations versus acceptance.
+        " NOTE:
+        "    This assumes the only way to cancel the search is to press Ctrl-C.
+        let g:easymotion_tmp_cancel_cmap = maparg('<C-c>', 'c', 0, 1)
         cnoremap <expr> <C-c> execute("let g:easymotion_search_cancelled = 1") ? "\<C-c>" : "\<C-c>"
+
+        " Start the interactive search.
         call feedkeys(a:search_char . search_prefix, 'n')
     endfunction
+
+    " Mappings
     if g:easymotion_option_override_default_search_mappings
         " Override default / ? mappings
         nnoremap / :call __EasyMotionSearch('/')<cr>
@@ -1084,6 +1115,7 @@ let g:termdebug_config = {
             \ 'use_prompt' : 0
             \ }
 
+" Like json_decode but use jq to pretty-print the json string.
 function! JsonEncodePretty(obj)
 
     let l:json = json_encode(a:obj)
@@ -1098,7 +1130,7 @@ function! JsonEncodePretty(obj)
         echoerr "json_encode_pretty: jq failed"
         return
     endif
-    echo l:output
+    return l:output
 endfunction
 
 hi debugPC ctermbg=white
