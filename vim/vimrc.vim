@@ -833,6 +833,10 @@ if PluginEnabled("vim-surround") == 1
 endif
 
 if PluginEnabled("vim-easymotion") == 1
+    " EasyMotion options
+    " Disable messages like "Jumped to ..." and "EasyMotion cancelled."
+    let g:EasyMotion_verbose = 0
+
     " extension options
     let g:easymotion_option_override_default_search_mappings = 0
 
@@ -856,8 +860,9 @@ if PluginEnabled("vim-easymotion") == 1
             augroup EasyMotionEasyMotionSearchCmdlineChanged
                 autocmd!
             augroup END
+        elseif g:easymotion_EasyMotionFirstCmdlineChange_counter < g:easymotion_EasyMotionFirstCmdlineChange_target
+            let g:easymotion_EasyMotionFirstCmdlineChange_counter += 1
         endif
-        let g:easymotion_EasyMotionFirstCmdlineChange_counter += 1
     endfunction
 
     function! __EasyMotionSearchPrevious()
@@ -909,6 +914,9 @@ if PluginEnabled("vim-easymotion") == 1
             return
         endif
         unlet g:easymotion_tmp_previous_search
+
+        let l:cmdline = getcmdline()[g:easymotion_EasyMotionFirstCmdlineChange_target:]
+        call timer_start(10, {-> setreg("/", l:cmdline)})
 
         " NOTE: Hacky
         "     Call asynchronously after 10ms.
