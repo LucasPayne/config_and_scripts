@@ -865,6 +865,8 @@ if PluginEnabled("vim-easymotion") == 1
         endif
         unlet g:easymotion_tmp_easymotionsearchfinished_to_trigger
 
+        call system("date >> /tmp/a")
+
         let &hlsearch = g:easymotion_tmp_hlsearch
         unlet g:easymotion_tmp_hlsearch
         let &incsearch = g:easymotion_tmp_incsearch
@@ -873,7 +875,13 @@ if PluginEnabled("vim-easymotion") == 1
         unlet g:easymotion_tmp_maparg
         let &scrolloff = g:easymotion_tmp_scrolloff
         unlet g:easymotion_tmp_scrolloff
-        
+
+        if exists("g:easymotion_search_cancelled")
+            call system('echo "cancelled $(date)" >> /tmp/a')
+            return
+        endif
+        cunmap <C-c>
+
         " NOTE: Hacky
         "     Call asynchronously after 10ms.
         "     Also, invoke <Plug>(easymotion-bd-n) through its actual invoked
@@ -897,7 +905,6 @@ if PluginEnabled("vim-easymotion") == 1
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
         let g:easymotion_tmp_easymotionsearchfinished_to_trigger = 1
         autocmd CmdlineLeave /,\? ++once call __EasyMotionSearchFinished()
-        cnoremap <M-/> <C-c>\<Plug>(easymotion-bd-n)
         set scrolloff=0
         let @/ = ""
         " Search only the visible lines in the window.
@@ -914,6 +921,8 @@ if PluginEnabled("vim-easymotion") == 1
             autocmd!
             autocmd CmdlineChanged /,\? call __EasyMotionFirstCmdlineChange()
         augroup END
+        let g:easymotion_tmp_cancel_cmap = maparg('<C-c>', 'n')
+        cnoremap <expr> <C-c> execute("let g:easymotion_search_cancelled = 1") ? "\<C-c>" : "\<C-c>"
         call feedkeys(a:search_char . search_prefix, 'n')
     endfunction
     if g:easymotion_option_override_default_search_mappings
@@ -1074,6 +1083,23 @@ let g:termdebug_config = {
             \ 'wide' : 32,
             \ 'use_prompt' : 0
             \ }
+
+function! JsonEncodePretty(obj)
+
+    let l:json = json_encode(a:obj)
+
+    if !executable("jq")
+        echoerr "json_encode_pretty: jq not found"
+        return
+    endif
+
+    let l:output = system("jq . 2>/dev/null", l:json)
+    if v:shell_error
+        echoerr "json_encode_pretty: jq failed"
+        return
+    endif
+    echo l:output
+endfunction
 
 hi debugPC ctermbg=white
 "hi SignColumn ctermbg=blue
