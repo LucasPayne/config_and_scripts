@@ -27,6 +27,26 @@ set noincsearch
 "        1 2 3 [9]   Jump to line 9
 "        (Introduced in neovim and implemented in vim 9.0.1921.)
 set jumpoptions=stack
+" 
+augroup JumpListModifications
+    autocmd!
+    " Clear the jump list for a new window.
+    " This makes the jump list truly window-local.
+    " NOTE:
+    "     I'm not sure when vim is setting the jumps, but this appears to work.
+    " TODO: There is a single jump at the first position of the file for a new tab. Maybe this is fine?
+    autocmd VimEnter * clearjumps
+    autocmd WinNew * let w:jumplistmodifications_new_window = 1
+                 \ | let w:jumplistmodifications_new_buf = 1
+    autocmd WinEnter * if exists("w:jumplistmodifications_new_window")
+                   \ |     clearjumps
+                   \ |     unlet w:jumplistmodifications_new_window
+                   \ | endif
+    autocmd BufEnter * if exists("w:jumplistmodifications_new_buf")
+                   \ |     clearjumps
+                   \ |     unlet w:jumplistmodifications_new_buf
+                   \ | endif
+augroup END
 
 let g:vimrc_loaded_state = "start"
 
@@ -153,8 +173,8 @@ endfunction
 "    set colorscheme ...
 "    ...
 "<<<
-colorscheme solarized
-"colorscheme default
+"colorscheme solarized
+colorscheme default
 set background=dark
 hi LineNr ctermbg=None
 "hi Normal ctermfg=White
@@ -806,26 +826,44 @@ nnoremap <silent> <M--> :sp<cr>
 "    ...
 "<<<
 if PluginEnabled("vim-surround") == 1
+    " Use the s key as the surround operator.
+    " (note: s is also a common prefix for vim-sneak/leap.nvim plugins which I might want to use.)
     nmap s ys
     vmap s S
 endif
 
 if PluginEnabled("vim-easymotion") == 1
+    " extension options
+    let g:easymotion_option_override_default_search_mappings = 0
+
     " EasyMotion search utilities.
     "
     " Feature: Search in visible part of buffer, then jump.
     " This is basically a rudimentary version of https://github.com/ggandor/leap.nvim hacked from EasyMotion.
     function! __EasyMotionSearchJump()
         nohlsearch
+        " (gotten from bd-n specification/test)
         call EasyMotion#Search(0,2,0)
+    endfunction
+
+    let g:easymotion_EasyMotionFirstCmdlineChange_counter = 0
+    let g:easymotion_EasyMotionFirstCmdlineChange_target = 0
+    function! __EasyMotionFirstCmdlineChange()
+        if g:easymotion_EasyMotionFirstCmdlineChange_counter == g:easymotion_EasyMotionFirstCmdlineChange_target
+            set incsearch
+            set hlsearch
+            augroup EasyMotionEasyMotionSearchCmdlineChanged
+                autocmd!
+            augroup END
+        endif
+        let g:easymotion_EasyMotionFirstCmdlineChange_counter += 1
     endfunction
     function! __EasyMotionSearchFinished()
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
-        if !exists("g:easymotion_tmp_do_call")
+        if !exists("g:easymotion_tmp_easymotionsearchfinished_to_trigger")
             return
         endif
-        unlet g:easymotion_tmp_do_call
-        "call system("date >> /tmp/a")
+        unlet g:easymotion_tmp_easymotionsearchfinished_to_trigger
 
         let &hlsearch = g:easymotion_tmp_hlsearch
         unlet g:easymotion_tmp_hlsearch
@@ -835,13 +873,20 @@ if PluginEnabled("vim-easymotion") == 1
         unlet g:easymotion_tmp_maparg
         let &scrolloff = g:easymotion_tmp_scrolloff
         unlet g:easymotion_tmp_scrolloff
-        " (gotten from bd-n specification/test)
+        
+        " NOTE: Hacky
+        "     Call asynchronously after 10ms.
+        "     Also, invoke <Plug>(easymotion-bd-n) through its actual invoked
+        "     function, instead of sending the keys.
+        "     Sending the keys does trigger the mapping, but EasyMotion cancels it
+        "     immediately.
+        "     This is the only way I've found to keep interactive mode.
+        "     (Unsure currently why it is needed, todo.)
+        "     failed attempts:
+        "         execute "normal! \<Plug>(easymotion-bd-n)"
+        "         call timer_start(10, {-> execute('normal! \<Plug>(easymotion-bd-n)')})
+        "         call EasyMotion#Search(0,2,0)
         call timer_start(10, {-> __EasyMotionSearchJump()})
-
-        "failed attempts
-        " execute "normal! \<Plug>(easymotion-bd-n)"
-        " call timer_start(10, {-> execute('normal! \<Plug>(easymotion-bd-n)')})
-        " call EasyMotion#Search(0,2,0)
     endfunction
     " search_char: '/' or '?'
     function! __EasyMotionSearch(search_char)
@@ -850,21 +895,38 @@ if PluginEnabled("vim-easymotion") == 1
         let g:easymotion_tmp_scrolloff = &scrolloff
         let g:easymotion_tmp_maparg = maparg('<M-/>', 'c')
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
-        let g:easymotion_tmp_do_call = 1
+        let g:easymotion_tmp_easymotionsearchfinished_to_trigger = 1
         autocmd CmdlineLeave /,\? ++once call __EasyMotionSearchFinished()
         cnoremap <M-/> <C-c>\<Plug>(easymotion-bd-n)
-        set hlsearch
-        set incsearch
-        nohlsearch
         set scrolloff=0
         let @/ = ""
         " Search only the visible lines in the window.
         " (Using line number regex matching.)
         let search_prefix = "\\%>".(line('w0')-1)."l\\%<".(line('w$')+1)."l"
+
+        " NOTE: Ungodly hack to make hlsearch activate only when the actual
+        "       input string is being written, not the prefix regex
+        set noincsearch
+        set nohlsearch
+        let g:easymotion_EasyMotionFirstCmdlineChange_counter = 0
+        let g:easymotion_EasyMotionFirstCmdlineChange_target = len(search_prefix)
+        augroup EasyMotionEasyMotionSearchCmdlineChanged
+            autocmd!
+            autocmd CmdlineChanged /,\? call __EasyMotionFirstCmdlineChange()
+        augroup END
         call feedkeys(a:search_char . search_prefix, 'n')
     endfunction
-    nnoremap <M-/> :call __EasyMotionSearch('/')<cr>
-    nnoremap <M-?> :call __EasyMotionSearch('?')<cr>
+    if g:easymotion_option_override_default_search_mappings
+        " Override default / ? mappings
+        nnoremap / :call __EasyMotionSearch('/')<cr>
+        nnoremap ? :call __EasyMotionSearch('?')<cr>
+        " Hold alt to get normal search.
+        nnoremap <M-/> /
+        nnoremap <M-?> ?
+    else
+        nnoremap <M-/> :call __EasyMotionSearch('/')<cr>
+        nnoremap <M-?> :call __EasyMotionSearch('?')<cr>
+    endif
 endif
 
 if PluginEnabled("vim-highlightedyank") == 1

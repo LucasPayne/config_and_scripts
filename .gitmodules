@@ -52,3 +52,9 @@
 [submodule "vim/__tmp/vim-easymotion"]
 	path = vim/repos/vim-easymotion
 	url = https://github.com/easymotion/vim-easymotion.git
+[submodule "vim/__tmp/vim-ingo-library"]
+	path = vim/repos/vim-ingo-library
+	url = git@github.com:LucasPayne/vim-ingo-library.git
+[submodule "vim/__tmp/vim-EnhancedJumps"]
+	path = vim/repos/vim-EnhancedJumps
+	url = git@github.com:LucasPayne/vim-EnhancedJumps.git
