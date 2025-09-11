@@ -58,3 +58,6 @@
 [submodule "vim/__tmp/vim-EnhancedJumps"]
 	path = vim/repos/vim-EnhancedJumps
 	url = git@github.com:LucasPayne/vim-EnhancedJumps.git
+[submodule "vim/__tmp/clever-f.vim"]
+	path = vim/repos/clever-f.vim
+	url = git@github.com:LucasPayne/clever-f.vim.git
