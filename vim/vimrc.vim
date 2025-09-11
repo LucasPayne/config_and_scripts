@@ -860,6 +860,15 @@ if PluginEnabled("vim-easymotion") == 1
         let g:easymotion_EasyMotionFirstCmdlineChange_counter += 1
     endfunction
 
+    function! __EasyMotionSearchPrevious()
+        " Only run if no characters have been typed on the search.
+        if g:easymotion_EasyMotionFirstCmdlineChange_counter != g:easymotion_EasyMotionFirstCmdlineChange_target
+            return
+        endif
+        call feedkeys(g:easymotion_tmp_previous_search.."\<cr>", 'n')
+        "call feedkeys("\<cr>", 'n')
+    endfunction
+
     function! __EasyMotionSearchFinished()
 
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
@@ -893,8 +902,13 @@ if PluginEnabled("vim-easymotion") == 1
         " Handle cancel
         if exists("g:easymotion_search_cancelled")
             unlet g:easymotion_search_cancelled
+            " Restore the search string register on cancel.
+            " This matches with normal / and ? search behaviour.
+            let @/ = g:easymotion_tmp_previous_search
+            unlet g:easymotion_tmp_previous_search
             return
         endif
+        unlet g:easymotion_tmp_previous_search
 
         " NOTE: Hacky
         "     Call asynchronously after 10ms.
@@ -919,11 +933,11 @@ if PluginEnabled("vim-easymotion") == 1
         let g:easymotion_tmp_hlsearch = &hlsearch 
         let g:easymotion_tmp_incsearch = &incsearch 
         let g:easymotion_tmp_scrolloff = &scrolloff
-        let g:easymotion_tmp_search_previous_cmap = maparg('<M-/>', 'c', 0, 1)
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
         let g:easymotion_tmp_easymotionsearchfinished_to_trigger = 1
         autocmd CmdlineLeave /,\? ++once call __EasyMotionSearchFinished()
         set scrolloff=0
+        let g:easymotion_tmp_previous_search = @/
         let @/ = ""
 
         " Search only the visible lines in the window
@@ -950,6 +964,10 @@ if PluginEnabled("vim-easymotion") == 1
         "    This assumes the only way to cancel the search is to press Ctrl-C.
         let g:easymotion_tmp_cancel_cmap = maparg('<C-c>', 'c', 0, 1)
         cnoremap <expr> <C-c> execute("let g:easymotion_search_cancelled = 1") ? "\<C-c>" : "\<C-c>"
+
+        " Bind Alt-/ to redo for the previous search.
+        let g:easymotion_tmp_search_previous_cmap = maparg('<M-/>', 'c', 0, 1)
+        cnoremap <expr> <M-/> __EasyMotionSearchPrevious() ? "" : ""
 
         " Start the interactive search.
         call feedkeys(a:search_char . search_prefix, 'n')
