@@ -2202,10 +2202,8 @@ nnoremap <M-v><M-i> `[v`]
 " the EDITOR/VISUAL/GIT_EDITOR, etc.
 function! VimTerminalEditor(filename, requesting_pid)
     let l:launcher_winid = bufwinid(bufnr('%'))
-    let l:launcher_winview = winsaveview()
     execute "tabnew ".fnameescape(a:filename)
     let b:launcher_winid = l:launcher_winid
-    let b:launcher_winview = l:launcher_winview
 
     " Pass this onto the buffer so it can use it on autocmd.
     " todo: Can autocmds easily contain evaluating expressions at definition time? e.g. closures.
@@ -2216,12 +2214,12 @@ function! VimTerminalEditor(filename, requesting_pid)
     autocmd BufWritePost <buffer>
         \ |    call DEBUG("BufWritePost")
         \ |    call system("kill -SIGUSR1 ".string(getbufvar(str2nr(expand('<abuf>')), "vim_terminal_editor_requesting_pid")))
-        \ |    let g:VimTerminalEditor_launcher_winid = b:launcher_winid
-        \ |    let g:VimTerminalEditor_launcher_winview = b:launcher_winview
-        \ |    call win_gotoid(g:VimTerminalEditor_launcher_winid)
-        \ |    call winrestview(g:VimTerminalEditor_launcher_winview)
+        \ |    call win_gotoid(b:launcher_winid)
+        \ |    if &buftype ==# 'terminal'
+        \ |        let b:switch_to_terminal_mode = 1
+        \ |    endif
         \ |    execute "bwipeout! ".expand('<abuf>')
-
+        \ |    call CheckSwitchToTerminalMode()
 
     "autocmd BufWritePost <buffer>
     "    \ |    call DEBUG(expand('<abuf>'))
