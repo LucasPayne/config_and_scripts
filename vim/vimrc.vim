@@ -597,22 +597,29 @@ function! SendSelectedToScratchBuffer()
     let l:tmp = @*
     tabnew
     set buftype=nofile
-    execute "normal! O".l:tmp
+    execute "normal! O" l:tmp
     normal! gg
 endfunction
-vnoremap <M-t> :<c-u>call SendSelectedToScratchBuffer()<cr>
+vnoremap <silent> <M-t> :<c-u>call SendSelectedToScratchBuffer()<cr>
 " Open scratch buffer and start insert.
 " For editing text by itself.
-nnoremap <M-t> :tabnew<cr>
+nnoremap <silent> <M-t> :tabnew<cr>
+
 " Duplicate this buffer view to another tab.
 " This is useful for in-window navigation, for example opening tabs for
 " important targets during tag search.
-nnoremap <M-T> :tab split<cr>
+" This opens in the background.
+nnoremap <silent> <M-T>
+            \ :let curtab = tabpagenr()<cr>
+            \ :tab split<cr>
+            \ :execute "tabnext" curtab<cr>
+            \ :unlet curtab<cr>
+
 " Copy text to system clipboard and close.
 " Workflow intended for scratch buffer, quickly edit text to send to use
 " elsewhere.
 " (This is an insert mode mapping just so another keybinding doesn't have to be used.)
-inoremap <M-t> <esc>:%yank<cr>:close<cr>
+inoremap <silent> <M-t> <esc>:%yank<cr>:close<cr>
 
 inoremap <tab> <space><space><space><space>
 nnoremap j gj
@@ -773,7 +780,7 @@ function! CheckSwitchToTerminalMode()
     endif
 endfunction
 function! SwitchTab(number)
-    execute "normal! ".a:number."gt"
+    execute "normal!" a:number.."gt"
     call CheckSwitchToTerminalMode()
 endfunction
 
@@ -853,14 +860,31 @@ nnoremap <silent> <M--> :sp<cr>
 " Plugins
 "    ...
 "<<<
-if PluginEnabled("vim-surround") == 1
+if PluginEnabled("vim-surround")
     " Use the s key as the surround operator.
     " (note: s is also a common prefix for vim-sneak/leap.nvim plugins which I might want to use.)
     nmap s ys
     vmap s S
 endif
 
-if PluginEnabled("vim-easymotion") == 1
+if PluginEnabled("vim-EnhancedJumps")
+
+    " Timeout for the double Ctrl-I/Ctrl-O in milliseconds when travelling between buffers.
+    let g:stopFirstAndNotifyTimeoutLen = 2000
+
+    " Disable navigation through tabs.
+    " I want jump list navigation to restrict to one window anyway.
+    let g:EnhancedJumps_UseTab = 0
+
+    " Do the mappings myself.
+    let g:EnhancedJumps_no_mappings = 1
+    nnoremap <C-o> <Plug>EnhancedJumpsOlder
+    nnoremap <C-i> <Plug>EnhancedJumpsNewer
+    nnoremap <M-o> <Plug>EnhancedJumpsRemoteOlder
+    nnoremap <M-i> <Plug>EnhancedJumpsRemoteNewer
+endif
+
+if PluginEnabled("vim-easymotion")
     " EasyMotion options
     " Disable messages like "Jumped to ..." and "EasyMotion cancelled."
     let g:EasyMotion_verbose = 0
@@ -1061,21 +1085,21 @@ augroup SearchMappings
     autocmd CmdlineLeave /,\? call __SearchMappings_CmdlineLeave()
 augroup END
 
-if PluginEnabled("vim-highlightedyank") == 1
+if PluginEnabled("vim-highlightedyank")
     " measured in milliseconds
     let g:highlightedyank_highlight_duration = 200
 endif
 
-if PluginEnabled("tagbar") == 1
+if PluginEnabled("tagbar")
     nnoremap <leader>t :Tagbar<cr>
 endif
 
-if PluginEnabled("bufexplorer") == 1
+if PluginEnabled("bufexplorer")
     nnoremap <silent> <C-p> :ToggleBufExplorer<CR>
     "nnoremap <silent> <C-p> :BufExplorerHorizontalSplit<CR>
 endif
 
-"if PluginEnabled("quickpeek") == 1
+"if PluginEnabled("quickpeek")
 let g:quickpeek_auto = 1
 let g:quickpeek_popup_options = {
     \ 'border': [0,0,0,0],
@@ -1084,7 +1108,7 @@ let g:quickpeek_popup_options = {
 "let g:quickpeek_window_settings = ["wincolor=Window"]
 "endif
 
-"if PluginEnabled("tig-explorer.vim") == 1
+"if PluginEnabled("tig-explorer.vim")
 "    let g:tig_explorer_use_builtin_term = 0
 "
 "    let g:tig_explorer_keymap_edit_e  = 'e'
@@ -1103,7 +1127,7 @@ let g:quickpeek_popup_options = {
 "    nnoremap .bl :TigBlame<cr>
 "endif
 
-"if PluginEnabled("vim-gitgutter") == 1
+"if PluginEnabled("vim-gitgutter")
 "    let g:gitgutter_enabled = 0
 "    let g:gitgutter_preview_win_floating = 0
 "
@@ -1121,7 +1145,7 @@ let g:quickpeek_popup_options = {
 "    augroup END
 "endif
 
-if PluginEnabled("vim-lsp") == 1
+if PluginEnabled("vim-lsp")
     let g:lsp_diagnostics_enabled = 0
     let g:lsp_document_highlight_enabled = 0
 
@@ -1142,7 +1166,7 @@ if PluginEnabled("vim-lsp") == 1
     nnoremap <space>t :LspTypeDefinition<cr>
 endif
 
-if PluginEnabled("targets") == 1
+if PluginEnabled("targets")
     " Documentation:
     " https://github.com/wellle/targets.vim
 
@@ -2210,11 +2234,6 @@ source $CONFIG_DIR/scripts/syncer_files/syncer-vim.vim
 "         getbufvar(get(buf_info, "bufnr"), 
 "     endfor
 " endfunction
-
-" jump list
-" center cursor after jumping
-"nnoremap <C-o> <C-o>zz
-"nnoremap <C-i> <C-i>zz
 
 " Select the last inserted text.
 "todo: Seems to not be accurate.
