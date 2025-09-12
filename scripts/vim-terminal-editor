@@ -14,12 +14,33 @@ filename="$1"
 # https://stackoverflow.com/questions/8337472/bash-how-should-i-idle-until-i-get-a-signal
 sleep infinity & SLEEPER_PID=$!
 trap 'kill $SLEEPER_PID' USR1
+trap 'kill $SLEEPER_PID' USR2
 
 requesting_pid=$$
 vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:call VimTerminalEditor("'"$filename"'", '$requesting_pid')<cr>'
 
 # Wait the sleeper process to be killed by a USR1 signal.
 wait
-# todo: Why does this need to be echo'd?
-#       Might be an accidental workaround for a problem, the VISUAL/EDITOR-pattern-using `git commit` is erroring if this isn't done.
-echo done
+err=$?
+
+# Catch SIGUSR1 success signal (128+N = 128+10 = 138).
+if [ $err -eq 138 ]
+then
+    # todo: Why does this need to be echo'd?
+    #       Might be an accidental workaround for a problem, the VISUAL/EDITOR-pattern-using `git commit` is erroring if this isn't done.
+    exit 0
+fi
+
+# Catch SIGUSR2 cancel signal (128+N = 128+12 = 140).
+if [ $err -eq 140 ]
+then
+    # Cancel
+    echo
+    echo "Cancelled commit message"
+    exit 1
+fi
+
+# Otherwise a general error.
+echo
+echo "Error writing commit message"
+exit 1

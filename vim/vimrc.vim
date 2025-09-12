@@ -1,6 +1,12 @@
 " vimrc
 "--------------------------------------------------------------------------------/
 
+function! DEBUG(str)
+    call system("date '+%H:%M:%S ' | tr -d '\n' >> /tmp/a")
+    call system("cat >> /tmp/a", a:str)
+    call system("echo >> /tmp/a")
+endfunction
+
 "------------------------------------------------------------
 " Load defaults.vim.
 " (:help usr_05.txt)
@@ -56,13 +62,11 @@ let g:vimrc_loaded_state = "start"
 " TODO: Do this without autocmds, setlocal not working?
 let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?;:"
 function! ResetAltKeyMappings()
-    call system("echo reset >> /tmp/vimlog")
     for char in g:alphabet
         execute "set <M-".char.">=\e".char
     endfor
 endfunction
 function! UnsetAltKeyMappings()
-    call system("echo unset >> /tmp/vimlog")
     for char in g:alphabet
         execute "set <M-".char.">="
     endfor
@@ -2197,21 +2201,36 @@ nnoremap <M-v><M-i> `[v`]
 " Called remotely by the vim-terminal-editor script which can be assigned as
 " the EDITOR/VISUAL/GIT_EDITOR, etc.
 function! VimTerminalEditor(filename, requesting_pid)
-    execute "tabnew ".a:filename
-    let b:is_vim_terminal_editor = 1
+    let l:launcher_winid = bufwinid(bufnr('%'))
+    let l:launcher_winview = winsaveview()
+    execute "tabnew ".fnameescape(a:filename)
+    let b:launcher_winid = l:launcher_winid
+    let b:launcher_winview = l:launcher_winview
+
     " Pass this onto the buffer so it can use it on autocmd.
-    " todo: Can autocmds easily contain evaluating expressions at definition time?
+    " todo: Can autocmds easily contain evaluating expressions at definition time? e.g. closures.
     let b:vim_terminal_editor_requesting_pid = a:requesting_pid
-    augroup VimTerminalEditor
-        autocmd!
-        " Saving finishes the edit.
-        autocmd BufWritePre,BufWinLeave,WinClosed *
-                  \   if get(b:, 'is_vim_terminal_editor', 0) == 1
-                  \ |     write
-                  \ |     call system("kill -SIGUSR1 ".b:vim_terminal_editor_requesting_pid)
-                  \ |     quit!
-                  \ | endif
-    augroup END
+    
+    autocmd! * <buffer>
+    " Saving finishes the edit.
+    autocmd BufWritePost <buffer>
+        \ |    call DEBUG("BufWritePost")
+        \ |    call system("kill -SIGUSR1 ".string(getbufvar(str2nr(expand('<abuf>')), "vim_terminal_editor_requesting_pid")))
+        \ |    let g:VimTerminalEditor_launcher_winid = b:launcher_winid
+        \ |    let g:VimTerminalEditor_launcher_winview = b:launcher_winview
+        \ |    call win_gotoid(g:VimTerminalEditor_launcher_winid)
+        \ |    call winrestview(g:VimTerminalEditor_launcher_winview)
+        \ |    execute "bwipeout! ".expand('<abuf>')
+
+
+    "autocmd BufWritePost <buffer>
+    "    \ |    call DEBUG(expand('<abuf>'))
+    "    \ |    call DEBUG(string(getbufvar(str2nr(expand('<abuf>')), "vim_terminal_editor_requesting_pid")))
+    "" Cancel
+    "autocmd BufDelete <buffer>
+    "    \ |    call DEBUG("BufDelete")
+    "    \ |    call system("kill -SIGUSR2 ".getbufvar(expand('<abuf>'), "vim_terminal_editor_requesting_pid"))
+    "    \ |    execute "bwipeout! ".expand('<abuf>')
 endfunction
 
 " Tags
