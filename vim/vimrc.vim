@@ -1,7 +1,7 @@
 " vimrc
 "--------------------------------------------------------------------------------/
 
-function! DEBUG(str)
+function! DEBUGLOG(str)
     call system("date '+%H:%M:%S ' | tr -d '\n' >> /tmp/a")
     call system("cat >> /tmp/a", a:str)
     call system("echo >> /tmp/a")
@@ -181,14 +181,17 @@ endfunction
 colorscheme default
 set background=dark
 hi LineNr ctermbg=None
-"hi Normal ctermfg=White
-"hi Comment ctermfg=Blue
-set enc=utf8
-set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
-set signcolumn=auto
+" Error message highlighting.
+hi ErrorMsg cterm=bold ctermfg=Red ctermbg=Black
+" Selection highlighting
+hi Visual cterm=underline ctermfg=NONE ctermbg=NONE
 hi SignColumn ctermbg=none
 " todo: Find a good unintrusive styling for this line.
 hi debugPC ctermbg=none
+
+set enc=utf8
+set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
+set signcolumn=auto
 ">>>
 
 augroup filetype_qf
@@ -601,11 +604,15 @@ vnoremap <M-t> :<c-u>call SendSelectedToScratchBuffer()<cr>
 " Open scratch buffer and start insert.
 " For editing text by itself.
 nnoremap <M-t> :tabnew<cr>
+" Duplicate this buffer view to another tab.
+" This is useful for in-window navigation, for example opening tabs for
+" important targets during tag search.
+nnoremap <M-T> :tab split<cr>
 " Copy text to system clipboard and close.
 " Workflow intended for scratch buffer, quickly edit text to send to use
 " elsewhere.
-"todo: Why space at end?
-nnoremap <M-T> ggVG"+y:close<cr>
+" (This is an insert mode mapping just so another keybinding doesn't have to be used.)
+inoremap <M-t> <esc>:%yank<cr>:close<cr>
 
 inoremap <tab> <space><space><space><space>
 nnoremap j gj
@@ -806,6 +813,23 @@ function! MoveCurrentWindowToNewTab(background)
         endif
     endif
 endfunction
+" Move window to tab.
+function! MoveCurrentWindowToTab(target_tab)
+    let l:current_tab = tabpagenr()
+    if l:current_tab == a:target_tab
+        " If this window is already at the target tab,
+        " don't do anything, don't even rearrange windows.
+        return
+    endif
+    let l:buf = bufnr('%')
+    let l:current_winid = win_getid()
+    execute "tabnext ".a:target_tab
+    execute "sbuffer ".l:buf
+    call win_execute(l:current_winid, "close")
+endfunction
+for i in range(1,9)
+    execute "nnoremap <silent> <M-w>"..i.." :call MoveCurrentWindowToTab("..i..")<cr>"
+endfor
 nnoremap <silent> <M-w><M-t> :call MoveCurrentWindowToNewTab(0)<cr>
 tnoremap <silent> <M-W><M-t> <cmd>call MoveCurrentWindowToNewTab(0)<cr>
 nnoremap <silent> <M-w><M-T> :call MoveCurrentWindowToNewTab(1)<cr>
