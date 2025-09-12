@@ -2200,6 +2200,19 @@ nnoremap <M-v><M-i> `[v`]
 " VimTerminalEditor
 " Called remotely by the vim-terminal-editor script which can be assigned as
 " the EDITOR/VISUAL/GIT_EDITOR, etc.
+
+function __VimTerminalEditor_Finish(mode)
+    let l:signal = "SIGUSR"..(a:mode == "success" ? "1" : "2")
+    call system("kill -"..l:signal.." "..string(getbufvar(str2nr(expand('<abuf>')), "vim_terminal_editor_requesting_pid")))
+    call win_gotoid(getbufvar(str2nr(expand('<abuf>')), "launcher_winid"))
+    if &buftype ==# 'terminal'
+        let b:switch_to_terminal_mode = 1
+    endif
+    if a:mode == "success" || a:mode == "cancel"
+        execute "bwipeout! ".expand('<abuf>')
+    endif
+    call CheckSwitchToTerminalMode()
+endfunction
 function! VimTerminalEditor(filename, requesting_pid)
     let l:launcher_winid = bufwinid(bufnr('%'))
     execute "tabnew ".fnameescape(a:filename)
@@ -2208,27 +2221,15 @@ function! VimTerminalEditor(filename, requesting_pid)
     " Pass this onto the buffer so it can use it on autocmd.
     " todo: Can autocmds easily contain evaluating expressions at definition time? e.g. closures.
     let b:vim_terminal_editor_requesting_pid = a:requesting_pid
+
+    " Cancel when Ctrl-C is pressed in normal mode.
+    nnoremap <silent> <buffer> <C-c> :call __VimTerminalEditor_Finish("cancel")<cr>
     
     autocmd! * <buffer>
     " Saving finishes the edit.
-    autocmd BufWritePost <buffer>
-        \ |    call DEBUG("BufWritePost")
-        \ |    call system("kill -SIGUSR1 ".string(getbufvar(str2nr(expand('<abuf>')), "vim_terminal_editor_requesting_pid")))
-        \ |    call win_gotoid(b:launcher_winid)
-        \ |    if &buftype ==# 'terminal'
-        \ |        let b:switch_to_terminal_mode = 1
-        \ |    endif
-        \ |    execute "bwipeout! ".expand('<abuf>')
-        \ |    call CheckSwitchToTerminalMode()
-
-    "autocmd BufWritePost <buffer>
-    "    \ |    call DEBUG(expand('<abuf>'))
-    "    \ |    call DEBUG(string(getbufvar(str2nr(expand('<abuf>')), "vim_terminal_editor_requesting_pid")))
-    "" Cancel
-    "autocmd BufDelete <buffer>
-    "    \ |    call DEBUG("BufDelete")
-    "    \ |    call system("kill -SIGUSR2 ".getbufvar(expand('<abuf>'), "vim_terminal_editor_requesting_pid"))
-    "    \ |    execute "bwipeout! ".expand('<abuf>')
+    autocmd BufWritePost <buffer> call __VimTerminalEditor_Finish("success")
+    " Cancel when the buffer is wiped.
+    autocmd BufWipeout <buffer> call __VimTerminalEditor_Finish("wipeout")
 endfunction
 
 " Tags
