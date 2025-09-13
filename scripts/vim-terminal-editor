@@ -1,4 +1,8 @@
 #!/bin/bash
+# Program to be set as EDITOR/GITEDITOR.
+# If VIM_SERVERNAME is set, use that.
+# e.g., this allows editing a git commit message in the same
+# vim that the `git commit --amend` is run in, in a vim terminal window.
 
 # todo: Can trap INT and tell vim that it is aborting the job.
 #       Or rather, trap exit handlers. Then vim can e.g. close the stuff it is providing for the edit.
