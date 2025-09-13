@@ -1,0 +1,16 @@
+#!/bin/bash
+# mpvbg: mpv as background player
+
+mpv --loop "$@" &
+pid="$!"
+wid=$(waitwindow "$pid")
+echo "mpv pid: $pid"
+echo "mpv window id: $wid"
+
+# Todo: Apparently mpv creates the window but waits some time to set properties.
+#       This sleep seems to work to wait until it is initialized, I guess unless the video takes a while to load.
+sleep 5
+wmctrl -i -r $wid -b add,below
+wmctrl -i -r $wid -b add,fullscreen
+wmctrl -i -r $wid -b add,sticky
+wait "$pid"
