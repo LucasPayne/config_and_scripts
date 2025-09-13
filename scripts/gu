@@ -1,3 +1,4 @@
 #!/bin/bash
-# gu:
+# gu: git add -u
+exec git add -u
 
