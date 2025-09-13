@@ -1,3 +1,42 @@
 #!/bin/bash
-# xwiborder:
+# xwiborder: toggle X window border
+script_option_debug_mode=0
 
+if [ $# -eq 0 ]
+then
+    id="$(xwi)"
+else
+    id="$1"
+fi
+
+debug ()
+{
+    if [ $script_option_debug_mode -eq 1 ]
+    then
+        >&2 echo "$@"
+    fi
+}
+
+debug "id: $id"
+
+hints="$(xprop -id "$id" _MOTIF_WM_HINTS 2>/dev/null)"
+
+if [ $? -ne 0 ]
+then
+    >&2 echo "error: Failed to get X window _MOTIF_WM_HINTS."
+    exit 1
+fi
+hints="$(echo "$hints" | awk -F" = " '{print $2}')"
+debug "$hints"
+
+# TODO: Make sure using _MOTIF_WM_HINTS correctly and inherit other settings in it.
+if [ "$hints" = "2, 0, 0, 0, 0" ]
+then
+    debug enabled
+    # Enable the border
+    xprop -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "2, 1, 1, 0, 0" -id "$id"
+else
+    debug disabled
+    # Disable the border
+    xprop -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "2, 0, 0, 0, 0" -id "$id"
+fi
