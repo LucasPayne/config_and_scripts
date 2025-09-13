@@ -4,15 +4,32 @@
 focus_wid="$(xdotool getwindowfocus)"
 mpv --loop "$@" &
 pid="$!"
-wid=$(waitwindow "$pid")
+wid="$(xdotool search --sync --onlyvisible --pid "$pid")"
 echo "mpv pid: $pid"
 echo "mpv window id: $wid"
 
-# Todo: Apparently mpv creates the window but waits some time to set properties.
-#       This sleep seems to work to wait until it is initialized, I guess unless the video takes a while to load.
-sleep 5
 wmctrl -i -r $wid -b add,below
 wmctrl -i -r $wid -b add,fullscreen
 wmctrl -i -r $wid -b add,sticky
+
+date_ms ()
+{
+    date +%s%3N
+}
+(
+    t=$(date_ms)
+    xdotool behave "$wid" focus getwindowname | while read -r line
+    do
+        echo "t: $t -- tt: $tt"
+        tt=$(date_ms)
+        if [ $((tt - t)) -gt 1000 ]
+        then
+            notify-send -t 500 "Background mpv focused"
+        fi
+        t=$tt
+    done
+) &
+
+# Return to window which was focused when this script was executed.
 xdotool windowfocus "$focus_wid"
 wait "$pid"
