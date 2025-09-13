@@ -2540,6 +2540,11 @@ function! CleanHiddenBuffers(...)
     let l:msg0 = l:do_clean_unlisted ? "Wiped out" : "Deleted"
     echo "CleanHiddenBuffers: "..l:msg0 l:successfully_deleted_bufnames
 endfunction
+
+" CleanHiddenBuffers
+"     Delete all hidden buffers which are not modified and are not terminals.
+" CleanHiddenBuffers!
+"     Do the same, but include unlisted buffers, and wipeout the buffers instead of delete.
 command! -bang -nargs=0 CleanHiddenBuffers call CleanHiddenBuffers(<bang>0)
 
 " Execute selected vimscript

@@ -1,9 +1,30 @@
 #!/bin/bash
 # getcol: use awk to print n'th column
+# With negative n, get n'th from the last (starting at -1).
 
 # parse arguments
-[ $# -eq 1 ] || exit 1
-[[ "$1" =~ ^[0-9]+$ ]] || exit 1
-[ "$1" -ne 0 ] || exit 1
+if [ $# -ne 1 ]
+then
+    exit 1
+fi
+n="$1"
+if [[ ! "$n" =~ ^-?[0-9]+$ ]]
+then
+    >&2 echo "Not a positive or negative integer."
+    exit 1
+fi
+if [ $n -eq 0 ]
+then
+    >&2 echo "Can't get 0'th column."
+    exit 1
+fi
 
-exec awk '{print $'"$1"'}'
+if [ $n -lt 0 ]
+then
+    n=$((-n))
+    awk_string='{print $(NF+1-'"$n"')}'
+else
+    awk_string='{print $'"$n"'}'
+fi
+
+exec awk "$awk_string"
