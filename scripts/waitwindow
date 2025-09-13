@@ -68,7 +68,9 @@ do
             # (Might not be necessary, todo check if xdotool search output is always window IDs.)
             if xdotool getwindowname "$wid" >/dev/null 2>&1
             then
-                echo "$wid"
+                # Return window ID in hex
+                wid_hex="$(printf '0x%x' "$wid")"
+                echo "$wid_hex"
                 exit 0
             fi
         fi

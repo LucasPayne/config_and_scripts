@@ -2481,3 +2481,67 @@ command! -bar -nargs=0 Vimpath
             \   echo join(map(split(substitute(&runtimepath, ",", "\n", "g"), "\n"), {_, v -> "runtimepath: " . v}), "\n")
             \ | echo join(map(split(substitute(&packpath, ",", "\n", "g"), "\n"), {_, v -> "packpath: " . v}), "\n")
 
+function! CleanHiddenBuffers(...)
+    " If set, also delete unlisted hidden buffers.
+    let l:do_clean_unlisted = get(a:000, 0, 0)
+
+    " Get hidden buffers.
+    " (Note: Using :ls output because there doesn't seem to be a "bufhidden()" available.
+    let l:hidden_bufs = []
+    if 1
+        redir => l:ls
+        if l:do_clean_unlisted
+            silent ls!
+        else
+            silent ls
+        endif
+        redir END
+        let l:ls_lines = split(l:ls, "\n")
+        for line in l:ls_lines
+            let line = split(line, "\"")[0]
+            let match = matchlist(line, '\v\s+(\d+)(.*)')
+            if empty(match)
+                continue
+            endif
+            let bufnr = match[1]
+            let flags = match[2]
+
+            let unlisted_flag = flags[0] == "u"
+            let hidden_flag = flags[2] == "h"
+            let active_flag = flags[2] == "a"
+
+            if hidden_flag || (unlisted_flag && !active_flag)
+                let hidden_bufs += [str2nr(bufnr)]
+            endif
+        endfor
+    endif
+
+    let l:successfully_deleted_bufs = []
+    let l:successfully_deleted_bufnames = []
+    for bufnr in l:hidden_bufs
+        if !getbufvar(bufnr, '&modified') && getbufvar(bufnr, '&buftype') !=# 'terminal'
+            let v:errmsg = ""
+            let bufname = bufname(bufnr)
+            if l:do_clean_unlisted
+                execute 'bwipeout' bufnr
+            else
+                execute 'bdelete' bufnr
+            endif
+            if v:errmsg != ""
+                echo "Buffer delete failed: "..v:errmsg
+                let v:errmsg = ""
+            else
+                let l:successfully_deleted_bufs += [bufnr]
+                let l:successfully_deleted_bufnames += [bufname]
+            endif
+        endif
+    endfor
+
+    let l:msg0 = l:do_clean_unlisted ? "Wiped out" : "Deleted"
+    echo "CleanHiddenBuffers: "..l:msg0 l:successfully_deleted_bufnames
+endfunction
+command! -bang -nargs=0 CleanHiddenBuffers call CleanHiddenBuffers(<bang>0)
+
+" Execute selected vimscript
+vnoremap <M-e><M-e> :source<cr>
+
