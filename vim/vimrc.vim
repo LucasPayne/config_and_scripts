@@ -220,7 +220,6 @@ function! YankWordAndFilePath()
     let @+ = "    ".l:word."\n".expand("%:p")." ".line(".")."\n"
 endfunction
 function! YankSelectionAndFilePath()
-    let @+ = "    ".@*."\n".expand("%:p")." ".line(".")."\n"
 endfunction
 nnoremap <space>cp :call YankFilePath()<cr>
 nnoremap <space>CP :call YankWordAndFilePath()<cr>
@@ -898,13 +897,6 @@ if PluginEnabled("vim-easymotion")
     " This is basically a rudimentary version of https://github.com/ggandor/leap.nvim hacked from EasyMotion.
 
     function! __EasyMotionSearchJump()
-        nohlsearch
-        " (gotten from bd-n specification/test)
-        call EasyMotion#Search(0,2,0)
-
-        " Restore scrolloff
-        let &scrolloff = g:easymotion_tmp_scrolloff
-        unlet g:easymotion_tmp_scrolloff
     endfunction
 
     let g:easymotion_EasyMotionFirstCmdlineChange_counter = 0
@@ -973,19 +965,12 @@ if PluginEnabled("vim-easymotion")
         let l:cmdline = getcmdline()[g:easymotion_EasyMotionFirstCmdlineChange_target:]
         call timer_start(10, {-> setreg("/", l:cmdline)})
 
-        " NOTE: Hacky
-        "     Call asynchronously after 10ms.
-        "     Also, invoke <Plug>(easymotion-bd-n) through its actual invoked
-        "     function, instead of sending the keys.
-        "     Sending the keys does trigger the mapping, but EasyMotion cancels it
-        "     immediately.
-        "     This is the only way I've found to keep interactive mode.
-        "     (Unsure currently why it is needed, todo.)
-        "     failed attempts:
-        "         execute "normal! \<Plug>(easymotion-bd-n)"
-        "         call timer_start(10, {-> execute('normal! \<Plug>(easymotion-bd-n)')})
-        "         call EasyMotion#Search(0,2,0)
-        call timer_start(10, {-> __EasyMotionSearchJump()})
+        " Trigger the easymotion jump keys prompt.
+        nohlsearch
+        call feedkeys("\<Plug>(easymotion-bd-n)", "m")
+        " Restore scrolloff
+        let &scrolloff = g:easymotion_tmp_scrolloff
+        unlet g:easymotion_tmp_scrolloff
     endfunction
 
     function! __EasyMotionSearch(search_char)
@@ -2305,9 +2290,19 @@ function! QuickFixFromJSON(json)
     call GoToQuickFix()
 endfunction
 
+" Close the quickfix if it is the last window.
 augroup QFClose
   autocmd!
-  autocmd WinEnter * if winnr('$') == 1 && &buftype == "quickfix" | q | endif
+  " https://stackoverflow.com/questions/7476126/how-to-automatically-close-the-quick-fix-window-when-leaving-a-file
+  " Note: Comment below gives attempt fix for vim >=9.1.18, but doesn't work for me.
+  " Just using a timer for now to circumvent...
+  " I think the reasoning is this would create recursive autocmd triggers, but really
+  " I think that should be the responsibility of the user.
+  " The below autocmd does trigger again but then the if statement fails.
+  autocmd WinEnter *
+              \   if winnr('$') == 1 && &buftype == "quickfix"
+              \ |     call timer_start(10, {-> execute("quit")})
+              \ | endif
 augroup END
 
 " Reader mode
