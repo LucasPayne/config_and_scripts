@@ -895,9 +895,19 @@ if PluginEnabled("vim-easymotion")
     "
     " Feature: Search in visible part of buffer, then jump.
     " This is basically a rudimentary version of https://github.com/ggandor/leap.nvim hacked from EasyMotion.
+    "
+    "
 
+    " Note:
+    "     Hack to get cursor position restore.
+    "     Need to use feedkeys for some reason...
     function! __EasyMotionSearchJump()
+        " Restore cursor position.
+        call setpos('.', g:easymotion_tmp_cursor_pos)
+        unlet g:easymotion_tmp_cursor_pos
+        call feedkeys("\<Plug>(easymotion-bd-n)", "m")
     endfunction
+    nnoremap <Plug>(my-easymotion-search-jump) :call __EasyMotionSearchJump()<cr>
 
     let g:easymotion_EasyMotionFirstCmdlineChange_counter = 0
     let g:easymotion_EasyMotionFirstCmdlineChange_target = 0
@@ -920,11 +930,10 @@ if PluginEnabled("vim-easymotion")
             return
         endif
         call feedkeys(g:easymotion_tmp_previous_search.."\<cr>", 'n')
-        "call feedkeys("\<cr>", 'n')
     endfunction
 
     function! __EasyMotionSearchFinished()
-
+        
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
         if !exists("g:easymotion_tmp_easymotionsearchfinished_to_trigger")
             return
@@ -963,11 +972,13 @@ if PluginEnabled("vim-easymotion")
         unlet g:easymotion_tmp_previous_search
 
         let l:cmdline = getcmdline()[g:easymotion_EasyMotionFirstCmdlineChange_target:]
+        " Note: Not sure why need to delay.
         call timer_start(10, {-> setreg("/", l:cmdline)})
 
         " Trigger the easymotion jump keys prompt.
         nohlsearch
-        call feedkeys("\<Plug>(easymotion-bd-n)", "m")
+        
+        call feedkeys("\<Plug>(my-easymotion-search-jump)", "m")
         " Restore scrolloff
         let &scrolloff = g:easymotion_tmp_scrolloff
         unlet g:easymotion_tmp_scrolloff
@@ -981,6 +992,8 @@ if PluginEnabled("vim-easymotion")
         let g:easymotion_tmp_hlsearch = &hlsearch 
         let g:easymotion_tmp_incsearch = &incsearch 
         let g:easymotion_tmp_scrolloff = &scrolloff
+        " Save cursor position to restore, so incsearch doesn't clobber it.
+        let g:easymotion_tmp_cursor_pos = getpos(".")
         "TODO: Bug workaround here, ++once autocmd is called multiple times.
         let g:easymotion_tmp_easymotionsearchfinished_to_trigger = 1
         autocmd CmdlineLeave /,\? ++once call __EasyMotionSearchFinished()
