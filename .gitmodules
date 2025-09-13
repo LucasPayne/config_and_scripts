@@ -61,3 +61,6 @@
 [submodule "vim/__tmp/clever-f.vim"]
 	path = vim/repos/clever-f.vim
 	url = git@github.com:LucasPayne/clever-f.vim.git
+[submodule "vim/__tmp/vim-signature"]
+	path = vim/repos/vim-signature
+	url = https://github.com/kshenoy/vim-signature

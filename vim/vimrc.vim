@@ -901,19 +901,24 @@ if PluginEnabled("vim-easymotion")
         nohlsearch
         " (gotten from bd-n specification/test)
         call EasyMotion#Search(0,2,0)
+
+        " Restore scrolloff
+        let &scrolloff = g:easymotion_tmp_scrolloff
+        unlet g:easymotion_tmp_scrolloff
     endfunction
 
     let g:easymotion_EasyMotionFirstCmdlineChange_counter = 0
     let g:easymotion_EasyMotionFirstCmdlineChange_target = 0
     function! __EasyMotionFirstCmdlineChange()
-        if g:easymotion_EasyMotionFirstCmdlineChange_counter == g:easymotion_EasyMotionFirstCmdlineChange_target
-            set incsearch
-            set hlsearch
-            augroup EasyMotionEasyMotionSearchCmdlineChanged
-                autocmd!
-            augroup END
-        elseif g:easymotion_EasyMotionFirstCmdlineChange_counter < g:easymotion_EasyMotionFirstCmdlineChange_target
+        if g:easymotion_EasyMotionFirstCmdlineChange_counter < g:easymotion_EasyMotionFirstCmdlineChange_target
             let g:easymotion_EasyMotionFirstCmdlineChange_counter += 1
+            if g:easymotion_EasyMotionFirstCmdlineChange_counter == g:easymotion_EasyMotionFirstCmdlineChange_target
+                set incsearch
+                set hlsearch
+                augroup EasyMotionEasyMotionSearchCmdlineChanged
+                    autocmd!
+                augroup END
+            endif
         endif
     endfunction
 
@@ -939,8 +944,6 @@ if PluginEnabled("vim-easymotion")
         unlet g:easymotion_tmp_hlsearch
         let &incsearch = g:easymotion_tmp_incsearch
         unlet g:easymotion_tmp_incsearch
-        let &scrolloff = g:easymotion_tmp_scrolloff
-        unlet g:easymotion_tmp_scrolloff
 
         " Restore mappings
         if g:easymotion_tmp_cancel_cmap != {}
