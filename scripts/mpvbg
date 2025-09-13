@@ -1,6 +1,7 @@
 #!/bin/bash
 # mpvbg: mpv as background player
 
+focus_wid="$(xdotool getwindowfocus)"
 mpv --loop "$@" &
 pid="$!"
 wid=$(waitwindow "$pid")
@@ -13,4 +14,5 @@ sleep 5
 wmctrl -i -r $wid -b add,below
 wmctrl -i -r $wid -b add,fullscreen
 wmctrl -i -r $wid -b add,sticky
+xdotool windowfocus "$focus_wid"
 wait "$pid"
