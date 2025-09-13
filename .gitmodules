@@ -64,3 +64,6 @@
 [submodule "vim/__tmp/vim-signature"]
 	path = vim/repos/vim-signature
 	url = https://github.com/kshenoy/vim-signature
+[submodule "vim/__tmp/undoquit.vim"]
+	path = vim/repos/undoquit.vim
+	url = git@github.com:LucasPayne/undoquit.vim.git
