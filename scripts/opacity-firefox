@@ -18,7 +18,12 @@ else
     exit 1
 fi
 
-windows="$(wmctrl -l | grep ' Mozilla Firefox$' | getcol 1 | tr '\n' ' ')"
+windows="$(wmctrl -l \
+    | grep -E 'Mozilla Firefox( Private Browsing)?$' \
+    | getcol 1 \
+    | tr '\n' ' ' \
+)"
+
 if [ -z "$windows" ]
 then
     >&2 echo "No firefox windows found."

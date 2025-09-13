@@ -276,7 +276,6 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 "set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
-" set cursorline
 set nonumber
 set nuw=5
 set noswapfile
@@ -859,11 +858,17 @@ nnoremap <silent> <M--> :sp<cr>
 " Plugins
 "    ...
 "<<<
+
 if PluginEnabled("vim-surround")
     " Use the s key as the surround operator.
     " (note: s is also a common prefix for vim-sneak/leap.nvim plugins which I might want to use.)
     nmap s ys
     vmap s S
+endif
+
+if PluginEnabled("undoquit.vim")
+    let g:undoquit_mapping = '<M-w><M-u>'
+    let g:undoquit_tab_mapping = '<M-w><M-U>'
 endif
 
 if PluginEnabled("vim-EnhancedJumps")
