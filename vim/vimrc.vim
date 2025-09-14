@@ -2574,14 +2574,40 @@ set fillchars+=tpl_vert:\
 
 function! TabPanel() abort
     let tab = g:actual_curtabpage
-    let numwin = tabpagewinnr(tab, '$')
     let panel_lines = []
+    let cwd = getcwd()
+
+    " Show total header (above the first tab).
+    if tab == 1
+        "let panel_lines += [cwd]
+    endif
+
+    " Show header for the tab.
+    let numwin = tabpagewinnr(tab, '$')
     let panel_lines += [printf("%d", tab)]
+
     for win in range(1, numwin)
         let buf = Win_id2bufnr(win_getid(win, tab))
-        let panel_lines += [" "..bufname(buf)]
+        let buftype = getbufvar(buf, "buftype")
+        if buftype == ""
+            " Normal buffer.
+            " Note: I assume bufname is the absolute or relative path, is this always true?
+            let path = bufname(buf)
+            if empty(path)
+                let panel_lines += [" ".."(empty)"]
+                continue
+            endif
+            let path = fnamemodify(path, ":p")
+            if stridx(path, cwd..'/') == 0
+                let path = path[strlen(cwd) + 1:]
+            endif
+            let panel_lines += [" "..path]
+        else
+            let panel_lines += [" "..bufname(buf)]
+        endif
     endfor
     return join(panel_lines, "\n")
 endfunction
 redrawtabpanel
 set tabpanel=%!TabPanel()
+

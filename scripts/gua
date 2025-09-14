@@ -1,0 +1,5 @@
+#!/bin/bash
+# gua: git add -u and git commit --amend without edit
+
+git add -u
+git commit --amend --no-edit
