@@ -620,6 +620,12 @@ function! TabPanel() abort
                 let panel_lines += ["%#TabPanelFooter#"..s]
             endfor
         endif
+
+        let num_hidden_unlisted = NumHiddenBuffers(1)
+        if num_hidden_unlisted > num_hidden
+            let panel_lines += [""]
+            let panel_lines += ["%#TabPanelFooter#("..(num_hidden_unlisted - num_hidden).." unlisted)%#TabPanel#"]
+        endif
     endif
 
     return join(panel_lines, "\n")
@@ -2688,8 +2694,9 @@ function! GetHiddenBuffers(...)
 endfunction
 
 " Count the number of hidden buffers.
-function NumHiddenBuffers()
-    return len(GetHiddenBuffers())
+function NumHiddenBuffers(...)
+    let l:include_unlisted = get(a:000, 0, 0)
+    return len(GetHiddenBuffers(l:include_unlisted))
 endfunction
 
 function! CleanHiddenBuffers(...)
