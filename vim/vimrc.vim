@@ -58,10 +58,11 @@ augroup END
 " To get from window and tab number, use win_getid(win, tab).
 " e.g. Win_id2bufnr(win_getid(win, tab))
 function! Win_id2bufnr(winid)
-    silent! call win_execute(winid, "let g:tmpwinbufnr = winbufnr(".win.")")
-    echo g:tmpwinbufnr
-    let buf = g:tmpwinbufnr
+    let l:win = win_id2win(a:winid)
+    silent! call win_execute(a:winid, "let g:tmpwinbufnr = winbufnr(".l:win.")")
+    let l:buf = g:tmpwinbufnr
     unlet g:tmpwinbufnr
+    return l:buf
 endfunction
 
 " Alt key mappings
@@ -2565,22 +2566,22 @@ nnoremap <M-e><M-e> :.source<cr>
 
 set showtabline=0
 set showtabpanel=2
-hi TabPanel cterm=NONE
+hi TabPanel cterm=NONE ctermfg=grey
 hi TabPanelFill cterm=NONE
+hi TabPanelSel cterm=NONE ctermfg=white
 set tabpanelopt=vert,columns:20,align:left
 set fillchars+=tpl_vert:\ 
-set tabpanel=%!TabPanel()
-
-" function! TabPanel() abort
-"     return printf("(%2d)\n  %%f", g:actual_curtabpage)
-" endfunction
 
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let numwin = tabpagewinnr(tab, '$')
-    for i in range(1, numwin)
-        win
-        
-    return printf("%d:%d\n  %%f", tab, numwin)
+    let panel_lines = []
+    let panel_lines += [printf("%d", tab)]
+    for win in range(1, numwin)
+        let buf = Win_id2bufnr(win_getid(win, tab))
+        let panel_lines += [" "..bufname(buf)]
+    endfor
+    return join(panel_lines, "\n")
 endfunction
-
+redrawtabpanel
+set tabpanel=%!TabPanel()
