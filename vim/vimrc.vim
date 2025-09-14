@@ -2584,27 +2584,31 @@ function! TabPanel() abort
 
     " Show header for the tab.
     let numwin = tabpagewinnr(tab, '$')
-    let panel_lines += [printf("%d", tab)]
+    let panel_lines += ['%#TabPanel#'..printf("%d", tab)]
 
     for win in range(1, numwin)
         let buf = Win_id2bufnr(win_getid(win, tab))
         let buftype = getbufvar(buf, "buftype")
+        " s: Line for the window.
+        let s = ""
+        let s .= (buf == bufnr()) ? '%#TabPanelSel#' : '%#TabPanel#'
         if buftype == ""
             " Normal buffer.
             " Note: I assume bufname is the absolute or relative path, is this always true?
             let path = bufname(buf)
             if empty(path)
-                let panel_lines += [" ".."(empty)"]
+                let s .= " ".."(empty)"
                 continue
             endif
             let path = fnamemodify(path, ":p")
             if stridx(path, cwd..'/') == 0
                 let path = path[strlen(cwd) + 1:]
             endif
-            let panel_lines += [" "..path]
+            let s .= " "..path
         else
-            let panel_lines += [" "..bufname(buf)]
+            let s .= " "..bufname(buf)
         endif
+        let panel_lines += [s]
     endfor
     return join(panel_lines, "\n")
 endfunction
