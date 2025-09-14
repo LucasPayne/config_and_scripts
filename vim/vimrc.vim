@@ -1645,71 +1645,81 @@ function! CtrlCHandler()
     endif
 endfunction
 
+let g:use_tabpanel = 1
 " 2D movement.
 " Horizontal: Left-right splits movement, tabs
-function! SpaceMoveHorizontal(amount, skip_splits)
-    if a:amount < 0
-        let l:winkey = "h"
-        let l:winotherkey = "l"
-        let l:tabcmd = "tabprevious"
-        let l:absolute_amount = -a:amount
-    elseif a:amount > 0
-        let l:winkey = "l"
-        let l:winotherkey = "h"
-        let l:tabcmd = "tabnext"
-        let l:absolute_amount = a:amount
-    else
+function! SpaceMove(vertical, amount, skip_splits)
+    if a:amount == 0
+        " Don't have to move.
         return
     endif
-    if a:skip_splits == 1
-        if a:amount < 0 && tabpagenr() > 1 || a:amount > 0 && tabpagenr() < tabpagenr('$')
-            execute l:tabcmd
+    if a:amount < 0
+        if a:vertical
+            let l:tabcmd = "tabnext"
+            let l:winkey = "j"
+            let l:winotherkey = "k"
+            let l:absolute_amount = -a:amount
+        else
+            let l:tabcmd = "tabprevious"
+            let l:winkey = "h"
+            let l:winotherkey = "l"
+            let l:absolute_amount = -a:amount
         endif
     else
-        let l:prev_wingetid = win_getid()
-        for i in range(l:absolute_amount)
-            execute "wincmd ".l:winkey
-            if win_getid() == l:prev_wingetid
-                if a:amount < 0 && tabpagenr() > 1 || a:amount > 0 && tabpagenr() < tabpagenr('$')
-                    execute l:tabcmd
-                    " Go to the left-or-rightmost split, so e.g. navigation to the right 
-                    let l:prev_winnr = -1
-                    while l:prev_winnr != winnr()
-                        let l:prev_winnr = winnr()
-                        execute "wincmd ".l:winotherkey
-                    endwhile
-                endif
-            endif
-        endfor
+        if a:vertical
+            let l:tabcmd = "tabprevious"
+            let l:winkey = "k"
+            let l:winotherkey = "j"
+            let l:absolute_amount = a:amount
+        else
+            let l:tabcmd = "tabnext"
+            let l:winkey = "l"
+            let l:winotherkey = "h"
+            let l:absolute_amount = a:amount
+        endif
     endif
-    call CheckSwitchToTerminalMode()
-endfunction
-" Vertical: Up-down splits movement, dirspaces
-function! SpaceMoveVertical(amount, skip_splits)
-    if a:amount < 0
-        let l:winkey = "j"
-        let l:winotherkey = "k"
-        let l:absolute_amount = -a:amount
-    elseif a:amount > 0
-        let l:winkey = "k"
-        let l:winotherkey = "j"
-        let l:absolute_amount = a:amount
-    else
-        return
-    endif
-    if a:skip_splits == 1
-        " change dirspace
 
-        " for now just doing splits anyway
-        for i in range(l:absolute_amount)
-            execute "wincmd ".l:winkey
-        endfor
+    if a:skip_splits == 1
+        if a:vertical == g:use_tabpanel
+            if (     ((a:amount < 0) != a:vertical) && tabpagenr() > 1
+                \ || ((a:amount > 0) != a:vertical) && tabpagenr() < tabpagenr('$'))
+                call DEBUGLOG(l:tabcmd)
+                execute l:tabcmd
+            endif
+        else
+            " todo, optional: Some other navigation, like "dirspace" navigation.
+        endif
     else
-        for i in range(l:absolute_amount)
-            execute "wincmd ".l:winkey
-        endfor
+        if a:vertical == g:use_tabpanel
+            let l:prev_wingetid = win_getid()
+            for i in range(l:absolute_amount)
+                execute "wincmd ".l:winkey
+                if win_getid() == l:prev_wingetid
+                    if (     ((a:amount < 0) != a:vertical) && tabpagenr() > 1
+                        \ || ((a:amount > 0) != a:vertical) && tabpagenr() < tabpagenr('$'))
+                        execute l:tabcmd
+                        " Go to the left-or-rightmost split, so e.g. navigation to the right 
+                        let l:prev_winnr = -1
+                        while l:prev_winnr != winnr()
+                            let l:prev_winnr = winnr()
+                            execute "wincmd ".l:winotherkey
+                        endwhile
+                    endif
+                endif
+            endfor
+        else
+            for i in range(l:absolute_amount)
+                execute "wincmd ".l:winkey
+            endfor
+        endif
     endif
     call CheckSwitchToTerminalMode()
+endfunction!
+function! SpaceMoveHorizontal(amount, skip_splits)
+    call SpaceMove(0, a:amount, a:skip_splits)
+endfunction
+function! SpaceMoveVertical(amount, skip_splits)
+    call SpaceMove(1, a:amount, a:skip_splits)
 endfunction
 
 tnoremap <M-J><M-K> <C-\><C-n>
@@ -2608,6 +2618,7 @@ hi TabPanelSel cterm=NONE ctermfg=white
 set tabpanelopt=vert,columns:20,align:left
 set fillchars+=tpl_vert:\ 
 
+"@@
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let panel_lines = []
@@ -2629,7 +2640,7 @@ function! TabPanel() abort
     for win in range(1, numwin)
         let winid = win_getid(win, tab)
         let buf = Win_id2bufnr(winid)
-        let buftype = getbufvar(buf, "buftype")
+        let buftype = getbufvar(buf, "&buftype")
         " s: Line for the window.
         let s = ""
         let s .= (buf == bufnr()) ? '%#TabPanelSel#' : '%#TabPanel#'
@@ -2651,8 +2662,11 @@ function! TabPanel() abort
                 endif
                 let s .= path
             endif
-        else
-            let s .= bufname(buf)
+        elseif buftype == "help"
+            let basename = fnamemodify(bufname(buf), ":t:r")
+            let s .= "[?] "..basename
+        elseif buftype == "terminal"
+            " todo
         endif
         let panel_lines += [s]
     endfor
