@@ -293,8 +293,6 @@ set mouse=a
 set shm+=I
 set ignorecase
 set smartcase
-"Buggy? started not working, hiding even with > 1 tab page. todo
-"set showtabline=1
 set splitright
 " Don't resize splits when closing a window.
 set noequalalways
@@ -328,7 +326,17 @@ nnoremap <M-?> ?^\s*
 " Tab line
 " :help tabline
 " :help setting-tabline
-set showtabline=2
+
+let g:use_tabpanel = 1
+
+if g:use_tabpanel
+    set showtabpanel=2
+    set showtabline=0
+else
+    set showtabpanel=0
+    set showtabline=2
+endif
+
 set tabline=%!TabLine()
 function! TabLine()
     let s = ''
@@ -482,6 +490,92 @@ highlight TabLineNumber cterm=underline ctermfg=blue ctermbg=black
 highlight TabLineNumberSel cterm=underline ctermfg=blue ctermbg=black
 highlight TabLineTag cterm=underline ctermfg=gray ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
+
+" TabPanel
+set showtabline=0
+set showtabpanel=2
+hi TabPanel cterm=NONE ctermfg=grey
+hi TabPanelFill cterm=NONE
+hi TabPanelSel cterm=NONE ctermfg=white
+set tabpanelopt=vert,columns:20,align:left
+set fillchars+=tpl_vert:\ 
+
+"@@
+function! TabPanel() abort
+    let tab = g:actual_curtabpage
+    let panel_lines = []
+    let cwd = getcwd()
+    let focus_winid = gettabvar(tab, "tabwindowfocus_winid_winenter")
+
+    " Show total header (above the first tab).
+    if tab == 1
+        "let panel_lines += [cwd]
+    endif
+
+    " Show separator.
+    if tab != 1
+        let panel_lines += ['']
+    endif
+
+    " Show the tab.
+    let numwin = tabpagewinnr(tab, '$')
+    for win in range(1, numwin)
+        let winid = win_getid(win, tab)
+        let buf = Win_id2bufnr(winid)
+        let buftype = getbufvar(buf, "&buftype")
+        " s: Line for the window.
+        let s = ""
+        if buf == bufnr()
+            if winid == focus_winid
+                let s .= '%#TabPanelFocusLine#'
+            else
+                let s .= '%#TabPanelSel#'
+            endif
+        else
+            let s .= '%#TabPanel#'
+        endif
+        if winid == focus_winid
+            let s .= tab..' '
+        else
+            let s .= '  '
+        endif
+        if buftype == ""
+            " Normal buffer.
+            " Note: I assume bufname is the absolute or relative path, is this always true?
+            let path = bufname(buf)
+            if empty(path)
+                let s .= "(empty)"
+            else
+                let path = fnamemodify(path, ":p")
+                if stridx(path, cwd..'/') == 0
+                    " File in vim's working directory.
+                    let path = path[strlen(cwd) + 1:]
+                    let s .= path
+                else
+                    " File outside vim's working directory.
+                    let basename = fnamemodify(path, ":t")
+                    " r for "remote".
+                    let s .= "[r] "..basename
+                endif
+            endif
+        elseif buftype == "help"
+            let basename = fnamemodify(bufname(buf), ":t:r")
+            let s .= "[?] "..basename
+        elseif buftype == "terminal"
+            " todo
+            let s .= "$"
+        endif
+        let panel_lines += [s]
+    endfor
+    return join(panel_lines, "\n")
+endfunction
+redrawtabpanel
+set tabpanel=%!TabPanel()
+" Custom highlights for tabpanel
+highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
+
+"------------------------------------------------------------
+
 
 " Nice to have center-scroll when going to end of file.
 function! EndOfFileNavigate()
@@ -1645,7 +1739,6 @@ function! CtrlCHandler()
     endif
 endfunction
 
-let g:use_tabpanel = 1
 " 2D movement.
 " Horizontal: Left-right splits movement, tabs
 function! SpaceMove(vertical, amount, skip_splits)
@@ -1683,7 +1776,6 @@ function! SpaceMove(vertical, amount, skip_splits)
         if a:vertical == g:use_tabpanel
             if (     ((a:amount < 0) != a:vertical) && tabpagenr() > 1
                 \ || ((a:amount > 0) != a:vertical) && tabpagenr() < tabpagenr('$'))
-                call DEBUGLOG(l:tabcmd)
                 execute l:tabcmd
             endif
         else
@@ -2608,69 +2700,3 @@ augroup END
 " Call for the initial window.
 " (see :help WinEnter, it doesn't trigger for the starting window.)
 call TabWindowFocus_WinEnter()
-
-" TabPanel
-set showtabline=0
-set showtabpanel=2
-hi TabPanel cterm=NONE ctermfg=grey
-hi TabPanelFill cterm=NONE
-hi TabPanelSel cterm=NONE ctermfg=white
-set tabpanelopt=vert,columns:20,align:left
-set fillchars+=tpl_vert:\ 
-
-"@@
-function! TabPanel() abort
-    let tab = g:actual_curtabpage
-    let panel_lines = []
-    let cwd = getcwd()
-    let focus_winid = gettabvar(tab, "tabwindowfocus_winid_winenter")
-
-    " Show total header (above the first tab).
-    if tab == 1
-        "let panel_lines += [cwd]
-    endif
-
-    " Show separator.
-    if tab != 1
-        let panel_lines += ['']
-    endif
-
-    " Show the tab.
-    let numwin = tabpagewinnr(tab, '$')
-    for win in range(1, numwin)
-        let winid = win_getid(win, tab)
-        let buf = Win_id2bufnr(winid)
-        let buftype = getbufvar(buf, "&buftype")
-        " s: Line for the window.
-        let s = ""
-        let s .= (buf == bufnr()) ? '%#TabPanelSel#' : '%#TabPanel#'
-        if winid == focus_winid
-            let s .= tab..' '
-        else
-            let s .= '  '
-        endif
-        if buftype == ""
-            " Normal buffer.
-            " Note: I assume bufname is the absolute or relative path, is this always true?
-            let path = bufname(buf)
-            if empty(path)
-                let s .= "(empty)"
-            else
-                let path = fnamemodify(path, ":p")
-                if stridx(path, cwd..'/') == 0
-                    let path = path[strlen(cwd) + 1:]
-                endif
-                let s .= path
-            endif
-        elseif buftype == "help"
-            let basename = fnamemodify(bufname(buf), ":t:r")
-            let s .= "[?] "..basename
-        elseif buftype == "terminal"
-            " todo
-        endif
-        let panel_lines += [s]
-    endfor
-    return join(panel_lines, "\n")
-endfunction
-redrawtabpanel
-set tabpanel=%!TabPanel()
