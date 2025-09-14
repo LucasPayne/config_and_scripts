@@ -511,7 +511,6 @@ hi TabPanelSel cterm=NONE ctermfg=white
 set tabpanelopt=vert,columns:20,align:left
 set fillchars+=tpl_vert:\ 
 
-"@@
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let panel_lines = []
@@ -520,7 +519,7 @@ function! TabPanel() abort
 
     " Show total header (above the first tab).
     if tab == 1
-        "let panel_lines += [cwd]
+        let panel_lines += ["%#TabPanelHeader#"..cwd, ""]
     endif
 
     " Show separator.
@@ -591,6 +590,7 @@ redrawtabpanel
 set tabpanel=%!TabPanel()
 " Custom highlights for tabpanel
 highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
+highlight TabPanelHeader ctermfg=grey ctermbg=black
 
 "------------------------------------------------------------
 
