@@ -537,7 +537,7 @@ function! TabPanel() abort
         " s: Line for the window.
         let s = ""
         if buf == bufnr()
-            if winid == focus_winid
+            if winid == win_getid()
                 let s .= '%#TabPanelFocusLine#'
             else
                 let s .= '%#TabPanelSel#'
