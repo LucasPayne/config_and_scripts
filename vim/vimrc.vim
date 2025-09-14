@@ -519,7 +519,8 @@ function! TabPanel() abort
 
     " Show total header (above the first tab).
     if tab == 1
-        let panel_lines += ["%#TabPanelHeader#"..cwd, ""]
+        let cwd_string = fnamemodify(cwd, ":~")
+        let panel_lines += ["%#TabPanelHeader#"..cwd_string.."%#TabPanel#", ""]
     endif
 
     " Show separator.
@@ -590,7 +591,7 @@ redrawtabpanel
 set tabpanel=%!TabPanel()
 " Custom highlights for tabpanel
 highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
-highlight TabPanelHeader ctermfg=grey ctermbg=black
+highlight TabPanelHeader cterm=underline ctermfg=blue ctermbg=black
 
 "------------------------------------------------------------
 
@@ -2718,3 +2719,4 @@ augroup END
 " Call for the initial window.
 " (see :help WinEnter, it doesn't trigger for the starting window.)
 call TabWindowFocus_WinEnter()
+
