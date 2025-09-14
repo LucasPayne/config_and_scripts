@@ -337,6 +337,19 @@ else
     set showtabline=2
 endif
 
+function! ToggleTabPanel()
+    let g:use_tabpanel = !g:use_tabpanel
+    if g:use_tabpanel
+        set showtabpanel=2
+        set showtabline=0
+    else
+        set showtabpanel=0
+        set showtabline=2
+    endif
+endfunction
+
+nnoremap <M-w><M-p> :call ToggleTabPanel()<cr>
+
 set tabline=%!TabLine()
 function! TabLine()
     let s = ''
@@ -492,8 +505,6 @@ highlight TabLineTag cterm=underline ctermfg=gray ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
 
 " TabPanel
-set showtabline=0
-set showtabpanel=2
 hi TabPanel cterm=NONE ctermfg=grey
 hi TabPanelFill cterm=NONE
 hi TabPanelSel cterm=NONE ctermfg=white
