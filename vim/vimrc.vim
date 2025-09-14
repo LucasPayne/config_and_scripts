@@ -54,7 +54,15 @@ augroup JumpListModifications
                    \ | endif
 augroup END
 
-let g:vimrc_loaded_state = "start"
+" Add missing window/tab/winid API to get the buffer number from a window ID.
+" To get from window and tab number, use win_getid(win, tab).
+" e.g. Win_id2bufnr(win_getid(win, tab))
+function! Win_id2bufnr(winid)
+    silent! call win_execute(winid, "let g:tmpwinbufnr = winbufnr(".win.")")
+    echo g:tmpwinbufnr
+    let buf = g:tmpwinbufnr
+    unlet g:tmpwinbufnr
+endfunction
 
 " Alt key mappings
 " If terminal is sending modifiers as esc-key.
@@ -2345,8 +2353,6 @@ function! ToggleReaderMode()
 endfunction
 nnoremap <silent> <M-F> :call ToggleReaderMode()<cr>
 
-let g:vimrc_loaded_state = "finished"
-
 "https://vi.stackexchange.com/questions/17262/iedit-behaviour-in-vim/17272#17272
 "--------------------------------------------------------------------------------
 "function! GetTextObject(type, is_visual)
@@ -2556,3 +2562,25 @@ command! -bang -nargs=0 CleanHiddenBuffers call CleanHiddenBuffers(<bang>0)
 vnoremap <M-e><M-e> :source<cr>
 " Execute vimscript line
 nnoremap <M-e><M-e> :.source<cr>
+
+set showtabline=0
+set showtabpanel=2
+hi TabPanel cterm=NONE
+hi TabPanelFill cterm=NONE
+set tabpanelopt=vert,columns:20,align:left
+set fillchars+=tpl_vert:\ 
+set tabpanel=%!TabPanel()
+
+" function! TabPanel() abort
+"     return printf("(%2d)\n  %%f", g:actual_curtabpage)
+" endfunction
+
+function! TabPanel() abort
+    let tab = g:actual_curtabpage
+    let numwin = tabpagewinnr(tab, '$')
+    for i in range(1, numwin)
+        win
+        
+    return printf("%d:%d\n  %%f", tab, numwin)
+endfunction
+
