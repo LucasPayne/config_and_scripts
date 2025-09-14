@@ -2564,6 +2564,42 @@ vnoremap <M-e><M-e> :source<cr>
 " Execute vimscript line
 nnoremap <M-e><M-e> :.source<cr>
 
+" TabWindowFocus
+let g:TabWindowFocus_debug = 0
+function! TabWindowFocus_TabLeave()
+    if g:TabWindowFocus_debug
+        call DEBUGLOG("From: tab("..tabpagenr().."), win("..winnr()..")")
+        call DEBUGLOG(string(t:winmru))
+    endif
+    let t:tabwindowfocus_winid_tableave = win_getid()
+endfunction
+function! TabWindowFocus_TabEnter()
+    if g:TabWindowFocus_debug
+        call DEBUGLOG("To: tab("..tabpagenr().."), win("..winnr()..")")
+        call DEBUGLOG(string(t:winmru))
+    endif
+    if exists("t:tabwindowfocus_winid_tableave")
+        let win = win_id2win(t:tabwindowfocus_winid_tableave)
+        if win != 0
+            execute win.."wincmd w"
+        endif
+        unlet t:tabwindowfocus_winid_tableave
+    endif
+endfunction
+function! TabWindowFocus_WinEnter()
+    let t:tabwindowfocus_winid_winenter = win_getid()
+endfunction
+augroup TabWindowFocus
+    autocmd!
+    autocmd TabLeave * silent call TabWindowFocus_TabLeave()
+    autocmd TabEnter * silent call TabWindowFocus_TabEnter()
+    autocmd WinEnter * silent call TabWindowFocus_WinEnter()
+augroup END
+" Call for the initial window.
+" (see :help WinEnter, it doesn't trigger for the starting window.)
+call TabWindowFocus_WinEnter()
+
+" TabPanel
 set showtabline=0
 set showtabpanel=2
 hi TabPanel cterm=NONE ctermfg=grey
@@ -2576,37 +2612,47 @@ function! TabPanel() abort
     let tab = g:actual_curtabpage
     let panel_lines = []
     let cwd = getcwd()
+    let focus_winid = gettabvar(tab, "tabwindowfocus_winid_winenter")
 
     " Show total header (above the first tab).
     if tab == 1
         "let panel_lines += [cwd]
     endif
 
-    " Show header for the tab.
-    let numwin = tabpagewinnr(tab, '$')
-    let panel_lines += ['%#TabPanel#'..printf("%d", tab)]
+    " Show separator.
+    if tab != 1
+        let panel_lines += ['']
+    endif
 
+    " Show the tab.
+    let numwin = tabpagewinnr(tab, '$')
     for win in range(1, numwin)
-        let buf = Win_id2bufnr(win_getid(win, tab))
+        let winid = win_getid(win, tab)
+        let buf = Win_id2bufnr(winid)
         let buftype = getbufvar(buf, "buftype")
         " s: Line for the window.
         let s = ""
         let s .= (buf == bufnr()) ? '%#TabPanelSel#' : '%#TabPanel#'
+        if winid == focus_winid
+            let s .= tab..' '
+        else
+            let s .= '  '
+        endif
         if buftype == ""
             " Normal buffer.
             " Note: I assume bufname is the absolute or relative path, is this always true?
             let path = bufname(buf)
             if empty(path)
-                let s .= " ".."(empty)"
-                continue
+                let s .= "(empty)"
+            else
+                let path = fnamemodify(path, ":p")
+                if stridx(path, cwd..'/') == 0
+                    let path = path[strlen(cwd) + 1:]
+                endif
+                let s .= path
             endif
-            let path = fnamemodify(path, ":p")
-            if stridx(path, cwd..'/') == 0
-                let path = path[strlen(cwd) + 1:]
-            endif
-            let s .= " "..path
         else
-            let s .= " "..bufname(buf)
+            let s .= bufname(buf)
         endif
         let panel_lines += [s]
     endfor
@@ -2614,4 +2660,3 @@ function! TabPanel() abort
 endfunction
 redrawtabpanel
 set tabpanel=%!TabPanel()
-
