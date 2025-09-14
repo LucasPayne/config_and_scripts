@@ -535,10 +535,17 @@ function! TabPanel() abort
             let s .= '%#TabPanel#'
         endif
         if winid == focus_winid
-            let s .= tab..' '
+            let s .= tab
         else
-            let s .= '  '
+            let s .= ' '
         endif
+        if buf == bufnr()
+            " Revert back from TabPanelFocusLine, so it doesn't cover the whole line,
+            " only the marker characters.
+            let s .= '%#TabPanelSel#'
+        endif
+        let s .= ' '
+
         if buftype == ""
             " Normal buffer.
             " Note: I assume bufname is the absolute or relative path, is this always true?
