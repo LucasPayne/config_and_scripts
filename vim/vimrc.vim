@@ -189,7 +189,8 @@ endfunction
 "colorscheme solarized
 colorscheme default
 set background=dark
-hi LineNr ctermbg=None
+hi LineNr ctermfg=darkgrey ctermbg=None
+hi QuickFixLine cterm=underline ctermfg=white ctermbg=None
 " Error message highlighting.
 hi ErrorMsg cterm=bold ctermfg=Red ctermbg=Black
 " Selection highlighting
@@ -851,7 +852,7 @@ function! ToggleFullscreen()
 endfunction
 nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
 
-let g:detail_view_active = 1
+let g:detail_view_active = 0
 function! SetDetailView(val)
     if a:val == 1
         let g:detail_view_active = 1
@@ -2251,10 +2252,10 @@ augroup END
 
 " guifg trick to prevent vim from inserting ^^^ if stl/stlnc fillchars are
 " the same, see https://vi.stackexchange.com/questions/15873/carets-in-status-line
-hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=red
-hi StatusLineNC term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=green
-hi StatusLineTerm term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=red
-hi StatusLineTermNC term=NONE cterm=NONE ctermfg=white ctermbg=black guibg=green
+hi StatusLine term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=red
+hi StatusLineNC term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=green
+hi StatusLineTerm term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=red
+hi StatusLineTermNC term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=green
 
 " patch-9.0.0340
 "     a2a8973e51a0052bb52e43a2b22e7ecdecc32003
@@ -2614,40 +2615,50 @@ command! -bar -nargs=0 Vimpath
             \   echo join(map(split(substitute(&runtimepath, ",", "\n", "g"), "\n"), {_, v -> "runtimepath: " . v}), "\n")
             \ | echo join(map(split(substitute(&packpath, ",", "\n", "g"), "\n"), {_, v -> "packpath: " . v}), "\n")
 
-function! CleanHiddenBuffers(...)
-    " If set, also delete unlisted hidden buffers.
-    let l:do_clean_unlisted = get(a:000, 0, 0)
 
-    " Get hidden buffers.
+function! GetHiddenBuffers(...)
+    let l:include_unlisted = get(a:000, 0, 0)
+    
     " (Note: Using :ls output because there doesn't seem to be a "bufhidden()" available.
     let l:hidden_bufs = []
-    if 1
-        redir => l:ls
-        if l:do_clean_unlisted
-            silent ls!
-        else
-            silent ls
-        endif
-        redir END
-        let l:ls_lines = split(l:ls, "\n")
-        for line in l:ls_lines
-            let line = split(line, "\"")[0]
-            let match = matchlist(line, '\v\s+(\d+)(.*)')
-            if empty(match)
-                continue
-            endif
-            let bufnr = match[1]
-            let flags = match[2]
-
-            let unlisted_flag = flags[0] == "u"
-            let hidden_flag = flags[2] == "h"
-            let active_flag = flags[2] == "a"
-
-            if hidden_flag || (unlisted_flag && !active_flag)
-                let hidden_bufs += [str2nr(bufnr)]
-            endif
-        endfor
+    redir => l:ls
+    if l:include_unlisted
+        silent ls!
+    else
+        silent ls
     endif
+    redir END
+    let l:ls_lines = split(l:ls, "\n")
+    for line in l:ls_lines
+        let line = split(line, "\"")[0]
+        let match = matchlist(line, '\v\s+(\d+)(.*)')
+        if empty(match)
+            continue
+        endif
+        let bufnr = match[1]
+        let flags = match[2]
+
+        let unlisted_flag = flags[0] == "u"
+        let hidden_flag = flags[2] == "h"
+        let active_flag = flags[2] == "a"
+
+        if hidden_flag || (unlisted_flag && !active_flag)
+            let hidden_bufs += [str2nr(bufnr)]
+        endif
+    endfor
+    return l:hidden_bufs
+endfunction
+
+" Count the number of hidden buffers.
+function NumHiddenBuffers()
+    return len(GetHiddenBuffers())
+endfunction
+
+function! CleanHiddenBuffers(...)
+    " If set, also delete unlisted hidden buffers.
+    let l:include_unlisted = get(a:000, 0, 0)
+
+    let l:hidden_buffers = GetHiddenBuffers(include_unlisted)
 
     let l:successfully_deleted_bufs = []
     let l:successfully_deleted_bufnames = []
