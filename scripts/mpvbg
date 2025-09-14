@@ -16,6 +16,12 @@ date_ms ()
 {
     date +%s%3N
 }
+
+# Show a notification when the background is switched to.
+# This is so it is more obvious when window focus somehow changes, and I am less likely to accidentally
+# enter keys into mpv.
+# TODO: Focus event is triggered too many times, and when switching away.
+#       Is this because of alt-tab window display?
 (
     t=$(date_ms)
     xdotool behave "$wid" focus getwindowname | while read -r line

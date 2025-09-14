@@ -2554,4 +2554,5 @@ command! -bang -nargs=0 CleanHiddenBuffers call CleanHiddenBuffers(<bang>0)
 
 " Execute selected vimscript
 vnoremap <M-e><M-e> :source<cr>
-
+" Execute vimscript line
+nnoremap <M-e><M-e> :.source<cr>
