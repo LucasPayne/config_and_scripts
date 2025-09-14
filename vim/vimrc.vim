@@ -512,6 +512,47 @@ hi TabPanelSel cterm=NONE ctermfg=white
 set tabpanelopt=vert,columns:20,align:left
 set fillchars+=tpl_vert:\ 
 
+"@@
+function! GetTabPanelBufName(buf, cwd)
+    let buf = a:buf
+    let cwd = a:cwd
+
+    let buftype = getbufvar(buf, "&buftype")
+    let s = ""
+    if buftype == ""
+        " Normal buffer.
+        " Note: I assume bufname is the absolute or relative path, is this always true?
+        let path = bufname(buf)
+        if empty(path)
+            let s .= "(empty)"
+        else
+            let path = fnamemodify(path, ":p")
+            if stridx(path, cwd..'/') == 0
+                " File in vim's working directory.
+                let path = path[strlen(cwd) + 1:]
+
+                "TODO: Find a way to display without long line.
+                "let s .= path
+                "For now, just displaying basename.
+                let basename = fnamemodify(path, ":t")
+                let s .= basename
+            else
+                " File outside vim's working directory.
+                let basename = fnamemodify(path, ":t")
+                " r for "remote".
+                let s .= "[r] "..basename
+            endif
+        endif
+    elseif buftype == "help"
+        let basename = fnamemodify(bufname(buf), ":t:r")
+        let s .= "[?] "..basename
+    elseif buftype == "terminal"
+        " todo
+        let s .= "$"
+    endif
+    return s
+endfunction
+
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let panel_lines = []
@@ -534,7 +575,6 @@ function! TabPanel() abort
     for win in range(1, numwin)
         let winid = win_getid(win, tab)
         let buf = Win_id2bufnr(winid)
-        let buftype = getbufvar(buf, "&buftype")
         " s: Line for the window.
         let s = ""
         if buf == bufnr()
@@ -558,34 +598,30 @@ function! TabPanel() abort
         endif
         let s .= ' '
 
-        if buftype == ""
-            " Normal buffer.
-            " Note: I assume bufname is the absolute or relative path, is this always true?
-            let path = bufname(buf)
-            if empty(path)
-                let s .= "(empty)"
-            else
-                let path = fnamemodify(path, ":p")
-                if stridx(path, cwd..'/') == 0
-                    " File in vim's working directory.
-                    let path = path[strlen(cwd) + 1:]
-                    let s .= path
-                else
-                    " File outside vim's working directory.
-                    let basename = fnamemodify(path, ":t")
-                    " r for "remote".
-                    let s .= "[r] "..basename
-                endif
-            endif
-        elseif buftype == "help"
-            let basename = fnamemodify(bufname(buf), ":t:r")
-            let s .= "[?] "..basename
-        elseif buftype == "terminal"
-            " todo
-            let s .= "$"
-        endif
+        let s .= GetTabPanelBufName(buf, cwd)
         let panel_lines += [s]
     endfor
+    
+    " Show total footer (below the last tab).
+    if tab == tabpagenr('$')
+        let panel_lines += [""]
+
+        let num_hidden = NumHiddenBuffers()
+        if num_hidden > 0
+            " Show number hidden.
+            "let panel_lines += ["%#TabPanelFooter#("..num_hidden.." hidden)%#TabPanel#"]
+            
+            let panel_lines += [""]
+
+            let hidden_buffers = GetHiddenBuffers()
+            for buf in hidden_buffers
+                let s = "  "
+                let s .= GetTabPanelBufName(buf, cwd)
+                let panel_lines += ["%#TabPanelFooter#"..s]
+            endfor
+        endif
+    endif
+
     return join(panel_lines, "\n")
 endfunction
 redrawtabpanel
@@ -593,6 +629,8 @@ set tabpanel=%!TabPanel()
 " Custom highlights for tabpanel
 highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
 highlight TabPanelHeader cterm=underline ctermfg=blue ctermbg=black
+highlight TabPanelFooter ctermfg=grey ctermbg=black
+"@@
 
 "------------------------------------------------------------
 
