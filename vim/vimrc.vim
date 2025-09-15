@@ -752,9 +752,11 @@ function! TabPanel() abort
             let highlight = entry[1]
             let line_length += strlen(text)
             " Cut off the end of lines.
-            " if line_length > g:tabpanel_width
-            "     break
-            " endif
+            if line_length > g:tabpanel_width - 2
+                call TabPanelDebug("CUT")
+                let cut_text_length = strlen(text) - (line_length - (g:tabpanel_width - 2))
+                let text = text[:cut_text_length]
+            endif
             let uncolored_line .= text
             let colored_line .= "%#TabPanel"..highlight.."#"..text
         endfor
