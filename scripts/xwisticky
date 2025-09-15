@@ -1,0 +1,11 @@
+#!/bin/bash
+# xwisticky: toggle X window sticky
+
+if [ $# -eq 0 ]
+then
+    id="$(xwi)"
+else
+    id="$1"
+fi
+
+wmctrl -i -r "$id" -b toggle,sticky

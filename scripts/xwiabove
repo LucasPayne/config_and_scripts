@@ -1,0 +1,12 @@
+#!/bin/bash
+# xwiabove: toggle X window above
+
+if [ $# -eq 0 ]
+then
+    id="$(xwi)"
+else
+    id="$1"
+fi
+echo $id
+
+wmctrl -i -r "$id" -b toggle,above
