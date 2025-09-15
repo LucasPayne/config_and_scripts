@@ -595,15 +595,21 @@ endfunction
 let g:tabpanel_current_branch = ""
 let g:tabpanel_vcs_author = ""
 let g:tabpanel_vcs_project = ""
+let g:tabpanel_debug = 1
+function! TabPanelDebug(str)
+    if g:tabpanel_debug
+        call DEBUGLOG(a:str)
+    endif
+endfunction
 function! AddPanelText(P, text, ...)
     let l:highlight = get(a:000, 0, "")
     let a:P[1] += [[a:text, l:highlight]]
-    call DEBUGLOG(a:text.." "..l:highlight)
+    call TabPanelDebug("["..a:text..", "..l:highlight.."]")
 endfunction
 function! FinishPanelLine(P)
     let panel_lines = a:P[0]
     let current_panel_line_description = a:P[1]
-    call DEBUGLOG("Finish: "..string(current_panel_line_description))
+    call TabPanelDebug("Finish: "..string(current_panel_line_description))
     let a:P[0] += [copy(current_panel_line_description)]
     let a:P[1] = []
 endfunction
@@ -612,7 +618,11 @@ function! TabPanel() abort
     let cwd = getcwd()
     let focus_winid = gettabvar(tab, "tabwindowfocus_winid_winenter")
 
-    call DEBUGLOG("START")
+    if tab == 1
+        call TabPanelDebug("START")
+        call TabPanelDebug("------------------------------")
+    endif
+    call TabPanelDebug("Tab: "..tab)
 
     let panel_lines = []
     let current_panel_line_description = []
@@ -645,83 +655,95 @@ function! TabPanel() abort
                     let s = g:tabpanel_vcs_author.."/"..g:tabpanel_vcs_project
                     if strlen(s) > g:tabpanel_width
                         " Split over two lines
-                        let s = g:tabpanel_vcs_author.."\n/"..g:tabpanel_vcs_project
+                        call AddPanelText(P, g:tabpanel_vcs_author, "Header2")
+                        call FinishPanelLine(P)
+                        call AddPanelText(P, "/"..g:tabpanel_vcs_project, "Header2")
+                        call FinishPanelLine(P)
+                    else
+                        call AddPanelText(P, s, "Header2")
+                        call FinishPanelLine(P)
                     endif
-                    call AddPanelText(P, s, "Header2")
-                    call FinishPanelLine(P)
                 endif
             endif
         endif
     endif
 
     "" Show separator.
-    "if tab != 1
-    "    call AddPanelText(P, "", "")
-    "    call FinishPanelLine(P)
-    "endif
+    call AddPanelText(P, "", "")
+    call FinishPanelLine(P)
 
     " " Show the tab.
-    " let numwin = tabpagewinnr(tab, '$')
-    " for win in range(1, numwin)
-    "     let winid = win_getid(win, tab)
-    "     let buf = Win_id2bufnr(winid)
-    "     " s: Line for the window.
-    "     let s = ""
-    "     if buf == bufnr()
-    "         if winid == win_getid()
-    "             let s .= '%#TabPanelFocusLine#'
-    "         else
-    "             let s .= '%#TabPanelSel#'
-    "         endif
-    "     else
-    "         let s .= '%#TabPanel#'
-    "     endif
-    "     if winid == focus_winid
-    "         let s .= tab
-    "     else
-    "         let s .= ' '
-    "     endif
-    "     if buf == bufnr()
-    "         " Revert back from TabPanelFocusLine, so it doesn't cover the whole line,
-    "         " only the marker characters.
-    "         let s .= '%#TabPanelSel#'
-    "     endif
-    "     let s .= ' '
+    let numwin = tabpagewinnr(tab, '$')
+    for win in range(1, numwin)
+        let winid = win_getid(win, tab)
+        let buf = Win_id2bufnr(winid)
+        " s: Line for the window.
+        let s = ""
+        if buf == bufnr()
+            if winid == win_getid()
+                let highlight = "FocusLine"
+            else
+                let highlight = "Sel"
+            endif
+        else
+            let highlight = ""
+        endif
+        if winid == focus_winid
+            let s .= tab
+        else
+            let s .= ' '
+        endif
+        call AddPanelText(P, s, highlight)
+        call AddPanelText(P, " ", "")
 
-    "     let s .= GetTabPanelBufName(buf, cwd)
-    "     let panel_lines += [s]
-    " endfor
-    " 
-    " " Show total footer (below the last tab).
-    " if tab == tabpagenr('$')
-    "     let panel_lines += [""]
+        if buf == bufnr()
+            " Revert back from TabPanelFocusLine, so it doesn't cover the whole line,
+            " only the marker characters.
+            let highlight = "Sel"
+        endif
 
-    "     let num_hidden = NumHiddenBuffers()
-    "     if num_hidden > 0
-    "         " Show number hidden.
-    "         "let panel_lines += ["%#TabPanelFooter#("..num_hidden.." hidden)%#TabPanel#"]
-    "         
-    "         let panel_lines += [""]
+        let bufname = GetTabPanelBufName(buf, cwd)
+        call AddPanelText(P, bufname, highlight)
+        call FinishPanelLine(P)
+    endfor
+    
+    " Show total footer (below the last tab).
+    if tab == tabpagenr('$')
+        call AddPanelText(P, "", "")
+        call FinishPanelLine(P)
 
-    "         let hidden_buffers = GetHiddenBuffers()
-    "         for buf in hidden_buffers
-    "             let s = "  "
-    "             let s .= GetTabPanelBufName(buf, cwd)
-    "             let panel_lines += ["%#TabPanelFooter#"..s]
-    "         endfor
-    "     endif
+        let num_hidden = NumHiddenBuffers()
+        if num_hidden > 0
+            " Show number hidden.
+            "call AddPanelText(P, "("..num_hidden..")", "Footer")
+            "call FinishPanelLine(P)
+            
+            call AddPanelText(P, "", "")
+            call FinishPanelLine(P)
 
-    "     let num_hidden_unlisted = NumHiddenBuffers(1)
-    "     if num_hidden_unlisted > num_hidden
-    "         let panel_lines += [""]
-    "         let panel_lines += ["%#TabPanelFooter#("..(num_hidden_unlisted - num_hidden).." unlisted)%#TabPanel#"]
-    "     endif
-    " endif
+            let hidden_buffers = GetHiddenBuffers()
+            for buf in hidden_buffers
+                let s = "  "..GetTabPanelBufName(buf, cwd)
+                call AddPanelText(P, s, "Footer")
+                call FinishPanelLine(P)
+            endfor
+        endif
 
-    call DEBUGLOG("Full: "..string(panel_lines))
+        let num_hidden_including_unlisted = NumHiddenBuffers(1)
+        if num_hidden_including_unlisted > num_hidden
+            call AddPanelText(P, "", "")
+            call FinishPanelLine(P)
+            call AddPanelText(P, "("..num_hidden.." unlisted)", "Footer")
+            call FinishPanelLine(P)
+        endif
+    endif
 
+    call TabPanelDebug("Full: "..string(panel_lines))
+
+    let num_panel_lines = len(panel_lines)
     let panel_string = ""
-    for line in panel_lines
+    for i in range(num_panel_lines)
+        let line = panel_lines[i]
         let uncolored_line = ""
         let colored_line = ""
         let line_length = 0
@@ -736,7 +758,11 @@ function! TabPanel() abort
             let uncolored_line .= text
             let colored_line .= "%#TabPanel"..highlight.."#"..text
         endfor
-        let panel_string .= colored_line.."\n"
+        if i < num_panel_lines - 1
+            let panel_string .= colored_line .. "\n"
+        else
+            let panel_string .= colored_line
+        endif
     endfor
     return panel_string
 endfunction
