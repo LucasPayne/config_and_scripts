@@ -1,0 +1,29 @@
+#!/bin/bash
+# xwiopacity: set X window opacity
+# Usage:
+#     xwiopacity <percentage>       # Prompts window with click
+#     xwiopacity <percentage> <id>  # Window given by ID
+
+if [ $# -eq 1 ]
+then
+    id="$(xwi)"
+elif [ $# -eq 2 ]
+then
+    id="$2"
+else
+    echo "give good args"
+    exit 1
+fi
+opacity="$1"
+
+# Convert the percentage to 32-bit range.
+opacity_32=$((opacity * 42949673))
+if [ $opacity_32 -gt 4294967295 ]
+then
+    opacity_32=4294967295
+fi
+# Convert to hex code.
+opacity_hex=$(printf '0x%x' $opacity_32)
+
+# Set the window opacity.
+xprop -id $id -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY $opacity_hex
