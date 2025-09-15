@@ -595,7 +595,7 @@ endfunction
 let g:tabpanel_current_branch = ""
 let g:tabpanel_vcs_author = ""
 let g:tabpanel_vcs_project = ""
-let g:tabpanel_debug = 1
+let g:tabpanel_debug = 0
 function! TabPanelDebug(str)
     if g:tabpanel_debug
         call DEBUGLOG(a:str)
@@ -729,11 +729,11 @@ function! TabPanel() abort
             endfor
         endif
 
-        let num_hidden_including_unlisted = NumHiddenBuffers(1)
-        if num_hidden_including_unlisted > num_hidden
+        let num_unlisted = NumHiddenBuffers(1) - num_hidden
+        if num_unlisted > 0
             call AddPanelText(P, "", "")
             call FinishPanelLine(P)
-            call AddPanelText(P, "("..num_hidden.." unlisted)", "Footer")
+            call AddPanelText(P, "("..num_unlisted.." unlisted)", "Footer")
             call FinishPanelLine(P)
         endif
     endif

@@ -20,6 +20,20 @@ num="$(echo "$lines" | wc -l)"
 mapfile -t paths < <(echo "$lines" | awk -F" -- " '{print $1}')
 mapfile -t names < <(echo "$lines" | awk -F" -- " '{print $2}')
 
+
+function match_path()
+{
+    local path="$1"
+    if [ ! -d "$path" ]
+    then
+        # Skip silently.
+        return 1
+    fi
+    path="$(realpath "$path")"
+    test "$path" = "$input_path"
+    return $?
+}
+
 name=""
 for ((i=0 ; i<num; i++))
 do
@@ -27,27 +41,34 @@ do
     # Expand the leading ~ if there.
     path="${path/#\~/$HOME}"
 
-    if [ ! -d "$path" ]
+    if echo "$path" | grep -q "{}$" 2>/dev/null
     then
-        # Skip silently.
-        continue
-    fi
-    path="$(realpath "$path")"
-
-    if [ "$input_path" = "$path" ]
-    then
-        name="${names[i]}"
-        break
+        expanding_path="${path::-2}"
+        if [ ! -d "$expanding_path" ]
+        then
+            # Skip silently.
+            continue  path
+        fi
+        expanding_path="$(realpath "$expanding_path")"
+        while read -r path
+        do
+            if match_path "$path"
+            then
+                expanding_name="${names[i]}"
+                subdir="$(basename "$path")"
+                echo "${expanding_name//\{\}/$subdir}"
+                exit 0
+            fi
+        done < <(fd . -td -d1 "${path::-2}")
+    else
+        if match_path "$path"
+        then
+            echo "${names[i]}"
+            exit 0
+        fi
     fi
 done
 
-if [ ! -z "$name" ]
-then
-    # Dirspace found
-    echo "$name"
-    exit 0
-else
-    # Dirspace not found
-    # Fail.
-    exit 1
-fi
+# Dirspace not found
+# Fail.
+exit 1
