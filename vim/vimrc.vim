@@ -128,6 +128,7 @@ function! SetDetailView(val)
         " Make tabpanel refresh detail.
         " So, I can just toggle detail view if it is out of sync,
         " without recomputing it every tabpanel draw.
+        let g:tabpanel_directory_header = ""
         let g:tabpanel_current_branch = ""
         let g:tabpanel_vcs_author = ""
         let g:tabpanel_vcs_project = ""
@@ -592,20 +593,33 @@ endfunction
 
 " Store info so it doesn't have to recompute again.
 " Set it to "" to reset on the next tab draw.
+let g:tabpanel_directory_header = ""
 let g:tabpanel_current_branch = ""
 let g:tabpanel_vcs_author = ""
 let g:tabpanel_vcs_project = ""
 let g:tabpanel_debug = 0
+
+augroup TabPanel
+    autocmd!
+    " Recalculate directory header on DirChanged.
+    " (Vim is already refreshing the tab panel on DirChanged, I think.)
+    autocmd DirChanged *
+                    \   let g:tabpanel_directory_header = ""
+                    \ | call timer_start(10, {-> execute("quit")})
+augroup END
+
 function! TabPanelDebug(str)
     if g:tabpanel_debug
         call DEBUGLOG(a:str)
     endif
 endfunction
+
 function! AddPanelText(P, text, ...)
     let l:highlight = get(a:000, 0, "")
     let a:P[1] += [[a:text, l:highlight]]
     call TabPanelDebug("["..a:text..", "..l:highlight.."]")
 endfunction
+
 function! FinishPanelLine(P)
     let panel_lines = a:P[0]
     let current_panel_line_description = a:P[1]
@@ -613,6 +627,7 @@ function! FinishPanelLine(P)
     let a:P[0] += [copy(current_panel_line_description)]
     let a:P[1] = []
 endfunction
+
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let cwd = getcwd()
@@ -630,8 +645,16 @@ function! TabPanel() abort
 
     "" Show total header (above the first tab).
     if tab == 1
-        let cwd_string = fnamemodify(cwd, ":~")
-        call AddPanelText(P, cwd_string, "Header")
+        if g:tabpanel_directory_header == ""
+
+            let dirspace_name = system("dirspace_get "..shellescape(fnamemodify(cwd, ":p")))
+            if v:shell_error == 0
+                let g:tabpanel_directory_header = dirspace_name
+            else
+                let g:tabpanel_directory_header = fnamemodify(cwd, ":~")
+            endif
+        endif
+        call AddPanelText(P, g:tabpanel_directory_header, "Header")
         call FinishPanelLine(P)
 
         "TODO: Use vim builtin.
