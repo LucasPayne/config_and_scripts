@@ -1,0 +1,21 @@
+# List of dirspaces, directories which are special
+# and detected as 
+#
+# Syntax:
+# {Path} -- {Name}
+# "{}" can be used to create multiple dirspaces.
+
+~/notes/notes.d -- Notes
+~/config -- Config
+~/drive/dev/academia -- Academia
+~/drive/dev/computer -- Computer
+~/drive/dev/documentation -- Documentation
+~/drive/dev/films -- Films
+~/drive/dev/literature -- Literature
+~/drive/dev/magic_the_gathering -- Magic
+~/drive/dev/person -- Person
+~/drive/dev/piano -- Piano
+~/drive/dev/visual_effects -- VFX
+~/config -- Config
+~/code/{} -- code:{}
+~/drive/dev/documentation/{} -- docs:{}
