@@ -52,7 +52,7 @@ cmd_issue ()
     then
         >&2 echo "Usage:"
         >&2 echo "    Print issue url:"
-        >&2 echo "        gh issue <project>"
+        >&2 echo "        gh url <project>"
         >&2 echo "    Search issues:"
         >&2 echo "        gh issue <project> <search>"
         exit 1

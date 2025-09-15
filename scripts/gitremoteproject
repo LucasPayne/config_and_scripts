@@ -1,0 +1,47 @@
+#!/bin/bash
+# gitremoteproject: returns the remote origin's "user/project" string if applicable.
+
+if ! ingit
+then
+    >&2 echo "Not in a git repo."
+    exit 1
+fi
+
+mode=0
+if [ $# -eq 1 ]
+then
+    if [[ "$1" =~ (-u|--user) ]]
+    then
+        mode=1
+    elif [[ "$1" =~ (-p|--project) ]]
+    then
+        mode=2
+    fi
+fi
+
+remote_url="$(git config --get remote.origin.url)"
+
+if [[ "$remote_url" =~ ^.*github.com:([^/]+)/([^\.]+).git$ ]]
+then
+    # Handle github
+    user="${BASH_REMATCH[1]}"
+    project_name="${BASH_REMATCH[2]}"
+
+    case $mode in
+    0)
+        echo "$user/$project_name"
+        ;;
+    1)
+        echo "$user"
+        ;;
+    2)
+        echo "$project_name"
+        ;;
+    *)
+        ;;
+    esac
+else
+    #TODO: More url types, like gitlab, savannah
+    >&2 echo "Could not process URL for project \"$1\": $remote_url."
+    return 1
+fi

@@ -116,6 +116,31 @@ endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
 
+" Detail view
+let g:detail_view_active = 0
+function! SetDetailView(val)
+    if a:val == 1
+        let g:detail_view_active = 1
+        set laststatus=2
+        "set statusline=%{BufferLabel(bufnr())}
+        set statusline=
+    elseif a:val == 0
+        let g:detail_view_active = 0
+        set laststatus=0
+        set statusline=⎯
+    endif
+endfunction
+call SetDetailView(g:detail_view_active)
+function! ToggleDetailView()
+    if g:detail_view_active == 0
+        call SetDetailView(1)
+    else
+        call SetDetailView(0)
+    endif
+    call SetDetailView(g:detail_view_active)
+endfunction
+nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
+
 " Make help buffers listed
 autocmd FileType help setlocal buflisted
 
@@ -553,9 +578,11 @@ function! GetTabPanelBufName(buf, cwd)
     return s
 endfunction
 
-" Store the current branch so it doesn't have to recompute again.
+" Store info so it doesn't have to recompute again.
 " Set it to "" to reset on the next tab draw.
 let g:tabpanel_current_branch = ""
+let g:tabpanel_vcs_author = ""
+let g:tabpanel_vcs_project = ""
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let panel_lines = []
@@ -574,7 +601,21 @@ function! TabPanel() abort
                 let g:tabpanel_current_branch = systemlist("gitcb")[0]
             endif
             if v:shell_error == 0
-                let panel_lines += ["%#TabPanelHeader#"..g:tabpanel_current_branch, ""]
+                let panel_lines += ["%#TabPanelHeader2#"..g:tabpanel_current_branch]
+            endif
+            if g:detail_view_active
+                if g:tabpanel_vcs_author == ""
+                    let g:tabpanel_vcs_author = systemlist("gitremoteproject -u")[0]
+                endif
+                if v:shell_error == 0
+                    let panel_lines += ["%#TabPanelHeader2#"..g:tabpanel_vcs_author]
+                endif
+                if g:tabpanel_vcs_project == ""
+                    let g:tabpanel_vcs_project = systemlist("gitremoteproject -p")[0]
+                endif
+                if v:shell_error == 0
+                    let panel_lines += ["%#TabPanelHeader2#"..g:tabpanel_vcs_project]
+                endif
             endif
         endif
 
@@ -652,6 +693,7 @@ set tabpanel=%!TabPanel()
 highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
 highlight TabPanelHeader cterm=underline ctermfg=blue ctermbg=black
 highlight TabPanelFooter ctermfg=grey ctermbg=black
+highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 "@@
 
 "------------------------------------------------------------
@@ -912,29 +954,6 @@ function! ToggleFullscreen()
 endfunction
 nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
 
-let g:detail_view_active = 0
-function! SetDetailView(val)
-    if a:val == 1
-        let g:detail_view_active = 1
-        set laststatus=2
-        "set statusline=%{BufferLabel(bufnr())}
-        set statusline=
-    elseif a:val == 0
-        let g:detail_view_active = 0
-        set laststatus=0
-        set statusline=⎯
-    endif
-endfunction
-call SetDetailView(g:detail_view_active)
-function! ToggleDetailView()
-    if g:detail_view_active == 0
-        call SetDetailView(1)
-    else
-        call SetDetailView(0)
-    endif
-    call SetDetailView(g:detail_view_active)
-endfunction
-nnoremap <silent> <M-r> :call ToggleDetailView()<cr>
 " Toggle numbers and relative numberrs.
 " <M-m> : Toggle numbers, default to non-relative.
 " <M-M> : Toggle relative. If no numbers are shown, show them first, then switch to relative.
