@@ -7,6 +7,5 @@ then
 else
     id="$1"
 fi
-echo $id
 
 wmctrl -i -r "$id" -b toggle,above

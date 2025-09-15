@@ -1,5 +1,6 @@
 #!/bin/bash
 # error_summary: show a summary of the error code
+# Usage: Run the command, then run error_summary $?.
 err="$1"
 
 UNDERLINE_GREEN='\033[32;4m'

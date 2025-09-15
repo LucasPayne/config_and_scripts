@@ -2,6 +2,13 @@
 # dirspace_get: Get the name of a dirspace from a path.
 # Error code indicates whether the path is a dirspace.
 
+option_get_parent_dirspace=0
+if [ $# -eq 2 ] && [[ "$1" =~ (-p|--parent) ]]
+then
+    option_get_parent_dirspace=1
+    shift
+fi
+
 if [ $# -ne 1 ]
 then
     >&2 echo "give good args"
@@ -30,8 +37,14 @@ function match_path()
         return 1
     fi
     path="$(realpath "$path")"
-    test "$path" = "$input_path"
-    return $?
+    if [ $option_get_parent_dirspace -eq 1 ]
+    then
+        [[ "$input_path/" =~ ^$path/ ]]
+        return $?
+    else
+        test "$path" = "$input_path"
+        return $?
+    fi
 }
 
 name=""

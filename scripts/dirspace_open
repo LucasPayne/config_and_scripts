@@ -1,0 +1,4 @@
+#!/bin/bash
+# dirspace_open:
+
+name="$(dirspace_get "$1")"

@@ -30,17 +30,8 @@ then
     exit 0
 fi
 
-# Convert the percentage to 32-bit range.
-opacity_32=$((opacity * 42949673))
-if [ $opacity_32 -gt 4294967295 ]
-then
-    opacity_32=4294967295
-fi
-# Convert to hex code.
-opacity_hex=$(printf '0x%x' $opacity_32)
-
 # Set the opacity on the windows.
 for win in $windows
 do
-    xprop -id $win -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY $opacity_hex
+    xwiopacity $opacity $win
 done
