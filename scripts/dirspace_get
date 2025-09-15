@@ -1,5 +1,6 @@
 #!/bin/bash
-# dirspace_get:
+# dirspace_get: Get the name of a dirspace from a path.
+# Error code indicates whether the path is a dirspace.
 
 if [ $# -ne 1 ]
 then
@@ -19,7 +20,6 @@ num="$(echo "$lines" | wc -l)"
 
 mapfile -t paths < <(echo "$lines" | awk -F" -- " '{print $1}')
 mapfile -t names < <(echo "$lines" | awk -F" -- " '{print $2}')
-
 
 function match_path()
 {

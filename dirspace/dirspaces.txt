@@ -1,5 +1,5 @@
 # List of dirspaces, directories which are special
-# and detected as 
+# and can have custom names in the UI.
 #
 # Syntax:
 # {Path} -- {Name}
@@ -7,6 +7,8 @@
 
 ~/notes/notes.d -- Notes
 ~/config -- Config
+~/drive/videos -- Videos
+~/drive/music -- Music
 ~/drive/dev/academia -- Academia
 ~/drive/dev/computer -- Computer
 ~/drive/dev/documentation -- Documentation

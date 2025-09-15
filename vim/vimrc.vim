@@ -605,7 +605,7 @@ augroup TabPanel
     " (Vim is already refreshing the tab panel on DirChanged, I think.)
     autocmd DirChanged *
                     \   let g:tabpanel_directory_header = ""
-                    \ | call timer_start(10, {-> execute("quit")})
+                    \ | redrawtabpanel
 augroup END
 
 function! TabPanelDebug(str)
