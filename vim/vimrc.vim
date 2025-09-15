@@ -553,6 +553,9 @@ function! GetTabPanelBufName(buf, cwd)
     return s
 endfunction
 
+" Store the current branch so it doesn't have to recompute again.
+" Set it to "" to reset on the next tab draw.
+let g:tabpanel_current_branch = ""
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let panel_lines = []
@@ -562,7 +565,20 @@ function! TabPanel() abort
     " Show total header (above the first tab).
     if tab == 1
         let cwd_string = fnamemodify(cwd, ":~")
-        let panel_lines += ["%#TabPanelHeader#"..cwd_string.."%#TabPanel#", ""]
+        let panel_lines += ["%#TabPanelHeader#"..cwd_string]
+
+        "TODO: Use vim builtin.
+        call system("[ -d "..shellescape(cwd).."/.git ]")
+        if v:shell_error == 0
+            if g:tabpanel_current_branch == ""
+                let g:tabpanel_current_branch = systemlist("gitcb")[0]
+            endif
+            if v:shell_error == 0
+                let panel_lines += ["%#TabPanelHeader#"..g:tabpanel_current_branch, ""]
+            endif
+        endif
+
+        let panel_lines += ["%#TabPanel"]
     endif
 
     " Show separator.
@@ -2659,6 +2675,8 @@ command! -bar -nargs=0 Vimpath
             \   echo join(map(split(substitute(&runtimepath, ",", "\n", "g"), "\n"), {_, v -> "runtimepath: " . v}), "\n")
             \ | echo join(map(split(substitute(&packpath, ",", "\n", "g"), "\n"), {_, v -> "packpath: " . v}), "\n")
 
+"------------------------------------------------------------
+" Manipulate hidden buffers
 
 function! GetHiddenBuffers(...)
     let l:include_unlisted = get(a:000, 0, 0)
@@ -2735,11 +2753,19 @@ endfunction
 " CleanHiddenBuffers!
 "     Do the same, but include unlisted buffers, and wipeout the buffers instead of delete.
 command! -bang -nargs=0 CleanHiddenBuffers call CleanHiddenBuffers(<bang>0)
+"------------------------------------------------------------
 
+"------------------------------------------------------------
 " Execute selected vimscript
 vnoremap <M-e><M-e> :source<cr>
 " Execute vimscript line
 nnoremap <M-e><M-e> :.source<cr>
+"------------------------------------------------------------
+
+"------------------------------------------------------------
+" Keep track of which window was last focused in a tab.
+" The effect is that each tab has a persistent "focus window"
+" which can be displayed in the UI, e.g. the tab panel.
 
 " TabWindowFocus
 let g:TabWindowFocus_debug = 0
@@ -2775,4 +2801,4 @@ augroup END
 " Call for the initial window.
 " (see :help WinEnter, it doesn't trigger for the starting window.)
 call TabWindowFocus_WinEnter()
-
+"------------------------------------------------------------

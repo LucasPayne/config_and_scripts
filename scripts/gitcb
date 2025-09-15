@@ -1,0 +1,4 @@
+#!/bin/bash
+# gitcb: get git current branch
+
+git branch | grep '^*' | sed "s/^* //"
