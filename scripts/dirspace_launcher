@@ -8,7 +8,7 @@ error ()
     exit 1
 }
 
-session_name_postfix="dirspace"
+screen_name_postfix="dirspace"
 
 # Make sure runtime (xdg share) directories are available.
 RUNTIME_DIR=~"/.local/share/dirspace"
@@ -24,25 +24,28 @@ fi
 #--Maybe scan for dead fifos, with fuser.
 
 # Create a named pipe (FIFO).
-FIFO="$(mktemp --tmpdir "$FIFOS_DIR" XXXXXX)"
-if [[ ! -p "$FIFO" ]]
+FIFO="$(mktemp --tmpdir="$FIFOS_DIR" XXXX)"
+if [[ ! -f "$FIFO" ]]
 then
-    mkfifo "$FIFO" || error "Failed to create FIFO."
+    error "Failed to create FIFO."
 fi
+rm "$FIFO"
+mkfifo "$FIFO" || error "Failed to create FIFO."
+
+DIRSPACE_SESSION_ID="$(basename "$FIFO")"
 
 # -D: Don't attach and don't fork the daemon.
 #     The screen session will run as a job in this script.
 #     (This is the easiest way to get its PID.)
 # -m: Create even if STY exists (e.g. in a screen session).
-#screen -D -m -S "$session_name_postfix" -c ~/config/dirspace/dirspace_screenrc &
-screen -D -m -S "$session_name_postfix" &
+DIRSPACE_SESSION_ID="$DIRSPACE_SESSION_ID" screen -D -m -S "$screen_name_postfix" &
 screen_pid=$!
-session_name="$screen_pid.$session_name_postfix"
+screen_name="$screen_pid.$screen_name_postfix"
 echo "$screen_pid"
-echo "$session_name"
+echo "$screen_name"
 
 # Wait for the new screen session.
-while ! (screen -ls | grep -q "$session_name")
+while ! (screen -ls | grep -q "$screen_name")
 do
     sleep 0.1
 done
@@ -50,7 +53,7 @@ done
 # Helper function to send a command to the session.
 call ()
 {
-    screen -S "$session_name" "$@"
+    screen -S "$screen_name" "$@"
 }
 
 get_current_window ()
@@ -82,12 +85,35 @@ create_dirspace ~/code/cg_sandbox
 
 # Create a terminal emulator to run screen as controlling process,
 # and attach to the session.
-d cool-retro-term -e screen -r "$session_name"
+d cool-retro-term -e screen -r "$screen_name"
 
 # Wait until the emulator has attached the session.
-while ! (screen -ls | grep "$session_name" | grep -q "Attached")
+while ! (screen -ls | grep "$screen_name" | grep -q "Attached")
 do
     sleep 0.1
+done
+
+# Act as a RCP server.
+
+RCP_func ()
+{
+    echo "$1" | tr o e
+}
+
+# Run forever, reading lines
+while true
+do
+    if read line < "$FIFO"
+    then
+        cmd=( $line )
+        fn="${cmd[0]}"
+        args=( "${cmd[@]:1}" )
+        if declare -F "RCP_$fn" >/dev/null; then
+            "RCP_$fn" "${args[@]}"
+        else
+            echo "Unknown function: $fn"
+        fi
+    fi
 done
 
 # # Select the first window.
@@ -95,9 +121,9 @@ done
 # sleep 2
 # call -p 0 -X select
 
-# Act as a RCP server.
-
 # Wait for screen session to die.
 #--
 # Delete FIFO.
 #--
+
+#screen -D -m -S "$screen_name_postfix" -c ~/config/dirspace/dirspace_screenrc &
