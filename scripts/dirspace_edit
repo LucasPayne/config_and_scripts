@@ -1,0 +1,41 @@
+#!/bin/bash
+# dirspace_edit:
+
+option_focus=0
+option_pin=0
+while [ $# -ge 1 ]
+do
+    if [[ "$1" =~ (-f|--focus) ]]
+    then
+        option_focus=1
+        shift
+        continue
+    fi
+    if [[ "$1" =~ (-p|--pin-directory) ]]
+    then
+        option_pin=1
+        shift
+        continue
+    fi
+    break
+done
+
+if [ $# -ne 1 ]
+then
+    exit 1
+fi
+file="$1"
+if [ ! -f "$file" ]
+then
+    >&2 echo "Not a file."
+    exit 1
+fi
+
+path="$(dirname "$file")"
+resolved_path="$(
+    cd "$path"
+    pwd -L
+)"
+dirspace_open "$(dirname "$file")"
+dirspace_fifo_command edit_tab "$resolved_path" "$file"
+

@@ -17,6 +17,7 @@ do
         shift
         continue
     fi
+    break
 done
 
 path="$1"
@@ -40,30 +41,9 @@ then
     name="$resolved_path"
 fi
 
-#------------------------------------------------------------
-session_id="$(dirspace_get_session)" || exit 1
-
-FIFO=~/.local/share/dirspace/sessions/$session_id/fifo
-if [[ ! -p "$FIFO" ]]
-then
-    >&2 echo "Dirspace session FIFO not found."
-    exit 1
-fi
-
-quote_args ()
-{
-    echo "$(printf '%q ' "$@")"
-}
-
-fifo_command ()
-{
-    echo "$(quote_args "$@")" >> "$FIFO"
-}
-#------------------------------------------------------------
-
 if [ $option_focus -eq 1 ]
 then
-    fifo_command open_dirspace "$name" "$resolved_path"
+    dirspace_fifo_command open_dirspace "$name" "$resolved_path"
 else
-    fifo_command open_dirspace "$name" "$resolved_path" "$WINDOW"
+    dirspace_fifo_command open_dirspace "$name" "$resolved_path" "$WINDOW"
 fi

@@ -83,6 +83,7 @@ done
 
 declare -A open_dirspaces
 declare -A window_numbers
+declare -A vim_servernames
 
 RPC_test_func ()
 {
@@ -91,7 +92,7 @@ RPC_test_func ()
 
 RPC_open_dirspace ()
 {
-    echo "open_dirspace" $(printf '%q ' "$@")
+    echo "RPC_open_dirspace" $(printf '%q ' "$@")
     local name="$1"
     local path="$2"
     if [ $# -eq 3 ]
@@ -102,9 +103,19 @@ RPC_open_dirspace ()
         local window_switch_command=":"
     fi
 
-    if [[ ! -v "${open_dirspaces[$path]}" ]]
+    if [[ ! -v "open_dirspaces[$path]" ]]
     then
-        open_dirspaces["$path"]=name
+        echo From
+        for key in "${!open_dirspaces[@]}"
+        do
+            echo "$key"
+        done
+        open_dirspaces["$path"]="$name"
+        echo To
+        for key in "${!open_dirspaces[@]}"
+        do
+            echo "$key"
+        done
         local vim_dir="$(mktemp -d --tmpdir="$session_runtime_dir/vim" XXXX)"
         local vim_servername="$dirspace_session_id.$(basename "$vim_dir")"
 
@@ -121,12 +132,32 @@ RPC_open_dirspace ()
             sleep 0.1
         done
         window_numbers["$path"]="$(cat "$vim_dir/window_id")"
+        vim_servernames["$path"]="$vim_servername"
     else
         if [ ! ${switch_to_window+x} ]
         then
             call -X select "${window_numbers["$path"]}"
         fi
     fi
+}
+
+RPC_edit_tab ()
+{
+    echo "RPC_edit_tab" $(printf '%q ' "$@")
+    for key in "${!open_dirspaces[@]}"
+    do
+        echo "$key"
+    done
+    local dirspace_path="$1"
+    local file="$2"
+    if [[ ! -v "open_dirspaces[$dirspace_path]" ]]
+    then
+        echo Gone
+        return 1
+    fi
+    local vim_servername="${vim_servernames[$path]}"
+    echo "vim_servername: $vim_servername"
+    VIM_SERVERNAME="$vim_servername" v "$file"
 }
 
 # Read FIFO.
