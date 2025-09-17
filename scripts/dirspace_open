@@ -1,6 +1,46 @@
 #!/bin/bash
 # dirspace_open:
 
+option_focus=0
+option_pin=0
+while [ $# -ge 1 ]
+do
+    if [[ "$1" =~ (-f|--focus) ]]
+    then
+        option_focus=1
+        shift
+        continue
+    fi
+    if [[ "$1" =~ (-p|--pin-directory) ]]
+    then
+        option_pin=1
+        shift
+        continue
+    fi
+done
+
+path="$1"
+if [ ! -d "$path" ]
+then
+    >&2 echo "Not a directory."
+    exit 1
+fi
+resolved_path="$(
+    cd "$path"
+    pwd -L
+)"
+if [ $option_pin -eq 1 ]
+then
+    name="$(dirspace_get "$path")"
+else
+    name="$(dirspace_get --parent "$path")"
+fi
+if [ $? -ne 0 ]
+then
+    name="$resolved_path"
+fi
+
+#------------------------------------------------------------
 session_id="$(dirspace_get_session)" || exit 1
 
 FIFO=~/.local/share/dirspace/sessions/$session_id/fifo
@@ -19,17 +59,11 @@ fifo_command ()
 {
     echo "$(quote_args "$@")" >> "$FIFO"
 }
+#------------------------------------------------------------
 
-path="$1"
-echo "$path"
-name="$(dirspace_get --parent "$path")"
-if [ $? -ne 0 ]
+if [ $option_focus -eq 1 ]
 then
-    exit 1
+    fifo_command open_dirspace "$name" "$resolved_path"
+else
+    fifo_command open_dirspace "$name" "$resolved_path" "$WINDOW"
 fi
-resolved_path="$(
-    cd "$path"
-    pwd -L
-)"
-
-fifo_command open_dirspace "$name" "$resolved_path"
