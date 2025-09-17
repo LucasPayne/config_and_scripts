@@ -1,0 +1,11 @@
+#!/bin/bash
+# dirspace_get_session:
+
+if [ "${DIRSPACE_SESSION_ID+x}" ]
+then
+    echo "$DIRSPACE_SESSION_ID"
+    exit 0
+else
+    >&2 echo "Not in a dirspace session."
+    exit 1
+endif
