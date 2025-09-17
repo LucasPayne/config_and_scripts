@@ -3,6 +3,32 @@
 
 session_id="$(dirspace_get_session)" || exit 1
 
-name="$(dirspace_get --parent "$1")"
+FIFO=~/.local/share/dirspace/sessions/$session_id/fifo
+if [[ ! -p "$FIFO" ]]
+then
+    >&2 echo "Dirspace session FIFO not found."
+    exit 1
+fi
 
+quote_args ()
+{
+    echo "$(printf '%q ' "$@")"
+}
 
+fifo_command ()
+{
+    echo "$(quote_args "$@")" >> "$FIFO"
+}
+
+path="$1"
+echo "$path"
+name="$(dirspace_get --parent "$path")"
+if [ $? -ne 0 ]
+then
+    exit 1
+fi
+resolved_path="$(
+    cd "$path"
+    pwd -L
+)"
+fifo_command open_dirspace "$name" "$resolved_path" "$WINDOW"

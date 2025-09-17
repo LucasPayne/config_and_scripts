@@ -2883,6 +2883,10 @@ command! -bang -nargs=0 CleanHiddenBuffers call CleanHiddenBuffers(<bang>0)
 vnoremap <M-e><M-e> :source<cr>
 " Execute vimscript line
 nnoremap <M-e><M-e> :.source<cr>
+" Execute selected bash.
+vnoremap <M-e><M-b> :w !bash<cr>
+" Execute bash line
+nnoremap <M-e><M-b> :.w !bash<cr>
 "------------------------------------------------------------
 
 "------------------------------------------------------------

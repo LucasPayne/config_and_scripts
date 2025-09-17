@@ -2,6 +2,12 @@
 # dirspace_launcher:
 #
 
+option_debug=0
+debug ()
+{
+    [ $option_debug -eq 1 ] && echo "$@"
+}
+
 error ()
 {
     >&2 echo "$1"
@@ -11,38 +17,39 @@ error ()
 screen_name_postfix="dirspace"
 
 # Make sure runtime (xdg share) directories are available.
-RUNTIME_DIR=~"/.local/share/dirspace"
+RUNTIME_DIR=~/.local/share/dirspace
 if [ ! -d "$RUNTIME_DIR" ]
 then
     mkdir -p "$RUNTIME_DIR" 2>/dev/null || error "Failed to create dirspace runtime directory."
 fi
-FIFOS_DIR="$RUNTIME_DIR/fifos"
-if [ ! -d "$FIFOS_DIR" ]
+if [ ! -d "$RUNTIME_DIR/sessions" ]
 then
-    mkdir -p "$FIFOS_DIR" 2>/dev/null || error "Failed to create dirspace fifos directory."
+    mkdir -p "$RUNTIME_DIR/sessions" 2>/dev/null || error "Failed to create dirspace sessions directory."
 fi
 #--Maybe scan for dead fifos, with fuser.
 
+# Create session runtime directory.
+session_runtime_dir="$(mktemp -d --tmpdir="$RUNTIME_DIR/sessions" XXXX)"
+[[ -d "$session_runtime_dir" ]] || error "Failed to create session runtime directory."
+#
 # Create a named pipe (FIFO).
-FIFO="$(mktemp --tmpdir="$FIFOS_DIR" XXXX)"
-if [[ ! -f "$FIFO" ]]
-then
-    error "Failed to create FIFO."
-fi
-rm "$FIFO"
+FIFO="$session_runtime_dir/fifo"
 mkfifo "$FIFO" || error "Failed to create FIFO."
+#
+# Create a runtime directory for this session's vim instances.
+mkdir "$session_runtime_dir/vim"
 
-DIRSPACE_SESSION_ID="$(basename "$FIFO")"
+dirspace_session_id="$(basename "$session_runtime_dir")"
 
 # -D: Don't attach and don't fork the daemon.
 #     The screen session will run as a job in this script.
 #     (This is the easiest way to get its PID.)
 # -m: Create even if STY exists (e.g. in a screen session).
-DIRSPACE_SESSION_ID="$DIRSPACE_SESSION_ID" screen -D -m -S "$screen_name_postfix" &
+DIRSPACE_SESSION_ID="$dirspace_session_id" screen -D -m -S "$screen_name_postfix" &
 screen_pid=$!
 screen_name="$screen_pid.$screen_name_postfix"
-echo "$screen_pid"
-echo "$screen_name"
+debug "screen_pid: $screen_pid"
+debug "screen_name: $screen_name"
 
 # Wait for the new screen session.
 while ! (screen -ls | grep -q "$screen_name")
@@ -58,34 +65,13 @@ call ()
 
 get_current_window ()
 {
-    call -Q number | tr -d' ' -f 1 
+    call -Q number | cut -d' ' -f 1 
 }
 
-# Create a dirspace screen window.
-create_dirspace ()
-{
-    dirspace_path="$1"
-    dirspace_name="$(dirspace_get "$dirspace_path")"
-    if [ $? -ne ]
-    then
-        dirspace_name="$dirspace_path"
-    fi
-    call -X screen -t "$dirspace_name" bash -c "cd $(printf '%q' "$dirspace_path") ; exec ~/config/dirspace/dirspace_vim"
-}
-
-# Create a window.
-create_dirspace ~/notes/notes.d
-# Delete the initial window.
-call -p 0 -X kill
-call -p 1 -X number 0
-
-create_dirspace ~/config
-create_dirspace ~/drive/dev/academia
-create_dirspace ~/code/cg_sandbox
-
+debug Launching terminal emulator
 # Create a terminal emulator to run screen as controlling process,
 # and attach to the session.
-d cool-retro-term -e screen -r "$screen_name"
+emulator_pid="$(d cool-retro-term -e screen -r "$screen_name")"
 
 # Wait until the emulator has attached the session.
 while ! (screen -ls | grep "$screen_name" | grep -q "Attached")
@@ -93,14 +79,42 @@ do
     sleep 0.1
 done
 
-# Act as a RCP server.
+# Act as a RPC server.
 
-RCP_func ()
+declare -A open_dirspaces
+
+RPC_test_func ()
 {
-    echo "$1" | tr o e
+    echo "$@"
 }
 
-# Run forever, reading lines
+RPC_open_dirspace ()
+{
+    echo "open_dirspace" $(printf '%q ' "$@")
+    local name="$1"
+    local path="$2"
+    if [ $# -eq 3 ]
+    then
+        local switch_to_window="$3"
+    fi
+
+    if [[ ! -v "${open_dirspaces[$path]}" ]]
+    then
+        open_dirspaces["$path"]=name
+        local vim_dir="$(mktemp -d --tmpdir="$session_runtime_dir/vim" XXXX)"
+        local vim_servername="$dirspace_session_id.$(basename "$vim_dir")"
+        call -X screen -t "$name" bash -c \
+            "\
+            cd $(printf '%q' "$path") ; \
+            screen -X select "$switch_to_window" ; \
+            VIM_SERVERNAME="$vim_servername" exec vim -S ~/config/dirspace/dirspace_vim.vim --servername "$vim_servername" ; \
+            "
+    else
+        return 0
+    fi
+}
+
+# Read FIFO.
 while true
 do
     if read line < "$FIFO"
@@ -108,8 +122,8 @@ do
         cmd=( $line )
         fn="${cmd[0]}"
         args=( "${cmd[@]:1}" )
-        if declare -F "RCP_$fn" >/dev/null; then
-            "RCP_$fn" "${args[@]}"
+        if declare -F "RPC_$fn" >/dev/null; then
+            "RPC_$fn" "${args[@]}"
         else
             echo "Unknown function: $fn"
         fi

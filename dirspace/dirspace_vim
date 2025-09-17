@@ -1,4 +1,0 @@
-#!/bin/bash
-# dirspace_vim:
-
-vim -S ~/config/dirspace/dirspace_vim.vim
