@@ -1,0 +1,72 @@
+#!/bin/bash
+# dirspace_launcher:
+
+session_name_postfix="dirspace"
+
+# -D: Don't attach and don't fork the daemon.
+#     The screen session will run as a job in this script.
+#     (This is the easiest way to get its PID.)
+# -m: Create even if STY exists (e.g. in a screen session).
+#screen -D -m -S "$session_name_postfix" -c ~/config/dirspace/dirspace_screenrc &
+screen -D -m -S "$session_name_postfix" &
+screen_pid=$!
+session_name="$screen_pid.$session_name_postfix"
+echo "$screen_pid"
+echo "$session_name"
+
+# Wait for the new screen session.
+while ! (screen -ls | grep -q "$session_name")
+do
+    sleep 0.1
+done
+
+# Helper function to send a command to the session.
+call ()
+{
+    screen -S "$session_name" "$@"
+}
+
+get_current_window ()
+{
+    call -Q number | tr -d' ' -f 1 
+}
+
+# Create a dirspace screen window.
+create_dirspace ()
+{
+    dirspace_path="$1"
+    dirspace_name="$(dirspace_get "$dirspace_path")"
+    if [ $? -ne ]
+    then
+        dirspace_name="$dirspace_path"
+    fi
+    call -X screen -t "$dirspace_name" bash -c "cd $(printf '%q' "$dirspace_path") ; exec ~/config/dirspace/dirspace_vim"
+}
+
+# Create a window.
+create_dirspace ~/notes/notes.d
+# Delete the initial window.
+call -p 0 -X kill
+call -p 1 -X number 0
+
+create_dirspace ~/config
+create_dirspace ~/drive/dev/academia
+create_dirspace ~/code/cg_sandbox
+
+# Create a terminal emulator to run screen as controlling process,
+# and attach to the session.
+d cool-retro-term -e screen -r "$session_name"
+
+# Wait until the emulator has attached the session.
+screen -ls | grep "$session_name"
+while ! (screen -ls | grep "$session_name" | grep -q "Attached")
+do
+    screen -ls | grep "$session_name"
+    sleep 0.1
+done
+screen -ls | grep "$session_name"
+
+# # Select the first window.
+# # (Apparently this requires the session to be already attached.)
+# sleep 2
+# call -p 0 -X select

@@ -2,6 +2,9 @@
 # dirspace_get: Get the name of a dirspace from a path.
 # Error code indicates whether the path is a dirspace.
 
+# Option: Get the closest parent dirspace if possible.
+#     e.g. if Config is a dirspace at ~/config,
+#     then ~/config/scripts will resolve to Config with this option.
 option_get_parent_dirspace=0
 if [ $# -eq 2 ] && [[ "$1" =~ (-p|--parent) ]]
 then

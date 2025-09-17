@@ -1,4 +1,5 @@
 #!/bin/bash
 # dirspace_open:
 
-name="$(dirspace_get "$1")"
+name="$(dirspace_get --parent "$1")"
+
