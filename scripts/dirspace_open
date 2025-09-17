@@ -1,5 +1,8 @@
 #!/bin/bash
 # dirspace_open:
 
+session_id="$(dirspace_get_session)" || exit 1
+
 name="$(dirspace_get --parent "$1")"
+
 

@@ -1,7 +1,34 @@
 #!/bin/bash
 # dirspace_launcher:
+#
+
+error ()
+{
+    >&2 echo "$1"
+    exit 1
+}
 
 session_name_postfix="dirspace"
+
+# Make sure runtime (xdg share) directories are available.
+RUNTIME_DIR=~"/.local/share/dirspace"
+if [ ! -d "$RUNTIME_DIR" ]
+then
+    mkdir -p "$RUNTIME_DIR" 2>/dev/null || error "Failed to create dirspace runtime directory."
+fi
+FIFOS_DIR="$RUNTIME_DIR/fifos"
+if [ ! -d "$FIFOS_DIR" ]
+then
+    mkdir -p "$FIFOS_DIR" 2>/dev/null || error "Failed to create dirspace fifos directory."
+fi
+#--Maybe scan for dead fifos, with fuser.
+
+# Create a named pipe (FIFO).
+FIFO="$(mktemp --tmpdir "$FIFOS_DIR" XXXXXX)"
+if [[ ! -p "$FIFO" ]]
+then
+    mkfifo "$FIFO" || error "Failed to create FIFO."
+fi
 
 # -D: Don't attach and don't fork the daemon.
 #     The screen session will run as a job in this script.
@@ -58,15 +85,19 @@ create_dirspace ~/code/cg_sandbox
 d cool-retro-term -e screen -r "$session_name"
 
 # Wait until the emulator has attached the session.
-screen -ls | grep "$session_name"
 while ! (screen -ls | grep "$session_name" | grep -q "Attached")
 do
-    screen -ls | grep "$session_name"
     sleep 0.1
 done
-screen -ls | grep "$session_name"
 
 # # Select the first window.
 # # (Apparently this requires the session to be already attached.)
 # sleep 2
 # call -p 0 -X select
+
+# Act as a RCP server.
+
+# Wait for screen session to die.
+#--
+# Delete FIFO.
+#--

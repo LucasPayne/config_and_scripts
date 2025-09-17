@@ -8,4 +8,4 @@ then
 else
     >&2 echo "Not in a dirspace session."
     exit 1
-endif
+fi
