@@ -31,4 +31,5 @@ resolved_path="$(
     cd "$path"
     pwd -L
 )"
-fifo_command open_dirspace "$name" "$resolved_path" "$WINDOW"
+
+fifo_command open_dirspace "$name" "$resolved_path"

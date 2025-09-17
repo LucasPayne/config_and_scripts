@@ -82,6 +82,7 @@ done
 # Act as a RPC server.
 
 declare -A open_dirspaces
+declare -A window_numbers
 
 RPC_test_func ()
 {
@@ -96,6 +97,9 @@ RPC_open_dirspace ()
     if [ $# -eq 3 ]
     then
         local switch_to_window="$3"
+        local window_switch_command="screen -X select $switch_to_window"
+    else
+        local window_switch_command=":"
     fi
 
     if [[ ! -v "${open_dirspaces[$path]}" ]]
@@ -103,14 +107,25 @@ RPC_open_dirspace ()
         open_dirspaces["$path"]=name
         local vim_dir="$(mktemp -d --tmpdir="$session_runtime_dir/vim" XXXX)"
         local vim_servername="$dirspace_session_id.$(basename "$vim_dir")"
+
         call -X screen -t "$name" bash -c \
             "\
             cd $(printf '%q' "$path") ; \
-            screen -X select "$switch_to_window" ; \
+            echo \"\\\$WINDOW\" > $(printf '%q' "$vim_dir/window_id") ; \
+            $window_switch_command ; \
             VIM_SERVERNAME="$vim_servername" exec vim -S ~/config/dirspace/dirspace_vim.vim --servername "$vim_servername" ; \
             "
+
+        while [ ! -f "$vim_dir/window_id" ]
+        do
+            sleep 0.1
+        done
+        window_numbers["$path"]="$(cat "$vim_dir/window_id")"
     else
-        return 0
+        if [ ! ${switch_to_window+x} ]
+        then
+            call -X select "${window_numbers["$path"]}"
+        fi
     fi
 }
 
