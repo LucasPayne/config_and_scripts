@@ -8,6 +8,7 @@
 ~/notes/notes.d -- Notes
 ~/config -- Config
 ~/drive/videos -- Videos
+~/drive/images -- Images
 ~/drive/music -- Music
 ~/drive/dev/academia -- Academia
 ~/drive/dev/computer -- Computer

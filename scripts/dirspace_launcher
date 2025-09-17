@@ -155,8 +155,12 @@ RPC_edit_tab ()
         echo Gone
         return 1
     fi
-    local vim_servername="${vim_servernames[$path]}"
+    local vim_servername="${vim_servernames[$dirspace_path]}"
     echo "vim_servername: $vim_servername"
+    
+    # Open the file
+    cd "$dirspace_path"
+    pwd
     VIM_SERVERNAME="$vim_servername" v "$file"
 }
 

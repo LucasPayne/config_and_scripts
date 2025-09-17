@@ -280,6 +280,7 @@ map <a-m> maps
 map <a-M> cmaps
 map <a-c> cmds
 map <a-C> options
+map <a-o> $dirspace_open --pin --focus "$PWD"
 
 map <a-h> LFRC::execute-from-history
 # Clear command first.
