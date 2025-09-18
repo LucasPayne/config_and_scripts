@@ -1,0 +1,18 @@
+#!/bin/bash
+# vim_escape_list: Escape the argument list to be used as a vim expression list of strings.
+
+length="$#"
+printf '['
+
+index=1
+while [ $# -gt 0 ]
+do
+    vim_escape_string "$1"
+    if [ $index -lt $length ]
+    then
+        printf ', '
+    fi
+    ((index++))
+    shift
+done
+printf ']'
