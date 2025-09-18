@@ -1,0 +1,7 @@
+# This screen is under control entirely by the dirspace manager through commands.
+# The user does not create or select windows or run commands.
+
+# # Don't use any escape characters.
+escape ''
+# # Just in case, delete all bindings.
+# bindkey -d

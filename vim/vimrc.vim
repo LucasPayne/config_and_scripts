@@ -375,6 +375,7 @@ if g:use_tabpanel
 else
     set showtabpanel=0
     set showtabline=2
+    set tabline=%!TabLine()
 endif
 
 function! ToggleTabPanel()
@@ -387,10 +388,8 @@ function! ToggleTabPanel()
         set showtabline=2
     endif
 endfunction
-
 nnoremap <M-w><M-p> :call ToggleTabPanel()<cr>
 
-set tabline=%!TabLine()
 function! TabLine()
     let s = ''
     for i in range(1, tabpagenr('$'))
@@ -2954,3 +2953,14 @@ augroup END
 " (see :help WinEnter, it doesn't trigger for the starting window.)
 call TabWindowFocus_WinEnter()
 "------------------------------------------------------------
+
+" Dirspace runs vim with an extra script passed on the command line.
+" This script is meant to run after vim initialization,
+" such as overriding the tabline/tabpanel behaviour.
+" g;is_dirspace_vim is set when that script is source'd,
+" so on the first vimrc source, the below won't be run.
+" This mechanism is here so when I source my vimrc in a dirspace,
+" vim runs RC scripts as it did when it was invoked in the command line.
+if exists("g:is_dirspace_vim") && g:is_dirspace_vim == 1
+    source ~/config/dirspace/dirspace_vimrc.vim
+endif

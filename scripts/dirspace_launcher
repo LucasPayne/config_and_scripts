@@ -26,6 +26,7 @@ if [ ! -d "$RUNTIME_DIR/sessions" ]
 then
     mkdir -p "$RUNTIME_DIR/sessions" 2>/dev/null || error "Failed to create dirspace sessions directory."
 fi
+
 #--Maybe scan for dead fifos, with fuser.
 
 # Create session runtime directory.
@@ -38,6 +39,11 @@ mkfifo "$FIFO" || error "Failed to create FIFO."
 #
 # Create a runtime directory for this session's vim instances.
 mkdir "$session_runtime_dir/vim"
+#
+# Initialize empty status bar.
+STATUS_BAR="$session_runtime_dir/tabline_dirspace_status_bar"
+# It consists of one empty line.
+echo > "$session_runtime_dir/tabline_dirspace_status_bar"
 
 dirspace_session_id="$(basename "$session_runtime_dir")"
 
@@ -45,7 +51,7 @@ dirspace_session_id="$(basename "$session_runtime_dir")"
 #     The screen session will run as a job in this script.
 #     (This is the easiest way to get its PID.)
 # -m: Create even if STY exists (e.g. in a screen session).
-DIRSPACE_SESSION_ID="$dirspace_session_id" screen -D -m -S "$screen_name_postfix" &
+DIRSPACE_RUNTIME="$session_runtime_dir" DIRSPACE_SESSION_ID="$dirspace_session_id" screen -D -m -S "$screen_name_postfix" -c ~/config/dirspace/dirspace_screenrc &
 screen_pid=$!
 screen_name="$screen_pid.$screen_name_postfix"
 debug "screen_pid: $screen_pid"
@@ -124,15 +130,20 @@ RPC_open_dirspace ()
             cd $(printf '%q' "$path") ; \
             echo \"\\\$WINDOW\" > $(printf '%q' "$vim_dir/window_id") ; \
             $window_switch_command ; \
-            VIM_SERVERNAME="$vim_servername" exec vim -S ~/config/dirspace/dirspace_vimrc.vim --servername "$vim_servername" ; \
+            DIRSPACE_VIM_RUNTIME="$vim_dir" VIM_SERVERNAME="$vim_servername" exec vim -S ~/config/dirspace/dirspace_vimrc.vim --servername "$vim_servername" ; \
             "
-
         while [ ! -f "$vim_dir/window_id" ]
         do
             sleep 0.1
         done
-        window_numbers["$path"]="$(cat "$vim_dir/window_id")"
+        window_number="$(cat "$vim_dir/window_id")"
+        window_numbers["$path"]="$window_number"
         vim_servernames["$path"]="$vim_servername"
+        
+        # Update the status bar.
+        current_status="$(cat "$STATUS_BAR")"
+        current_status="${current_status//$'\n'/}"
+        echo "$current_status$window_number $name  " > "$STATUS_BAR"
     else
         if [ ! ${switch_to_window+x} ]
         then
@@ -189,5 +200,3 @@ done
 #--
 # Delete FIFO.
 #--
-
-#screen -D -m -S "$screen_name_postfix" -c ~/config/dirspace/dirspace_screenrc &
