@@ -606,6 +606,17 @@ augroup TabPanel
     autocmd DirChanged *
                     \   let g:tabpanel_directory_header = ""
                     \ | redrawtabpanel
+    " TabPanel is showing hidden and unlisted buffers information, so update when that is changed.
+    autocmd BufCreate * redrawtabpanel
+    " BufDelete and BufWipeout are triggered before the deletion,
+    " so the panel should be redrawn after a delay.
+    " This is not ideal, todo: Is there any other way?
+    " Note: The reason a function wrapping redrawtabpanel is run in a function wrapper,
+    "       is that execute("redrawtabpanel") causes an error when redir at any time in execute() context.
+    function! __TabPanel_BufDelete_After()
+        redrawtabpanel
+    endfunction
+    autocmd BufDelete,BufWipeout * call timer_start(10, {-> __TabPanel_BufDelete_After()})
 augroup END
 
 function! TabPanelDebug(str)
