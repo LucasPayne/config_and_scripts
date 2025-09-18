@@ -3,7 +3,13 @@
 #
 # Syntax:
 # {Path} -- {Name}
-# "{}" can be used to create multiple dirspaces.
+# {} in a path matches a subdirectory.
+# This can be only used as the final subdirectory.
+# This string-replaces in the dirspace name.
+#    {} : replace with string
+#    {capitalize} : replace with capitalized string
+#    {lower} : replace with upper case string
+#    {upper} : replace with lower case string
 
 ~/notes/notes.d -- Notes
 ~/config -- Config
@@ -21,4 +27,4 @@
 ~/drive/dev/visual_effects -- VFX
 ~/config -- Config
 ~/code/{} -- code:{}
-~/drive/dev/documentation/{} -- docs:{}
+~/drive/dev/documentation/{} -- Docs: {capitalize}

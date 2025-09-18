@@ -72,7 +72,11 @@ do
             then
                 expanding_name="${names[i]}"
                 subdir="$(basename "$path")"
-                echo "${expanding_name//\{\}/$subdir}"
+                expanding_name="${expanding_name//\{\}/$subdir}"
+                expanding_name="${expanding_name//\{capitalize\}/${subdir^}}"
+                expanding_name="${expanding_name//\{upper\}/${subdir^^}}"
+                expanding_name="${expanding_name//\{lower\}/${subdir,,}}"
+                echo "$expanding_name"
                 exit 0
             fi
         done < <(fd . -td -d1 "${path::-2}")
