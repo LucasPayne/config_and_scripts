@@ -56,13 +56,10 @@ then
     # In interactive bash, without a pipe this will read from input, e.g. like `cat > file`.
     data="$(cat)"
     
-    # vimserver's --remote-send requires escaping.
-    # Want to copy completely general text.
-    # Just using a tmp file.
     tmp_file_path="$(mktemp)"
     printf '%s' "$data" > "$tmp_file_path"
-
     vim_remote_expr "setreg($(vim_escape_string "$reg"), join(readfile($(vim_escape_string "$tmp_file_path"))))" >/dev/null
+    rm "$tmp_file_path"
 elif [ $option_output -eq 1 ]
 then
     vim_remote_call getreg "$reg"

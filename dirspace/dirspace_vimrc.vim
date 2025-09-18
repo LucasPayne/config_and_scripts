@@ -37,14 +37,23 @@ function! ToggleTabPanel()
 endfunction
 
 let g:tabline_dirspace_status_bar_file = expand("~/.local/share/dirspace/sessions/$DIRSPACE_SESSION_ID/tabline_dirspace_status_bar")
+let g:tabline_dirspace_status_bar = ""
+let g:tabline_dirspace_status_bar_dirty = 1
 function! TabLineDirspaceStatusBar()
-    if filereadable(g:tabline_dirspace_status_bar_file)
-        let lines = readfile(g:tabline_dirspace_status_bar_file)
-        if len(lines) > 0
-            return lines[0]
+    if g:tabline_dirspace_status_bar_dirty
+        if filereadable(g:tabline_dirspace_status_bar_file)
+            let lines = readfile(g:tabline_dirspace_status_bar_file)
+            if len(lines) > 0
+                let g:tabline_dirspace_status_bar = lines[0]
+            endif
+        else
+            let g:tabline_dirspace_status_bar = ""
         endif
-    else
-        return ""
+        "TODO: Set dirty on status change.
+        "      Might not even be worth it to save the file read.
+        "let g:tabline_dirspace_status_bar_dirty = 0
+        let g:tabline_dirspace_status_bar_dirty = 1
     endif
+    return g:tabline_dirspace_status_bar
 endfunction
 "------------------------------------------------------------

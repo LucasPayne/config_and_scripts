@@ -534,9 +534,9 @@ endfunction
 highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
-highlight TabLine cterm=underline ctermfg=gray ctermbg=black
+highlight TabLine cterm=underline ctermfg=blue ctermbg=black
 highlight TabLineSel cterm=underline ctermfg=white ctermbg=black
-highlight TabLineFill cterm=underline ctermfg=gray ctermbg=black
+highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
 highlight TabLineNumber cterm=underline ctermfg=blue ctermbg=black
 highlight TabLineNumberSel cterm=underline ctermfg=blue ctermbg=black
