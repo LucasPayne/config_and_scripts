@@ -57,7 +57,7 @@ do
     # Expand the leading ~ if there.
     path="${path/#\~/$HOME}"
 
-    if echo "$path" | grep -q "{}$" 2>/dev/null
+    if echo "$path" | grep -q "/{}$" 2>/dev/null
     then
         expanding_path="${path::-2}"
         if [ ! -d "$expanding_path" ]
@@ -65,7 +65,6 @@ do
             # Skip silently.
             continue  path
         fi
-        expanding_path="$(realpath "$expanding_path")"
         while read -r path
         do
             if match_path "$path"
@@ -79,7 +78,7 @@ do
                 echo "$expanding_name"
                 exit 0
             fi
-        done < <(fd . -td -d1 "${path::-2}")
+        done < <(fd . -td -d1 "$expanding_path")
     else
         if match_path "$path"
         then
