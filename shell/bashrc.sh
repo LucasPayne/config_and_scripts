@@ -282,7 +282,9 @@ vcd ()
     then
         if [ ! -z "$VIM_SERVERNAME" ]
         then
-            local targetdir="$(vim_remote_call getcwd)"
+            local targetdir="$(vim_remote_call getcwd -1)"
+            # Note: Not resolving paths because even if they are the same directory,
+            # it is useful to be able to cd to vim's different symlink.
             if [ "$(pwd)" != "$targetdir" ]
             then
                 cd "$targetdir"

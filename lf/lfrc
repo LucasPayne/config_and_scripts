@@ -278,9 +278,24 @@ map \\p ${{
 # Alt mappings <<<
 map <a-m> maps
 map <a-M> cmaps
-map <a-c> cmds
-map <a-C> options
+# Todo: Find new keys to map these to
+#map <a-c> cmds
+#map <a-C> options
 map <a-o> $dirspace_open --pin --focus "$PWD"
+# Swap between current and last directory.
+#todo
+map <a-C> jump-prev
+# Swap to the vim server's global working directory.
+map <a-c> ${{
+    if [ ! -z "$VIM_SERVERNAME" ]
+    then
+        targetdir="$(vim_remote_call getcwd -1)"
+        if [ "$(pwd)" != "$targetdir" ]
+        then
+            lf -remote "send cd $(printf '%q' "$targetdir")"
+        fi
+    fi
+}}
 
 map <a-h> LFRC::execute-from-history
 # Clear command first.
@@ -293,6 +308,8 @@ map <enter> open
 map h
 map \; open
 map l updir
+# Use h for : as part of the set of hjkl -> jkl; rebindings.
+map h read
 map D LFRC::mkdir
 map T LFRC::touch
 # move faster
