@@ -47,3 +47,4 @@ then
 else
     dirspace_fifo_command open_dirspace "$name" "$resolved_path" "$WINDOW"
 fi
+

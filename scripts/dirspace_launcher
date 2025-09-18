@@ -124,7 +124,7 @@ RPC_open_dirspace ()
             cd $(printf '%q' "$path") ; \
             echo \"\\\$WINDOW\" > $(printf '%q' "$vim_dir/window_id") ; \
             $window_switch_command ; \
-            VIM_SERVERNAME="$vim_servername" exec vim -S ~/config/dirspace/dirspace_vim.vim --servername "$vim_servername" ; \
+            VIM_SERVERNAME="$vim_servername" exec vim -S ~/config/dirspace/dirspace_vimrc.vim --servername "$vim_servername" ; \
             "
 
         while [ ! -f "$vim_dir/window_id" ]

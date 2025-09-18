@@ -711,13 +711,18 @@ function! TabPanel() abort
         else
             let highlight = ""
         endif
+        let prefix = ' '
         if winid == focus_winid
             let s .= tab
         else
             let s .= ' '
         endif
         call AddPanelText(P, s, highlight)
-        call AddPanelText(P, " ", "")
+        let buffer_flag_prefix = ' '
+        if getbufvar(buf, "&modified", 0) == 1
+            let buffer_flag_prefix = '+'
+        endif
+        call AddPanelText(P, buffer_flag_prefix.." ", "")
 
         if buf == bufnr()
             " Revert back from TabPanelFocusLine, so it doesn't cover the whole line,
@@ -746,7 +751,11 @@ function! TabPanel() abort
 
             let hidden_buffers = GetHiddenBuffers()
             for buf in hidden_buffers
-                let s = "  "..GetTabPanelBufName(buf, cwd)
+                let buffer_flag_prefix = ' '
+                if getbufvar(buf, "&modified", 0) == 1
+                    let buffer_flag_prefix = '+'
+                endif
+                let s = " "..buffer_flag_prefix.." "..GetTabPanelBufName(buf, cwd)
                 call AddPanelText(P, s, "Footer")
                 call FinishPanelLine(P)
             endfor
@@ -2805,7 +2814,7 @@ function! GetHiddenBuffers(...)
     let l:include_unlisted = get(a:000, 0, 0)
     
     " (Note: Using :ls output because there doesn't seem to be a "bufhidden()" available.
-    let l:hidden_bufs = []
+    let l:hidden_buffers = []
     redir => l:ls
     if l:include_unlisted
         silent ls!
@@ -2828,14 +2837,14 @@ function! GetHiddenBuffers(...)
         let active_flag = flags[2] == "a"
 
         if hidden_flag || (unlisted_flag && !active_flag)
-            let hidden_bufs += [str2nr(bufnr)]
+            let hidden_buffers += [str2nr(bufnr)]
         endif
     endfor
-    return l:hidden_bufs
+    return l:hidden_buffers
 endfunction
 
 " Count the number of hidden buffers.
-function NumHiddenBuffers(...)
+function! NumHiddenBuffers(...)
     let l:include_unlisted = get(a:000, 0, 0)
     return len(GetHiddenBuffers(l:include_unlisted))
 endfunction
@@ -2844,15 +2853,15 @@ function! CleanHiddenBuffers(...)
     " If set, also delete unlisted hidden buffers.
     let l:include_unlisted = get(a:000, 0, 0)
 
-    let l:hidden_buffers = GetHiddenBuffers(include_unlisted)
+    let l:hidden_buffers = GetHiddenBuffers(l:include_unlisted)
 
     let l:successfully_deleted_bufs = []
     let l:successfully_deleted_bufnames = []
-    for bufnr in l:hidden_bufs
+    for bufnr in l:hidden_buffers
         if !getbufvar(bufnr, '&modified') && getbufvar(bufnr, '&buftype') !=# 'terminal'
             let v:errmsg = ""
             let bufname = bufname(bufnr)
-            if l:do_clean_unlisted
+            if l:include_unlisted
                 execute 'bwipeout' bufnr
             else
                 execute 'bdelete' bufnr
@@ -2867,7 +2876,7 @@ function! CleanHiddenBuffers(...)
         endif
     endfor
 
-    let l:msg0 = l:do_clean_unlisted ? "Wiped out" : "Deleted"
+    let l:msg0 = l:include_unlisted ? "Wiped out" : "Deleted"
     echo "CleanHiddenBuffers: "..l:msg0 l:successfully_deleted_bufnames
 endfunction
 
@@ -2876,6 +2885,11 @@ endfunction
 " CleanHiddenBuffers!
 "     Do the same, but include unlisted buffers, and wipeout the buffers instead of delete.
 command! -bang -nargs=0 CleanHiddenBuffers call CleanHiddenBuffers(<bang>0)
+" Keybindings
+nnoremap <M-b><M-q> :CleanHiddenBuffers<cr>
+nnoremap <M-b><M-Q> :CleanHiddenBuffers!<cr>
+nnoremap <M-B><M-Q> :CleanHiddenBuffers!<cr>
+
 "------------------------------------------------------------
 
 "------------------------------------------------------------

@@ -1,5 +1,5 @@
 "
-" dirspace_vim
+" dirspace_vimrc
 "
 
 let s:options = ""
