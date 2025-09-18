@@ -282,10 +282,7 @@ vcd ()
     then
         if [ ! -z "$VIM_SERVERNAME" ]
         then
-            vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:call writefile([getcwd()], "/tmp/vimcwd")<cr>A'
-            # Wait for vim's file to to be modified or timeout.
-            inotifywait -t 2 -e modify /tmp/vimcwd >/dev/null 2>&1
-            local targetdir="$(cat /tmp/vimcwd)"
+            local targetdir="$(vim_remote_call getcwd)"
             if [ "$(pwd)" != "$targetdir" ]
             then
                 cd "$targetdir"
@@ -295,14 +292,16 @@ vcd ()
         fi
     else
         builtin cd "$@"
-        if [ ! -z "$VIM_SERVERNAME" ] ; then
-            vim --servername "$VIM_SERVERNAME" --remote-send '<C-\><C-n>:cd '"$(/bin/pwd)"'<cr>A'
+        if [ ! -z "$VIM_SERVERNAME" ]
+        then
+            vim_remote_call chdir "$(/bin/pwd)" >/dev/null
         fi
-        # Store the directory in the id temporary file.
-        # This is used in vim, which otherwise can't access non-symlink-resolved paths.
-        if [ ! -z "$VIM_SERVERNAME" ] ; then
-            pwd > "$VIM_SERVERNAME"
-        fi
+        # X---
+        # # Store the directory in the id temporary file.
+        # # This is used in vim, which otherwise can't access non-symlink-resolved paths.
+        # if [ ! -z "$VIM_SERVERNAME" ] ; then
+        #     pwd > "$VIM_SERVERNAME"
+        # fi
     fi
 }
 

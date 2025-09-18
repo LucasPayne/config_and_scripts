@@ -1,3 +1,8 @@
 #!/bin/bash
-# vim_escape_string:
+# vim_escape_string: Escape the arguments to be used as a vim string.
+# Usage:
+#     $ vim_escape_string /tmp/Test\ Dir/a.txt
+#     "/tmp/Test\ Dir/a.txt"
 
+str="$*"
+printf "'%s'" "${str//\'/\'\'}"

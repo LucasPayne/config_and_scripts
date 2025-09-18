@@ -1,3 +1,9 @@
 #!/bin/bash
-# vim_remote_send:
+# vim_remote_send: alias for --remote-send automatically using VIM_SERVERNAME.
 
+if [[ ! -v VIM_SERVERNAME ]]
+then
+    exit 1
+fi
+
+exec vim --servername "$VIM_SERVERNAME" --remote-send "$@"

@@ -2,26 +2,68 @@
 #
 # Like xclip but for vim registers.
 
-if [ -z "$TERMDESK_ID" ]
+if [ -z "$VIM_SERVERNAME" ]
 then
-    >&2 echo "Not in a termdesk."
+    >&2 echo "Vim server not specified."
     exit 1
 fi
 
-if [ $# -eq 0 ]
+option_input=1
+option_output=0
+reg=""
+register_names='"0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:.%#=*+~/'
+while [ $# -ne 0 ]
+do
+    case "$1" in
+        -i|--input)
+            option_input=1
+            option_output=0
+            ;;
+        -o|--output)
+            option_input=0
+            option_output=1
+            ;;
+        *)
+            if [ ! -z "$reg" ]
+            then
+                >&2 echo "Only one register may be specified. Invalid argument: $1"
+                exit 1
+            fi
+            reg="$1"
+            if [[ ! $register_names = *"$reg"* ]]
+            then
+                >&2 echo "Invalid register name: $reg."
+                exit 1
+            fi
+            ;;
+    esac
+    shift
+done
+if [ $option_input -eq 1 ] && [ $option_output -eq 1 ]
+then
+    >&2 echo "At most one of --input/--output, -i/-o can be specified."
+    exit 1
+fi
+if [ -z "$reg" ]
+then
+    # Default to the unnamed register (which does have a name alias of ").
+    reg='"'
+fi
+
+if [ $option_input -eq 1 ]
 then
     # Get contents from stdin.
     # In interactive bash, without a pipe this will read from input, e.g. like `cat > file`.
     data="$(cat)"
-else
-    # Get contents from arguments.
-    data="$*"
+    
+    # vimserver's --remote-send requires escaping.
+    # Want to copy completely general text.
+    # Just using a tmp file.
+    tmp_file_path="$(mktemp)"
+    printf '%s' "$data" > "$tmp_file_path"
+
+    vim_remote_expr "setreg($(vim_escape_string "$reg"), join(readfile($(vim_escape_string "$tmp_file_path"))))" >/dev/null
+elif [ $option_output -eq 1 ]
+then
+    vim_remote_call getreg "$reg"
 fi
-
-# vimserver's --remote-send requires escaping.
-# Want to copy completely general text.
-# Just using a tmp file.
-tmp_file_path="$(mktemp)"
-printf '%s' "$data" > "$tmp_file_path"
-
-vim --servername "$TERMDESK_ID" --remote-send '<C-\><C-n>:let @"=join(readfile("'"$tmp_file_path"'"), "\n")<cr>'
