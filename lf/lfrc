@@ -283,7 +283,7 @@ map <a-M> cmaps
 #map <a-C> options
 map <a-o> $dirspace_open --pin --focus "$PWD"
 # Swap between current and last directory.
-#todo
+#todo, for now it's just jump-prev
 map <a-C> jump-prev
 # Swap to the vim server's global working directory.
 map <a-c> ${{

@@ -32,6 +32,7 @@ function! ToggleTabPanel()
     else
         set showtabpanel=0
         set showtabline=2
+        set tabline=%!TabLine()
     endif
 endfunction
 
