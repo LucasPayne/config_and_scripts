@@ -585,21 +585,26 @@ function! GetTabPanelBufName(buf, cwd)
         let s .= "[?] "..basename
     elseif buftype == "terminal"
         let s .= "$"
-        let shell_working_directory = getbufvar(buf, "shell_working_directory", "")
-        if shell_working_directory != ""
+        let swd = getbufvar(buf, "shell_working_directory", "")
+        if swd != ""
             let s .= ":"
-            if stridx(shell_working_directory, cwd) == 0
+            if stridx(swd, cwd) == 0
                 " Shell in a subdirectory of vim's global working directory.
-                let shell_working_directory = shell_working_directory[strlen(cwd) + 1:]
-                if shell_working_directory == ""
+                let swd = swd[strlen(cwd) + 1:]
+                if swd == ""
                     " Indicate current directory with ".".
-                    let shell_working_directory = "."
+                    let swd = "."
                 endif
             else
                 " Use ~ for the home directory.
-                let shell_working_directory = fnamemodify(shell_working_directory, ':~')
+                let swd = fnamemodify(swd, ':~')
             endif
-            let s .= shell_working_directory
+            let s .= swd
+        endif
+        let swd = getbufvar(buf, "shell_working_directory", "")
+        let foreground = getbufvar(buf, "shell_foreground", {})
+        if foreground != {}
+            let s .= foreground["command"]
         endif
     endif
     return s
@@ -3006,6 +3011,29 @@ function! Tapi_vim_terminal_cd(buf, working_directory)
 
     " Refresh the tab panel since it displays shell working directories.
     redrawtabpanel
+
+    " Start an async poller for this terminal.
+    if getbufvar(a:buf, "vim_terminal_shell_poller_started", 0) == 0
+        call setbufvar(a:buf, "vim_terminal_shell_poller_started", 1)
+        call timer_start(1000, function('VimTerminalShellPoller', [a:buf]), {'repeat': -1})
+    endif
+endfunction
+function! VimTerminalShellPoller(...)
+    let buf = a:000[0]
+    let job = term_getjob(buf)
+    if job != v:null
+        let pid = job_info(job)["process"]
+        let foreground_pid = system("ps -o tpgid= "..pid.." | tr -d ' '")
+        let foreground_comm = systemlist("ps -o comm ".. foreground_pid)[1]
+        let foreground_args = systemlist("ps -o args ".. foreground_pid)[1]
+        let dict = {
+                    \ 'pid' : foreground_pid,
+                    \ 'command' : foreground_comm,
+                    \ 'args' : foreground_args,
+                    \ }
+        call setbufvar(buf, "shell_foreground", dict)
+        redrawtabpanel
+    endif
 endfunction
 
 " Dirspace runs vim with an extra script passed on the command line.
