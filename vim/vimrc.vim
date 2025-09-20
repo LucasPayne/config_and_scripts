@@ -388,7 +388,7 @@ function! ToggleTabPanel()
         set showtabline=2
     endif
 endfunction
-nnoremap <M-w><M-p> :call ToggleTabPanel()<cr>
+nnoremap <M-w><C-p> :call ToggleTabPanel()<cr>
 
 function! TabLine()
     let s = ''
@@ -1546,8 +1546,9 @@ if PluginEnabled("tagbar")
 endif
 
 if PluginEnabled("bufexplorer")
-    nnoremap <silent> <C-p> :ToggleBufExplorer<CR>
-    "nnoremap <silent> <C-p> :BufExplorerHorizontalSplit<CR>
+    nnoremap <silent> <M-w><M-p> :ToggleBufExplorer<CR>
+    "nnoremap <silent> <M-w><M-p> :BufExplorerHorizontalSplit<CR>
+    tnoremap <silent> <M-w><M-p> <C-w>:ToggleBufExplorer<CR>
 endif
 
 "if PluginEnabled("quickpeek")
