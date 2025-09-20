@@ -3158,10 +3158,22 @@ function! Lf_Popup(wd)
     let buf = term_start(['lf'], #{hidden: 1, term_finish: 'close'})
     noautocmd execute "cd "..fnameescape(global_cwd)
 
-    let height = winheight(0)/2
-    let width = winwidth(0)/2
-    let line = (winheight(0) - height) / 2
-    let col  = (winwidth(0)  - width) / 2
+    " NOTE: Bug workaround.
+    "     Popup placement does not take into account tab panel.
+    "     But all the other things like winheight, winwidth do, so if calculated from that,
+    "     it will be placed incorrectly.
+    if g:use_tabpanel == 1
+        let height = winheight(0)/2
+        let width = (winwidth(0) + g:tabpanel_width)/2
+        let line = (winheight(0) - height) / 2
+        let col  = (winwidth(0) + g:tabpanel_width - width) / 2
+        " let col += g:tabpanel_width
+    else
+        let height = winheight(0)/2
+        let width = winwidth(0)/2
+        let line = (winheight(0) - height) / 2
+        let col  = (winwidth(0)  - width) / 2
+    endif
     let options = {
         \ 'callback' : {p -> Lf_Popup_Callback(buf)},
         \ 'line' : line,
