@@ -3129,10 +3129,29 @@ function! Lf_Split(oldpwd, pwd, f)
     let pwd = a:pwd
     let f = a:f
 
+    call DEBUGLOG(oldpwd.." "..pwd.." "..f)
+
+    " If lf is run in a popup terminal,
+    " then window creations can't be run while it is focused.
+    " A workaround for this is to close the popup window, run the commands,
+    " then re-open it with the same options.
+    let winid = win_getid()
+    let buf = bufnr()
+    silent! let popup_options = popup_getoptions(win_getid())
+    call DEBUGLOG(string(popup_options))
+    if popup_options != {}
+        call popup_close(winid)
+    endif
+
     let global_cwd = getcwd(-1)
     noautocmd execute "cd "..fnameescape(oldpwd)
     execute "botright term ++close lf -command \"cd "..shellescape(pwd).."\" -command \"select "..shellescape(f).."\""
     noautocmd execute "cd "..fnameescape(global_cwd)
+
+    " Restore the popup window.
+    if popup_options != {}
+        call popup_create(buf, popup_options)
+    endif
 endfunction
 
 " Resizing
