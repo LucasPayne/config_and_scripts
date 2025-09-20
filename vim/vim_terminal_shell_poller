@@ -21,15 +21,45 @@ mkdir "$buf_dir"
 while true
 do
     foreground_pid="$(ps -o tpgid= "$pid" | tr -d ' ')"
-    echo "fgpid: $foreground_pid"
+
+    #TODO: Don't truncate it. See `man ps`.
     foreground_comm="$(ps -o comm "$foreground_pid" | tail -n +2 | head -1)"
-    foreground_args="$(ps -o args "$foreground_pid" | tail -n +2 | head -1)"
-    old_foreground_pid="$(cat "$buf_dir/foreground_pid")"
-    old_foreground_comm="$(cat "$buf_dir/foreground_comm")"
-    old_foreground_args="$(cat "$buf_dir/foreground_args")"
+
+    args="$(cat "/proc/$foreground_pid/cmdline" | tr '\0' '\n')"
+    args_is_bash_script=0
+    if [ "$(echo "$args" | head -1 | tr -d '\n')" = "$(which "$SHELL")" ]
+    then
+        script_path="$(echo "$args" | tail -n +2 | head -1 | tr -d '\n')"
+        if [[ "$script_path" =~ ^/ ]] && [ -x "$script_path" ]
+        then
+            args_is_bash_script=1
+        fi
+    fi
+    if [ $args_is_bash_script -eq 1 ]
+    then
+        foreground_args="$(echo "$args" | tail -n +3)"
+    else
+        foreground_args="$(echo "$args" | tail -n +2)"
+    fi
+
+    if [ -f "$buf_dir/foreground_pid" ]
+    then
+        old_foreground_pid="$(cat "$buf_dir/foreground_pid")"
+        old_foreground_comm="$(cat "$buf_dir/foreground_comm")"
+        old_foreground_args="$(cat "$buf_dir/foreground_args")"
+    else
+        # Just set it to the new one, because they aren't set yet.
+        old_foreground_pid="$foreground_pid"
+        old_foreground_comm="$foreground_comm"
+        old_foreground_args="$foreground_args"
+    fi
     echo "$foreground_pid" > "$buf_dir/foreground_pid"
     echo "$foreground_comm" > "$buf_dir/foreground_comm"
     echo "$foreground_args" > "$buf_dir/foreground_args"
+
+    echo "pid: $foreground_pid"
+    echo "comm: $foreground_comm"
+    echo "args: $foreground_args"
 
     # Update the vim UI if necessary.
     if [ ! "$old_foreground_comm" =  "$foreground_comm" ]

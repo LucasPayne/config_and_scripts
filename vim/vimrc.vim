@@ -624,6 +624,13 @@ function! GetTabPanelBufName(buf, cwd)
                     if foreground_pid != pid
                         let comm = readfile(dir.."/foreground_comm")[0]
                         let s .= "\n    "..comm
+                        
+                        let args = readfile(dir.."/foreground_args")
+                        if len(args) > 0
+                            for arg in args
+                                let s .= "\n    "..arg
+                            endfor
+                        endif
                     endif
                 endif
             endif
@@ -3046,7 +3053,6 @@ function! Tapi_vim_terminal_cd(buf, working_directory)
             let pid = job_info(job)["process"]
             let poller_options = {}
             let poller_command = [$HOME.."/config/vim/vim_terminal_shell_poller", string(pid), string(a:buf)]
-            echo poller_command
             let poller = job_start(poller_command, poller_options)
             "TODO: Add buffer number to an autocommand BufDelete to delete poller.
             call setbufvar(a:buf, "shell_poller", poller)
