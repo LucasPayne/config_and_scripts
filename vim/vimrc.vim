@@ -90,8 +90,11 @@ function! UnsetAltKeyMappings()
     " Just use <M-J><M-K> to escape.
     execute "set <M-j>=\ej"
     execute "set <M-k>=\ek"
-    execute "set <M-h>=\eh"
     execute "set <M-l>=\el"
+    execute "set <M-;>=\e;"
+    " Allow escape
+    execute "set <M-J>=\eJ"
+    execute "set <M-K>=\eK"
     " Allow tab switching
     execute "set <M-1>=\e1"
     execute "set <M-2>=\e2"
@@ -105,11 +108,6 @@ function! UnsetAltKeyMappings()
     " Allow tab moving
     execute "set <M-.>=\e."
     execute "set <M-,>=\e,"
-    " Allow navigation
-    execute "set <M-H>=\eH"
-    execute "set <M-J>=\eJ"
-    execute "set <M-K>=\eK"
-    execute "set <M-L>=\eL"
     " Allow system paste.
     execute "set <M-p>=\ep"
 endfunction
@@ -3100,12 +3098,14 @@ endfunction
 
 augroup Terminal_WinLeave
     autocmd!
+    "TODO: This is failing with:
+    "    :tab term ++close lf
     autocmd WinLeave *
-              \   if &buftype == 'terminal' && mode() == 'n'
+              \   if &buftype == 'terminal' && mode() == 'n' && job_info(term_getjob(bufnr())).status ==# 'run'
               \ |     normal! i
               \ | endif
 augroup END
-              "\ |     call timer_start(10, {-> execute("quit")})
+
 " Dirspace runs vim with an extra script passed on the command line.
 " This script is meant to run after vim initialization,
 " such as overriding the tabline/tabpanel behaviour.
@@ -3116,3 +3116,4 @@ augroup END
 if exists("g:is_dirspace_vim") && g:is_dirspace_vim == 1
     source ~/config/dirspace/dirspace_vimrc.vim
 endif
+
