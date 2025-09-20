@@ -915,7 +915,7 @@ highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
-highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=red ctermbg=black
+highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
 "@@
 
 "------------------------------------------------------------
@@ -1112,11 +1112,11 @@ nnoremap <silent> <M-X> :bwipeout<cr>
 nnoremap <silent> <M-w><M-w><M-x> :qa!<cr>
 " Close tab
 nnoremap <silent> <M-w><M-X> :tabclose<cr>
-tnoremap <silent> <M-W><M-X> :tabclose<cr>
+tnoremap <silent> <M-W><M-X> <C-w>:tabclose<cr>
 " Quick new empty tab.
 nnoremap <silent> <M-w><M-n> :tabnew<cr>
-tnoremap <silent> <M-W><M-n> :tabnew<cr>
-tnoremap <silent> <M-W><M-N> :tabnew<cr>
+tnoremap <silent> <M-W><M-n> <C-w>:tabnew<cr>
+tnoremap <silent> <M-W><M-N> <C-w>:tabnew<cr>
 " Copy file path
 "nnoremap .cp :let @" = expand("%:p")<cr>
 " Copy file directory
@@ -1126,8 +1126,8 @@ tnoremap <silent> <M-W><M-N> :tabnew<cr>
 " Move tab left and right.
 nnoremap <silent> <M-w><M-.> :tabm +1<cr>
 nnoremap <silent> <M-w><M-,> :tabm -1<cr>
-tnoremap <silent> <M-w><M-.> <C-\><C-n>:tabm +1 \| call feedkeys("i", 'n')<cr>
-tnoremap <silent> <M-w><M-,> <C-\><C-n>:tabm -1 \| call feedkeys("i", 'n')<cr>
+tnoremap <silent> <M-w><M-.> <C-w>:tabm +1 \| call feedkeys("i", 'n')<cr>
+tnoremap <silent> <M-w><M-,> <C-w>:tabm -1 \| call feedkeys("i", 'n')<cr>
 " Scroll-wheel goes to terminal normal mode so can scroll in vim buffer.
 "TODO: This should only be in the shell prompt, still want scroll in other
 "programs e.g. man pages.
@@ -1233,7 +1233,7 @@ for index in [1,2,3,4,5,6,7,8,9]
     "execute "nnoremap <silent> <M-".index."> :normal! ".index."gt<cr>"
     "execute "tnoremap <silent> <M-".index."> <C-\\><C-n>:normal! ".index."gt<cr>"
     execute "nnoremap <silent> <M-".index."> :call SwitchTab(".index.")<cr>"
-    execute 'tnoremap <silent> <M-'.index.'> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SwitchTab('.index.')<cr>'
+    execute 'tnoremap <silent> <M-'.index.'> <C-w>:call SwitchTab('.index.')<cr>'
     " Move window to tab
     "TODO
     "execute "nnoremap <silent> <M-w><M-".index."> :normal! ".index."gt<cr>"
@@ -2161,14 +2161,14 @@ tnoremap <M-W><M-W> <C-\><C-n>
 if 1
     " Switch jk and lh for space movement.
     " Horizontal is jk, vertical is lh.
-    tnoremap <silent> <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
-    tnoremap <silent> <M-w><M-;> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
-    tnoremap <silent> <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
-    tnoremap <silent> <M-W><M-:> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
-    tnoremap <silent> <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
-    tnoremap <silent> <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
-    tnoremap <silent> <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
-    tnoremap <silent> <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    tnoremap <silent> <M-w><M-l> <C-w>:call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-;> <C-w>:call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <silent> <M-W><M-L> <C-w>:call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-:> <C-w>:call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <silent> <M-w><M-j> <C-w>:call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-k> <C-w>:call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <silent> <M-W><M-J> <C-w>:call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-K> <C-w>:call SpaceMoveVertical(1, 1)<cr>
     nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
     nnoremap <silent> <M-w><M-l> :call SpaceMoveHorizontal(-1, 0)<cr>
     nnoremap <silent> <M-w><M-;> :call SpaceMoveHorizontal(1, 0)<cr>
@@ -2181,14 +2181,14 @@ if 1
 elseif 1
     " Switch jk and lh for space movement.
     " Horizontal is jk, vertical is lh.
-    tnoremap <silent> <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
-    tnoremap <silent> <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
-    tnoremap <silent> <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
-    tnoremap <silent> <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
-    tnoremap <silent> <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
-    tnoremap <silent> <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
-    tnoremap <silent> <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
-    tnoremap <silent> <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    tnoremap <silent> <M-w><M-j> <C-w>:call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-k> <C-w>:call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <silent> <M-W><M-J> <C-w>:call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-K> <C-w>:call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <silent> <M-w><M-l> <C-w>:call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-h> <C-w>:call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <silent> <M-W><M-L> <C-w>:call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-H> <C-w>:call SpaceMoveVertical(1, 1)<cr>
     nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
     nnoremap <silent> <M-w><M-j> :call SpaceMoveHorizontal(-1, 0)<cr>
     nnoremap <silent> <M-w><M-k> :call SpaceMoveHorizontal(1, 0)<cr>
@@ -2199,14 +2199,14 @@ elseif 1
     nnoremap <silent> <M-W><M-L> :call SpaceMoveVertical(-1, 1)<cr>
     nnoremap <silent> <M-W><M-H> :call SpaceMoveVertical(1, 1)<cr>
 else
-    tnoremap <silent> <M-w><M-h> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 0)<cr>
-    tnoremap <silent> <M-w><M-l> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 0)<cr>
-    tnoremap <silent> <M-W><M-H> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(-1, 1)<cr>
-    tnoremap <silent> <M-W><M-L> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveHorizontal(1, 1)<cr>
-    tnoremap <silent> <M-w><M-j> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 0)<cr>
-    tnoremap <silent> <M-w><M-k> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 0)<cr>
-    tnoremap <silent> <M-W><M-J> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(-1, 1)<cr>
-    tnoremap <silent> <M-W><M-K> <C-\><C-n>:let b:switch_to_terminal_mode = 1 \| call SpaceMoveVertical(1, 1)<cr>
+    tnoremap <silent> <M-w><M-h> <C-w>:call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-l> <C-w>:call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <silent> <M-W><M-H> <C-w>:call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-L> <C-w>:call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <silent> <M-w><M-j> <C-w>:call SpaceMoveVertical(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-k> <C-w>:call SpaceMoveVertical(1, 0)<cr>
+    tnoremap <silent> <M-W><M-J> <C-w>:call SpaceMoveVertical(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-K> <C-w>:call SpaceMoveVertical(1, 1)<cr>
     nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
     nnoremap <silent> <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
     nnoremap <silent> <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
@@ -2613,7 +2613,7 @@ if exists("&cmdheight") == 1
         endif
     endfunction
     nnoremap <silent> <M-w><M-c> :call ToggleCmdHeight()<cr>
-    tnoremap <silent> <M-W><M-C> <C-\><C-n>:call ToggleCmdHeight()<cr>
+    tnoremap <silent> <M-W><M-C> <C-w>:call ToggleCmdHeight()<cr>
 endif
 
 set wincolor=Window
