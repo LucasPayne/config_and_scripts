@@ -967,11 +967,31 @@ nnoremap <silent> <M-t> :tabnew<cr>
 " This is useful for in-window navigation, for example opening tabs for
 " important targets during tag search.
 " This opens in the background.
-nnoremap <silent> <M-T>
-            \ :let curtab = tabpagenr()<cr>
-            \ :tab split<cr>
-            \ :execute "tabnext" curtab<cr>
-            \ :unlet curtab<cr>
+nnoremap <silent> <M-T> :call DuplicateBufferView()<cr>
+function! DuplicateBufferView()
+    let curtab = tabpagenr()
+    tab split
+
+    if &buftype == "terminal"
+        " Special behaviour for shells.
+        " This "duplicates" the shell.
+        let swd = getbufvar(bufnr(), "shell_working_directory", "")
+        let cmd = $SHELL
+        let term_options = {
+            \ 'curwin': 1
+            \ }
+        if swd != ""
+            let global_cwd = getcwd(-1)
+            noautocmd execute "cd "..fnameescape(swd)
+            call term_start(cmd, term_options)
+            noautocmd execute "cd "..fnameescape(global_cwd)
+        else
+            call term_start(cmd, term_options)
+        endif
+    endif
+    execute "tabnext" curtab
+    unlet curtab
+endfunction
 
 " Copy text to system clipboard and close.
 " Workflow intended for scratch buffer, quickly edit text to send to use
