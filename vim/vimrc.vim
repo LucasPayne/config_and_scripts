@@ -3097,6 +3097,14 @@ function! Tapi_vim_terminal_cd(buf, working_directory)
     endif
 endfunction
 
+augroup Terminal_WinLeave
+    autocmd!
+    autocmd WinLeave *
+              \   if &buftype == 'terminal' && mode() == 'n'
+              \ |     normal! i
+              \ | endif
+augroup END
+              "\ |     call timer_start(10, {-> execute("quit")})
 " Dirspace runs vim with an extra script passed on the command line.
 " This script is meant to run after vim initialization,
 " such as overriding the tabline/tabpanel behaviour.
