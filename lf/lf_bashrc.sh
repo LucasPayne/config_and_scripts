@@ -2,6 +2,27 @@
 # (This is not a default lf feature, can for example use BASH_ENV when
 #  launching lf to tell bash subprocesses to load this file.)
 
+# TODO: Move this to on-init (release 34), so don't have to run each subshell.
+# X-- This appears not to work, I think lf_ vars are only initialized after BASH_ENV rc.
+#     So, just manually make the my_runtime dir until release 34.
+# if [ ! -d "$lf_user_my_runtime_prefix" ]
+# then
+#     echo "prefix: $lf_user_my_runtime_prefix"
+#     mkdir -p "$lf_user_my_runtime_prefix"
+# fi
+# TODO: Also this, it doesn't need to be a function called repeatedly.
+my_runtime()
+{
+    lf_pid="$(ppid $$)"
+    runtime="$lf_user_my_runtime_prefix/$lf_pid"
+    if [ -d "$runtime" ]
+    then
+        rm -r "$runtime"
+    fi
+    mkdir "$runtime"
+    echo "$runtime"
+}
+
 get_readme ()
 {
     local f="$1"

@@ -20,6 +20,12 @@ set user_readmes 1
 #todo: Does this have other implications?
 set nodircache
 
+# my_runtime in ~/.local/share/lf.
+# This contains runtime data indexed by the lf process id.
+# I can configure lf to write out state automatically,
+# so external processes which only know the lf's pid can access it.
+eval set user_my_runtime_prefix "$HOME/.local/share/lf/my_runtime"
+
 # White background, black text
 #set cursoractivefmt "\033[0;30;47m"
 #set cursorparentfmt "\033[0;30;47m"
@@ -81,6 +87,15 @@ cmd on-quit :{{
 #cmd on-focus-gained :{{
 #    &load-selection
 #}}
+
+cmd my-runtime-cwd &{{
+    runtime="$(my_runtime)"
+    echo "$PWD" > "$runtime/cwd"
+}}
+
+#Waiting for r34 for on-init.
+# cmd on-init my-runtime-cwd
+cmd on-cd my-runtime-cwd
 
 #>>>
 
