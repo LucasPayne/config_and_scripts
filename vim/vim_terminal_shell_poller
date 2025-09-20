@@ -47,11 +47,13 @@ do
         old_foreground_pid="$(cat "$buf_dir/foreground_pid")"
         old_foreground_comm="$(cat "$buf_dir/foreground_comm")"
         old_foreground_args="$(cat "$buf_dir/foreground_args")"
+        force_update=0
     else
         # Just set it to the new one, because they aren't set yet.
         old_foreground_pid="$foreground_pid"
         old_foreground_comm="$foreground_comm"
         old_foreground_args="$foreground_args"
+        force_update=1
     fi
     echo "$foreground_pid" > "$buf_dir/foreground_pid"
     echo "$foreground_comm" > "$buf_dir/foreground_comm"
@@ -62,7 +64,7 @@ do
     echo "args: $foreground_args"
 
     # Update the vim UI if necessary.
-    if [ ! "$old_foreground_comm" =  "$foreground_comm" ]
+    if [ $force_update -eq 1 ] || [ ! "$old_foreground_comm" =  "$foreground_comm" ]
     then
         vim_remote_call RedrawTabPanel
     fi

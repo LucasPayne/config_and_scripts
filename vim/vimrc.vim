@@ -631,8 +631,13 @@ function! TabPanelBufferDescription(P, buf)
                 if filereadable(dir.."/foreground_pid")
                     let foreground_pid = readfile(dir.."/foreground_pid")[0]
                     let job = term_getjob(buf)
-                    let pid = job_info(job)["process"]
-                    if foreground_pid != pid
+                    let job_info = job_info(job)
+                    let pid = job_info["process"]
+                    let command = job_info["cmd"][0]
+                    " Don't display description if the controlling process is
+                    " a shell and it is currently the foreground proess.
+                    " (todo: Check if it is any shell.)
+                    if command != "bash" || foreground_pid != pid
                         let comm = readfile(dir.."/foreground_comm")[0]
 
                         if comm == "lf"
