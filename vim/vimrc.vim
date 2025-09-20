@@ -801,14 +801,18 @@ function! TabPanel() abort
         endif
     endif
 
-    "" Show separator.
+    " Show separator.
     call AddPanelText(P, "", "")
     call FinishPanelLine(P)
 
-    " " Show the tab.
-    let numwin = tabpagewinnr(tab, '$')
-    for win in range(1, numwin)
-        let winid = win_getid(win, tab)
+    " Show the tab.
+    let winids = map(range(1, tabpagewinnr(tab, '$')), {_, winnr -> win_getid(winnr, tab)})
+    if tab == tabpagenr()
+        " NOTE: popup_list() only works with the current tab page.
+        " todo: Find a non-slow way to get this on another tab page.
+        call extend(winids, popup_list())
+    endif
+    for winid in winids
         let buf = Win_id2bufnr(winid)
         " s: Line for the window.
         let s = ""
@@ -3219,9 +3223,9 @@ function! Lf_Popup_Sibling(winid)
     endif
 endfunction
 
-nnoremap <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
-nnoremap <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
-nnoremap <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
+nnoremap <silent> <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
+nnoremap <silent> <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
+nnoremap <silent> <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
 
 function! Lf_Split(oldpwd, pwd, f)
     let oldpwd = a:oldpwd
