@@ -595,6 +595,9 @@ function! GetTabPanelBufName(buf, cwd)
                     " Indicate current directory with ".".
                     let shell_working_directory = "."
                 endif
+            else
+                " Use ~ for the home directory.
+                let shell_working_directory = fnamemodify(shell_working_directory, ':~')
             endif
             let s .= shell_working_directory
         endif
@@ -605,6 +608,7 @@ endfunction
 " Store info so it doesn't have to recompute again.
 " Set it to "" to reset on the next tab draw.
 let g:tabpanel_directory_header = ""
+let g:tabpanel_directory_header_is_dirspace = 0
 let g:tabpanel_current_branch = ""
 let g:tabpanel_vcs_author = ""
 let g:tabpanel_vcs_project = ""
@@ -668,16 +672,24 @@ function! TabPanel() abort
     "" Show total header (above the first tab).
     if tab == 1
         if g:tabpanel_directory_header == ""
-
             let dirspace_name = system("dirspace_get "..shellescape(fnamemodify(cwd, ":p")))
             if v:shell_error == 0
                 let g:tabpanel_directory_header = dirspace_name
+                let g:tabpanel_directory_header_is_dirspace = 1
             else
                 let g:tabpanel_directory_header = fnamemodify(cwd, ":~")
+                let g:tabpanel_directory_header_is_dirspace = 0
             endif
         endif
-        call AddPanelText(P, g:tabpanel_directory_header, "Header")
-        call FinishPanelLine(P)
+        if g:detail_view_active && g:tabpanel_directory_header_is_dirspace
+            call AddPanelText(P, g:tabpanel_directory_header, "Header")
+            call FinishPanelLine(P)
+            call AddPanelText(P, "@ "..fnamemodify(cwd, ":~"), "HeaderEnd")
+            call FinishPanelLine(P)
+        else
+            call AddPanelText(P, g:tabpanel_directory_header, "HeaderEnd")
+            call FinishPanelLine(P)
+        endif
 
         "TODO: Use vim builtin.
         call system("[ -d "..shellescape(cwd).."/.git ]")
@@ -826,7 +838,8 @@ redrawtabpanel
 set tabpanel=%!TabPanel()
 " Custom highlights for tabpanel
 highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
-highlight TabPanelHeader cterm=underline ctermfg=blue ctermbg=black
+highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
+highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
 highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 "@@
