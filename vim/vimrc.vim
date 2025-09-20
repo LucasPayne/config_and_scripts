@@ -1106,11 +1106,12 @@ inoremap <M-s> <Esc>:w<cr>a
 nnoremap <silent> <M-w><M-x> :quit<cr>
 nnoremap <silent> <M-x> :quit<cr>
 tnoremap <silent> <M-W><M-x> :quit<cr>
+" And wipeout buffer, with prompt of file modified.
+nnoremap <silent> <M-X> :bwipeout<cr>
 " Force quit vim
 nnoremap <silent> <M-w><M-w><M-x> :qa!<cr>
 " Close tab
 nnoremap <silent> <M-w><M-X> :tabclose<cr>
-nnoremap <silent> <M-X> :tabclose<cr>
 tnoremap <silent> <M-W><M-X> :tabclose<cr>
 " Quick new empty tab.
 nnoremap <silent> <M-w><M-n> :tabnew<cr>
