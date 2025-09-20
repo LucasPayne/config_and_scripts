@@ -41,6 +41,11 @@ prompt_function () {
     if [ ! -z "$branch" ] ; then
         printf ":$(c16 blue)($branch)$(c16 --reset)"
     fi
+
+    if [[ -v DIRSPACE_SESSION_ID ]]
+    then
+        printf '\033]51;["call", "Tapi_vim_terminal_cd", "%q"]\007' "$PWD"
+    fi
 }
 
 prompt_function

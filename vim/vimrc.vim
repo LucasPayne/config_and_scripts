@@ -363,7 +363,7 @@ nnoremap <M-?> ?^\s*
 " :help setting-tabline
 
 let g:use_tabpanel = 1
-let g:tabpanel_width = 25
+let g:tabpanel_width = 35
 function! SetTabPanelWidth(width)
     execute "set tabpanelopt=vert,columns:"..g:tabpanel_width..",align:left"
 endfunction
@@ -584,8 +584,20 @@ function! GetTabPanelBufName(buf, cwd)
         let basename = fnamemodify(bufname(buf), ":t:r")
         let s .= "[?] "..basename
     elseif buftype == "terminal"
-        " todo
         let s .= "$"
+        let shell_working_directory = getbufvar(buf, "shell_working_directory", "")
+        if shell_working_directory != ""
+            let s .= ":"
+            if stridx(shell_working_directory, cwd) == 0
+                " Shell in a subdirectory of vim's global working directory.
+                let shell_working_directory = shell_working_directory[strlen(cwd) + 1:]
+                if shell_working_directory == ""
+                    " Indicate current directory with ".".
+                    let shell_working_directory = "."
+                endif
+            endif
+            let s .= shell_working_directory
+        endif
     endif
     return s
 endfunction
@@ -2953,6 +2965,15 @@ augroup END
 " (see :help WinEnter, it doesn't trigger for the starting window.)
 call TabWindowFocus_WinEnter()
 "------------------------------------------------------------
+
+" :help terminal-api
+function! Tapi_vim_terminal_cd(buf, working_directory)
+    " echo "wd: "..a:working_directory
+    call setbufvar(a:buf, "shell_working_directory", a:working_directory)
+
+    " Refresh the tab panel since it displays shell working directories.
+    redrawtabpanel
+endfunction
 
 " Dirspace runs vim with an extra script passed on the command line.
 " This script is meant to run after vim initialization,
