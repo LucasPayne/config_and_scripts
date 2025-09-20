@@ -24,6 +24,10 @@ set mouse=a
 " option: incsearch?
 set noincsearch
 
+" option: termwinsize
+" Default each terminal to adapt to resize to the size of its window.
+set termwinsize=
+
 " option: jumpoptions
 " stack: Act like tag list.
 "        e.g., the jumplist behaviour is now:
@@ -2225,11 +2229,11 @@ function! LowerTerminal()
     endif
     execute "set termwinsize=".string(height)."x0"
     botright terminal
-    set termwinsize=0x0
+    set termwinsize=
 endfunction
 nnoremap <silent> <M-c> <cmd>call LowerTerminal()<cr>
 " Open a terminal in the current window.
-nnoremap <silent> <M-C> :set termwinsize=0x0 \| term ++curwin<cr>
+nnoremap <silent> <M-C> :set termwinsize= \| term ++curwin<cr>
 
 nnoremap <silent> <M-Q> :call GoToPrimaryShell(0)<cr>
 ">>>
@@ -3100,10 +3104,40 @@ augroup Terminal_WinLeave
     autocmd!
     "TODO: This is failing with:
     "    :tab term ++close lf
-    autocmd WinLeave *
-              \   if &buftype == 'terminal' && mode() == 'n' && job_info(term_getjob(bufnr())).status ==# 'run'
-              \ |     normal! i
-              \ | endif
+    "TODO: This is inserting in non-terminal windows. Does :normal delay?
+    "autocmd WinLeave *
+    "          \   if &buftype == 'terminal' && mode() == 'n' && job_info(term_getjob(bufnr())).status ==# 'run'
+    "          \ |     normal! i
+    "          \ | endif
+augroup END
+
+function! Lf_Split(oldpwd, pwd, f)
+    let oldpwd = a:oldpwd
+    let pwd = a:pwd
+    let f = a:f
+
+    let global_cwd = getcwd(-1)
+    noautocmd execute "cd "..fnameescape(oldpwd)
+    execute "botright term ++close lf -command \"cd "..shellescape(pwd).."\" -command \"select "..shellescape(f).."\""
+    noautocmd execute "cd "..fnameescape(global_cwd)
+endfunction
+
+" Resizing
+" (May not be necessary when termwinsize is empty, e.g. vim automatically resizes its terminals.)
+function! DoVimResize()
+    for tab in gettabinfo()
+        for window in get(tab, "windows")
+            let buf = winbufnr(window)
+            let buftype = getbufvar(buf, "&buftype")
+            if buftype == "terminal"
+                call term_setsize(buf, winheight(window), winwidth(window))
+            endif
+        endfor
+    endfor
+endfunction
+augroup Resizing
+    autocmd!
+    autocmd VimResized * call DoVimResize()
 augroup END
 
 " Dirspace runs vim with an extra script passed on the command line.
@@ -3116,4 +3150,3 @@ augroup END
 if exists("g:is_dirspace_vim") && g:is_dirspace_vim == 1
     source ~/config/dirspace/dirspace_vimrc.vim
 endif
-
