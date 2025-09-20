@@ -634,13 +634,23 @@ function! TabPanelBufferDescription(P, buf)
                         let comm = readfile(dir.."/foreground_comm")[0]
 
                         if comm == "lf"
-                            call AddPanelText(P, "    Files", "BufferDescriptionCommand")
-                            call FinishPanelLine(P)
+                            " call AddPanelText(P, "    Files", "BufferDescriptionCommand")
+                            " call FinishPanelLine(P)
                             let lf_cwd_file = $HOME.."/.local/share/lf/my_runtime/"..foreground_pid.."/cwd"
-                            call DEBUGLOG("lf_cwd_file: "..lf_cwd_file)
                             if filereadable(lf_cwd_file)
                                 let lf_cwd = readfile(lf_cwd_file)[0]
-                                call AddPanelText(P, "    "..lf_cwd, "BufferDescriptionArgs")
+                                " If a subdir, make it relative to the global cwd.
+                                let global_cwd = getcwd(-1)
+                                if stridx(lf_cwd, global_cwd) == 0
+                                    let lf_cwd = lf_cwd[strlen(global_cwd) + 1:]
+                                    if lf_cwd == ""
+                                        let lf_cwd = "."
+                                    endif
+                                else
+                                    " Use ~ if a subdir of home.
+                                    let lf_cwd = fnamemodify(lf_cwd, ":~")
+                                endif
+                                call AddPanelText(P, "    "..lf_cwd, "BufferDescriptionFilesCWD")
                                 call FinishPanelLine(P)
                             endif
                         elseif comm == "tig"
@@ -905,6 +915,7 @@ highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
+highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=red ctermbg=black
 "@@
 
 "------------------------------------------------------------
