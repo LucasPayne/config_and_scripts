@@ -3093,12 +3093,10 @@ endfunction
 function! StartShellPoller()
     " Start an async poller for this terminal.
     let buf = bufnr('%')
-    call DEBUGLOG("StartShellPoller: "..buf)
     if getbufvar(buf, "shell_poller", v:null) == v:null
         let job = term_getjob(buf)
         if job != v:null
             let pid = job_info(job)["process"]
-            call DEBUGLOG("    pid: "..pid)
             let poller_options = {}
             let poller_command = [$HOME.."/config/vim/vim_terminal_shell_poller", string(pid), string(buf)]
             let poller = job_start(poller_command, poller_options)
@@ -3150,12 +3148,19 @@ function! Lf_Popup_Callback(buf)
     call timer_start(10, {-> execute("bwipeout! "..a:buf)})
     "bwipeout! "..a:buf
 endfunction
-function! Lf_Popup(wd)
+function! Lf_Popup(wd, ...)
     let wd = a:wd
+    let lf_options = get(a:000, 0, {})
 
     let global_cwd = getcwd(-1)
     noautocmd execute "cd "..fnameescape(wd)
-    let buf = term_start(['lf'], #{hidden: 1, term_finish: 'close'})
+    if get(lf_options, 'select', "") != ""
+        let select_file = get(lf_options, 'select', "")
+        let cmd = ['lf', select_file]
+    else
+        let cmd = ['lf']
+    endif
+    let buf = term_start(cmd, #{hidden: 1, term_finish: 'close'})
     noautocmd execute "cd "..fnameescape(global_cwd)
 
     " NOTE: Bug workaround.
@@ -3195,14 +3200,33 @@ function! Lf_Popup(wd)
     hi link Terminal Normal
     let winid = popup_create(buf, options)
 endfunction
+function! Lf_Popup_Sibling(winid)
+    let winid = a:winid
+
+    let buf = winbufnr(winid)
+    let buftype = getbufvar(buf, "&buftype", "NONE")
+    if buftype == ""
+        let dir = fnamemodify(bufname(buf), ':p:h')
+        let file = fnamemodify(bufname(buf), ':p:t')
+
+        let options = {
+                    \ 'select': file,
+                    \ }
+        call Lf_Popup(dir, options)
+    else
+        " Don't popup for this buftype.
+        return
+    endif
+endfunction
+
 nnoremap <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
+nnoremap <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
+nnoremap <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
 
 function! Lf_Split(oldpwd, pwd, f)
     let oldpwd = a:oldpwd
     let pwd = a:pwd
     let f = a:f
-
-    call DEBUGLOG(oldpwd.." "..pwd.." "..f)
 
     " If lf is run in a popup terminal,
     " then window creations can't be run while it is focused.
@@ -3211,7 +3235,6 @@ function! Lf_Split(oldpwd, pwd, f)
     let winid = win_getid()
     let buf = bufnr()
     silent! let popup_options = popup_getoptions(win_getid())
-    call DEBUGLOG(string(popup_options))
     if popup_options != {}
         call popup_close(winid)
     endif
