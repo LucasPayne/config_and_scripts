@@ -617,9 +617,14 @@ function! GetTabPanelBufName(buf, cwd)
             let shell_poller_runtime_subdir = getbufvar(buf, "shell_poller_runtime_subdir", "")
             if shell_poller_runtime_subdir != ""
                 let dir = $DIRSPACE_VIM_RUNTIME.."/"..shell_poller_runtime_subdir
-                if filereadable(dir.."/foreground_comm")
-                    let comm = readfile(dir.."/foreground_comm")[0]
-                    let s .= " "..comm
+                if filereadable(dir.."/foreground_pid")
+                    let foreground_pid = readfile(dir.."/foreground_pid")[0]
+                    let job = term_getjob(buf)
+                    let pid = job_info(job)["process"]
+                    if foreground_pid != pid
+                        let comm = readfile(dir.."/foreground_comm")[0]
+                        let s .= "\n    "..comm
+                    endif
                 endif
             endif
         endif
