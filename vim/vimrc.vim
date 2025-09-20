@@ -3143,14 +3143,27 @@ augroup Resizing
 augroup END
 
 " File browsing
+function! Lf_Popup_Callback(buf)
+    "Note: Without an async timer, the wipeout gets the focus buffer.
+    "    But the buffer is given explicitly.
+    "    Unsure why this bug.
+    call timer_start(10, {-> execute("bwipeout! "..a:buf)})
+    "bwipeout! "..a:buf
+endfunction
 function! Lf_Popup(wd)
     let wd = a:wd
+
+    let global_cwd = getcwd(-1)
+    noautocmd execute "cd "..fnameescape(wd)
+    let buf = term_start(['lf'], #{hidden: 1, term_finish: 'close'})
+    noautocmd execute "cd "..fnameescape(global_cwd)
 
     let height = winheight(0)/2
     let width = winwidth(0)/2
     let line = (winheight(0) - height) / 2
     let col  = (winwidth(0)  - width) / 2
     let options = {
+        \ 'callback' : {p -> Lf_Popup_Callback(buf)},
         \ 'line' : line,
         \ 'col'  : col,
         \ 'minheight' : height,
@@ -3168,10 +3181,6 @@ function! Lf_Popup(wd)
         \ }
     hi TerminalBorder cterm=None ctermfg=darkgrey ctermbg=black
     hi link Terminal Normal
-    let global_cwd = getcwd(-1)
-    noautocmd execute "cd "..fnameescape(wd)
-    let buf = term_start(['lf'], #{hidden: 1, term_finish: 'close'})
-    noautocmd execute "cd "..fnameescape(global_cwd)
     let winid = popup_create(buf, options)
 endfunction
 nnoremap <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
