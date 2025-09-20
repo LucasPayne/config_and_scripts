@@ -1,0 +1,41 @@
+#!/bin/bash
+
+pid="$1"
+buf="$2"
+
+[[ -v DIRSPACE_VIM_RUNTIME ]] || exit 1
+[[ -d "$DIRSPACE_VIM_RUNTIME" ]] || exit 1
+
+state_dir="$DIRSPACE_VIM_RUNTIME/state"
+if [ ! -d "$state_dir" ]
+then
+    mkdir "$state_dir"
+fi
+buf_dir="$state_dir/$pid:$buf"
+if [ -d "$buf_dir" ]
+then 
+    rm -r "$buf_dir"
+fi
+mkdir "$buf_dir"
+
+while true
+do
+    foreground_pid="$(ps -o tpgid= "$pid" | tr -d ' ')"
+    echo "fgpid: $foreground_pid"
+    foreground_comm="$(ps -o comm "$foreground_pid" | tail -n +2 | head -1)"
+    foreground_args="$(ps -o args "$foreground_pid" | tail -n +2 | head -1)"
+    old_foreground_pid="$(cat "$buf_dir/foreground_pid")"
+    old_foreground_comm="$(cat "$buf_dir/foreground_comm")"
+    old_foreground_args="$(cat "$buf_dir/foreground_args")"
+    echo "$foreground_pid" > "$buf_dir/foreground_pid"
+    echo "$foreground_comm" > "$buf_dir/foreground_comm"
+    echo "$foreground_args" > "$buf_dir/foreground_args"
+
+    # Update the vim UI if necessary.
+    if [ ! "$old_foreground_comm" =  "$foreground_comm" ]
+    then
+        vim_remote_call RedrawTabPanel
+    fi
+
+    sleep 0.3
+done

@@ -2,6 +2,22 @@
 " dirspace_vimrc
 "
 
+if !exists("g:is_dirspace_vim") || g:is_dirspace_vim == 0
+    " Do initialization for the whole session.
+    " This is not re-source'd when the vimrc is sourced.
+
+    if !exists("$DIRSPACE_VIM_RUNTIME)
+        echoerr "DIRSPACE_VIM_RUNTIME is not set."
+    endif
+    
+    " Clear the vim runtime state.
+    if exists("$DIRSPACE_VIM_RUNTIME")
+        let runtime_state_dir = $DIRSPACE_VIM_RUNTIME.."/state
+        call system("rm -r "..shellescape(runtime_state_dir.."/state))
+        call system("mkdir -p "..shellescape(runtime_state_dir.."/state))
+    endif
+endif
+
 " vimrc will source this file again
 " if it is sourced and this is already set.
 let g:is_dirspace_vim = 1

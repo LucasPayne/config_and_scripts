@@ -549,6 +549,13 @@ hi TabPanelFill cterm=NONE
 hi TabPanelSel cterm=NONE ctermfg=white
 set fillchars+=tpl_vert:\ 
 
+" Wrapper for redrawtabpanel so it can be remote-called through vim server commands.
+" execute("redrawtabpanel") doesn't work because redir is not allowed in
+" execute() context.
+function! RedrawTabPanel()
+    redrawtabpanel
+endfunction
+
 "@@
 function! GetTabPanelBufName(buf, cwd)
     let buf = a:buf
@@ -602,6 +609,21 @@ function! GetTabPanelBufName(buf, cwd)
             let s .= swd
         endif
         let swd = getbufvar(buf, "shell_working_directory", "")
+
+        " The async job which saves foreground process info uses
+        " the runtime directories dirspace provides.
+        " This is just for convenience, it is not really a "dirspace" feature.
+        if exists("$DIRSPACE_VIM_RUNTIME")
+            let shell_poller_runtime_subdir = getbufvar(buf, "shell_poller_runtime_subdir", "")
+            if shell_poller_runtime_subdir != ""
+                let dir = $DIRSPACE_VIM_RUNTIME.."/"..shell_poller_runtime_subdir
+                if filereadable(dir.."/foreground_comm")
+                    let comm = readfile(dir.."/foreground_comm")[0]
+                    let s .= " "..comm
+                endif
+            endif
+        endif
+
         let foreground = getbufvar(buf, "shell_foreground", {})
         if foreground != {}
             let s .= foreground["command"]
@@ -634,7 +656,7 @@ augroup TabPanel
     " Note: The reason a function wrapping redrawtabpanel is run in a function wrapper,
     "       is that execute("redrawtabpanel") causes an error when redir at any time in execute() context.
     function! __TabPanel_BufDelete_After()
-        redrawtabpanel
+        call RedrawTabPanel()
     endfunction
     autocmd BufDelete,BufWipeout * call timer_start(10, {-> __TabPanel_BufDelete_After()})
 augroup END
@@ -3013,26 +3035,18 @@ function! Tapi_vim_terminal_cd(buf, working_directory)
     redrawtabpanel
 
     " Start an async poller for this terminal.
-    if getbufvar(a:buf, "vim_terminal_shell_poller_started", 0) == 0
-        call setbufvar(a:buf, "vim_terminal_shell_poller_started", 1)
-        call timer_start(1000, function('VimTerminalShellPoller', [a:buf]), {'repeat': -1})
-    endif
-endfunction
-function! VimTerminalShellPoller(...)
-    let buf = a:000[0]
-    let job = term_getjob(buf)
-    if job != v:null
-        let pid = job_info(job)["process"]
-        let foreground_pid = system("ps -o tpgid= "..pid.." | tr -d ' '")
-        let foreground_comm = systemlist("ps -o comm ".. foreground_pid)[1]
-        let foreground_args = systemlist("ps -o args ".. foreground_pid)[1]
-        let dict = {
-                    \ 'pid' : foreground_pid,
-                    \ 'command' : foreground_comm,
-                    \ 'args' : foreground_args,
-                    \ }
-        call setbufvar(buf, "shell_foreground", dict)
-        redrawtabpanel
+    if getbufvar(a:buf, "shell_poller", v:null) == v:null
+        let job = term_getjob(a:buf)
+        if job != v:null
+            let pid = job_info(job)["process"]
+            let poller_options = {}
+            let poller_command = [$HOME.."/config/vim/vim_terminal_shell_poller", string(pid), string(a:buf)]
+            echo poller_command
+            let poller = job_start(poller_command, poller_options)
+            "TODO: Add buffer number to an autocommand BufDelete to delete poller.
+            call setbufvar(a:buf, "shell_poller", poller)
+            call setbufvar(a:buf, "shell_poller_runtime_subdir", "state/"..pid..":"..a:buf)
+        endif
     endif
 endfunction
 
