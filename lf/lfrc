@@ -24,7 +24,8 @@ set nodircache
 # This contains runtime data indexed by the lf process id.
 # I can configure lf to write out state automatically,
 # so external processes which only know the lf's pid can access it.
-eval set user_my_runtime_prefix "$HOME/.local/share/lf/my_runtime"
+# TODO: Use eval to expand ~? Eval isn't working.
+set user_my_runtime_prefix ".local/share/lf/my_runtime"
 
 # White background, black text
 #set cursoractivefmt "\033[0;30;47m"
@@ -90,7 +91,9 @@ cmd on-quit :{{
 
 cmd my-runtime-cwd &{{
     runtime="$(my_runtime)"
+    echo "$runtime" > /tmp/buggle
     echo "$PWD" > "$runtime/cwd"
+    vim_remote_call RedrawTabPanel
 }}
 
 #Waiting for r34 for on-init.

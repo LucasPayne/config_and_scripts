@@ -636,6 +636,13 @@ function! TabPanelBufferDescription(P, buf)
                         if comm == "lf"
                             call AddPanelText(P, "    Files", "BufferDescriptionCommand")
                             call FinishPanelLine(P)
+                            let lf_cwd_file = $HOME.."/.local/share/lf/my_runtime/"..foreground_pid.."/cwd"
+                            call DEBUGLOG("lf_cwd_file: "..lf_cwd_file)
+                            if filereadable(lf_cwd_file)
+                                let lf_cwd = readfile(lf_cwd_file)[0]
+                                call AddPanelText(P, "    "..lf_cwd, "BufferDescriptionArgs")
+                                call FinishPanelLine(P)
+                            endif
                         elseif comm == "tig"
                             call AddPanelText(P, "    Git TUI", "BufferDescriptionCommand")
                             call FinishPanelLine(P)
