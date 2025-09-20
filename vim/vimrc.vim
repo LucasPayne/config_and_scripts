@@ -632,15 +632,24 @@ function! TabPanelBufferDescription(P, buf)
                     let pid = job_info(job)["process"]
                     if foreground_pid != pid
                         let comm = readfile(dir.."/foreground_comm")[0]
-                        call AddPanelText(P, "    "..comm, "BufferDescriptionCommand")
-                        call FinishPanelLine(P)
-                        let args = readfile(dir.."/foreground_args")
-                        for arg in args
-                            if arg != ""
-                                call AddPanelText(P, "    "..arg, "BufferDescriptionArgs")
-                                call FinishPanelLine(P)
-                            endif
-                        endfor
+
+                        if comm == "lf"
+                            call AddPanelText(P, "    Files", "BufferDescriptionCommand")
+                            call FinishPanelLine(P)
+                        elseif comm == "tig"
+                            call AddPanelText(P, "    Git TUI", "BufferDescriptionCommand")
+                            call FinishPanelLine(P)
+                        else
+                            call AddPanelText(P, "    "..comm, "BufferDescriptionCommand")
+                            call FinishPanelLine(P)
+                            let args = readfile(dir.."/foreground_args")
+                            for arg in args
+                                if arg != ""
+                                    call AddPanelText(P, "    "..arg, "BufferDescriptionArgs")
+                                    call FinishPanelLine(P)
+                                endif
+                            endfor
+                        endif
                     endif
                 endif
             endif
@@ -836,6 +845,7 @@ function! TabPanel() abort
                 let s = " "..buffer_flag_prefix.." "..GetTabPanelBufName(buf, cwd)
                 call AddPanelText(P, s, "Footer")
                 call FinishPanelLine(P)
+                call TabPanelBufferDescription(P, buf)
             endfor
         endif
 
@@ -886,7 +896,7 @@ highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
 highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
-highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
+highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=red ctermbg=black
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
 "@@
 
