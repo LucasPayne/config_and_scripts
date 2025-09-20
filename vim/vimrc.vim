@@ -3084,21 +3084,29 @@ function! Tapi_vim_terminal_cd(buf, working_directory)
 
     " Refresh the tab panel since it displays shell working directories.
     redrawtabpanel
-
+endfunction
+function! StartShellPoller()
     " Start an async poller for this terminal.
-    if getbufvar(a:buf, "shell_poller", v:null) == v:null
-        let job = term_getjob(a:buf)
+    let buf = bufnr('%')
+    call DEBUGLOG("StartShellPoller: "..buf)
+    if getbufvar(buf, "shell_poller", v:null) == v:null
+        let job = term_getjob(buf)
         if job != v:null
             let pid = job_info(job)["process"]
+            call DEBUGLOG("    pid: "..pid)
             let poller_options = {}
-            let poller_command = [$HOME.."/config/vim/vim_terminal_shell_poller", string(pid), string(a:buf)]
+            let poller_command = [$HOME.."/config/vim/vim_terminal_shell_poller", string(pid), string(buf)]
             let poller = job_start(poller_command, poller_options)
             "TODO: Add buffer number to an autocommand BufDelete to delete poller.
-            call setbufvar(a:buf, "shell_poller", poller)
-            call setbufvar(a:buf, "shell_poller_runtime_subdir", "state/"..pid..":"..a:buf)
+            call setbufvar(buf, "shell_poller", poller)
+            call setbufvar(buf, "shell_poller_runtime_subdir", "state/"..pid..":"..buf)
         endif
     endif
 endfunction
+augroup Poller
+    autocmd!
+    autocmd TerminalOpen * call StartShellPoller()
+augroup END
 
 augroup Terminal_WinLeave
     autocmd!
