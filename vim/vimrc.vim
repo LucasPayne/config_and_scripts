@@ -608,8 +608,17 @@ function! GetTabPanelBufName(buf, cwd)
             endif
             let s .= swd
         endif
-        let swd = getbufvar(buf, "shell_working_directory", "")
 
+    endif
+    return s
+endfunction
+"@@
+
+function! TabPanelBufferDescription(P, buf)
+    let P = a:P
+    let buf = a:buf
+    let buftype = getbufvar(buf, "&buftype")
+    if buftype == "terminal"
         " The async job which saves foreground process info uses
         " the runtime directories dirspace provides.
         " This is just for convenience, it is not really a "dirspace" feature.
@@ -623,25 +632,20 @@ function! GetTabPanelBufName(buf, cwd)
                     let pid = job_info(job)["process"]
                     if foreground_pid != pid
                         let comm = readfile(dir.."/foreground_comm")[0]
-                        let s .= "\n    "..comm
-                        
+                        call AddPanelText(P, "    "..comm, "BufferDescriptionCommand")
+                        call FinishPanelLine(P)
                         let args = readfile(dir.."/foreground_args")
-                        if len(args) > 0
-                            for arg in args
-                                let s .= "\n    "..arg
-                            endfor
-                        endif
+                        for arg in args
+                            if arg != ""
+                                call AddPanelText(P, "    "..arg, "BufferDescriptionArgs")
+                                call FinishPanelLine(P)
+                            endif
+                        endfor
                     endif
                 endif
             endif
         endif
-
-        let foreground = getbufvar(buf, "shell_foreground", {})
-        if foreground != {}
-            let s .= foreground["command"]
-        endif
     endif
-    return s
 endfunction
 
 " Store info so it doesn't have to recompute again.
@@ -806,6 +810,7 @@ function! TabPanel() abort
         let bufname = GetTabPanelBufName(buf, cwd)
         call AddPanelText(P, bufname, highlight)
         call FinishPanelLine(P)
+        call TabPanelBufferDescription(P, buf)
     endfor
     
     " Show total footer (below the last tab).
@@ -881,6 +886,8 @@ highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
 highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
+highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
+highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
 "@@
 
 "------------------------------------------------------------
