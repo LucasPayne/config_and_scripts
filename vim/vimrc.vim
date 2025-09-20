@@ -3124,6 +3124,58 @@ augroup Terminal_WinLeave
     "          \ | endif
 augroup END
 
+" Resizing
+" (May not be necessary when termwinsize is empty, e.g. vim automatically resizes its terminals.)
+function! DoVimResize()
+    for tab in gettabinfo()
+        for window in get(tab, "windows")
+            let buf = winbufnr(window)
+            let buftype = getbufvar(buf, "&buftype")
+            if buftype == "terminal"
+                call term_setsize(buf, winheight(window), winwidth(window))
+            endif
+        endfor
+    endfor
+endfunction
+augroup Resizing
+    autocmd!
+    autocmd VimResized * call DoVimResize()
+augroup END
+
+" File browsing
+function! Lf_Popup(wd)
+    let wd = a:wd
+
+    let height = winheight(0)/2
+    let width = winwidth(0)/2
+    let line = (winheight(0) - height) / 2
+    let col  = (winwidth(0)  - width) / 2
+    let options = {
+        \ 'line' : line,
+        \ 'col'  : col,
+        \ 'minheight' : height,
+        \ 'maxheight' : height,
+        \ 'minwidth' : width,
+        \ 'maxwidth' : width,
+        \ 'scrollbar' : 0,
+        \ 'title' : "",
+        \ 'cursorline' : 0,
+        \ 'wrap' : 0,
+        \ 'highlight' : 'hl-Normal',
+        \ 'border' : [1],
+        \ 'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+        \ 'borderhighlight' : ['TerminalBorder'],
+        \ }
+    hi TerminalBorder cterm=None ctermfg=darkgrey ctermbg=black
+    hi link Terminal Normal
+    let global_cwd = getcwd(-1)
+    noautocmd execute "cd "..fnameescape(wd)
+    let buf = term_start(['lf'], #{hidden: 1, term_finish: 'close'})
+    noautocmd execute "cd "..fnameescape(global_cwd)
+    let winid = popup_create(buf, options)
+endfunction
+nnoremap <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
+
 function! Lf_Split(oldpwd, pwd, f)
     let oldpwd = a:oldpwd
     let pwd = a:pwd
@@ -3154,23 +3206,7 @@ function! Lf_Split(oldpwd, pwd, f)
     endif
 endfunction
 
-" Resizing
-" (May not be necessary when termwinsize is empty, e.g. vim automatically resizes its terminals.)
-function! DoVimResize()
-    for tab in gettabinfo()
-        for window in get(tab, "windows")
-            let buf = winbufnr(window)
-            let buftype = getbufvar(buf, "&buftype")
-            if buftype == "terminal"
-                call term_setsize(buf, winheight(window), winwidth(window))
-            endif
-        endfor
-    endfor
-endfunction
-augroup Resizing
-    autocmd!
-    autocmd VimResized * call DoVimResize()
-augroup END
+
 
 " Dirspace runs vim with an extra script passed on the command line.
 " This script is meant to run after vim initialization,
