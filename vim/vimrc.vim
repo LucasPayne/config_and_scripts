@@ -85,17 +85,6 @@ function! UnsetAltKeyMappings()
     endfor
     " OVERRIDE
     " Allow these to act normally as they are detected in terminal mode.
-    " Allow universal navigation modifier <M-w>.
-    execute "set <M-w>=\ew"
-    execute "set <M-W>=\eW"
-    " Allow escape
-    "--These are useful bindings for terminal programs,
-    " probably don't want to override them.
-    " Just use <M-J><M-K> to escape.
-    execute "set <M-j>=\ej"
-    execute "set <M-k>=\ek"
-    execute "set <M-l>=\el"
-    execute "set <M-;>=\e;"
     " Allow escape
     execute "set <M-J>=\eJ"
     execute "set <M-K>=\eK"
@@ -109,11 +98,14 @@ function! UnsetAltKeyMappings()
     execute "set <M-7>=\e7"
     execute "set <M-8>=\e8"
     execute "set <M-9>=\e9"
+    " Allow universal navigation modifier <M-w>.
+    execute "set <M-w>=\ew"
+    execute "set <M-W>=\eW"
     " Allow tab moving
     execute "set <M-.>=\e."
     execute "set <M-,>=\e,"
-    " Allow system paste.
-    execute "set <M-p>=\ep"
+    " Allow file browser key.
+    execute "set <M-;>=\e;"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -3207,7 +3199,6 @@ function! Lf_Popup(launcher_winid, wd, ...)
                     let pid = job_info(job)["process"]
                     if foreground_pid == pid
                         let launcher_file = swd
-                        call DEBUGLOG("launched from shell")
                         let launcher_term = launcher_buf
                     else
                         return

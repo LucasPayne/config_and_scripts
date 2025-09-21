@@ -369,8 +369,8 @@ map h read
 map D LFRC::mkdir
 map T LFRC::touch
 # move faster
-map J :down; down; down; down
-map K :up; up; up; up
+map J :down; down; down; down; down; down; down; down
+map K :up; up; up; up; up; up; up; up
 
 cmd yank-dirname ${{
     echo "$PWD" | xclip -i -selection clipboard
