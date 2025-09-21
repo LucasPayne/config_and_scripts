@@ -3146,9 +3146,17 @@ augroup END
 
 " File browsing
 function! Lf_Popup_Callback(buf)
+     return
+    " The popup is closed when moving it between tabs.
+    " This option is set in that case, so skip this callback.
+    if exists("g:has_left_popup_terminal_options")
+        return
+    endif
+    
     "Note: Without an async timer, the wipeout gets the focus buffer.
     "    But the buffer is given explicitly.
     "    Unsure why this bug.
+    "
     call timer_start(10, {-> execute("bwipeout! "..a:buf)})
     "bwipeout! "..a:buf
 endfunction
@@ -3274,6 +3282,33 @@ function! Lf_Split(oldpwd, pwd, f)
         call popup_create(buf, popup_options)
     endif
 endfunction
+
+augroup PopupTerminal
+    autocmd!
+    " Move popup terminal to the active tab.
+    " Vim doesn't allow multiple popup terminals anyway, and does bring the
+    " popup to this tab's window list even though it is not shown on this tab.
+    " So it makes sense that a popup terminal should be over the screen, not a
+    " single tab.
+    " Note that a popup terminal steals all focus on its own tab.
+    " So, it can safely be assumed that it is in focus on TabLeave.
+    autocmd TabLeave *
+              \   if &buftype == 'terminal'
+              \ |     silent! let g:tmp_popup_options = popup_getoptions(win_getid())
+              \ |     if g:tmp_popup_options != {}
+              \ |        let g:has_left_popup_terminal_buffer = bufnr()
+              \ |        let g:has_left_popup_terminal_options = g:tmp_popup_options
+              \ |        call popup_close(win_getid())
+              \ |     endif
+              \ |     unlet g:tmp_popup_options
+              \ | endif
+    autocmd TabEnter *
+              \   if exists("g:has_left_popup_terminal_options")
+              \ |     call popup_create(g:has_left_popup_terminal_buffer, g:has_left_popup_terminal_options)
+              \ |     unlet g:has_left_popup_terminal_buffer
+              \ |     unlet g:has_left_popup_terminal_options
+              \ | endif
+augroup END
 
 
 
