@@ -55,6 +55,20 @@ shell_type_keys ()
     fi
 }
 
+Lf_Edit ()
+{
+    file="$1"
+    mode="$2"
+    close="$3"
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call Lf_Edit "$file" "$mode" "$close"
+        fi
+    fi
+}
+
 get_readme ()
 {
     local f="$1"

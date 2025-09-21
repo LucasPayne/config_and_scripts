@@ -366,7 +366,7 @@ nnoremap <M-?> ?^\s*
 " :help setting-tabline
 
 let g:use_tabpanel = 1
-let g:tabpanel_width = 30
+let g:tabpanel_width = 26
 function! SetTabPanelWidth(width)
     execute "set tabpanelopt=vert,columns:"..g:tabpanel_width..",align:left"
 endfunction
@@ -3251,7 +3251,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
     let window_horizontal_ratio = 0.9
     " 2.13: Approximate terminal font aspect ratio, todo.
     let window_vertical_ratio = 1 - (1 - window_horizontal_ratio)*2.13
-    let screen_horizontal_ratio = 0.65
+    let screen_horizontal_ratio = 0.75
     let screen_vertical_ratio = 1 - (1 - screen_horizontal_ratio)*2.13*0.5
 
     if over_screen == 1

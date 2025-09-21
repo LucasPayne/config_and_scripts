@@ -310,20 +310,20 @@ map \\p ${{
 #map <m-3> push <m-1><space>
 #>>>
 # Alt mappings <<<
-map <a-m> maps
-map <a-M> cmaps
+# map <a-m> maps
+# map <a-M> cmaps
 # Todo: Find new keys to map these to
 #map <a-c> cmds
 #map <a-C> options
 # Open a dirspace. This opens the closest parent if it is not a dirspace.
-map <a-o> ${{
+map <a-m> ${{
     if dirspace_open --focus "$PWD"
     then
         lf -remote "send $id quit"
     fi
 }}
 # Open a dirspace. If it is not in dirspaces.txt, force it to open anyway.
-map <a-O> ${{
+map <a-M> ${{
     if dirspace_open --pin --focus "$PWD"
     then
         lf -remote "send $id quit"
@@ -373,7 +373,7 @@ map J :down; down; down; down
 map K :up; up; up; up
 
 cmd yank-dirname ${{
-    dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
+    echo "$PWD" | xclip -i -selection clipboard
 }}
 cmd yank-path ${{
     printf '%s' "$f" | xclip -i -selection clipboard
@@ -392,6 +392,7 @@ map g :top
 map w
 
 map <a-y> :yank-path
+map <a-Y> :yank-dirname
 #map <a-j> :down
 #map <a-k> :up
 
@@ -423,76 +424,46 @@ cmd open &{{
 # VIM MAPPINGS
 #<<<
 # Open in new tab
-map c %{{
-    if in_vim
-    then
-        if [ -f "$f" ]
-        then
-            vim_remote_call Lf_Edit "$f" "tab"
-        fi
-    fi
-}}
+map c %Lf_Edit "$f" "tab" 0
+map <a-c> %Lf_Edit "$f" "tab" 1
 # Open to the left in a vertical split.
-map I %{{
-    if in_vim
-    then
-        if [ -f "$f" ]
-        then
-            vim_remote_call Lf_Edit "$f" "left"
-        fi
-    fi
-}}
+map I %Lf_Edit "$f" "left" 0
+map <a-I> %Lf_Edit "$f" "left" 1
 # Open to the right in a vertical split.
-map A %{{
-    if in_vim
-    then
-        if [ -f "$f" ]
-        then
-            vim_remote_call Lf_Edit "$f" "right"
-        fi
-    fi
-}}
+map A %Lf_Edit "$f" "right" 0
+map <a-A> %Lf_Edit "$f" "right" 1
 # Open below in a horizontal split
-map o %{{
-    if in_vim
-    then
-        if [ -f "$f" ]
-        then
-            vim_remote_call Lf_Edit "$f" "down"
-        fi
-    fi
-}}
+map o %Lf_Edit "$f" "down" 0
+map <a-o> %Lf_Edit "$f" "down" 1
 # Open above in a horizontal split
-map O %{{
-    if in_vim
-    then
-        if [ -f "$f" ]
-        then
-            vim_remote_call Lf_Edit "$f" "up"
-        fi
-    fi
-}}
+map O %Lf_Edit "$f" "up" 0
+map <a-O> %Lf_Edit "$f" "up" 1
 # Open at vim's focus window.
-map e %{{
-    if in_vim
-    then
-        if [ -f "$f" ]
-        then
-            vim_remote_call Lf_Edit "$f" "here"
-        fi
-    fi
-}}
+map e %Lf_Edit "$f" "here" 0
+map <a-e> %Lf_Edit "$f" "here" 1
+
 # Open at vim's focus window, and close lf.
 cmd open_enter ${{
     close="$1"
-    if [ ! -f "$f" ]
-    then
-        return
-    fi
     mim="$(mimetype -b "$(realpath "$f")")"
     if in_vim && ( [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] )
     then
         vim_remote_call Lf_Edit "$f" "here" "$close"
+    elif [ -d "$f" ]
+    then
+        if [ $close -eq 1 ]
+        then
+            # # It doesn't make sense to navigate and lf then close.
+            # # So, this option instead opens it in the GUI file browser,
+            # # which might be useful.
+            # xdg-open "$f"
+            # lf -remote "send $id quit"
+            #X--
+            # Just doing the same, so pressing alt doesn't change anything in this case.
+            lf -remote "send $id open"
+        else
+            lf -remote "send $id open"
+        fi
     else
         xdg-open "$f"
         if [ $close -eq 1 ]
