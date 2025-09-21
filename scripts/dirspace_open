@@ -35,6 +35,7 @@ then
     name="$(dirspace_get "$path")"
 else
     name="$(dirspace_get --parent "$path")"
+    name="$(dirspace_get --path --parent "$path")"
 fi
 if [ $? -ne 0 ]
 then

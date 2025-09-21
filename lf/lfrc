@@ -316,6 +316,7 @@ map <a-M> cmaps
 #map <a-c> cmds
 #map <a-C> options
 map <a-o> ${{
+    
     dirspace_open --pin --focus "$PWD"
     lf -remote "send $id quit"
 }}

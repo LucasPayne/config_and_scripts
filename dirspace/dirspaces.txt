@@ -27,4 +27,5 @@
 ~/drive/dev/visual_effects -- VFX
 ~/config -- Config
 ~/code/{} -- code:{}
-~/drive/dev/documentation/{} -- Docs: {capitalize}
+~/config/vim/repos/{} -- vim:{}
+~/drive/dev/documentation/{} -- Docs:{capitalize}

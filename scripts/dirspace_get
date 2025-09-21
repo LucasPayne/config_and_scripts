@@ -50,6 +50,8 @@ function match_path()
     fi
 }
 
+longest_pathlen=-1
+longest_path=
 name=""
 for ((i=0 ; i<num; i++))
 do
@@ -69,24 +71,39 @@ do
         do
             if match_path "$path"
             then
-                expanding_name="${names[i]}"
-                subdir="$(basename "$path")"
-                expanding_name="${expanding_name//\{\}/$subdir}"
-                expanding_name="${expanding_name//\{capitalize\}/${subdir^}}"
-                expanding_name="${expanding_name//\{upper\}/${subdir^^}}"
-                expanding_name="${expanding_name//\{lower\}/${subdir,,}}"
-                printf '%s' "$expanding_name"
-                exit 0
+                pathlen=${#path}
+                if [ $pathlen -gt $longest_pathlen ]
+                then
+                    longest_pathlen=$pathlen
+                    longest_path="$path"
+                    subdir="$(basename "$path")"
+                    expanding_name="${names[i]}"
+                    expanding_name="${expanding_name//\{\}/$subdir}"
+                    expanding_name="${expanding_name//\{capitalize\}/${subdir^}}"
+                    expanding_name="${expanding_name//\{upper\}/${subdir^^}}"
+                    expanding_name="${expanding_name//\{lower\}/${subdir,,}}"
+                    name="$expanding_name"
+                fi
             fi
-        done < <(fd . -td -d1 "$expanding_path")
+        done < <(fd -I . -td -d1 "$expanding_path")
     else
         if match_path "$path"
         then
-            printf '%s' "${names[i]}"
-            exit 0
+            pathlen=${#path}
+            if [ $pathlen -gt $longest_pathlen ]
+            then
+                longest_pathlen=$pathlen
+                longest_path="$path"
+                name="${names[i]}"
+            fi
         fi
     fi
 done
+
+if [ $longest_pathlen -ge 0 ]
+then
+    printf '%s -- %s' "$name" "$longest_path"
+fi
 
 # Dirspace not found
 # Fail.
