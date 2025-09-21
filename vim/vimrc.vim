@@ -3172,29 +3172,40 @@ function! Lf_Popup_Callback(buf)
     call timer_start(10, {-> execute("bwipeout! "..a:buf)})
     "bwipeout! "..a:buf
 endfunction
-function! Lf_Popup(wd, ...)
+function! Lf_Popup(launcher_winid, wd, ...)
     let wd = a:wd
+    let launcher_winid = a:launcher_winid
+    let launcher_buf = Win_id2bufnr(launcher_winid)
+    let launcher_buftype = getbufvar(launcher_buf, "&buftype", "")
     let lf_options = get(a:000, 0, {})
-
-    let global_cwd = getcwd(-1)
-    noautocmd execute "cd "..fnameescape(wd)
-    let cmd = ['lfnoshell']
 
     let launcher_file = get(lf_options, 'launcher_file', "")
     if launcher_file == ""
         if get(lf_options, 'infer_launcher_file', 0)
             " Infer the launcher file from the current buffer.
-            if &buftype == ""
+            if launcher_buftype == ""
                 let launcher_file = expand("%:p")
+            elseif launcher_buftype == "terminal"
+                let swd = getbufvar(launcher_buf, "shell_working_directory", "")
+                if swd != ""
+                    let launcher_file = swd
+                endif
+            else
+                " Don't create the popup if can't infer the launcher file.
+                return
             endif
         endif
     endif
+
+    let global_cwd = getcwd(-1)
+    noautocmd execute "cd "..fnameescape(wd)
+    let cmd = ['lfnoshell']
+
     if launcher_file != ""
         let cmd += ["-command", "set user_launcher_file "..shellescape(launcher_file)]
-    endif
-    if get(lf_options, 'select', "") != ""
-        let select_file = get(lf_options, 'select', "")
-        let cmd += [select_file]
+        if get(lf_options, 'focus_launcher_file', 0)
+            let cmd += [launcher_file]
+        endif
     endif
     let buf = term_start(cmd, #{hidden: 1, term_finish: 'close'})
 
@@ -3230,6 +3241,15 @@ function! Lf_Popup(wd, ...)
         let line   = winpos[0] + (winheight(0) - height) / 2
         let col    = winpos[1] + (winwidth(0) - width) / 2
     endif
+
+    " Determine the title.
+    " This can e.g. indicate the launcher file.
+    let title = ""
+    if launcher_file != ""
+        let title .= "launcher: "
+        let title .= launcher_file
+    endif
+
     let options = {
         \ 'callback' : {p -> Lf_Popup_Callback(buf)},
         \ 'line' : line,
@@ -3239,7 +3259,7 @@ function! Lf_Popup(wd, ...)
         \ 'minwidth' : width,
         \ 'maxwidth' : width,
         \ 'scrollbar' : 0,
-        \ 'title' : "",
+        \ 'title' : title,
         \ 'cursorline' : 0,
         \ 'wrap' : 0,
         \ 'highlight' : 'hl-Normal',
@@ -3249,37 +3269,11 @@ function! Lf_Popup(wd, ...)
         \ }
     hi TerminalBorder cterm=None ctermfg=darkgrey ctermbg=black
     hi link Terminal Normal
-    let winid = popup_create(buf, options)
-endfunction
-function! Lf_Popup_Sibling(winid)
-    let winid = a:winid
-
-    let buf = winbufnr(winid)
-    let buftype = getbufvar(buf, "&buftype", "NONE")
-    if buftype == ""
-        let dir = fnamemodify(bufname(buf), ':p:h')
-        let select = fnamemodify(bufname(buf), ':p:t')
-        let launcher_file = fnamemodify(bufname(buf), ':p')
-
-        let options = {
-                    \ 'select': select,
-                    \ 'launcher_file': launcher_file,
-                    \ }
-        call Lf_Popup(dir, options)
-    else
-        " Don't popup for this buftype.
-        return
-    endif
+    call popup_create(buf, options)
 endfunction
 
-" nunmap <M-;><M-;>
-" nunmap <M-:><M-:>
-" nunmap <M-;><M-:>
-"nnoremap <silent> <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
-"nnoremap <silent> <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
-"nnoremap <silent> <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
-nnoremap <silent> <M-;> :call Lf_Popup(getcwd(-1), { 'infer_launcher_file' : 1 })<cr>
-nnoremap <silent> <M-:> :call Lf_Popup_Sibling(win_getid())<cr>
+nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), getcwd(-1), { 'infer_launcher_file' : 1 })<cr>
+nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), expand("%:p:h"), { 'infer_launcher_file' : 1, 'focus_launcher_file' : 1 })<cr>
 
 " This function should be called from lf in a vim terminal.
 " It creates another lf with the same state in a horizontal split.

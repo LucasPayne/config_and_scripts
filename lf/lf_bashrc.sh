@@ -24,6 +24,12 @@ my_runtime()
     echo "$runtime"
 }
 
+in_vim ()
+{
+    [[ -v VIM_SERVERNAME ]]
+    return $?
+}
+
 get_readme ()
 {
     local f="$1"

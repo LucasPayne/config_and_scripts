@@ -100,7 +100,10 @@ cmd on-quit :{{
 cmd my-runtime-cwd &{{
     runtime="$(my_runtime)"
     echo "$PWD" > "$runtime/cwd"
-    vim_remote_call RedrawTabPanel
+    if in_vim
+    then
+        vim_remote_call RedrawTabPanel
+    fi
 }}
 
 #Waiting for r34 for on-init.
@@ -314,7 +317,7 @@ map <a-C> jump-prev
 #TODO: alt remapping in vim terminals, working around this with literal.
 #map <a-;>
 map » %{{
-    if [ ! -z "$VIM_SERVERNAME" ]
+    if in_vim
     then
         targetdir="$(vim_remote_call getcwd -1)"
         if [ "$(pwd)" != "$targetdir" ]
@@ -349,6 +352,33 @@ map T LFRC::touch
 # move faster
 map J :down; down; down; down
 map K :up; up; up; up
+# Vim mappings
+# Open in new tab
+map c %{{
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call execute "tabnew $(printf '%q' "$f")"
+        elif
+            #TODO: Open a new lf at the selected directory.
+            :
+        fi
+    fi
+}}
+# Open to the right in a vertical split.
+map c %{{
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call execute "tabnew $(printf '%q' "$f")"
+        elif
+            #TODO: Open a new lf at the selected directory.
+            :
+        fi
+    fi
+}}
 
 cmd yank-dirname ${{
     dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
@@ -391,15 +421,11 @@ cmd open &{{
 }}
 
 # Open a text file and go to the end.
-map A &{{
-    # Using -l because it is easy. Assuming the file is < 100000 lines long.
-    v "$f" -l 100000
-}}
+# map A &{{
+#     # Using -l because it is easy. Assuming the file is < 100000 lines long.
+#     v "$f" -l 100000
+# }}
 
-# Open file
-map o :LFRC::open-file
-
-#todo: O, open without window focus change.
 #>>>
 
 # SELECTION
