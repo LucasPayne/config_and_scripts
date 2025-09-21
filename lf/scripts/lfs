@@ -11,10 +11,12 @@ lfs ()
         return 1
     fi
 
-    if [ ! -t 0 ]
+    if [ ! -t 0 ] && ( [ "$#" -eq 0 ] || [ ! "$1" = "-o" ] )
     then
         # Input from a pipe.
         # Interpret stdin as selections.
+        # Input from a pipe is ignored with the -o flag, which forces printing output
+        # instead, as it would interactively with no pipe input.
         local append_mode
         if [ $# -eq 1 ] && [ "$1" = -a ]
         then
@@ -54,6 +56,7 @@ lfs ()
     then
         if [ -s "$selection_file" ]
         then
+            # Default without pipe input: Output selection file.
             cat "$selection_file"
         fi
     elif [ $# -eq 1 ]
@@ -62,6 +65,14 @@ lfs ()
         then
             # Clear selection file
             >"$selection_file"
+        fi
+        if [ "$1" = "-o" ]
+        then
+            # Output selection file.
+            if [ -s "$selection_file" ]
+            then
+                cat "$selection_file"
+            fi
         fi
     else
         >&2 echo "bad args"
