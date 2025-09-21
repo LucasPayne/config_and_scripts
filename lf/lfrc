@@ -359,7 +359,7 @@ map c %{{
     then
         if [ -f "$f" ]
         then
-            vim_remote_call execute "tabnew $(printf '%q' "$f")"
+            vim_remote_call Lf_Edit "$f" "tab"
         fi
     fi
 }}
@@ -369,7 +369,7 @@ map I %{{
     then
         if [ -f "$f" ]
         then
-            vim_remote_call execute "leftabove vsplit $(printf '%q' "$f")"
+            vim_remote_call Lf_Edit "$f" "left"
         fi
     fi
 }}
@@ -379,7 +379,7 @@ map A %{{
     then
         if [ -f "$f" ]
         then
-            vim_remote_call execute "vsplit $(printf '%q' "$f")"
+            vim_remote_call Lf_Edit "$f" "right"
         fi
     fi
 }}
@@ -389,7 +389,7 @@ map o %{{
     then
         if [ -f "$f" ]
         then
-            vim_remote_call execute "rightbelow split $(printf '%q' "$f")"
+            vim_remote_call Lf_Edit "$f" "down"
         fi
     fi
 }}
@@ -399,7 +399,7 @@ map O %{{
     then
         if [ -f "$f" ]
         then
-            vim_remote_call execute "split $(printf '%q' "$f")"
+            vim_remote_call Lf_Edit "$f" "up"
         fi
     fi
 }}

@@ -3313,7 +3313,11 @@ endfunction
 function! Lf_Edit(f, mode)
     let f = a:f
     let mode = a:mode
-    if index(mode, ["left", "right", "up", "down", "tab"]) == -1
+
+    call DEBUGLOG("f: "..f.."  mode: "..mode)
+
+    if index(["left", "right", "up", "down", "tab"], mode) == -1
+        call DEBUGLOG("broken")
         return
     endif
     
@@ -3325,6 +3329,8 @@ function! Lf_Edit(f, mode)
     let buf = bufnr()
     silent! let popup_options = popup_getoptions(win_getid())
     if popup_options != {}
+        " Indicate to popup callback not to trigger wipeout on close.
+        let g:has_left_popup_terminal_options = popup_options
         call popup_close(winid)
     endif
     
@@ -3343,6 +3349,7 @@ function! Lf_Edit(f, mode)
     " Restore the popup window.
     if popup_options != {}
         call popup_create(buf, popup_options)
+        unlet g:has_left_popup_terminal_options
     endif
 endfunction
 
