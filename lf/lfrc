@@ -33,13 +33,13 @@ set user_my_runtime_prefix ".local/share/lf/my_runtime"
 # e.g. if in vim there is a keybinding to open lf in a popup terminal
 # at the file's directory, it makes sense that that file is the "launch file",
 # and lf will have a keybinding to return to it.
-set lf_user_launcher_file ""
+set user_launcher_file ""
 " The "launcher term" is a vim buffer number which can be used
 " with vim remote commands, such as caling term_sendkeys.
 " This is -1 by default, but can be set by a -command by the launcher
 " if the launcher is from a shell prompt.
 " This can be used to use lf as a file argument selector.
-set lf_user_launcher_term -1
+set user_launcher_term -1
 
 # White background, black text
 #set cursoractivefmt "\033[0;30;47m"
