@@ -3171,17 +3171,31 @@ function! Lf_Popup(wd, ...)
     "     Popup placement does not take into account tab panel.
     "     But all the other things like winheight, winwidth do, so if calculated from that,
     "     it will be placed incorrectly.
-    if g:use_tabpanel == 1
-        let height = winheight(0)/2
-        let width = (winwidth(0) + g:tabpanel_width)/2
-        let line = (winheight(0) - height) / 2
-        let col  = (winwidth(0) + g:tabpanel_width - width) / 2
-        " let col += g:tabpanel_width
+    let over_screen = 1
+    let window_horizontal_ratio = 0.9
+    " 2.13: Approximate terminal font aspect ratio, todo.
+    let window_vertical_ratio = 1 - (1 - window_horizontal_ratio)*2.13
+    let screen_horizontal_ratio = 0.5
+    let screen_vertical_ratio = 1 - (1 - screen_horizontal_ratio)*2.13*0.5
+
+    if over_screen == 1
+        " Display the popup over the whole screen.
+        " Note that popups cannot be displayed over the tab panel.
+        " If they would be, vim just displays them shifted to the right
+        " (or left if the tab panel is right aligned.)
+        let cols = &columns
+        let lines = &lines
+        let height = float2nr(floor(lines * screen_vertical_ratio))
+        let width  = float2nr(floor(cols * screen_horizontal_ratio))
+        let line   = (lines - height)/2
+        let col    = (cols - width)/2
     else
-        let height = winheight(0)/2
-        let width = winwidth(0)/2
-        let line = (winheight(0) - height) / 2
-        let col  = (winwidth(0)  - width) / 2
+        " Display the popup over the current window.
+        let winpos = win_screenpos(winnr())
+        let height = float2nr(floor(winheight(0) * window_vertical_ratio))
+        let width  = float2nr(floor(winwidth(0) * window_horizontal_ratio))
+        let line   = winpos[0] + (winheight(0) - height) / 2
+        let col    = winpos[1] + (winwidth(0) - width) / 2
     endif
     let options = {
         \ 'callback' : {p -> Lf_Popup_Callback(buf)},
