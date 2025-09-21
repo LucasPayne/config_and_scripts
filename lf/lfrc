@@ -366,16 +366,43 @@ map c %{{
         fi
     fi
 }}
-# Open to the right in a vertical split.
-map c %{{
+# Open to the left in a vertical split.
+map A %{{
     if in_vim
     then
         if [ -f "$f" ]
         then
-            vim_remote_call execute "tabnew $(printf '%q' "$f")"
-        elif
-            #TODO: Open a new lf at the selected directory.
-            :
+            vim_remote_call execute "leftabove vsplit $(printf '%q' "$f")"
+        fi
+    fi
+}}
+# Open to the right in a vertical split.
+map I %{{
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call execute "vsplit $(printf '%q' "$f")"
+        fi
+    fi
+}}
+# Open below in a horizontal split
+map o %{{
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call execute "rightbelow split $(printf '%q' "$f")"
+        fi
+    fi
+}}
+# Open above in a horizontal split
+map O %{{
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call execute "split $(printf '%q' "$f")"
         fi
     fi
 }}

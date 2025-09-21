@@ -3267,11 +3267,12 @@ function! Lf_Popup(launcher_winid, wd, ...)
         \ 'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
         \ 'borderhighlight' : ['TerminalBorder'],
         \ }
-    hi TerminalBorder cterm=None ctermfg=darkgrey ctermbg=black
-    hi link Terminal Normal
     call popup_create(buf, options)
 endfunction
 
+"hi TerminalBorder cterm=None ctermfg=darkgrey ctermbg=black
+hi TerminalBorder cterm=None ctermfg=blue ctermbg=black
+hi link Terminal Normal
 nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), getcwd(-1), { 'infer_launcher_file' : 1 })<cr>
 nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), expand("%:p:h"), { 'infer_launcher_file' : 1, 'focus_launcher_file' : 1 })<cr>
 
