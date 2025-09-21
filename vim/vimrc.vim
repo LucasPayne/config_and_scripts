@@ -809,11 +809,6 @@ function! TabPanel() abort
 
     " Show the tab.
     let winids = map(range(1, tabpagewinnr(tab, '$')), {_, winnr -> win_getid(winnr, tab)})
-    if tab == tabpagenr()
-        " NOTE: popup_list() only works with the current tab page.
-        " todo: Find a non-slow way to get this on another tab page.
-        call extend(winids, popup_list())
-    endif
     for winid in winids
         let buf = Win_id2bufnr(winid)
         " s: Line for the window.
@@ -851,12 +846,26 @@ function! TabPanel() abort
         call FinishPanelLine(P)
         call TabPanelBufferDescription(P, buf)
     endfor
-    
+
     " Show total footer (below the last tab).
     if tab == tabpagenr('$')
         call AddPanelText(P, "", "")
         call FinishPanelLine(P)
 
+        " Popup
+        " NOTE: popup_list() only works with the current tab page.
+        " TODO: Might not want to see most popups here.
+        for winid in popup_list()
+            let buf = Win_id2bufnr(winid)
+            call AddPanelText(P, "[p]", "PopupIndicator")
+            call AddPanelText(P, " "..GetTabPanelBufName(buf, cwd), "Footer")
+            call FinishPanelLine(P)
+            call TabPanelBufferDescription(P, buf)
+            call AddPanelText(P, "", "")
+            call FinishPanelLine(P)
+        endfor
+
+        " Hidden
         let num_hidden = NumHiddenBuffers()
         if num_hidden > 0
             " Show number hidden.
@@ -879,6 +888,7 @@ function! TabPanel() abort
             endfor
         endif
 
+        " Unlisted
         let num_unlisted = NumHiddenBuffers(1) - num_hidden
         if num_unlisted > 0
             call AddPanelText(P, "", "")
@@ -929,6 +939,7 @@ highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
+highlight TabPanelPopupIndicator cterm=None ctermfg=red, ctermbg=black
 "@@
 
 "------------------------------------------------------------
@@ -3324,3 +3335,5 @@ augroup END
 if exists("g:is_dirspace_vim") && g:is_dirspace_vim == 1
     source ~/config/dirspace/dirspace_vimrc.vim
 endif
+
+
