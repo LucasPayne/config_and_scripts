@@ -27,6 +27,14 @@ set nodircache
 # TODO: Use eval to expand ~? Eval isn't working.
 set user_my_runtime_prefix ".local/share/lf/my_runtime"
 
+# The "launcher file" can be set with -command, or remotely.
+# This is an optional context which can be used by keybindings,
+# the file which lf was "launched" from.
+# e.g. if in vim there is a keybinding to open lf in a popup terminal
+# at the file's directory, it makes sense that that file is the "launch file",
+# and lf will have a keybinding to return to it.
+set lf_user_launcher_file ""
+
 # White background, black text
 #set cursoractivefmt "\033[0;30;47m"
 #set cursorparentfmt "\033[0;30;47m"
@@ -303,7 +311,9 @@ map <a-o> $dirspace_open --pin --focus "$PWD"
 #todo, for now it's just jump-prev
 map <a-C> jump-prev
 # Swap to the vim server's global working directory.
-map <a-c> ${{
+#TODO: alt remapping in vim terminals, working around this with literal.
+#map <a-;>
+map » %{{
     if [ ! -z "$VIM_SERVERNAME" ]
     then
         targetdir="$(vim_remote_call getcwd -1)"
@@ -311,6 +321,13 @@ map <a-c> ${{
         then
             lf -remote "send cd $(printf '%q' "$targetdir")"
         fi
+    fi
+}}
+# Swap to the launch focus file's working directory with it at focus.
+map <a-:> %{{
+    if [ ! "$lf_user_launcher_file" = "" ]
+    then
+        lf -remote "send select $(printf '%q' "$lf_user_launcher_file")"
     fi
 }}
 

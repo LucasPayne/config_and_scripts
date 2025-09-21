@@ -3178,11 +3178,14 @@ function! Lf_Popup(wd, ...)
 
     let global_cwd = getcwd(-1)
     noautocmd execute "cd "..fnameescape(wd)
+    let cmd = ['lfnoshell']
+    if get(lf_options, 'launcher_file', "") != ""
+        let launcher_file = get(lf_options, 'launcher_file', "")
+        let cmd += ["-command", "set user_launcher_file "..shellescape(launcher_file)]
+    endif
     if get(lf_options, 'select', "") != ""
         let select_file = get(lf_options, 'select', "")
-        let cmd = ['lfnoshell', select_file]
-    else
-        let cmd = ['lfnoshell']
+        let cmd += [select_file]
     endif
     let buf = term_start(cmd, #{hidden: 1, term_finish: 'close'})
 
@@ -3246,10 +3249,12 @@ function! Lf_Popup_Sibling(winid)
     let buftype = getbufvar(buf, "&buftype", "NONE")
     if buftype == ""
         let dir = fnamemodify(bufname(buf), ':p:h')
-        let file = fnamemodify(bufname(buf), ':p:t')
+        let select = fnamemodify(bufname(buf), ':p:t')
+        let launcher_file = fnamemodify(bufname(buf), ':p')
 
         let options = {
-                    \ 'select': file,
+                    \ 'select': select,
+                    \ 'launcher_file': launcher_file,
                     \ }
         call Lf_Popup(dir, options)
     else
@@ -3258,9 +3263,14 @@ function! Lf_Popup_Sibling(winid)
     endif
 endfunction
 
-nnoremap <silent> <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
-nnoremap <silent> <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
-nnoremap <silent> <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
+" nunmap <M-;><M-;>
+" nunmap <M-:><M-:>
+" nunmap <M-;><M-:>
+"nnoremap <silent> <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
+"nnoremap <silent> <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
+"nnoremap <silent> <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
+nnoremap <silent> <M-;> :call Lf_Popup(getcwd(-1))<cr>
+nnoremap <silent> <M-:> :call Lf_Popup_Sibling(win_getid())<cr>
 
 " This function should be called from lf in a vim terminal.
 " It creates another lf with the same state in a horizontal split.
