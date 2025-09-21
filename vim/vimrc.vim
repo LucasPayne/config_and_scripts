@@ -3227,6 +3227,13 @@ nnoremap <silent> <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
 nnoremap <silent> <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
 nnoremap <silent> <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
 
+" This function should be called from lf in a vim terminal.
+" It creates another lf with the same state in a horizontal split.
+" If the window is a popup, it is created below the other windows below.
+" lf does not have tabs or splits on purpose, the author intends people to DIY
+" a workflow using multiple lfs with deletion/yank lists synchronized over
+" ~/.local/share/lf/files.
+" So, this is one implementation of the Midnight Commander style side-by-side.
 function! Lf_Split(oldpwd, pwd, f)
     let oldpwd = a:oldpwd
     let pwd = a:pwd
