@@ -315,7 +315,10 @@ map <a-M> cmaps
 # Todo: Find new keys to map these to
 #map <a-c> cmds
 #map <a-C> options
-map <a-o> $dirspace_open --pin --focus "$PWD"
+map <a-o> ${{
+    dirspace_open --pin --focus "$PWD"
+    lf -remote "send $id quit"
+}}
 # Swap between current and last directory.
 #todo, for now it's just jump-prev
 map <a-C> jump-prev
