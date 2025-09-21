@@ -3182,8 +3182,35 @@ function! Lf_Popup(launcher_winid, wd, ...)
     if launcher_buftype == ""
         let launcher_file = expand("%:p")
     elseif launcher_buftype == "terminal"
+        let job = term_getjob(launcher_buf)
+        if job == v:null
+            return
+        endif
+
         let swd = getbufvar(launcher_buf, "shell_working_directory", "")
-        if swd != ""
+        if swd == ""
+            return
+        endif
+
+        let foreground_pid = -1
+        if exists("$DIRSPACE_VIM_RUNTIME")
+            let shell_poller_runtime_subdir = getbufvar(launcher_buf, "shell_poller_runtime_subdir", "")
+            if shell_poller_runtime_subdir != ""
+                let dir = $DIRSPACE_VIM_RUNTIME.."/"..shell_poller_runtime_subdir
+                if filereadable(dir.."/foreground_pid")
+                    let foreground_pid = readfile(dir.."/foreground_pid")[0]
+                    let pid = job_info(job)["process"]
+                    if foreground_pid == pid
+                        let launcher_file = swd
+                        call DEBUGLOG("launched from shell")
+                    else
+                        return
+                    endif
+                endif
+            endif
+        endif
+
+        if foreground_pid == -1
             let launcher_file = swd
         endif
     else
