@@ -341,7 +341,6 @@ cmap <a-h> :cmd-end; cmd-delete-home; LFRC::execute-from-history
 #>>>
 # General mappings
 map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
-map <enter> open
 map h
 map \; open
 map l updir
@@ -400,6 +399,26 @@ map O %{{
         if [ -f "$f" ]
         then
             vim_remote_call Lf_Edit "$f" "up"
+        fi
+    fi
+}}
+# Open at vim's focus window.
+map e %{{
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call Lf_Edit "$f" "here"
+        fi
+    fi
+}}
+# Open at vim's focus window, and close lf.
+map <enter> %{{
+    if in_vim
+    then
+        if [ -f "$f" ]
+        then
+            vim_remote_call Lf_Edit "$f" "here" 1
         fi
     fi
 }}

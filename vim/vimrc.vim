@@ -1150,8 +1150,8 @@ tnoremap <silent> <M-W><M-N> <C-w>:tabnew<cr>
 " Move tab left and right.
 nnoremap <silent> <M-w><M-.> :tabm +1<cr>
 nnoremap <silent> <M-w><M-,> :tabm -1<cr>
-tnoremap <silent> <M-w><M-.> <C-w>:tabm +1 \| call feedkeys("i", 'n')<cr>
-tnoremap <silent> <M-w><M-,> <C-w>:tabm -1 \| call feedkeys("i", 'n')<cr>
+tnoremap <silent> <M-w><M-.> <C-w>:tabm +1<cr>
+tnoremap <silent> <M-w><M-,> <C-w>:tabm -1<cr>
 " Scroll-wheel goes to terminal normal mode so can scroll in vim buffer.
 "TODO: This should only be in the shell prompt, still want scroll in other
 "programs e.g. man pages.
@@ -3178,22 +3178,17 @@ function! Lf_Popup(launcher_winid, wd, ...)
     let launcher_buftype = getbufvar(launcher_buf, "&buftype", "")
     let lf_options = get(a:000, 0, {})
 
-    let launcher_file = get(lf_options, 'launcher_file', "")
-    if launcher_file == ""
-        if get(lf_options, 'infer_launcher_file', 0)
-            " Infer the launcher file from the current buffer.
-            if launcher_buftype == ""
-                let launcher_file = expand("%:p")
-            elseif launcher_buftype == "terminal"
-                let swd = getbufvar(launcher_buf, "shell_working_directory", "")
-                if swd != ""
-                    let launcher_file = swd
-                endif
-            else
-                " Don't create the popup if can't infer the launcher file.
-                return
-            endif
+    " Infer the launcher file from the current buffer.
+    if launcher_buftype == ""
+        let launcher_file = expand("%:p")
+    elseif launcher_buftype == "terminal"
+        let swd = getbufvar(launcher_buf, "shell_working_directory", "")
+        if swd != ""
+            let launcher_file = swd
         endif
+    else
+        " Don't create the popup if can't infer the launcher file.
+        return
     endif
 
     let global_cwd = getcwd(-1)
@@ -3274,8 +3269,10 @@ endfunction
 
 hi TerminalBorder cterm=underline ctermfg=darkgrey ctermbg=black
 hi link Terminal Normal
-nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), getcwd(-1), { 'infer_launcher_file' : 1 })<cr>
-nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), expand("%:p:h"), { 'infer_launcher_file' : 1, 'focus_launcher_file' : 1 })<cr>
+nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), getcwd(-1), {  })<cr>
+nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), "", { 'focus_launcher_file' : 1 })<cr>
+tnoremap <silent> <M-;> <C-w>:call Lf_Popup(win_getid(), getcwd(-1), { })<cr>
+tnoremap <silent> <M-:> <C-w>:call Lf_Popup(win_getid(), "", { 'focus_launcher_file' : 1 })<cr>
 
 " This function should be called from lf in a vim terminal.
 " It creates another lf with the same state in a horizontal split.
@@ -3311,11 +3308,12 @@ function! Lf_Split(oldpwd, pwd, f)
     endif
 endfunction
 
-function! Lf_Edit(f, mode)
+function! Lf_Edit(f, mode, ...)
     let f = a:f
     let mode = a:mode
+    let force_close_lf = get(a:000, 0, 0)
 
-    if index(["left", "right", "up", "down", "tab"], mode) == -1
+    if index(["left", "right", "up", "down", "tab", "here"], mode) == -1
         return
     endif
     
@@ -3328,7 +3326,9 @@ function! Lf_Edit(f, mode)
     silent! let popup_options = popup_getoptions(win_getid())
     if popup_options != {}
         " Indicate to popup callback not to trigger wipeout on close.
-        let g:has_left_popup_terminal_options = popup_options
+        if force_close_lf == 0
+            let g:has_left_popup_terminal_options = popup_options
+        endif
         call popup_close(winid)
     endif
     
@@ -3342,14 +3342,18 @@ function! Lf_Edit(f, mode)
         execute "rightbelow split "..fnameescape(f)
     elseif mode == "tab"
         execute "tabnew "..fnameescape(f)
+    elseif mode == "here"
+        execute "edit "..fnameescape(f)
     endif
     "TODO: Alt key stuff is buggy, but this seems to fix some problems here.
     call ResetAltKeyMappings()
     
     " Restore the popup window.
     if popup_options != {}
-        call popup_create(buf, popup_options)
-        unlet g:has_left_popup_terminal_options
+        if force_close_lf == 0
+            call popup_create(buf, popup_options)
+            unlet g:has_left_popup_terminal_options
+        endif
     endif
 endfunction
 
