@@ -73,7 +73,7 @@ endfunction
 " If terminal is sending modifiers as esc-key.
 " For some reason, the below works!
 " TODO: Do this without autocmds, setlocal not working?
-let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?;:"
+let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?;:'"
 function! ResetAltKeyMappings()
     for char in g:alphabet
         execute "set <M-".char.">=\e".char
@@ -1570,9 +1570,8 @@ if PluginEnabled("tagbar")
 endif
 
 if PluginEnabled("bufexplorer")
-    nnoremap <silent> <M-w><M-p> :ToggleBufExplorer<CR>
-    "nnoremap <silent> <M-w><M-p> :BufExplorerHorizontalSplit<CR>
-    tnoremap <silent> <M-w><M-p> <C-w>:ToggleBufExplorer<CR>
+    nnoremap <silent> <M-'> :ToggleBufExplorer<CR>
+    tnoremap <silent> <M-'> <C-w>:ToggleBufExplorer<CR>
 endif
 
 "if PluginEnabled("quickpeek")
@@ -3250,6 +3249,8 @@ function! Lf_Popup(launcher_winid, wd, ...)
         let title .= launcher_file
     endif
 
+    let left_pillar = '▛'
+    let right_pillar = '▜'
     let options = {
         \ 'callback' : {p -> Lf_Popup_Callback(buf)},
         \ 'line' : line,
@@ -3263,15 +3264,15 @@ function! Lf_Popup(launcher_winid, wd, ...)
         \ 'cursorline' : 0,
         \ 'wrap' : 0,
         \ 'highlight' : 'hl-Normal',
-        \ 'border' : [1],
-        \ 'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+        \ 'border' : [1, 1, 1, 1],
+        \ 'borderchars': [' ', left_pillar, ' ', right_pillar, right_pillar, left_pillar, left_pillar, right_pillar],
+        "\ 'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
         \ 'borderhighlight' : ['TerminalBorder'],
         \ }
     call popup_create(buf, options)
 endfunction
 
-"hi TerminalBorder cterm=None ctermfg=darkgrey ctermbg=black
-hi TerminalBorder cterm=None ctermfg=blue ctermbg=black
+hi TerminalBorder cterm=underline ctermfg=darkgrey ctermbg=black
 hi link Terminal Normal
 nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), getcwd(-1), { 'infer_launcher_file' : 1 })<cr>
 nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), expand("%:p:h"), { 'infer_launcher_file' : 1, 'focus_launcher_file' : 1 })<cr>
@@ -3314,10 +3315,7 @@ function! Lf_Edit(f, mode)
     let f = a:f
     let mode = a:mode
 
-    call DEBUGLOG("f: "..f.."  mode: "..mode)
-
     if index(["left", "right", "up", "down", "tab"], mode) == -1
-        call DEBUGLOG("broken")
         return
     endif
     
@@ -3345,6 +3343,8 @@ function! Lf_Edit(f, mode)
     elseif mode == "tab"
         execute "tabnew "..fnameescape(f)
     endif
+    "TODO: Alt key stuff is buggy, but this seems to fix some problems here.
+    call ResetAltKeyMappings()
     
     " Restore the popup window.
     if popup_options != {}
