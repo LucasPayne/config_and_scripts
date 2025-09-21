@@ -32,20 +32,30 @@ resolved_path="$(
 )"
 if [ $option_pin -eq 1 ]
 then
-    name="$(dirspace_get "$path")"
+    dirspace="$(dirspace_get "$path")"
 else
-    name="$(dirspace_get --parent "$path")"
-    name="$(dirspace_get --path --parent "$path")"
+    dirspace="$(dirspace_get --parent "$path")"
 fi
 if [ $? -ne 0 ]
 then
-    name="$resolved_path"
+    if [ $option_pin -eq 1 ]
+    then
+        # This isn't a dirspace, but create one here and open it anyway.
+        name="$resolved_path"
+        path="$resolved_path"
+    else
+        >&2 echo "No parent in dirspaces.txt: $path"
+        exit 1
+    fi
+else
+    name="$(echo "$dirspace" | awk -F' -- ' '{print $1}')"
+    path="$(echo "$dirspace" | awk -F' -- ' '{print $2}')"
 fi
 
 if [ $option_focus -eq 1 ]
 then
-    dirspace_fifo_command open_dirspace "$name" "$resolved_path"
+    dirspace_fifo_command open_dirspace "$name" "$path"
 else
-    dirspace_fifo_command open_dirspace "$name" "$resolved_path" "$WINDOW"
+    dirspace_fifo_command open_dirspace "$name" "$path" "$WINDOW"
 fi
 

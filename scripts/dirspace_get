@@ -103,6 +103,7 @@ done
 if [ $longest_pathlen -ge 0 ]
 then
     printf '%s -- %s' "$name" "$longest_path"
+    exit 0
 fi
 
 # Dirspace not found

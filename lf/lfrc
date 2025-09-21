@@ -316,9 +316,10 @@ map <a-M> cmaps
 #map <a-c> cmds
 #map <a-C> options
 map <a-o> ${{
-    
-    dirspace_open --pin --focus "$PWD"
-    lf -remote "send $id quit"
+    if dirspace_open --focus "$PWD"
+    then
+        lf -remote "send $id quit"
+    fi
 }}
 # Swap between current and last directory.
 #todo, for now it's just jump-prev
