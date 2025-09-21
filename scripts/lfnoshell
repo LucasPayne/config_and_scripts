@@ -1,0 +1,8 @@
+#!/bin/bash
+# lfnoshell: Run lf like the lf_shell.sh aliases as if it were run in an interactive shell.
+#     The cd behaviour will just not do anything.
+
+#BASH_ENV="$(realpath ~/config/lf/lf_shell.sh)" exec bash -c "lf"
+
+lf_runtime_dir="$HOME/.config/lf"
+BASH_ENV="$(realpath ~/config/lf/lf_bashrc.sh)" exec lf -command="set user_runtime_dir \"$lf_runtime_dir\"" "$@"

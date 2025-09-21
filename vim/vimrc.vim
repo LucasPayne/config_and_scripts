@@ -616,6 +616,7 @@ function! GetTabPanelBufName(buf, cwd)
 endfunction
 "@@
 
+"@@
 function! TabPanelBufferDescription(P, buf)
     let P = a:P
     let buf = a:buf
@@ -637,10 +638,10 @@ function! TabPanelBufferDescription(P, buf)
                     " Don't display description if the controlling process is
                     " a shell and it is currently the foreground proess.
                     " (todo: Check if it is any shell.)
-                    if command != "bash" || foreground_pid != pid
+                    if ( command != "bash" && command != "/bin/bash" ) || foreground_pid != pid
                         let comm = readfile(dir.."/foreground_comm")[0]
 
-                        if comm == "lf"
+                        if comm == "lf" || comm == "lfnoshell"
                             " call AddPanelText(P, "    Files", "BufferDescriptionCommand")
                             " call FinishPanelLine(P)
                             let lf_cwd_file = $HOME.."/.local/share/lf/my_runtime/"..foreground_pid.."/cwd"
@@ -680,6 +681,7 @@ function! TabPanelBufferDescription(P, buf)
         endif
     endif
 endfunction
+"@@
 
 " Store info so it doesn't have to recompute again.
 " Set it to "" to reset on the next tab draw.
@@ -3112,7 +3114,7 @@ function! StartShellPoller()
 endfunction
 augroup Poller
     autocmd!
-    autocmd TerminalOpen * call StartShellPoller()
+    autocmd TerminalOpen * call timer_start(100, {-> StartShellPoller()})
 augroup END
 
 augroup Terminal_WinLeave
@@ -3146,7 +3148,6 @@ augroup END
 
 " File browsing
 function! Lf_Popup_Callback(buf)
-     return
     " The popup is closed when moving it between tabs.
     " This option is set in that case, so skip this callback.
     if exists("g:has_left_popup_terminal_options")
@@ -3168,11 +3169,12 @@ function! Lf_Popup(wd, ...)
     noautocmd execute "cd "..fnameescape(wd)
     if get(lf_options, 'select', "") != ""
         let select_file = get(lf_options, 'select', "")
-        let cmd = ['lf', select_file]
+        let cmd = ['lfnoshell', select_file]
     else
-        let cmd = ['lf']
+        let cmd = ['lfnoshell']
     endif
     let buf = term_start(cmd, #{hidden: 1, term_finish: 'close'})
+
     noautocmd execute "cd "..fnameescape(global_cwd)
 
     " NOTE: Bug workaround.

@@ -14,6 +14,7 @@
 my_runtime()
 {
     lf_pid="$(ppid $$)"
+
     runtime="$HOME/$lf_user_my_runtime_prefix/$lf_pid"
     if [ -d "$runtime" ]
     then

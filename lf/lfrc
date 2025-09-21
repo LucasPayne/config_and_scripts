@@ -91,7 +91,6 @@ cmd on-quit :{{
 
 cmd my-runtime-cwd &{{
     runtime="$(my_runtime)"
-    echo "$runtime" > /tmp/buggle
     echo "$PWD" > "$runtime/cwd"
     vim_remote_call RedrawTabPanel
 }}
