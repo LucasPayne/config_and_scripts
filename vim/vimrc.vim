@@ -3178,6 +3178,9 @@ function! Lf_Popup(launcher_winid, wd, ...)
     let launcher_buftype = getbufvar(launcher_buf, "&buftype", "")
     let lf_options = get(a:000, 0, {})
 
+    let launcher_file = ""
+    let launcher_term = -1
+
     " Infer the launcher file from the current buffer.
     if launcher_buftype == ""
         let launcher_file = expand("%:p")
@@ -3203,6 +3206,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
                     if foreground_pid == pid
                         let launcher_file = swd
                         call DEBUGLOG("launched from shell")
+                        let launcher_term = launcher_buf
                     else
                         return
                     endif
@@ -3222,12 +3226,17 @@ function! Lf_Popup(launcher_winid, wd, ...)
     noautocmd execute "cd "..fnameescape(wd)
     let cmd = ['lfnoshell']
 
+    if launcher_term != -1
+        let cmd += ["-command", "set user_launcher_term "..string(launcher_term)]
+    endif
+
     if launcher_file != ""
         let cmd += ["-command", "set user_launcher_file "..shellescape(launcher_file)]
         if get(lf_options, 'focus_launcher_file', 0)
             let cmd += [launcher_file]
         endif
     endif
+
     let buf = term_start(cmd, #{hidden: 1, term_finish: 'close'})
 
     noautocmd execute "cd "..fnameescape(global_cwd)
@@ -3340,7 +3349,7 @@ function! Lf_Edit(f, mode, ...)
     let mode = a:mode
     let force_close_lf = get(a:000, 0, 0)
 
-    if index(["left", "right", "up", "down", "tab", "here"], mode) == -1
+    if index(["left", "right", "up", "down", "tab", "here", "nop"], mode) == -1
         return
     endif
     
@@ -3371,9 +3380,15 @@ function! Lf_Edit(f, mode, ...)
         execute "tabnew "..fnameescape(f)
     elseif mode == "here"
         execute "edit "..fnameescape(f)
+    elseif mode == "nop"
+        " Don't do anything.
+        " This option is here to get all the rest of the effects,
+        " such as force closing the popup window, without editing anything.
     endif
     "TODO: Alt key stuff is buggy, but this seems to fix some problems here.
-    call ResetAltKeyMappings()
+    if mode != "nop"
+        call ResetAltKeyMappings()
+    endif
     
     " Restore the popup window.
     if popup_options != {}

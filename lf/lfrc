@@ -34,6 +34,12 @@ set user_my_runtime_prefix ".local/share/lf/my_runtime"
 # at the file's directory, it makes sense that that file is the "launch file",
 # and lf will have a keybinding to return to it.
 set lf_user_launcher_file ""
+" The "launcher term" is a vim buffer number which can be used
+" with vim remote commands, such as caling term_sendkeys.
+" This is -1 by default, but can be set by a -command by the launcher
+" if the launcher is from a shell prompt.
+" This can be used to use lf as a file argument selector.
+set lf_user_launcher_term -1
 
 # White background, black text
 #set cursoractivefmt "\033[0;30;47m"
@@ -419,6 +425,21 @@ map <enter> %{{
         if [ -f "$f" ]
         then
             vim_remote_call Lf_Edit "$f" "here" 1
+        fi
+    fi
+}}
+
+map <a-u> %{{
+    if in_vim
+    then
+        if [ $lf_user_launcher_term -ne -1 ]
+        then
+            string="$(printf '%q' "$f")"
+            # Add a space after. Is useful if want to keep editing the command, and doesn't hurt command line processing.
+            string="$string "
+            string="$(vim_escape_string "$string")"
+            vim_remote_expr "term_sendkeys($lf_user_launcher_term, $string)"
+            vim_remote_call Lf_Edit "$f" "nop" 1
         fi
     fi
 }}
