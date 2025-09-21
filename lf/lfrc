@@ -315,12 +315,21 @@ map <a-M> cmaps
 # Todo: Find new keys to map these to
 #map <a-c> cmds
 #map <a-C> options
+# Open a dirspace. This opens the closest parent if it is not a dirspace.
 map <a-o> ${{
     if dirspace_open --focus "$PWD"
     then
         lf -remote "send $id quit"
     fi
 }}
+# Open a dirspace. If it is not in dirspaces.txt, force it to open anyway.
+map <a-O> ${{
+    if dirspace_open --pin --focus "$PWD"
+    then
+        lf -remote "send $id quit"
+    fi
+}}
+
 # Swap between current and last directory.
 #todo, for now it's just jump-prev
 map <a-C> jump-prev
@@ -474,15 +483,27 @@ map e %{{
     fi
 }}
 # Open at vim's focus window, and close lf.
-map <enter> %{{
-    if in_vim
+cmd open_enter ${{
+    close="$1"
+    if [ ! -f "$f" ]
     then
-        if [ -f "$f" ]
+        return
+    fi
+    mim="$(mimetype -b "$(realpath "$f")")"
+    if in_vim && ( [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] )
+    then
+        vim_remote_call Lf_Edit "$f" "here" "$close"
+    else
+        xdg-open "$f"
+        if [ $close -eq 1 ]
         then
-            vim_remote_call Lf_Edit "$f" "here" 1
+            lf -remote "send $id quit"
         fi
     fi
 }}
+map <enter> :open_enter 0
+map <a-enter> :open_enter 1
+
 # Shell entry commands.
 # (If user_launcher_term is set to a vim terminal buffer with an interactive shell foregrounded.)
 # Write the focus file as an argument, with a space after.
