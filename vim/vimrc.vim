@@ -117,6 +117,7 @@ function! UnsetAltKeyMappings()
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
+call ResetAltKeyMappings()
 
 " Detail view
 let g:detail_view_active = 0
@@ -939,7 +940,7 @@ highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
-highlight TabPanelPopupIndicator cterm=None ctermfg=red, ctermbg=black
+highlight TabPanelPopupIndicator cterm=None ctermfg=red ctermbg=black
 "@@
 
 "------------------------------------------------------------
