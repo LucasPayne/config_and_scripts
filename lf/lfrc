@@ -357,7 +357,57 @@ map T LFRC::touch
 # move faster
 map J :down; down; down; down
 map K :up; up; up; up
-# Vim mappings
+
+cmd yank-dirname ${{
+    dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
+}}
+cmd yank-path ${{
+    printf '%s' "$f" | xclip -i -selection clipboard
+}}
+
+# Set wallpaper
+cmd wp ${{
+    wp "$f"
+}}
+
+map <a-f> :LFRC::fzf_jump 0
+map <a-r> :LFRC::fzf_jump 1
+map x :LFRC::unarchive
+map g :top
+# Unmap w. w's default is to close lf.
+map w
+
+map <a-y> :yank-path
+#map <a-j> :down
+#map <a-k> :up
+
+# Checkout navigation, should have same effect as from shell, but uses this existing lf session.
+cmd lf-checkout-find-config &lf-checkout-find ~/config
+map <a-i> :lf-checkout-find-config
+
+cmd lf-checkout-find-dev &lf-checkout-find ~/drive/dev
+map <a-e> :lf-checkout-find-dev
+
+cmd lf-checkout-find-code &lf-checkout-find ~/code
+map <a-q> :lf-checkout-find-code
+
+cmd lf-checkout-find-documentation &lf-checkout-find ~/drive/dev/documentation
+map <a-d> :lf-checkout-find-documentation
+
+cmd open &{{
+    v "$f"
+}}
+
+# Open a text file and go to the end.
+# map A &{{
+#     # Using -l because it is easy. Assuming the file is < 100000 lines long.
+#     v "$f" -l 100000
+# }}
+
+#>>>
+
+# VIM MAPPINGS
+#<<<
 # Open in new tab
 map c %{{
     if in_vim
@@ -428,55 +478,19 @@ map <enter> %{{
         fi
     fi
 }}
-
+# Shell entry commands.
+# (If user_launcher_term is set to a vim terminal buffer with an interactive shell foregrounded.)
+# Write the focus file as an argument, with a space after.
 map <a-u> %shell_type_keys "$(printf '%q' "$f") "
+# Write the current directory as an argument, with a space after.
 map <a-U> %shell_type_keys "$(printf '%q' "$PWD") "
 
-cmd yank-dirname ${{
-    dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
+# Exit lf and cd to its directory.
+# Note: This assumes <c-u> in the shell is bound to delete to the start of the line.
+map Q %{{
+    shell_type_keys '\<c-u>cd '"$(printf '%q' "$PWD")"'\<cr>' -e
+    lf -remote "send $id quit"
 }}
-cmd yank-path ${{
-    printf '%s' "$f" | xclip -i -selection clipboard
-}}
-
-# Set wallpaper
-cmd wp ${{
-    wp "$f"
-}}
-
-map <a-f> :LFRC::fzf_jump 0
-map <a-r> :LFRC::fzf_jump 1
-map x :LFRC::unarchive
-map g :top
-# Unmap w. w's default is to close lf.
-map w
-
-map <a-y> :yank-path
-#map <a-j> :down
-#map <a-k> :up
-
-# Checkout navigation, should have same effect as from shell, but uses this existing lf session.
-cmd lf-checkout-find-config &lf-checkout-find ~/config
-map <a-i> :lf-checkout-find-config
-
-cmd lf-checkout-find-dev &lf-checkout-find ~/drive/dev
-map <a-e> :lf-checkout-find-dev
-
-cmd lf-checkout-find-code &lf-checkout-find ~/code
-map <a-q> :lf-checkout-find-code
-
-cmd lf-checkout-find-documentation &lf-checkout-find ~/drive/dev/documentation
-map <a-d> :lf-checkout-find-documentation
-
-cmd open &{{
-    v "$f"
-}}
-
-# Open a text file and go to the end.
-# map A &{{
-#     # Using -l because it is easy. Assuming the file is < 100000 lines long.
-#     v "$f" -l 100000
-# }}
 
 #>>>
 

@@ -33,11 +33,22 @@ in_vim ()
 shell_type_keys ()
 {
     keys="$1"
+    if [ $# -eq 2 ] && [ "$2" = "-e" ]
+    then
+        double_quote=1
+    else
+        double_quote=0
+    fi
     if in_vim
     then
         if [ $lf_user_launcher_term -ne -1 ]
         then
-            string="$(vim_escape_string "$keys")"
+            if [ $double_quote -eq 1 ]
+            then
+                string="$(printf "\"%s\"" "${keys//\"/\\\"}")"
+            else
+                string="$(vim_escape_string "$keys")"
+            fi
             vim_remote_expr "term_sendkeys($lf_user_launcher_term, $string)"
             vim_remote_call Lf_Edit "$f" "nop" 1
         fi
