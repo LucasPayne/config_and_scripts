@@ -751,8 +751,9 @@ function! TabPanel() abort
     "" Show total header (above the first tab).
     if tab == 1
         if g:tabpanel_directory_header == ""
-            let dirspace_name = system("dirspace_get "..shellescape(fnamemodify(cwd, ":p")))
+            let dirspace = system("dirspace_get "..shellescape(fnamemodify(cwd, ":p")))
             if v:shell_error == 0
+                let dirspace_name = split(dirspace, " -- ")[0]
                 let g:tabpanel_directory_header = dirspace_name
                 let g:tabpanel_directory_header_is_dirspace = 1
             else
