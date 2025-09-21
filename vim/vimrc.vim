@@ -3279,6 +3279,13 @@ function! Lf_Popup(launcher_winid, wd, ...)
         let title .= "launcher: "
         let title .= launcher_file
     endif
+    if launcher_term != -1
+        if launcher_file != ""
+            let title .= "    "
+        endif
+        let title .= "launcher_term: "
+        let title .= string(launcher_term)..":"..bufname(launcher_term)
+    endif
 
     let left_pillar = '▛'
     let right_pillar = '▜'

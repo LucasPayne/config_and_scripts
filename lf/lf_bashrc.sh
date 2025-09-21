@@ -30,6 +30,20 @@ in_vim ()
     return $?
 }
 
+shell_type_keys ()
+{
+    keys="$1"
+    if in_vim
+    then
+        if [ $lf_user_launcher_term -ne -1 ]
+        then
+            string="$(vim_escape_string "$keys")"
+            vim_remote_expr "term_sendkeys($lf_user_launcher_term, $string)"
+            vim_remote_call Lf_Edit "$f" "nop" 1
+        fi
+    fi
+}
+
 get_readme ()
 {
     local f="$1"

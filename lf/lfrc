@@ -429,20 +429,8 @@ map <enter> %{{
     fi
 }}
 
-map <a-u> %{{
-    if in_vim
-    then
-        if [ $lf_user_launcher_term -ne -1 ]
-        then
-            string="$(printf '%q' "$f")"
-            # Add a space after. Is useful if want to keep editing the command, and doesn't hurt command line processing.
-            string="$string "
-            string="$(vim_escape_string "$string")"
-            vim_remote_expr "term_sendkeys($lf_user_launcher_term, $string)"
-            vim_remote_call Lf_Edit "$f" "nop" 1
-        fi
-    fi
-}}
+map <a-u> %shell_type_keys "$(printf '%q' "$f") "
+map <a-U> %shell_type_keys "$(printf '%q' "$PWD") "
 
 cmd yank-dirname ${{
     dirname -- "$f" | head -c-1 | xclip -i -selection clipboard
