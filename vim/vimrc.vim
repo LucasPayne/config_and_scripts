@@ -3310,6 +3310,42 @@ function! Lf_Split(oldpwd, pwd, f)
     endif
 endfunction
 
+function! Lf_Edit(f, mode)
+    let f = a:f
+    let mode = a:mode
+    if index(mode, ["left", "right", "up", "down", "tab"]) == -1
+        return
+    endif
+    
+    " If lf is run in a popup terminal,
+    " then window creations can't be run while it is focused.
+    " A workaround for this is to close the popup window, run the commands,
+    " then re-open it with the same options.
+    let winid = win_getid()
+    let buf = bufnr()
+    silent! let popup_options = popup_getoptions(win_getid())
+    if popup_options != {}
+        call popup_close(winid)
+    endif
+    
+    if mode == "left"
+        execute "leftabove vsplit "..fnameescape(f)
+    elseif mode == "right"
+        execute "vsplit "..fnameescape(f)
+    elseif mode == "up"
+        execute "split "..fnameescape(f)
+    elseif mode == "down"
+        execute "rightbelow split "..fnameescape(f)
+    elseif mode == "tab"
+        execute "tabnew "..fnameescape(f)
+    endif
+    
+    " Restore the popup window.
+    if popup_options != {}
+        call popup_create(buf, popup_options)
+    endif
+endfunction
+
 augroup PopupTerminal
     autocmd!
     " Move popup terminal to the active tab.

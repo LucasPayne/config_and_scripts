@@ -360,14 +360,11 @@ map c %{{
         if [ -f "$f" ]
         then
             vim_remote_call execute "tabnew $(printf '%q' "$f")"
-        elif
-            #TODO: Open a new lf at the selected directory.
-            :
         fi
     fi
 }}
 # Open to the left in a vertical split.
-map A %{{
+map I %{{
     if in_vim
     then
         if [ -f "$f" ]
@@ -377,7 +374,7 @@ map A %{{
     fi
 }}
 # Open to the right in a vertical split.
-map I %{{
+map A %{{
     if in_vim
     then
         if [ -f "$f" ]
