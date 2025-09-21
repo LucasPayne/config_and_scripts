@@ -3179,8 +3179,17 @@ function! Lf_Popup(wd, ...)
     let global_cwd = getcwd(-1)
     noautocmd execute "cd "..fnameescape(wd)
     let cmd = ['lfnoshell']
-    if get(lf_options, 'launcher_file', "") != ""
-        let launcher_file = get(lf_options, 'launcher_file', "")
+
+    let launcher_file = get(lf_options, 'launcher_file', "")
+    if launcher_file == ""
+        if get(lf_options, 'infer_launcher_file', 0)
+            " Infer the launcher file from the current buffer.
+            if &buftype == ""
+                let launcher_file = expand("%:p")
+            endif
+        endif
+    endif
+    if launcher_file != ""
         let cmd += ["-command", "set user_launcher_file "..shellescape(launcher_file)]
     endif
     if get(lf_options, 'select', "") != ""
@@ -3269,7 +3278,7 @@ endfunction
 "nnoremap <silent> <M-;><M-;> :call Lf_Popup(getcwd(-1))<cr>
 "nnoremap <silent> <M-:><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
 "nnoremap <silent> <M-;><M-:> :call Lf_Popup_Sibling(win_getid())<cr>
-nnoremap <silent> <M-;> :call Lf_Popup(getcwd(-1))<cr>
+nnoremap <silent> <M-;> :call Lf_Popup(getcwd(-1), { 'infer_launcher_file' : 1 })<cr>
 nnoremap <silent> <M-:> :call Lf_Popup_Sibling(win_getid())<cr>
 
 " This function should be called from lf in a vim terminal.
