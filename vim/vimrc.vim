@@ -852,10 +852,13 @@ function! TabPanel() abort
         call AddPanelText(P, s, highlight)
         let buffer_flag = ' '
         let bufhidden = getbufvar(buf, "&bufhidden", "")
+        let buftype = getbufvar(buf, "&buftype", "")
         if bufhidden == "wipe" || bufhidden == "delete"
             let buffer_flag = '~'
         endif
-        if getbufvar(buf, "&modified", 0) == 1
+        if getbufvar(buf, "&modified", 0) && buftype != "terminal"
+            " Note: Terminals are skipped because they are always marked
+            " modified, which clutters the tab panel with +.
             let buffer_flag = '+'
         endif
         call AddPanelText(P, buffer_flag, "BufferFlag")
@@ -3613,6 +3616,8 @@ endif
 " testing
 nnoremap <silent> <Esc>! :call system("dirspace_open -f ~/config")<cr>
 nnoremap <silent> <Esc>@ :call system("dirspace_open -f ~/notes/notes.d")<cr>
+nnoremap <silent> <Esc># :call system("dirspace_open -f ~/drive/videos")<cr>
 tnoremap <silent> <Esc>! <C-w>:call system("dirspace_open -f ~/config")<cr>
 tnoremap <silent> <Esc>@ <C-w>:call system("dirspace_open -f ~/notes/notes.d")<cr>
+tnoremap <silent> <Esc># <C-w>:call system("dirspace_open -f ~/drive/videos")<cr>
 
