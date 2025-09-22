@@ -116,6 +116,10 @@ endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
 call ResetAltKeyMappings()
+augroup AltKeyMappings
+    autocmd!
+    autocmd WinEnter * :if &buftype != "terminal" | silent! call ResetAltKeyMappings() | endif
+augroup END
 
 " Detail view
 let g:detail_view_active = 0
@@ -3461,8 +3465,9 @@ function! Lf_Edit(f, mode, ...)
         " such as force closing the popup window, without editing anything.
     endif
     "TODO: Alt key stuff is buggy, but this seems to fix some problems here.
-    if mode != "nop"
+    if mode != "nop" && !force_close_lf
         call ResetAltKeyMappings()
+        call UnsetAltKeyMappings()
     endif
     
     " Restore the popup window.
