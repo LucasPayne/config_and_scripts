@@ -565,7 +565,8 @@ function! GetTabPanelBufName(buf, cwd)
         " Note: I assume bufname is the absolute or relative path, is this always true?
         let path = bufname(buf)
         if empty(path)
-            let s .= "(empty)"
+            "let s .= "(empty)"
+            let s .= ""
         else
             let path = fnamemodify(path, ":p")
             if stridx(path, cwd..'/') == 0
@@ -3210,7 +3211,21 @@ function! Lf_Popup(launcher_winid, wd, ...)
     let wd = a:wd
     let launcher_winid = a:launcher_winid
     let launcher_buf = Win_id2bufnr(launcher_winid)
+
+    if getbufvar(launcher_buf, "bufexplorer", 0)
+        " Use the same launcher file as the bufexplorer launcher.
+        " This is basically chaining launchers, you are technically launching
+        " the lf popup from bufexplorer, but it makes sense to instead launch
+        " lf from the file bufexplorer was launched from.
+        let [launcher_winid_tab, launcher_winid_win] = win_id2tabwin(launcher_winid)
+        let bufexplorer_launcher_winid = gettabwinvar(launcher_winid_tab, launcher_winid_win, "tabpanel_launcher_winid", 0)
+        " Use this launcher instead.
+        let launcher_winid = bufexplorer_launcher_winid
+        let launcher_buf = Win_id2bufnr(launcher_winid)
+    endif
+
     let launcher_buftype = getbufvar(launcher_buf, "&buftype", "")
+
     let lf_options = get(a:000, 0, {})
 
     let launcher_file = ""
@@ -3218,7 +3233,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
 
     " Infer the launcher file from the current buffer.
     if launcher_buftype == ""
-        let launcher_file = expand("%:p")
+        let launcher_file = fnamemodify(bufname(launcher_buf), ":p")
     elseif launcher_buftype == "terminal"
         let job = term_getjob(launcher_buf)
         if job == v:null
@@ -3346,7 +3361,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
         \ 'borderhighlight' : ['TerminalBorder'],
         \ }
     call popup_create(buf, options)
-    let w:tabpanel_launcher_winid = a:launcher_winid
+    let w:tabpanel_launcher_winid = launcher_winid
     setlocal nobuflisted
 endfunction
 
