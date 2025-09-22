@@ -46,7 +46,7 @@ Comment[sv]=En minimalistisk dokumentvisare
 Comment[tr]=Minimalist bir belge görüntüleyicisi
 Comment[uk_UA]=Простий переглядач документів
 Comment=A minimalistic document viewer
-Exec=zathura --mode fullscreen %U
+Exec=z %U
 # Translators: Icon of the desktop entry.
 Icon=org.pwmt.zathura
 Terminal=false

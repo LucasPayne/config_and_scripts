@@ -1,2 +1,6 @@
 #!/bin/sh
-exec zathura --mode fullscreen "$@"
+zathura --mode fullscreen "$@" &
+pid="$!"
+wid="$(xdotool search --sync --onlyvisible --pid "$pid")"
+xwiopacity 80 "$wid"
+wait
