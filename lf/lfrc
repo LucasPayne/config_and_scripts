@@ -438,32 +438,32 @@ cmd open &{{
 # VIM MAPPINGS
 #<<<
 # Open in new tab
-map c %Lf_Edit "$f" "tab" 0
-map r
-map rc %Lf_Edit "$f" "tab" 1
+map c %Lf_Edit "$f" "tab" 1
+map <a-c> %Lf_Edit "$f" "tab" 0
 # Open to the left in a vertical split.
-map I %Lf_Edit "$f" "left" 0
-map rI %Lf_Edit "$f" "left" 1
+map I %Lf_Edit "$f" "left" 1
+map <a-I> %Lf_Edit "$f" "left" 0
 # Open to the right in a vertical split.
-map A %Lf_Edit "$f" "right" 0
-map rA %Lf_Edit "$f" "right" 1
+map A %Lf_Edit "$f" "right" 1
+map <a-A> %Lf_Edit "$f" "right" 0
 # Open below in a horizontal split
-map o %Lf_Edit "$f" "down" 0
-map ro %Lf_Edit "$f" "down" 1
+map o %Lf_Edit "$f" "down" 1
+map <a-o> %Lf_Edit "$f" "down" 0
 # Open above in a horizontal split
-map O %Lf_Edit "$f" "up" 0
-map rO %Lf_Edit "$f" "up" 1
+map O %Lf_Edit "$f" "up" 1
+map <a-O> %Lf_Edit "$f" "up" 0
 # Open at vim's focus window.
-map e %Lf_Edit "$f" "here" 0
-map re %Lf_Edit "$f" "here" 1
+map e %Lf_Edit "$f" "here" 1
+map <a-e> %Lf_Edit "$f" "here" 0
 
-# Open at vim's focus window, and close lf.
+# General enter key, does multiple things.
 cmd open_enter ${{
     close="$1"
     mim="$(mimetype -b "$(realpath "$f")")"
     if in_vim && ( [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] )
     then
-        vim_remote_call Lf_Edit "$f" "here" "$close"
+        # vim_remote_call Lf_Edit "$f" "here" "$close"
+        vim_remote_call Lf_Edit "$f" "tab" "$close"
     elif [ -d "$f" ]
     then
         if [ $close -eq 1 ]
@@ -487,9 +487,8 @@ cmd open_enter ${{
         fi
     fi
 }}
-map <enter> :open_enter 0
-map <a-enter> :open_enter 1
-map r<enter> :open_enter 1
+map <enter> :open_enter 1
+map <a-enter> :open_enter 0
 
 # Text entry commands.
 # If user_launcher_term is set to a vim terminal buffer with an interactive shell foregrounded,
