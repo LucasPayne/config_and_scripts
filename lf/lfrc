@@ -371,6 +371,17 @@ map T LFRC::touch
 # move faster
 map J :down; down; down; down; down; down; down; down
 map K :up; up; up; up; up; up; up; up
+# Execute file.
+# (No arguments)
+map <c-x> ${{
+    if [ -f "$f" ] && [ -x "$f" ]
+    then
+        "$f"
+        lf -remote "send $id echo \"Executed $f\""
+    else
+        lf -remote "send $id echoerr \"$f is not executable\""
+    fi
+}}
 
 cmd yank-dirname ${{
     echo "$PWD" | xclip -i -selection clipboard

@@ -925,7 +925,8 @@ endfunction
 redrawtabpanel
 set tabpanel=%!TabPanel()
 " Custom highlights for tabpanel
-highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
+"highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
+highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
 highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
 highlight TabPanelFooter ctermfg=grey ctermbg=black
