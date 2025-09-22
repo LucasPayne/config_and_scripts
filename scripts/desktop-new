@@ -1,0 +1,5 @@
+#!/bin/bash
+# desktop-new: Add another virtual desktop
+
+wmctrl -n $(($(wmctrl -d | wc -l) + 1))
+
