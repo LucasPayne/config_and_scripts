@@ -18,7 +18,10 @@ set user_readmes 1
 # Disable "directory caching".
 # Prevents lf from caching preview results, so preview options can change dynamically.
 #todo: Does this have other implications?
-set nodircache
+#NOTE: Apparently yes, this is for some reason preventing
+# lf from focusing an argument on startup.
+# Commenting it out for now.
+#set nodircache
 
 # my_runtime in ~/.local/share/lf.
 # This contains runtime data indexed by the lf process id.
@@ -53,6 +56,7 @@ set user_launcher_term -1
 set cursoractivefmt "\033[4;40m%s\033[0m"
 set cursorparentfmt "\033[4;40m%s\033[0m"
 set cursorpreviewfmt "\033[4;40m%s\033[0m"
+
 
 # LF-LANGUAGE UTILITIES
 #<<<
