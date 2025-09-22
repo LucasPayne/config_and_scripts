@@ -605,6 +605,12 @@ function! GetTabPanelBufName(buf, cwd)
         endif
     elseif buftype == "quickfix"
         let s .= "[Quickfix]"
+    elseif buftype == "nofile"
+        if bufname(buf) == "[BufExplorer]"
+            let s .= "[Buffers]"
+        else
+            let s .= "(nofile)"
+        endif
     endif
     return s
 endfunction
@@ -1566,8 +1572,8 @@ if PluginEnabled("tagbar")
 endif
 
 if PluginEnabled("bufexplorer")
-    nnoremap <silent> <M-'> :ToggleBufExplorer<CR>
-    tnoremap <silent> <M-'> <C-w>:ToggleBufExplorer<CR>
+    nnoremap <silent> <M-'> :BufExplorerTab<CR>
+    tnoremap <silent> <M-'> <C-w>:BufExplorerTab<CR>
 endif
 
 "if PluginEnabled("quickpeek")
