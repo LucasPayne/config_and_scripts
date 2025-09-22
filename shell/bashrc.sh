@@ -37,6 +37,26 @@ shoptp ()
     #cat <3 | $filter
 }
 
+drt ()
+{
+    if [[ ! -v DIRSPACE_RUNTIME ]]
+    then
+        >&2 echo "Not in a dirspace."
+        return 1
+    fi
+    cd "$DIRSPACE_RUNTIME"
+}
+
+vrt ()
+{
+    if [[ ! -v DIRSPACE_VIM_RUNTIME ]]
+    then
+        >&2 echo "Not in a dirspace vim."
+        return 1
+    fi
+    cd "$DIRSPACE_VIM_RUNTIME"
+}
+
 # Explicit terminfo needed for some reason, when using built-from-source ncurses.
 export TERMINFO=/lib/terminfo
 

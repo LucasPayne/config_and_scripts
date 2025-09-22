@@ -186,7 +186,6 @@ map <a-/> :set user_filter_mode "filter"; filter
 map F :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
 map U setfilter
 cmap <a-\;> :cmd-enter; setfilter; LFRC::open
-map <a-\;> :LFRC::open
 
 cmap <enter> &{{
     if [ "$lf_mode" = filter ]
@@ -334,9 +333,7 @@ map <a-N> ${{
 #todo, for now it's just jump-prev
 map <a-C> jump-prev
 # Swap to the vim server's global working directory.
-#TODO: alt remapping in vim terminals, working around this with literal.
-#map <a-;>
-map » %{{
+map <a-\;> %{{
     if in_vim
     then
         targetdir="$(vim_remote_call getcwd -1)"
@@ -350,7 +347,13 @@ map » %{{
 map <a-:> %{{
     if [ ! "$lf_user_launcher_file" = "" ]
     then
-        lf -remote "send select $(printf '%q' "$lf_user_launcher_file")"
+        if [ -d "$lf_user_launcher_file" ]
+        then
+            # If it is a directory, instead cd to it.
+            lf -remote "send cd $(printf '%q' "$lf_user_launcher_file")"
+        else
+            lf -remote "send select $(printf '%q' "$lf_user_launcher_file")"
+        fi
     fi
 }}
 

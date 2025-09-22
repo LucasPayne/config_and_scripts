@@ -73,7 +73,7 @@ endfunction
 " If terminal is sending modifiers as esc-key.
 " For some reason, the below works!
 " TODO: Do this without autocmds, setlocal not working?
-let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?;:'"
+let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-,.\\-/?;:'~!@#$%^&*()_+"
 function! ResetAltKeyMappings()
     for char in g:alphabet
         execute "set <M-".char.">=\e".char
@@ -857,7 +857,7 @@ function! TabPanel() abort
         call AddPanelText(P, buffer_flag, "BufferFlag")
 
         if winid == launcher_winid
-            call AddPanelText(P, '~', "LauncherFlag")
+            call AddPanelText(P, '_', "LauncherFlag")
         else
             call AddPanelText(P, ' ', "")
         endif
@@ -3606,4 +3606,9 @@ if exists("g:is_dirspace_vim") && g:is_dirspace_vim == 1
     source ~/config/dirspace/dirspace_vimrc.vim
 endif
 
+" testing
+nnoremap <silent> <Esc>! :call system("dirspace_open -f ~/config")<cr>
+nnoremap <silent> <Esc>@ :call system("dirspace_open -f ~/notes/notes.d")<cr>
+tnoremap <silent> <Esc>! <C-w>:call system("dirspace_open -f ~/config")<cr>
+tnoremap <silent> <Esc>@ <C-w>:call system("dirspace_open -f ~/notes/notes.d")<cr>
 
