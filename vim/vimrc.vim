@@ -936,8 +936,6 @@ function! TabPanel() abort
         endif
     endif
 
-    call TabPanelDebug("Full: "..string(panel_lines))
-
     let num_panel_lines = len(panel_lines)
     let panel_string = ""
     for i in range(num_panel_lines)
@@ -3018,6 +3016,7 @@ command! -bar -nargs=0 Vimpath
 " Manipulate hidden buffers
 
 function! GetHiddenBuffers(...)
+
     let l:include_unlisted = get(a:000, 0, 0)
     
     " (Note: Using :ls output because there doesn't seem to be a "bufhidden()" available.
@@ -3032,7 +3031,7 @@ function! GetHiddenBuffers(...)
     let l:ls_lines = split(l:ls, "\n")
     for line in l:ls_lines
         let line = split(line, "\"")[0]
-        let match = matchlist(line, '\v\s+(\d+)(.*)')
+        let match = matchlist(line, '\v\s*(\d+)(.*)')
         if empty(match)
             continue
         endif
