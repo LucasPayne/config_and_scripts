@@ -3544,7 +3544,21 @@ augroup PopupTerminal
               \ | endif
 augroup END
 
-
+function! BuffersHiding_BufWinEnter()
+    if &buftype == ""
+        set bufhidden=wipe
+    endif
+endfunction
+function! BuffersHiding_BufWritePost()
+    if &buftype == ""
+        set bufhidden=
+    endif
+endfunction
+augroup BuffersHiding
+    autocmd!
+    autocmd BufWinEnter * call BuffersHiding_BufWinEnter()
+    autocmd BufWritePost * call BuffersHiding_BufWritePost()
+augroup END
 
 " Dirspace runs vim with an extra script passed on the command line.
 " This script is meant to run after vim initialization,

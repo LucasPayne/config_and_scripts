@@ -486,6 +486,7 @@ cmd open_enter ${{
 }}
 map <enter> :open_enter 0
 map <a-enter> :open_enter 1
+map r<enter> :open_enter 1
 
 # Text entry commands.
 # If user_launcher_term is set to a vim terminal buffer with an interactive shell foregrounded,
