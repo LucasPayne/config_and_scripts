@@ -422,7 +422,7 @@ cmd lf-checkout-find-dev &lf-checkout-find ~/drive/dev
 map <a-e> :lf-checkout-find-dev
 
 cmd lf-checkout-find-code &lf-checkout-find ~/code
-map <a-q> :lf-checkout-find-code
+#map <a-q> :lf-checkout-find-code
 
 cmd lf-checkout-find-documentation &lf-checkout-find ~/drive/dev/documentation
 map <a-d> :lf-checkout-find-documentation
@@ -534,7 +534,7 @@ map <a-U> %{{
 
 # Exit lf and cd to its directory.
 # Note: This assumes <c-u> in the shell is bound to delete to the start of the line.
-map Q %{{
+map <a-q> %{{
     shell_type_keys '\<c-u>cd ' -e
     shell_type_keys "$(printf '%q' "$PWD")"
     shell_type_keys '\<cr>' -e
