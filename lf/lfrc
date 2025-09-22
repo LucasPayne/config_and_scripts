@@ -436,22 +436,23 @@ cmd open &{{
 #<<<
 # Open in new tab
 map c %Lf_Edit "$f" "tab" 0
-map <a-c> %Lf_Edit "$f" "tab" 1
+map r
+map rc %Lf_Edit "$f" "tab" 1
 # Open to the left in a vertical split.
 map I %Lf_Edit "$f" "left" 0
-map <a-I> %Lf_Edit "$f" "left" 1
+map rI %Lf_Edit "$f" "left" 1
 # Open to the right in a vertical split.
 map A %Lf_Edit "$f" "right" 0
-map <a-A> %Lf_Edit "$f" "right" 1
+map rA %Lf_Edit "$f" "right" 1
 # Open below in a horizontal split
 map o %Lf_Edit "$f" "down" 0
-map <a-o> %Lf_Edit "$f" "down" 1
+map ro %Lf_Edit "$f" "down" 1
 # Open above in a horizontal split
 map O %Lf_Edit "$f" "up" 0
-map <a-O> %Lf_Edit "$f" "up" 1
+map rO %Lf_Edit "$f" "up" 1
 # Open at vim's focus window.
 map e %Lf_Edit "$f" "here" 0
-map <a-e> %Lf_Edit "$f" "here" 1
+map re %Lf_Edit "$f" "here" 1
 
 # Open at vim's focus window, and close lf.
 cmd open_enter ${{
@@ -486,12 +487,43 @@ cmd open_enter ${{
 map <enter> :open_enter 0
 map <a-enter> :open_enter 1
 
-# Shell entry commands.
-# (If user_launcher_term is set to a vim terminal buffer with an interactive shell foregrounded.)
-# Write the focus file as an argument, with a space after.
-map <a-u> %shell_type_keys "$(printf '%q' "$f") "
-# Write the current directory as an argument, with a space after.
-map <a-U> %shell_type_keys "$(printf '%q' "$PWD") "
+# Text entry commands.
+# If user_launcher_term is set to a vim terminal buffer with an interactive shell foregrounded,
+# write the text as an argument, with a space after.
+# If launched on a editable vim file buffer, then enter that text.
+#
+# Write the selected file f
+map <a-u> %{{
+    if in_vim
+    then
+        if [ $lf_user_launcher_term -ne -1 ]
+        then
+            shell_type_keys "$(printf '%q' "$f") "
+            lf -remote "send $id quit"
+        elif [ ! "$lf_user_launcher_file" = "" ] && [ -f "$lf_user_launcher_file" ]
+        then
+            # It is assumed that vim has focus on a file.
+            vim_remote_call Lf_EnterText "$f" 1
+            lf -remote "send $id quit"
+        fi
+    fi
+}}
+# Write the current directory
+map <a-U> %{{
+    if in_vim
+    then
+        if [ $lf_user_launcher_term -ne -1 ]
+        then
+            shell_type_keys "$(printf '%q' "$PWD") "
+            lf -remote "send $id quit"
+        elif [ ! "$lf_user_launcher_file" = "" ] && [ -f "$lf_user_launcher_file" ]
+        then
+            # It is assumed that vim has focus on a file.
+            vim_remote_call Lf_EnterText "$PWD" 1
+            lf -remote "send $id quit"
+        fi
+    fi
+}}
 
 # Exit lf and cd to its directory.
 # Note: This assumes <c-u> in the shell is bound to delete to the start of the line.

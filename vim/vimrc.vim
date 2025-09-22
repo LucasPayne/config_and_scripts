@@ -603,7 +603,8 @@ function! GetTabPanelBufName(buf, cwd)
             endif
             let s .= swd
         endif
-
+    elseif buftype == "quickfix"
+        let s .= "[Quickfix]"
     endif
     return s
 endfunction
@@ -3232,6 +3233,10 @@ function! Lf_Popup(launcher_winid, wd, ...)
     endif
 
     let buf = term_start(cmd, #{hidden: 1, term_finish: 'close'})
+    " Save launcher information on the lf terminal buffer for convenient access.
+    call setbufvar(buf, "launcher_winid", launcher_winid)
+    call setbufvar(buf, "launcher_file", launcher_file)
+    call setbufvar(buf, "launcher_term", launcher_term)
 
     noautocmd execute "cd "..fnameescape(global_cwd)
 
@@ -3368,7 +3373,7 @@ function! Lf_Edit(f, mode, ...)
         endif
         call popup_close(winid)
     endif
-    
+
     if mode == "left"
         execute "leftabove vsplit "..fnameescape(f)
     elseif mode == "right"
@@ -3389,6 +3394,49 @@ function! Lf_Edit(f, mode, ...)
     "TODO: Alt key stuff is buggy, but this seems to fix some problems here.
     if mode != "nop"
         call ResetAltKeyMappings()
+    endif
+    
+    " Restore the popup window.
+    if popup_options != {}
+        if force_close_lf == 0
+            call popup_create(buf, popup_options)
+            unlet g:has_left_popup_terminal_options
+        endif
+    endif
+endfunction
+
+" Call this function from lf
+" to enter the text in the launcher file.
+" This can be used e.g. for lf keybindings to
+" write the selection into the file where lf was launched from.
+function! Lf_EnterText(text, ...)
+    let text = a:text
+    let force_close_lf = get(a:000, 0, 0)
+
+    let winid = win_getid()
+    let buf = bufnr()
+
+    " Needs the launcher window id.
+    " TODO: This isn't set on non-popup lfs.
+    let launcher_winid = getbufvar(buf, "launcher_winid", v:null)
+    if launcher_winid == v:null
+        return
+    endif
+
+    silent! let popup_options = popup_getoptions(win_getid())
+    if popup_options != {}
+        " Indicate to popup callback not to trigger wipeout on close.
+        if force_close_lf == 0
+            let g:has_left_popup_terminal_options = popup_options
+        endif
+        call popup_close(winid)
+    endif
+
+    let modifiable = str2nr(win_execute(launcher_winid, "echo &modifiable")[1])
+    if modifiable == 1
+        let keys_string = string('a'..text)
+        let win_cmd = 'call feedkeys('..keys_string..', "n")'
+        call win_execute(launcher_winid, win_cmd)
     endif
     
     " Restore the popup window.
