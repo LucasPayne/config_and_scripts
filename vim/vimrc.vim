@@ -3513,10 +3513,19 @@ augroup PopupTerminal
     " single tab.
     " Note that a popup terminal steals all focus on its own tab.
     " So, it can safely be assumed that it is in focus on TabLeave.
+    "
+    " Note:
+    "     I am using w:tabpanel_launcher_winid, a window variable, on some
+    "     terminal windows. Saving and restoring it here.
+    "     Any other window or buffer variables would also have to be saved and
+    "     restored here to persist across tab navigation.
     autocmd TabLeave *
               \   if &buftype == 'terminal'
               \ |     silent! let g:tmp_popup_options = popup_getoptions(win_getid())
               \ |     if g:tmp_popup_options != {}
+              \ |        if exists("w:tabpanel_launcher_winid")
+              \ |            let g:has_left_popup_terminal_launcher_winid = w:tabpanel_launcher_winid
+              \ |        endif
               \ |        let g:has_left_popup_terminal_buffer = bufnr()
               \ |        let g:has_left_popup_terminal_options = g:tmp_popup_options
               \ |        call popup_close(win_getid())
@@ -3526,6 +3535,10 @@ augroup PopupTerminal
     autocmd TabEnter *
               \   if exists("g:has_left_popup_terminal_options")
               \ |     call popup_create(g:has_left_popup_terminal_buffer, g:has_left_popup_terminal_options)
+              \ |     if exists("g:has_left_popup_terminal_launcher_winid")
+              \ |         let w:tabpanel_launcher_winid = g:has_left_popup_terminal_launcher_winid
+              \ |         unlet g:has_left_popup_terminal_launcher_winid
+              \ |     endif
               \ |     unlet g:has_left_popup_terminal_buffer
               \ |     unlet g:has_left_popup_terminal_options
               \ | endif
