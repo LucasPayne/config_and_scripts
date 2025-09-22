@@ -14,6 +14,10 @@ endfunction
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
+" I keep accidentally recording macros.
+noremap q <nop>
+noremap <C-q> q
+
 " option: display
 " =lastline: Show @@@ rightmost, can see more of the last line versus =truncate.
 set display=lastline
