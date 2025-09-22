@@ -557,6 +557,22 @@ map <space> :toggle; on-selection-changed
 
 #>>>
 
+# RANDOM USEFUL KEYBINDINGS
+#<<<
+
+# Play a video file in the background.
+map .b ${{
+    in_vim || exit
+    # vim_remote_call Lf_Popup_BeginIgnore
+    # vim_remote_call execute "call Lf_Popup_BeginIgnore() | tab term ++close mpvbg $(printf '%q' "$f")"
+    vim_remote_call Lf_Popup_BeginIgnore
+    vim_remote_call execute "tab term ++close mpvbg $(printf '%q' "$f")"
+    vim_remote_call Lf_Popup_EndIgnore
+    sleep 5
+}}
+
+#>>>
+
 # Source auto-generated config
 eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
 

@@ -106,6 +106,8 @@ function! UnsetAltKeyMappings()
     execute "set <M-,>=\e,"
     " Allow file browser key.
     execute "set <M-;>=\e;"
+    " Allow paste
+    execute "set <M-p>=\ep"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -3408,6 +3410,28 @@ function! Lf_Edit(f, mode, ...)
             call popup_create(buf, popup_options)
             unlet g:has_left_popup_terminal_options
         endif
+    endif
+endfunction
+
+" Helper functions to ignore the lf popup errors.
+" This is useful when calling vim remotely.
+" e.g.
+"     vim_remote_call Lf_Popup_BeginIgnore
+"     vim_remote_call execute "tabnew /tmp/a"
+"     vim_remote_call Lf_Popup_EndIgnore
+function! Lf_Popup_BeginIgnore()
+    let winid = win_getid()
+    let buf = bufnr()
+    silent! let popup_options = popup_getoptions(winid)
+    if popup_options != {}
+        let g:has_left_popup_terminal_options = popup_options
+        call popup_close(winid)
+    endif
+endfunction
+function! Lf_Popup_EndIgnore()
+    if g:has_left_popup_terminal_options != {}
+        call popup_create(buf, g:has_left_popup_terminal_options)
+        unlet g:has_left_popup_terminal_options
     endif
 endfunction
 
