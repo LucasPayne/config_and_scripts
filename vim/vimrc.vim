@@ -846,6 +846,10 @@ function! TabPanel() abort
         endif
         call AddPanelText(P, s, highlight)
         let buffer_flag = ' '
+        let bufhidden = getbufvar(buf, "&bufhidden", "")
+        if bufhidden == "wipe" || bufhidden == "delete"
+            let buffer_flag = '~'
+        endif
         if getbufvar(buf, "&modified", 0) == 1
             let buffer_flag = '+'
         endif
@@ -3343,6 +3347,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
         \ }
     call popup_create(buf, options)
     let w:tabpanel_launcher_winid = a:launcher_winid
+    setlocal nobuflisted
 endfunction
 
 hi TerminalBorder cterm=underline ctermfg=darkgrey ctermbg=black
@@ -3548,17 +3553,19 @@ augroup END
 
 function! BuffersHiding_BufReadPost()
     if &buftype == ""
-        set bufhidden=wipe
+        setlocal bufhidden=wipe
     elseif &buftype == "help"
         " Don't discard help buffers.
-        set bufhidden=
+        setlocal bufhidden=
         " Do discard help buffers.
-        " set buffhidden=wipe
+        " setlocal buffhidden=wipe
     endif
 endfunction
 function! BuffersHiding_BufWritePost()
     if &buftype == ""
-        set bufhidden=
+        setlocal bufhidden=
+        " Redraw tab panel.
+        redrawtabpanel
     endif
 endfunction
 augroup BuffersHiding
