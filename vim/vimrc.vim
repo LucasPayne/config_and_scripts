@@ -317,7 +317,7 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 "set autochdir
 set foldmethod=marker
 set foldmarker=<<<,>>>
-set nonumber
+set number
 set nuw=5
 set noswapfile
 set mouse=a
@@ -1269,6 +1269,11 @@ nnoremap <silent> <M-M> :if &number == 1
                      \ \|    set relativenumber
                      \ \| endif
                      \ <cr>
+augroup LineNumbers
+    autocmd!
+    " Disable line number on notes (.ns) files.
+    autocmd BufReadPost *.ns set nonumber
+augroup END
 
 function! CheckSwitchToTerminalMode()
     if exists("b:switch_to_terminal_mode") && b:switch_to_terminal_mode
@@ -2687,6 +2692,7 @@ hi Normal ctermbg=black ctermfg=white
 function! TerminalWinOpenCommands()
     set wincolor=Window
     setlocal scrolloff=0
+    setlocal nonumber
 endfunction
 augroup TerminalWinOpen_augroup
     autocmd!
