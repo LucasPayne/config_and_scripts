@@ -535,6 +535,14 @@ map Q %{{
     lf -remote "send $id quit"
 }}
 
+map <a-l> %{{
+    # Note: This is closing the popup for some reason anyway.
+    #       So, as long as this works, not closing it explicitly.
+    vim_remote_call Lf_Popup_BeginIgnore
+    vim_remote_call OpenBufExplorer
+    vim_remote_call Lf_Popup_EndIgnore
+}}
+
 #>>>
 
 # SELECTION

@@ -634,48 +634,50 @@ function! TabPanelBufferDescription(P, buf)
                 if filereadable(dir.."/foreground_pid")
                     let foreground_pid = readfile(dir.."/foreground_pid")[0]
                     let job = term_getjob(buf)
-                    let job_info = job_info(job)
-                    let pid = job_info["process"]
-                    let command = job_info["cmd"][0]
-                    " Don't display description if the controlling process is
-                    " a shell and it is currently the foreground proess.
-                    " (todo: Check if it is any shell.)
-                    if ( command != "bash" && command != "/bin/bash" ) || foreground_pid != pid
-                        let comm = readfile(dir.."/foreground_comm")[0]
+                    if job != v:null
+                        let job_info = job_info(job)
+                        let pid = job_info["process"]
+                        let command = job_info["cmd"][0]
+                        " Don't display description if the controlling process is
+                        " a shell and it is currently the foreground proess.
+                        " (todo: Check if it is any shell.)
+                        if ( command != "bash" && command != "/bin/bash" ) || foreground_pid != pid
+                            let comm = readfile(dir.."/foreground_comm")[0]
 
-                        if comm == "lf" || comm == "lfnoshell"
-                            " call AddPanelText(P, "    Files", "BufferDescriptionCommand")
-                            " call FinishPanelLine(P)
-                            let lf_cwd_file = $HOME.."/.local/share/lf/my_runtime/"..foreground_pid.."/cwd"
-                            if filereadable(lf_cwd_file)
-                                let lf_cwd = readfile(lf_cwd_file)[0]
-                                " If a subdir, make it relative to the global cwd.
-                                let global_cwd = getcwd(-1)
-                                if stridx(lf_cwd, global_cwd) == 0
-                                    let lf_cwd = lf_cwd[strlen(global_cwd) + 1:]
-                                    if lf_cwd == ""
-                                        let lf_cwd = "."
+                            if comm == "lf" || comm == "lfnoshell"
+                                " call AddPanelText(P, "    Files", "BufferDescriptionCommand")
+                                " call FinishPanelLine(P)
+                                let lf_cwd_file = $HOME.."/.local/share/lf/my_runtime/"..foreground_pid.."/cwd"
+                                if filereadable(lf_cwd_file)
+                                    let lf_cwd = readfile(lf_cwd_file)[0]
+                                    " If a subdir, make it relative to the global cwd.
+                                    let global_cwd = getcwd(-1)
+                                    if stridx(lf_cwd, global_cwd) == 0
+                                        let lf_cwd = lf_cwd[strlen(global_cwd) + 1:]
+                                        if lf_cwd == ""
+                                            let lf_cwd = "."
+                                        endif
+                                    else
+                                        " Use ~ if a subdir of home.
+                                        let lf_cwd = fnamemodify(lf_cwd, ":~")
                                     endif
-                                else
-                                    " Use ~ if a subdir of home.
-                                    let lf_cwd = fnamemodify(lf_cwd, ":~")
-                                endif
-                                call AddPanelText(P, "    "..lf_cwd, "BufferDescriptionFilesCWD")
-                                call FinishPanelLine(P)
-                            endif
-                        elseif comm == "tig"
-                            call AddPanelText(P, "    Git TUI", "BufferDescriptionCommand")
-                            call FinishPanelLine(P)
-                        else
-                            call AddPanelText(P, "    "..comm, "BufferDescriptionCommand")
-                            call FinishPanelLine(P)
-                            let args = readfile(dir.."/foreground_args")
-                            for arg in args
-                                if arg != ""
-                                    call AddPanelText(P, "    "..arg, "BufferDescriptionArgs")
+                                    call AddPanelText(P, "    "..lf_cwd, "BufferDescriptionFilesCWD")
                                     call FinishPanelLine(P)
                                 endif
-                            endfor
+                            elseif comm == "tig"
+                                call AddPanelText(P, "    Git TUI", "BufferDescriptionCommand")
+                                call FinishPanelLine(P)
+                            else
+                                call AddPanelText(P, "    "..comm, "BufferDescriptionCommand")
+                                call FinishPanelLine(P)
+                                let args = readfile(dir.."/foreground_args")
+                                for arg in args
+                                    if arg != ""
+                                        call AddPanelText(P, "    "..arg, "BufferDescriptionArgs")
+                                        call FinishPanelLine(P)
+                                    endif
+                                endfor
+                            endif
                         endif
                     endif
                 endif
@@ -1599,8 +1601,8 @@ if PluginEnabled("bufexplorer")
         let w:tabpanel_launcher_winid = winid
     endfunction
 
-    nnoremap <silent> <M-'> :call OpenBufExplorer()<CR>
-    tnoremap <silent> <M-'> <C-w>:call OpenBufExplorer()<CR>
+    nnoremap <silent> <M-l> :call OpenBufExplorer()<CR>
+    tnoremap <silent> <M-l> <C-w>:call OpenBufExplorer()<CR>
 endif
 
 "if PluginEnabled("quickpeek")
@@ -3544,9 +3546,14 @@ augroup PopupTerminal
               \ | endif
 augroup END
 
-function! BuffersHiding_BufWinEnter()
+function! BuffersHiding_BufReadPost()
     if &buftype == ""
         set bufhidden=wipe
+    elseif &buftype == "help"
+        " Don't discard help buffers.
+        set bufhidden=
+        " Do discard help buffers.
+        " set buffhidden=wipe
     endif
 endfunction
 function! BuffersHiding_BufWritePost()
@@ -3556,7 +3563,7 @@ function! BuffersHiding_BufWritePost()
 endfunction
 augroup BuffersHiding
     autocmd!
-    autocmd BufWinEnter * call BuffersHiding_BufWinEnter()
+    autocmd BufReadPost * call BuffersHiding_BufReadPost()
     autocmd BufWritePost * call BuffersHiding_BufWritePost()
 augroup END
 
