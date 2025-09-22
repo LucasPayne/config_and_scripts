@@ -737,7 +737,18 @@ endfunction
 function! TabPanel() abort
     let tab = g:actual_curtabpage
     let cwd = getcwd()
+    " focus_winid is the focus for this tab.
+    " I have configured vim to track this for each tab.
     let focus_winid = gettabvar(tab, "tabwindowfocus_winid_winenter")
+    " total_focus_winid is the actually focused window.
+    let total_focus_winid = win_getid()
+
+    " The "launcher" is an optional window to indicate when the current window
+    " focused.
+    " This will e.g. be the window a bufexplorer tab is launched from,
+    " or the window an lf popup is launched from.
+    let [total_focus_winid_tab, total_focus_winid_win] = win_id2tabwin(total_focus_winid)
+    let launcher_winid = gettabwinvar(total_focus_winid_tab, total_focus_winid_win, "tabpanel_launcher_winid", 0)
 
     if tab == 1
         call TabPanelDebug("START")
@@ -817,7 +828,7 @@ function! TabPanel() abort
         " s: Line for the window.
         let s = ""
         if buf == bufnr()
-            if winid == win_getid()
+            if winid == total_focus_winid
                 let highlight = "FocusLine"
             else
                 let highlight = "Sel"
@@ -832,11 +843,17 @@ function! TabPanel() abort
             let s .= ' '
         endif
         call AddPanelText(P, s, highlight)
-        let buffer_flag_prefix = ' '
+        let buffer_flag = ' '
         if getbufvar(buf, "&modified", 0) == 1
-            let buffer_flag_prefix = '+'
+            let buffer_flag = '+'
         endif
-        call AddPanelText(P, buffer_flag_prefix.." ", "")
+        call AddPanelText(P, buffer_flag, "BufferFlag")
+
+        if winid == launcher_winid
+            call AddPanelText(P, '~', "LauncherFlag")
+        else
+            call AddPanelText(P, ' ', "")
+        endif
 
         if buf == bufnr()
             " Revert back from TabPanelFocusLine, so it doesn't cover the whole line,
@@ -943,7 +960,9 @@ highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
-highlight TabPanelPopupIndicator cterm=None ctermfg=red ctermbg=black
+highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
+highlight TabPanelBufferFlag cterm=None ctermfg=grey ctermbg=black
+highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
 "@@
 
 "------------------------------------------------------------
@@ -1574,8 +1593,14 @@ if PluginEnabled("tagbar")
 endif
 
 if PluginEnabled("bufexplorer")
-    nnoremap <silent> <M-'> :BufExplorerTab<CR>
-    tnoremap <silent> <M-'> <C-w>:BufExplorerTab<CR>
+    function! OpenBufExplorer()
+        let winid = win_getid()
+        BufExplorerTab
+        let w:tabpanel_launcher_winid = winid
+    endfunction
+
+    nnoremap <silent> <M-'> :call OpenBufExplorer()<CR>
+    tnoremap <silent> <M-'> <C-w>:call OpenBufExplorer()<CR>
 endif
 
 "if PluginEnabled("quickpeek")
@@ -3315,6 +3340,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
         \ 'borderhighlight' : ['TerminalBorder'],
         \ }
     call popup_create(buf, options)
+    let w:tabpanel_launcher_winid = a:launcher_winid
 endfunction
 
 hi TerminalBorder cterm=underline ctermfg=darkgrey ctermbg=black

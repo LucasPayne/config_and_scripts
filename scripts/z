@@ -1,6 +1,23 @@
 #!/bin/sh
+
+opacity=90
+
 zathura --mode fullscreen "$@" &
 pid="$!"
 wid="$(xdotool search --sync --onlyvisible --pid "$pid")"
-xwiopacity 80 "$wid"
+xwiopacity "$opacity" "$wid"
+
+previous_desktop="$(wmctrl -d | grep ' \* ' | getcol 1)"
+
+# Put it at virtual desktop 5.
+current_num_desktops="$(wmctrl -d | wc -l)"
+if [ $current_num_desktops -lt 5 ]
+then
+    wmctrl -n 5
+fi
+wmctrl -i -r "$wid" -t 4
+wmctrl -i -a "$wid"
+
 wait
+
+wmctrl -s "$previous_desktop"
