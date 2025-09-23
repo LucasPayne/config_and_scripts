@@ -8,22 +8,36 @@ then
 fi
 
 vim_ids="$(fd -td -d1 . "$DIRSPACE_RUNTIME/vim" | xargs -i basename {})"
+num_vims="$(echo "$vim_ids" | wc -l)"
 
+# Renumber, fix-up the slots symlinks if necessary.
+i=1
+while read -r slot
+do
+    if [ ! -e "$slot" ]
+    then
+        # This slot points to a closed vim, so delete it.
+        continue
+    fi
+    mv -T "$slot" "$DIRSPACE_RUNTIME/slots/$i" 2>/dev/null
+    ((i++))
+done < <(fd -tl . "$DIRSPACE_RUNTIME/slots" | sort -n)
 
-STATUS_BAR="$DIRSPACE_RUNTIME/tabline_dirspace_status_bar"
+    
 # Redraw the tabline in each vim.
 for vim_id in $vim_ids
 do
-
     status=
     append ()
     {
         status="$status$1"
     }
-    
+
     i=1
-    for other_vim_id in $vim_ids
+    while read -r slot
     do
+        other_vim_id="$(basename $(readlink "$slot"))"
+
         dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
         if [ "$other_vim_id" = "$vim_id" ]
         then
@@ -35,7 +49,8 @@ do
         fi
         append " "
         ((i++))
-    done
+    done < <(fd -tl . "$DIRSPACE_RUNTIME/slots" | sort -n)
+
 
     echo "$status" > "$DIRSPACE_RUNTIME/vim/$vim_id/tabline_dirspace_status_bar"
 

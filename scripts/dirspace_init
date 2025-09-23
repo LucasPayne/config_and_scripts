@@ -23,6 +23,9 @@ DIRSPACE_RUNTIME="$(mktemp -d --tmpdir="$RUNTIME_DIR/sessions" XXXX)"
 [[ -d "$DIRSPACE_RUNTIME" ]] || error "Failed to create session runtime directory."
 # Create a runtime directory for this session's vim instances.
 mkdir "$DIRSPACE_RUNTIME/vim"
+# Create a runtime directory for the slots symlinks.
+# These are symlinks for numbered bookmarks for open dirspaces, similar to tabs in vim.
+mkdir "$DIRSPACE_RUNTIME/slots"
 
 # Initialize empty status bar.
 STATUS_BAR="$DIRSPACE_RUNTIME/tabline_dirspace_status_bar"
