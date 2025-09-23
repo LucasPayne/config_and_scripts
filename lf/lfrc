@@ -371,6 +371,8 @@ map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
 map h
 map \; open
 map l updir
+# Unmap e, it defaults to run $EDITOR.
+map e
 # Use h for : as part of the set of hjkl -> jkl; rebindings.
 map h read
 map D LFRC::mkdir
