@@ -7,6 +7,63 @@ then
     exit 1
 fi
 
+option_parent=0
+option_force=0
+arg_path=
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        -p|--parent)
+            option_parent=1
+            ;;
+        -f|--force)
+            option_force=1
+            ;;
+        *)
+            if [ ! -z "$arg_path" ]
+            then
+                >&2 echo "Only one path can be given."
+                exit 1
+            fi
+            arg_path="$1"
+    esac
+    shift
+done
+if [ -z "$arg_path" ]
+then
+    >&2 echo "A path must be given."
+    exit 1
+fi
+if [ ! -d "$arg_path" ]
+then
+    >&2 echo "Not a directory: $arg_path"
+    exit 1
+fi
+
+# Resolve the path without resolving symbolic links.
+input_path="$(
+    cd "$arg_path"
+    pwd -L
+)"
+
+# Check if it is open already.
+if [ "$(ls "$DIRSPACE_RUNTIME/vim" | wc -l)" -ne 0 ]
+then
+    # Note: Wildcard doesn't expand if there are no files in the directory,
+    # so avoid expanding in that case.
+    for vim_runtime in $DIRSPACE_RUNTIME/vim/*
+    do
+        vim_id="$(basename "$vim_runtime")"
+        other_dirspace_path="$(cat "$vim_runtime/dirspace_path")"
+        if [ "$input_path" = "$other_dirspace_path" ]
+        then
+            # It is, switch to this screen window.
+            screen -S "$DIRSPACE_SCREEN_ID" -X select "$vim_id" 
+            exit 0
+        fi
+    done
+fi
+
 dirspace="$(dirspace_get "$@")"
 if [ $? -ne 0 ]
 then
@@ -15,19 +72,6 @@ then
 fi
 dirspace_name="$(echo "$dirspace" | awk -F' -- ' '{print $1}')"
 dirspace_path="$(echo "$dirspace" | awk -F' -- ' '{print $2}')"
-
-# Check if it is open already.
-for vim_runtime in $DIRSPACE_RUNTIME/vim/*
-do
-    vim_id="$(basename "$vim_runtime")"
-    other_dirspace_name="$(cat "$vim_runtime/dirspace_name")"
-    if [ "$dirspace_name" = "$other_dirspace_name" ]
-    then
-        # It is, switch to this screen window.
-        screen -S "$DIRSPACE_SCREEN_ID" -X select "$vim_id" 
-        exit 0
-    fi
-done
 
 # It is not open, initialize it.
 

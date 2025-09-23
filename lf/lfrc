@@ -320,14 +320,14 @@ map \\p ${{
 #map <a-C> options
 # Open a dirspace. This opens the closest parent if it is not a dirspace.
 map <a-n> ${{
-    if dirspace_open --focus "$PWD"
+    if dirspace_open --parent "$PWD"
     then
         lf -remote "send $id quit"
     fi
 }}
 # Open a dirspace. If it is not in dirspaces.txt, force it to open anyway.
 map <a-N> ${{
-    if dirspace_open --pin --focus "$PWD"
+    if dirspace_open --force "$PWD"
     then
         lf -remote "send $id quit"
     fi

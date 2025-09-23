@@ -3628,10 +3628,10 @@ if exists("g:is_dirspace_vim") && g:is_dirspace_vim == 1
 endif
 
 " testing
-nnoremap <silent> <Esc>! :call system("dirspace_open -f ~/config")<cr>
-nnoremap <silent> <Esc>@ :call system("dirspace_open -f ~/notes/notes.d")<cr>
-nnoremap <silent> <Esc># :call system("dirspace_open -f ~/drive/videos")<cr>
-tnoremap <silent> <Esc>! <C-w>:call system("dirspace_open -f ~/config")<cr>
-tnoremap <silent> <Esc>@ <C-w>:call system("dirspace_open -f ~/notes/notes.d")<cr>
-tnoremap <silent> <Esc># <C-w>:call system("dirspace_open -f ~/drive/videos")<cr>
+nnoremap <silent> <Esc>! :call system("dirspace_open ~/config")<cr>
+nnoremap <silent> <Esc>@ :call system("dirspace_open ~/notes/notes.d")<cr>
+nnoremap <silent> <Esc># :call system("dirspace_open ~/drive/videos")<cr>
+tnoremap <silent> <Esc>! <C-w>:call system("dirspace_open ~/config")<cr>
+tnoremap <silent> <Esc>@ <C-w>:call system("dirspace_open ~/notes/notes.d")<cr>
+tnoremap <silent> <Esc># <C-w>:call system("dirspace_open ~/drive/videos")<cr>
 
