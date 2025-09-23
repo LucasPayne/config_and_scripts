@@ -94,3 +94,4 @@ do
     vim_servername="$DIRSPACE_SESSION_ID.$vim_id"
     vim --servername "$vim_servername" --remote-expr "execute(\"redrawtabline\")" &
 done
+

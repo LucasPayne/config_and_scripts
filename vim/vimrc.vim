@@ -805,8 +805,9 @@ function! TabPanel() abort
                 let g:tabpanel_current_branch = systemlist("gitcb")[0]
             endif
             if v:shell_error == 0
-                call AddPanelText(P, g:tabpanel_current_branch, "Header2")
-                call FinishPanelLine(P)
+                "TODO: Find a better place to put the branch. Commented out.
+                "call AddPanelText(P, g:tabpanel_current_branch, "Header2")
+                "call FinishPanelLine(P)
             endif
             if g:detail_view_active
                 if g:tabpanel_vcs_author == ""
