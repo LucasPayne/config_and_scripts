@@ -1,0 +1,47 @@
+#!/bin/bash
+# dirspace_fzf_favorites:
+
+lines="$(cat ~/config/dirspace/dirspaces.txt | grep '^@ ' | sed 's/^@ //')"
+mapfile -t paths < <(echo "$lines" | awk -F" -- " '{print $1}' | sed 's/^~/\/home\/lucas/')
+mapfile -t names < <(echo "$lines" | awk -F" -- " '{print $2}')
+mapfile -t flags < <(echo "$lines" | sed 's/^.*$//')
+
+while read -r dir
+do
+    path="$(cat "$dir/dirspace_path")"
+    skip=0
+    for (( i=0 ; i < ${#paths[@]} ; i++ ))
+    do
+        if [ "$path" = "${paths[$i]}" ]
+        then
+            flags[$i]="*"
+            skip=1
+            break
+        fi
+    done
+    [ $skip -eq 1 ] && continue
+    name="$(cat "$dir/dirspace_name")"
+    paths+=("$path")
+    names+=("$name")
+    flags+=("*")
+done < <(fd -td -d1 . "$DIRSPACE_RUNTIME/vim")
+
+selected="$( (
+    for (( i=0 ; i < ${#paths[@]} ; i++ ))
+    do
+        name="${names[$i]}"
+        path="${paths[$i]}"
+        path="${path/#\~/$HOME}"
+        flag="${flags[$i]}"
+        printf '%s\x1F%s\x1F--\x1F%s\n' "$flag" "$name" "$path"
+    done
+) | column -t -s$'\x1F' | fzf )"
+
+if [ $? -ne 0 ]
+then
+    exit
+fi
+
+path="$(echo "$selected" | awk -F' -- ' '{print $2}' | trs)"
+
+dirspace_open "$path"
