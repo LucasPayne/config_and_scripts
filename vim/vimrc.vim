@@ -3746,3 +3746,6 @@ for i in range(1, 9)
     execute "tnoremap <silent> <M-W>d"..i.." <C-w>:call DeleteDirspaceSlot("..i..")<cr>"
 endfor
 
+"TODO: Does double enter cause problems?
+nnoremap <M-W><M-W> :!dirspace_fzf_active<cr><cr>
+tnoremap <M-W><M-W> <C-w>:!dirspace_fzf_active<cr><cr>
