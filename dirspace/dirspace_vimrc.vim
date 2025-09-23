@@ -76,10 +76,10 @@ function! TabLineDirspaceStatusBar()
     return g:tabline_dirspace_status_bar
 endfunction
 " Not selected
-highlight TabLineDirspace cterm=underline ctermfg=blue ctermbg=black
-highlight TabLineDirspaceNumber cterm=underline ctermfg=blue ctermbg=black
+highlight TabLineDirspace cterm=underline ctermfg=darkgrey ctermbg=black
+highlight TabLineDirspaceNumber cterm=underline ctermfg=darkgrey ctermbg=black
 " Selected
-highlight TabLineDirspaceSelected cterm=underline ctermfg=white ctermbg=black
+highlight TabLineDirspaceSelected cterm=underline ctermfg=grey ctermbg=black
 highlight TabLineDirspaceNumberSelected cterm=underline ctermfg=black ctermbg=cyan
 
 "------------------------------------------------------------

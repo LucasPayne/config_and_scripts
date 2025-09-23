@@ -3636,6 +3636,12 @@ endif
 "tnoremap <silent> <Esc># <C-w>:call system("dirspace_open ~/drive/videos")<cr>
 
 function! OpenDirspaceSlot(n)
+    let n = a:n
+    if type(n) != v:t_number
+        echoerr "OpenDirspaceSlot: not a number"
+        return
+    endif
+
     let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..a:n
     if getftype(slot_symlink) !=# 'link'
         return
@@ -3647,9 +3653,42 @@ function! OpenDirspaceSlot(n)
     call system("screen -S \"$DIRSPACE_SCREEN_ID\" -X select "..vim_id)
 endfunction
 
+function! SetDirspaceSlot(n)
+    let n = a:n
+    if type(n) != v:t_number
+        echoerr "SetDirspaceSlot: not a number"
+        return
+    endif
+    call system("ln -s $DIRSPACE_VIM_RUNTIME $DIRSPACE_RUNTIME/slots/"..n)
+    call system("d dirspace_status")
+endfunction
+
+function! DeleteDirspaceSlot(n)
+    let n = a:n
+    if type(n) != v:t_number
+        echoerr "DeleteDirspaceSlot: not a number"
+        return
+    endif
+
+    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..a:n
+    if getftype(slot_symlink) !=# 'link'
+        echoerr "Slot "..n.." is not set, can't delete it."
+        return
+    endif
+    call delete(slot_symlink)
+    call system("d dirspace_status")
+endfunction
+
 let g:num_special_chars = '!@#$%^&*()'
 for i in range(1, 9)
+    " Go to slot
     execute "nnoremap <silent> <Esc>"..g:num_special_chars[i-1].." :call OpenDirspaceSlot("..i..")<cr>"
     execute "tnoremap <silent> <Esc>"..g:num_special_chars[i-1].." <C-w>:call OpenDirspaceSlot("..i..")<cr>"
+    " Set slot
+    execute "nnoremap <M-W>"..i.." :call SetDirspaceSlot("..i..")<cr>"
+    execute "tnoremap <M-W>"..i.." <C-w>:call SetDirspaceSlot("..i..")<cr>"
+    " Delete a slot
+    execute "nnoremap <M-W>d"..i.." :call DeleteDirspaceSlot("..i..")<cr>"
+    execute "tnoremap <M-W>d"..i.." <C-w>:call DeleteDirspaceSlot("..i..")<cr>"
 endfor
 

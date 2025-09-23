@@ -8,21 +8,37 @@ then
 fi
 
 vim_ids="$(fd -td -d1 . "$DIRSPACE_RUNTIME/vim" | xargs -i basename {})"
-num_vims="$(echo "$vim_ids" | wc -l)"
 
 # Renumber, fix-up the slots symlinks if necessary.
+slot_vim_ids=""
 i=1
 while read -r slot
 do
+    vim_id="$(basename $(readlink "$slot"))"
     if [ ! -e "$slot" ]
     then
         # This slot points to a closed vim, so delete it.
         continue
     fi
+    if [ -z "$slot_vim_ids" ]
+    then
+        slot_vim_ids+="$vim_id"
+    else
+        slot_vim_ids+=$'\n'"$vim_id"
+    fi
     mv -T "$slot" "$DIRSPACE_RUNTIME/slots/$i" 2>/dev/null
     ((i++))
 done < <(fd -tl . "$DIRSPACE_RUNTIME/slots" | sort -n)
 
+#TODO: Sort by dirspace name, not vim_id.
+nonslot_vim_ids="$(comm -23 <(echo "$vim_ids" | sort) <(echo "$slot_vim_ids" | sort))"
+
+echo "vim_ids"
+echo "$vim_ids"
+echo "slot_vim_ids"
+echo "$slot_vim_ids"
+echo "nonslot_vim_ids"
+echo "$nonslot_vim_ids"
     
 # Redraw the tabline in each vim.
 for vim_id in $vim_ids
@@ -33,11 +49,11 @@ do
         status="$status$1"
     }
 
+    # Show the slotted vims.
+    # These are numbered bookmarks which pin the dirspace for user hotkeys.
     i=1
-    while read -r slot
+    for other_vim_id in $slot_vim_ids
     do
-        other_vim_id="$(basename $(readlink "$slot"))"
-
         dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
         if [ "$other_vim_id" = "$vim_id" ]
         then
@@ -49,8 +65,29 @@ do
         fi
         append " "
         ((i++))
-    done < <(fd -tl . "$DIRSPACE_RUNTIME/slots" | sort -n)
+    done
 
+    # Mark the rest is right-aligned.
+    append "%="
+
+    # Show the non-slotted vims.
+    for other_vim_id in $nonslot_vim_ids
+    do
+        dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
+        if [ "$other_vim_id" = "$vim_id" ]
+        then
+            append "%#TabLineDirspaceNumberSelected#"
+            append "%#TabLineDirspaceSelected# $dirspace_name"
+        else
+            append "%#TabLineDirspaceNumber#"
+            append "%#TabLineDirspace# $dirspace_name"
+        fi
+        append " "
+        ((i++))
+    done
+
+    # Add a right margin.
+    append "        "
 
     echo "$status" > "$DIRSPACE_RUNTIME/vim/$vim_id/tabline_dirspace_status_bar"
 
