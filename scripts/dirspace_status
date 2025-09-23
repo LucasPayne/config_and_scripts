@@ -9,24 +9,36 @@ fi
 
 vim_ids="$(fd -td -d1 . "$DIRSPACE_RUNTIME/vim" | xargs -i basename {})"
 
-status=
-append ()
-{
-    status="$status$1"
-}
-
-for vim_id in $vim_ids
-do
-    dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$vim_id/dirspace_name")"
-    append "$dirspace_name "
-done
 
 STATUS_BAR="$DIRSPACE_RUNTIME/tabline_dirspace_status_bar"
-echo "$status" > "$STATUS_BAR"
-
 # Redraw the tabline in each vim.
 for vim_id in $vim_ids
 do
+
+    status=
+    append ()
+    {
+        status="$status$1"
+    }
+    
+    i=1
+    for other_vim_id in $vim_ids
+    do
+        dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
+        if [ "$other_vim_id" = "$vim_id" ]
+        then
+            append "%#TabLineDirspaceNumberSelected#$i"
+            append "%#TabLineDirspaceSelected# $dirspace_name"
+        else
+            append "%#TabLineDirspaceNumber#$i"
+            append "%#TabLineDirspace# $dirspace_name"
+        fi
+        append " "
+        ((i++))
+    done
+
+    echo "$status" > "$DIRSPACE_RUNTIME/vim/$vim_id/tabline_dirspace_status_bar"
+
     vim_servername="$DIRSPACE_SESSION_ID.$vim_id"
     vim --servername "$vim_servername" --remote-expr "execute(\"redrawtabline\")" &
 done

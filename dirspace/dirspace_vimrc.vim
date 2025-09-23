@@ -16,6 +16,9 @@ if !exists("g:is_dirspace_vim") || g:is_dirspace_vim == 0
         call system("rm -r "..shellescape(runtime_state_dir.."/state"))
         call system("mkdir -p "..shellescape(runtime_state_dir.."/state"))
     endif
+
+    " Update the dirspace UI.
+    call system("dirspace_status")
 endif
 
 " vimrc will source this file again
@@ -52,7 +55,7 @@ function! ToggleTabPanel()
     endif
 endfunction
 
-let g:tabline_dirspace_status_bar_file = expand("~/.local/share/dirspace/sessions/$DIRSPACE_SESSION_ID/tabline_dirspace_status_bar")
+let g:tabline_dirspace_status_bar_file = expand("$DIRSPACE_VIM_RUNTIME/tabline_dirspace_status_bar")
 let g:tabline_dirspace_status_bar = ""
 let g:tabline_dirspace_status_bar_dirty = 1
 function! TabLineDirspaceStatusBar()
@@ -72,4 +75,11 @@ function! TabLineDirspaceStatusBar()
     endif
     return g:tabline_dirspace_status_bar
 endfunction
+" Not selected
+highlight TabLineDirspace cterm=underline ctermfg=blue ctermbg=black
+highlight TabLineDirspaceNumber cterm=underline ctermfg=blue ctermbg=black
+" Selected
+highlight TabLineDirspaceSelected cterm=underline ctermfg=white ctermbg=black
+highlight TabLineDirspaceNumberSelected cterm=underline ctermfg=black ctermbg=cyan
+
 "------------------------------------------------------------
