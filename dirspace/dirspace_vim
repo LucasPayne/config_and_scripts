@@ -15,6 +15,9 @@ DIRSPACE_VIM_RUNTIME="$DIRSPACE_RUNTIME/vim/$vim_id"
 echo "$dirspace_name" > "$DIRSPACE_VIM_RUNTIME/dirspace_name"
 echo "$dirspace_path" > "$DIRSPACE_VIM_RUNTIME/dirspace_path"
 
+# Refresh the dirspace UI.
+dirspace_status
+
 # Run vim
 env DIRSPACE_VIM_RUNTIME="$DIRSPACE_VIM_RUNTIME" vim -S ~/config/dirspace/dirspace_vimrc.vim --servername "$vim_servername"
 

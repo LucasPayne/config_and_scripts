@@ -7,6 +7,7 @@ then
     exit 1
 fi
 
+args=("$@")
 option_parent=0
 option_force=0
 arg_path=
@@ -29,6 +30,7 @@ do
     esac
     shift
 done
+
 if [ -z "$arg_path" ]
 then
     >&2 echo "A path must be given."
@@ -59,12 +61,16 @@ then
         then
             # It is, switch to this screen window.
             screen -S "$DIRSPACE_SCREEN_ID" -X select "$vim_id" 
+            # Refresh the dirspace UI.
+            dirspace_status
             exit 0
         fi
     done
 fi
 
-dirspace="$(dirspace_get "$@")"
+# It is not open, initialize it.
+
+dirspace="$(dirspace_get "${args[@]}")"
 if [ $? -ne 0 ]
 then
     >&2 echo "Couldn't find dirspace."
@@ -72,8 +78,6 @@ then
 fi
 dirspace_name="$(echo "$dirspace" | awk -F' -- ' '{print $1}')"
 dirspace_path="$(echo "$dirspace" | awk -F' -- ' '{print $2}')"
-
-# It is not open, initialize it.
 
 # Create the runtime directory for this window/vim.
 DIRSPACE_VIM_RUNTIME="$(mktemp -d --tmpdir="$DIRSPACE_RUNTIME/vim" XXXX)"

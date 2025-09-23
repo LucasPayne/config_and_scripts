@@ -17,7 +17,8 @@ append ()
 
 for vim_id in $vim_ids
 do
-    append "$vim_id "
+    dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$vim_id/dirspace_name")"
+    append "$dirspace_name "
 done
 
 STATUS_BAR="$DIRSPACE_RUNTIME/tabline_dirspace_status_bar"
