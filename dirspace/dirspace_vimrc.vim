@@ -1,4 +1,4 @@
-"
+
 " dirspace_vimrc
 "
 

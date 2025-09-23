@@ -1,0 +1,22 @@
+#!/bin/bash
+
+vim_id="$1"
+dirspace_name="$2"
+dirspace_path="$3"
+
+cd "$dirspace_path"
+
+# Create a globally unique vim servername.
+# (Vim has its own runtime files for implementing vim server, so vim_id is not necessarily unique.
+# It is only unique for this dirspace.)
+vim_servername="$DIRSPACE_SESSION_ID.$vim_id"
+DIRSPACE_VIM_RUNTIME="$DIRSPACE_RUNTIME/vim/$vim_id"
+
+echo "$dirspace_name" > "$DIRSPACE_VIM_RUNTIME/dirspace_name"
+echo "$dirspace_path" > "$DIRSPACE_VIM_RUNTIME/dirspace_path"
+
+# Run vim
+env DIRSPACE_VIM_RUNTIME="$DIRSPACE_VIM_RUNTIME" vim -S ~/config/dirspace/dirspace_vimrc.vim --servername "$vim_servername"
+
+# Cleanup, delete the dirspace.
+rm -r "$DIRSPACE_VIM_RUNTIME"

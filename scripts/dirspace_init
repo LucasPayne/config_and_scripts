@@ -7,8 +7,6 @@ error ()
     exit 1
 }
 
-screen_name_postfix="dirspace"
-
 # Make sure runtime (xdg share) directories are available.
 RUNTIME_DIR=~/.local/share/dirspace
 if [ ! -d "$RUNTIME_DIR" ]
@@ -21,26 +19,27 @@ then
 fi
 
 # Create session runtime directory.
-session_runtime_dir="$(mktemp -d --tmpdir="$RUNTIME_DIR/sessions" XXXX)"
-[[ -d "$session_runtime_dir" ]] || error "Failed to create session runtime directory."
-
+DIRSPACE_RUNTIME="$(mktemp -d --tmpdir="$RUNTIME_DIR/sessions" XXXX)"
+[[ -d "$DIRSPACE_RUNTIME" ]] || error "Failed to create session runtime directory."
 # Create a runtime directory for this session's vim instances.
-mkdir "$session_runtime_dir/vim"
+mkdir "$DIRSPACE_RUNTIME/vim"
 
 # Initialize empty status bar.
-STATUS_BAR="$session_runtime_dir/tabline_dirspace_status_bar"
+STATUS_BAR="$DIRSPACE_RUNTIME/tabline_dirspace_status_bar"
 # It consists of one empty line.
-echo > "$session_runtime_dir/tabline_dirspace_status_bar"
+echo > "$STATUS_BAR"
 
-dirspace_session_id="$(basename "$session_runtime_dir")"
+DIRSPACE_SESSION_ID=$(basename "$DIRSPACE_RUNTIME")
+DIRSPACE_SCREEN_ID=dirspace.$DIRSPACE_SESSION_ID
 
 # -m: Create even if STY exists (e.g. in a screen session).
 env \
     -u STY \
     -u DIRSPACE_VIM_RUNTIME \
     -u VIM_SERVERNAME \
-    DIRSPACE_RUNTIME="$session_runtime_dir" \
-    DIRSPACE_SESSION_ID="$dirspace_session_id" \
-    screen -m -S "$screen_name_postfix" -c ~/config/dirspace/dirspace_screenrc
+    DIRSPACE_RUNTIME="$DIRSPACE_RUNTIME" \
+    DIRSPACE_SESSION_ID="$DIRSPACE_SESSION_ID" \
+    DIRSPACE_SCREEN_ID="$DIRSPACE_SCREEN_ID" \
+    screen -m -S "$DIRSPACE_SCREEN_ID" -c ~/config/dirspace/dirspace_screenrc
 
-rm -r "$session_runtime_dir"
+rm -r "$DIRSPACE_RUNTIME"
