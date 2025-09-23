@@ -3628,10 +3628,28 @@ if exists("g:is_dirspace_vim") && g:is_dirspace_vim == 1
 endif
 
 " testing
-nnoremap <silent> <Esc>! :call system("dirspace_open ~/config")<cr>
-nnoremap <silent> <Esc>@ :call system("dirspace_open ~/notes/notes.d")<cr>
-nnoremap <silent> <Esc># :call system("dirspace_open ~/drive/videos")<cr>
-tnoremap <silent> <Esc>! <C-w>:call system("dirspace_open ~/config")<cr>
-tnoremap <silent> <Esc>@ <C-w>:call system("dirspace_open ~/notes/notes.d")<cr>
-tnoremap <silent> <Esc># <C-w>:call system("dirspace_open ~/drive/videos")<cr>
+"nnoremap <silent> <Esc>! :call system("dirspace_open ~/config")<cr>
+"nnoremap <silent> <Esc>@ :call system("dirspace_open ~/notes/notes.d")<cr>
+"nnoremap <silent> <Esc># :call system("dirspace_open ~/drive/videos")<cr>
+"tnoremap <silent> <Esc>! <C-w>:call system("dirspace_open ~/config")<cr>
+"tnoremap <silent> <Esc>@ <C-w>:call system("dirspace_open ~/notes/notes.d")<cr>
+"tnoremap <silent> <Esc># <C-w>:call system("dirspace_open ~/drive/videos")<cr>
+
+function! OpenDirspaceSlot(n)
+    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..a:n
+    if getftype(slot_symlink) !=# 'link'
+        return
+    endif
+    let vim_id = fnamemodify(resolve(slot_symlink), ":t")
+    " Refresh the dirspace UI.
+    call system("d dirspace_status")
+    " Switch dirspace.
+    call system("screen -S \"$DIRSPACE_SCREEN_ID\" -X select "..vim_id)
+endfunction
+
+let g:num_special_chars = '!@#$%^&*()'
+for i in range(1, 9)
+    execute "nnoremap <silent> <Esc>"..g:num_special_chars[i-1].." :call OpenDirspaceSlot("..i..")<cr>"
+    execute "tnoremap <silent> <Esc>"..g:num_special_chars[i-1].." <C-w>:call OpenDirspaceSlot("..i..")<cr>"
+endfor
 
