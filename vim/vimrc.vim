@@ -623,6 +623,8 @@ function! GetTabPanelBufName(buf, cwd)
     elseif buftype == "nofile"
         if bufname(buf) == "[BufExplorer]"
             let s .= "[Buffers]"
+        elseif stridx(bufname(buf), "__Tagbar__", 0) != -1
+            let s .= "[tags]"
         else
             let s .= "(nofile)"
         endif
