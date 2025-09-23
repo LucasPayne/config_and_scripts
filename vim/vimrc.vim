@@ -3643,7 +3643,7 @@ function! OpenDirspaceSlot(n)
         return
     endif
 
-    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..a:n
+    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..n
     if getftype(slot_symlink) !=# 'link'
         return
     endif
@@ -3654,13 +3654,66 @@ function! OpenDirspaceSlot(n)
     call system("screen -S \"$DIRSPACE_SCREEN_ID\" -X select "..vim_id)
 endfunction
 
+function! GetDirspaceSlots()
+    let slot_symlinks = systemlist("fd -tl -d1 . \"$DIRSPACE_RUNTIME/slots\"")
+    let slots = []
+    for slot_symlink in slot_symlinks
+        if getftype(slot_symlink) ==# 'link'
+            let slot_vim_runtime = resolve(slot_symlink)
+            if slot_vim_runtime == $DIRSPACE_VIM_RUNTIME
+                let slot = str2nr(fnamemodify(slot_symlink, ":t"))
+                let slots += [slot]
+            endif
+        endif
+    endfor
+    return slots
+endfunction
+
 function! SetDirspaceSlot(n)
     let n = a:n
     if type(n) != v:t_number
         echoerr "SetDirspaceSlot: not a number"
         return
     endif
-    call system("ln -s $DIRSPACE_VIM_RUNTIME $DIRSPACE_RUNTIME/slots/"..n)
+
+    let slots = GetDirspaceSlots()
+    for slot in slots
+        call delete($DIRSPACE_RUNTIME.."/slots/"..slot)
+    endfor
+
+    let target_slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..n
+    if getftype(target_slot_symlink) ==# 'link'
+        let slot_symlinks = systemlist("fd -tl -d1 . \"$DIRSPACE_RUNTIME/slots\" | sort -n | tac")
+        for slot_symlink in slot_symlinks
+            let slot = fnamemodify(slot_symlink, ":t")
+            call rename(slot_symlink, $DIRSPACE_RUNTIME.."/slots/"..(slot + 1))
+            if slot < n
+                break
+            endif
+        endfor
+    endif
+    call system("ln -s \"$DIRSPACE_VIM_RUNTIME\" "..shellescape(target_slot_symlink))
+
+    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..n
+    if getftype(slot_symlink) ==# 'link'
+        # Slot exists, swap it.
+        let other_vim_runtime = resolve(slot_symlink)
+        if $DIRSPACE_VIM_RUNTIME == other_vim_runtime
+            # Same slot, do nothing.
+            :
+        else
+            let slots = GetDirspaceSlots()
+            for slot in slots
+                call delete($DIRSPACE_RUNTIME.."/slots/"..slot)
+            endfor
+
+            # Delete the slot to replace.
+            call delete()
+        endif
+    else
+        # Slot doesn't exist, create it.
+        call system("ln -s \"$DIRSPACE_VIM_RUNTIME\" "..shellescape(slot_symlink))
+    endif
     call system("d dirspace_status")
 endfunction
 
@@ -3671,7 +3724,7 @@ function! DeleteDirspaceSlot(n)
         return
     endif
 
-    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..a:n
+    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..n
     if getftype(slot_symlink) !=# 'link'
         echoerr "Slot "..n.." is not set, can't delete it."
         return
