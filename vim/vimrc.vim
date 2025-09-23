@@ -3655,7 +3655,7 @@ function! OpenDirspaceSlot(n)
 endfunction
 
 function! GetDirspaceSlots()
-    let slot_symlinks = systemlist("fd -tl -d1 . \"$DIRSPACE_RUNTIME/slots\"")
+    let slot_symlinks = systemlist("fd -tl -d1 . \"$DIRSPACE_RUNTIME/slots\" | sort -n")
     let slots = []
     for slot_symlink in slot_symlinks
         if getftype(slot_symlink) ==# 'link'
@@ -3676,44 +3676,44 @@ function! SetDirspaceSlot(n)
         return
     endif
 
-    let slots = GetDirspaceSlots()
-    for slot in slots
-        call delete($DIRSPACE_RUNTIME.."/slots/"..slot)
-    endfor
-
     let target_slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..n
-    if getftype(target_slot_symlink) ==# 'link'
-        let slot_symlinks = systemlist("fd -tl -d1 . \"$DIRSPACE_RUNTIME/slots\" | sort -n | tac")
-        for slot_symlink in slot_symlinks
-            let slot = fnamemodify(slot_symlink, ":t")
-            call rename(slot_symlink, $DIRSPACE_RUNTIME.."/slots/"..(slot + 1))
-            if slot < n
-                break
-            endif
-        endfor
-    endif
-    call system("ln -s \"$DIRSPACE_VIM_RUNTIME\" "..shellescape(target_slot_symlink))
 
-    let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..n
-    if getftype(slot_symlink) ==# 'link'
-        # Slot exists, swap it.
-        let other_vim_runtime = resolve(slot_symlink)
-        if $DIRSPACE_VIM_RUNTIME == other_vim_runtime
-            # Same slot, do nothing.
+    let slots = GetDirspaceSlots()
+
+    if len(slots) == 0
+        " If this dirspace does not have a slot yet,
+        " make some space for it.
+        if getftype(target_slot_symlink) ==# 'link'
+            let slot_symlinks = systemlist("fd -tl -d1 . \"$DIRSPACE_RUNTIME/slots\" | sort -n | tac")
+            for slot_symlink in slot_symlinks
+                let slot = str2nr(fnamemodify(slot_symlink, ":t"))
+                if slot < n
+                    break
+                endif
+                call rename(slot_symlink, $DIRSPACE_RUNTIME.."/slots/"..(slot + 1))
+            endfor
+        endif
+        call system("ln -s \"$DIRSPACE_VIM_RUNTIME\" "..shellescape(target_slot_symlink))
+    else
+        " If there is more than one slot for this dirspace,
+        " delete and ignore each slot except the first. 
+        for slot in slots[1:]
+            call delete($DIRSPACE_RUNTIME.."/slots/"..slot)
+        endfor
+
+        if n == slots[0]
+            " Moving slot to the same slot, do nothing.
             :
         else
-            let slots = GetDirspaceSlots()
-            for slot in slots
-                call delete($DIRSPACE_RUNTIME.."/slots/"..slot)
-            endfor
-
-            # Delete the slot to replace.
-            call delete()
+            " Swapping with another slot.
+            let tmp = tempname()
+            let slot_symlink = $DIRSPACE_RUNTIME.."/slots/"..slots[0]
+            call rename(target_slot_symlink, tmp)
+            call rename(slot_symlink, target_slot_symlink)
+            call rename(tmp, slot_symlink)
         endif
-    else
-        # Slot doesn't exist, create it.
-        call system("ln -s \"$DIRSPACE_VIM_RUNTIME\" "..shellescape(slot_symlink))
     endif
+
     call system("d dirspace_status")
 endfunction
 
@@ -3739,10 +3739,10 @@ for i in range(1, 9)
     execute "nnoremap <silent> <Esc>"..g:num_special_chars[i-1].." :call OpenDirspaceSlot("..i..")<cr>"
     execute "tnoremap <silent> <Esc>"..g:num_special_chars[i-1].." <C-w>:call OpenDirspaceSlot("..i..")<cr>"
     " Set slot
-    execute "nnoremap <M-W>"..i.." :call SetDirspaceSlot("..i..")<cr>"
-    execute "tnoremap <M-W>"..i.." <C-w>:call SetDirspaceSlot("..i..")<cr>"
+    execute "nnoremap <silent> <M-W>"..i.." :call SetDirspaceSlot("..i..")<cr>"
+    execute "tnoremap <silent> <M-W>"..i.." <C-w>:call SetDirspaceSlot("..i..")<cr>"
     " Delete a slot
-    execute "nnoremap <M-W>d"..i.." :call DeleteDirspaceSlot("..i..")<cr>"
-    execute "tnoremap <M-W>d"..i.." <C-w>:call DeleteDirspaceSlot("..i..")<cr>"
+    execute "nnoremap <silent> <M-W>d"..i.." :call DeleteDirspaceSlot("..i..")<cr>"
+    execute "tnoremap <silent> <M-W>d"..i.." <C-w>:call DeleteDirspaceSlot("..i..")<cr>"
 endfor
 
