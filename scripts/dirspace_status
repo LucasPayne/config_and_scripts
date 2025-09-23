@@ -33,12 +33,13 @@ done < <(fd -tl . "$DIRSPACE_RUNTIME/slots" | sort -n)
 #TODO: Sort by dirspace name, not vim_id.
 nonslot_vim_ids="$(comm -23 <(echo "$vim_ids" | sort) <(echo "$slot_vim_ids" | sort))"
 
-echo "vim_ids"
-echo "$vim_ids"
-echo "slot_vim_ids"
-echo "$slot_vim_ids"
-echo "nonslot_vim_ids"
-echo "$nonslot_vim_ids"
+# debug
+# echo "vim_ids"
+# echo "$vim_ids"
+# echo "slot_vim_ids"
+# echo "$slot_vim_ids"
+# echo "nonslot_vim_ids"
+# echo "$nonslot_vim_ids"
     
 # Redraw the tabline in each vim.
 for vim_id in $vim_ids
@@ -66,6 +67,7 @@ do
         append " "
         ((i++))
     done
+    append "%#TabLineDirspace#"
 
     # Mark the rest is right-aligned.
     append "%="
@@ -76,7 +78,7 @@ do
         dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
         if [ "$other_vim_id" = "$vim_id" ]
         then
-            append "%#TabLineDirspaceNumberSelected#"
+            append "%#TabLineDirspaceNumberSelected#~"
             append "%#TabLineDirspaceSelected# $dirspace_name"
         else
             append "%#TabLineDirspaceNumber#"
@@ -87,7 +89,7 @@ do
     done
 
     # Add a right margin.
-    append "        "
+    append "%#TabLineDirspace#        "
 
     echo "$status" > "$DIRSPACE_RUNTIME/vim/$vim_id/tabline_dirspace_status_bar"
 
