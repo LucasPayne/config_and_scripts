@@ -3103,10 +3103,16 @@ nnoremap <M-B><M-Q> :CleanHiddenBuffers!<cr>
 vnoremap <M-e><M-e> :source<cr>
 " Execute vimscript line
 nnoremap <M-e><M-e> :.source<cr>
+" Execute vimscript paragraph
+nnoremap <M-e><M-E> vip:.source<cr>
+nnoremap <M-E><M-E> vip:.source<cr>
 " Execute selected bash.
 vnoremap <M-e><M-b> :w !bash<cr>
 " Execute bash line
 nnoremap <M-e><M-b> :.w !bash<cr>
+" Execute bash paragraph
+nnoremap <M-e><M-B> vip:.w !bash<cr>
+nnoremap <M-E><M-B> vip:.w !bash<cr>
 "------------------------------------------------------------
 
 "------------------------------------------------------------
