@@ -1,0 +1,35 @@
+#!/bin/bash
+
+sleep 0.5
+tput clear
+tput civis
+stty -echo
+
+message="Welcome to the computer"
+
+cols=$(tput cols)
+rows=$(tput lines)
+
+message_len="${#message}"
+start_x=$(( cols / 2  - message_len / 2 ))
+start_y=$(( rows / 2 - 1 ))
+tput cup $start_y $start_x
+echo "$message"
+
+mpv --no-terminal --no-video --really-quiet ~/config/sounds/office_kitano.mp3 >/dev/null 2>&1 &
+sleep 5
+
+tput clear
+tput cnorm
+stty -echo
+
+mpvbg ~/drive/videos/background/dark_souls_campfire_hflip.mp4 &
+
+bash ~/config/dirspace/dirspacerc.sh
+
+wait
+
+while 1
+do
+    bash
+done
