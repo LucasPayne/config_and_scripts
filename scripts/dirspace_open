@@ -1,61 +1,13 @@
 #!/bin/bash
 # dirspace_open:
 
-option_focus=0
-option_pin=0
-while [ $# -ge 1 ]
-do
-    if [[ "$1" =~ (-f|--focus) ]]
-    then
-        option_focus=1
-        shift
-        continue
-    fi
-    if [[ "$1" =~ (-p|--pin-directory) ]]
-    then
-        option_pin=1
-        shift
-        continue
-    fi
-    break
-done
-
-path="$1"
-if [ ! -d "$path" ]
-then
-    >&2 echo "Not a directory."
-    exit 1
-fi
-resolved_path="$(
-    cd "$path"
-    pwd -L
-)"
-if [ $option_pin -eq 1 ]
-then
-    dirspace="$(dirspace_get "$path")"
-else
-    dirspace="$(dirspace_get --parent "$path")"
-fi
+dirspace="$(dirspace_get "$@")"
 if [ $? -ne 0 ]
 then
-    if [ $option_pin -eq 1 ]
-    then
-        # This isn't a dirspace, but create one here and open it anyway.
-        name="$resolved_path"
-        path="$resolved_path"
-    else
-        >&2 echo "No parent in dirspaces.txt: $path"
-        exit 1
-    fi
-else
-    name="$(echo "$dirspace" | awk -F' -- ' '{print $1}')"
-    path="$(echo "$dirspace" | awk -F' -- ' '{print $2}')"
+    >&2 echo "Couldn't find dirspace."
+    exit 1
 fi
+dirspace_name="$(echo "$dirspace" | awk -F' -- ' '{print $1}')"
+dirspace_path="$(echo "$dirspace" | awk -F' -- ' '{print $2}')"
 
-if [ $option_focus -eq 1 ]
-then
-    dirspace_fifo_command open_dirspace "$name" "$path"
-else
-    dirspace_fifo_command open_dirspace "$name" "$path" "$WINDOW"
-fi
-
+echo "$dirspace_name"
