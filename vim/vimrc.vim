@@ -105,11 +105,15 @@ function! UnsetAltKeyMappings()
     " Allow universal navigation modifier <M-w>.
     execute "set <M-w>=\ew"
     execute "set <M-W>=\eW"
+    execute "set <M-j>=\ej"
+    execute "set <M-k>=\ek"
     " Allow tab moving
     execute "set <M-.>=\e."
     execute "set <M-,>=\e,"
     " Allow file browser key.
     execute "set <M-;>=\e;"
+    " Allow bufexplorer key.
+    execute "set <M-l>=\el"
     " Allow paste
     execute "set <M-p>=\ep"
 endfunction
@@ -1281,7 +1285,7 @@ nnoremap <silent> <M-M> :if &number == 1
 augroup LineNumbers
     autocmd!
     " Disable line number on notes (.ns) files.
-    autocmd BufReadPost *.ns set nonumber
+    autocmd BufWinEnter *.ns set nonumber
 augroup END
 
 function! CheckSwitchToTerminalMode()

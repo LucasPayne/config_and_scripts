@@ -403,7 +403,7 @@ cmd wp ${{
 }}
 
 map <a-f> :LFRC::fzf_jump 0
-map <a-r> :LFRC::fzf_jump 1
+#map <a-r> :LFRC::fzf_jump 1
 map x :LFRC::unarchive
 map g :top
 # Unmap w. w's default is to close lf.
@@ -457,8 +457,8 @@ map <a-o> %Lf_Edit "$f" "down" 0
 map O %Lf_Edit "$f" "up" 1
 map <a-O> %Lf_Edit "$f" "up" 0
 # Open at vim's focus window.
-map e %Lf_Edit "$f" "here" 1
-map <a-e> %Lf_Edit "$f" "here" 0
+map r %Lf_Edit "$f" "here" 1
+map <a-r> %Lf_Edit "$f" "here" 0
 
 # General enter key, does multiple things.
 cmd open_enter ${{
