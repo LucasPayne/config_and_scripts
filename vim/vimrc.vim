@@ -3751,3 +3751,5 @@ endfor
 "TODO: Does double enter cause problems?
 nnoremap <M-W><M-W> :!dirspace_fzf_active<cr><cr>
 tnoremap <M-W><M-W> <C-w>:!dirspace_fzf_active<cr><cr>
+nnoremap <M-W><M-E> :!dirspace_fzf_favorites<cr><cr>
+tnoremap <M-W><M-E> <C-w>:!dirspace_fzf_favorites<cr><cr>

@@ -10,22 +10,26 @@
 #    {capitalize} : replace with capitalized string
 #    {lower} : replace with upper case string
 #    {upper} : replace with lower case string
+# @ denotes a favourite. These might be treated differently,
+# such as appearing in a fzf popup to open possibly inactive dirspaces.
 
-~/notes/notes.d -- Notes
-~/config -- Config
-~/drive/videos -- Videos
-~/drive/images -- Images
-~/drive/music -- Music
-~/drive/dev/academia -- Academia
-~/drive/dev/computer -- Computer
-~/drive/dev/documentation -- Documentation
-~/drive/dev/films -- Films
-~/drive/dev/literature -- Literature
-~/drive/dev/magic_the_gathering -- Magic
-~/drive/dev/person -- Person
-~/drive/dev/piano -- Piano
-~/drive/dev/visual_effects -- VFX
-~/config -- Config
+@ ~/notes/notes.d -- Notes
+@ ~/config -- Config
+@ ~/drive/videos -- Videos
+@ ~/drive/images -- Images
+@ ~/drive/music -- Music
+@ ~/drive/dev/academia -- Academia
+@ ~/drive/dev/computer -- Computer
+@ ~/drive/dev/documentation -- Documentation
+@ ~/drive/dev/films -- Films
+@ ~/drive/dev/literature -- Literature
+@ ~/drive/dev/magic_the_gathering -- Magic
+@ ~/drive/dev/person -- Person
+@ ~/drive/dev/piano -- Piano
+@ ~/drive/dev/visual_effects -- VFX
+@ ~/code/cg_sandbox -- code:cg_sandbox
 ~/code/{} -- code:{}
+@ ~/config/vim/repos/bufexplorer -- vim:bufexplorer
 ~/config/vim/repos/{} -- vim:{}
 ~/drive/dev/documentation/{} -- Docs:{capitalize}
+

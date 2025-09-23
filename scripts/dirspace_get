@@ -47,7 +47,7 @@ input_path="$(
 lines="$(cat ~/config/dirspace/dirspaces.txt | grep -v '^#' | grep -v '^\s*$')"
 num="$(echo "$lines" | wc -l)"
 
-mapfile -t paths < <(echo "$lines" | awk -F" -- " '{print $1}')
+mapfile -t paths < <(echo "$lines" | awk -F" -- " '{print $1}' | sed 's/^@ //g')
 mapfile -t names < <(echo "$lines" | awk -F" -- " '{print $2}')
 
 function match_path()

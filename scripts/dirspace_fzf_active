@@ -6,7 +6,7 @@ selected="$( (
     do
         name="$(cat "$dir/dirspace_name")"
         path="$(cat "$dir/dirspace_path")"
-        printf '%s\x1F--\x1F%s\n' "$name" "$path"
+        printf '*  %s\x1F--\x1F%s\n' "$name" "$path"
     done < <(fd -td -d1 . "$DIRSPACE_RUNTIME/vim")
 ) | column -t -s$'\x1F' | fzf )"
 
