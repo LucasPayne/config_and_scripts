@@ -1,0 +1,31 @@
+#!/bin/bash
+# dirspace_set_status:
+
+if [[ ! -v DIRSPACE_RUNTIME ]]
+then
+    >&2 "Not in a dirspace session."
+    exit 1
+fi
+
+vim_ids="$(fd -td -d1 . "$DIRSPACE_RUNTIME/vim" | xargs -i basename {})"
+
+status=
+append ()
+{
+    status="$status$1"
+}
+
+for vim_id in $vim_ids
+do
+    append "$vim_id "
+done
+
+STATUS_BAR="$DIRSPACE_RUNTIME/tabline_dirspace_status_bar"
+echo "$status" > "$STATUS_BAR"
+
+# Redraw the tabline in each vim.
+for vim_id in $vim_ids
+do
+    vim_servername="$DIRSPACE_SESSION_ID.$vim_id"
+    vim --servername "$vim_servername" --remote-expr "execute(\"redrawtabline\")" &
+done
