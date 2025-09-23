@@ -43,6 +43,10 @@ env \
     DIRSPACE_RUNTIME="$DIRSPACE_RUNTIME" \
     DIRSPACE_SESSION_ID="$DIRSPACE_SESSION_ID" \
     DIRSPACE_SCREEN_ID="$DIRSPACE_SCREEN_ID" \
-    screen -m -S "$DIRSPACE_SCREEN_ID" -c ~/config/dirspace/dirspace_screenrc
+    screen \
+        -m \
+        -S "$DIRSPACE_SCREEN_ID" \
+        -c ~/config/dirspace/dirspace_screenrc \
+        ~/config/dirspace/dirspace_master_window
 
 rm -r "$DIRSPACE_RUNTIME"
