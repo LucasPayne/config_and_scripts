@@ -19,18 +19,18 @@ if !exists("g:is_dirspace_vim") || g:is_dirspace_vim == 0
 
     " Update the dirspace UI.
     call system("dirspace_status")
+
+    " Create the initial terminal
+    let s:term_buf = term_start('bash', {
+                \ 'curwin' : 1,
+                \ 'term_finish' : 'close'
+                \ })
+    call setbufvar(s:term_buf, "main_shell", 1)
 endif
 
 " vimrc will source this file again
 " if it is sourced and this is already set.
 let g:is_dirspace_vim = 1
-
-let s:options = ""
-
-let s:term_buf = term_start('bash', {
-    \ 'curwin' : 1,
-    \ 'term_finish' : 'close'
-    \ })
 
 "------------------------------------------------------------
 " Override the tab panel.

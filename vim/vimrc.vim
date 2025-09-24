@@ -601,8 +601,13 @@ function! GetTabPanelBufName(buf, cwd)
         let basename = fnamemodify(bufname(buf), ":t:r")
         let s .= "[?] "..basename
     elseif buftype == "terminal"
-        let s .= "$"
         let swd = getbufvar(buf, "shell_working_directory", "")
+        let main_shell = getbufvar(buf, "main_shell", 0)
+        if main_shell
+            let s .= "@"
+        else
+            let s .= "$"
+        endif
         if swd != ""
             let s .= ":"
             if stridx(swd, cwd) == 0
