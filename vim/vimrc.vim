@@ -81,7 +81,7 @@ let g:alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890
 function! ResetAltKeyMappings()
     for char in g:alphabet
         execute "set <M-".char.">=\e".char
-    endfor
+    endfo
 endfunction
 function! UnsetAltKeyMappings()
     for char in g:alphabet
@@ -2298,22 +2298,7 @@ else
     nnoremap <silent> <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
     nnoremap <silent> <M-W><M-K> :call SpaceMoveVertical(1, 1)<cr>
 endif
-" Open a terminal below.
-function! LowerTerminal()
-    if v:count == 0
-        let height = 12
-    else
-        let height = v:count
-    endif
-    execute "set termwinsize=".string(height)."x0"
-    botright terminal
-    set termwinsize=
-endfunction
-nnoremap <silent> <M-c> <cmd>call LowerTerminal()<cr>
-" Open a terminal in the current window.
-nnoremap <silent> <M-C> :set termwinsize= \| term ++curwin<cr>
 
-nnoremap <silent> <M-Q> :call GoToPrimaryShell(0)<cr>
 ">>>
 
 " Notes system
@@ -3753,3 +3738,48 @@ nnoremap <M-W><M-W> :!dirspace_fzf_active<cr><cr>
 tnoremap <M-W><M-W> <C-w>:!dirspace_fzf_active<cr><cr>
 nnoremap <M-W><M-E> :!dirspace_fzf_favorites<cr><cr>
 tnoremap <M-W><M-E> <C-w>:!dirspace_fzf_favorites<cr><cr>
+
+"------------------------------------------------------------
+" Shell prefix
+"
+" Open a shell below.
+function! LowerShell(...)
+    let wd = get(a:000, 0, getcwd(-1))
+    if v:count == 0
+        let height = 12
+    else
+        let height = v:count
+    endif
+    execute "set termwinsize=".string(height)."x0"
+    let global_cwd = getcwd(-1)
+    noautocmd execute "cd "..fnameescape(wd)
+    botright term ++close
+    noautocmd execute "cd "..fnameescape(global_cwd)
+    set termwinsize=
+endfunction
+" Open a shell in the current window.
+function! CurrentShell(...)
+    let wd = get(a:000, 0, getcwd(-1))
+    let global_cwd = getcwd(-1)
+    noautocmd execute "cd "..fnameescape(wd)
+    term ++curwin ++close
+    noautocmd execute "cd "..fnameescape(global_cwd)
+    set termwinsize=
+endfunction
+" Open a shell in a new tab.
+function! TabShell(...)
+    let wd = get(a:000, 0, getcwd(-1))
+    let global_cwd = getcwd(-1)
+    noautocmd execute "cd "..fnameescape(wd)
+    tab term ++close
+    noautocmd execute "cd "..fnameescape(global_cwd)
+    set termwinsize=
+endfunction
+
+nnoremap <silent> <M-c><M--> <cmd>call LowerShell()<cr>
+" Open a terminal in the current window.
+nnoremap <silent> <M-c><M-r> <cmd>call CurrentShell()<cr>
+" Open a terminal in a new tab.
+nnoremap <silent> <M-C><M-C> <cmd>call TabShell()<cr>
+nnoremap <silent> <M-c><M-C> <cmd>call TabShell()<cr>
+

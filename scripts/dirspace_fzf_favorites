@@ -4,7 +4,7 @@
 lines="$(cat ~/config/dirspace/dirspaces.txt | grep '^@ ' | sed 's/^@ //')"
 mapfile -t paths < <(echo "$lines" | awk -F" -- " '{print $1}' | sed 's/^~/\/home\/lucas/')
 mapfile -t names < <(echo "$lines" | awk -F" -- " '{print $2}')
-mapfile -t flags < <(echo "$lines" | sed 's/^.*$//')
+mapfile -t flags < <(echo "$lines" | sed 's/^.*$/ /')
 
 while read -r dir
 do

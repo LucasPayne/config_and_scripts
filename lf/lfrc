@@ -335,7 +335,7 @@ map <a-N> ${{
 
 # Swap between current and last directory.
 #todo, for now it's just jump-prev
-map <a-C> jump-prev
+#map <a-C> jump-prev
 # Swap to the vim server's global working directory.
 map <a-\;> %{{
     if in_vim
@@ -444,8 +444,8 @@ cmd open &{{
 # VIM MAPPINGS
 #<<<
 # Open in new tab
-map c %Lf_Edit "$f" "tab" 1
-map <a-c> %Lf_Edit "$f" "tab" 0
+map p %Lf_Edit "$f" "tab" 1
+map <a-p> %Lf_Edit "$f" "tab" 0
 # Open to the left in a vertical split.
 map I %Lf_Edit "$f" "left" 1
 map <a-I> %Lf_Edit "$f" "left" 0
@@ -461,6 +461,28 @@ map <a-O> %Lf_Edit "$f" "up" 0
 # Open at vim's focus window.
 map r %Lf_Edit "$f" "here" 1
 map <a-r> %Lf_Edit "$f" "here" 0
+
+# Open terminals
+map <a-c><a--> %{{
+    vim_remote_call Lf_Popup_BeginIgnore
+    vim_remote_call LowerShell "$PWD"
+    vim_remote_call Lf_Popup_EndIgnore
+}}
+map <a-c><a-r> %{{
+    vim_remote_call Lf_Popup_BeginIgnore
+    vim_remote_call CurrentShell "$PWD"
+    vim_remote_call Lf_Popup_EndIgnore
+}}
+map <a-C><a-C> %{{
+    vim_remote_call Lf_Popup_BeginIgnore
+    vim_remote_call TabShell "$PWD"
+    vim_remote_call Lf_Popup_EndIgnore
+}}
+map <a-c><a-C> %{{
+    vim_remote_call Lf_Popup_BeginIgnore
+    vim_remote_call TabShell "$PWD"
+    vim_remote_call Lf_Popup_EndIgnore
+}}
 
 # General enter key, does multiple things.
 cmd open_enter ${{
