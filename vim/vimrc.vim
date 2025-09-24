@@ -3381,10 +3381,10 @@ endfunction
 
 hi TerminalBorder cterm=underline ctermfg=darkgrey ctermbg=black
 hi link Terminal Normal
-nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), getcwd(-1), {  })<cr>
-nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), "", { 'focus_launcher_file' : 1 })<cr>
-tnoremap <silent> <M-;> <C-w>:call Lf_Popup(win_getid(), getcwd(-1), { })<cr>
-tnoremap <silent> <M-:> <C-w>:call Lf_Popup(win_getid(), "", { 'focus_launcher_file' : 1 })<cr>
+nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), "", { 'focus_launcher_file' : 1 })<cr>
+nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), getcwd(-1), {  })<cr>
+tnoremap <silent> <M-;> <C-w>:call Lf_Popup(win_getid(), "", { 'focus_launcher_file' : 1 })<cr>
+tnoremap <silent> <M-:> <C-w>:call Lf_Popup(win_getid(), getcwd(-1), { })<cr>
 
 " This function should be called from lf in a vim terminal.
 " It creates another lf with the same state in a horizontal split.
