@@ -1,0 +1,3 @@
+#!/bin/bash
+# xin0:
+trn0 | exec xi0 "$@"
