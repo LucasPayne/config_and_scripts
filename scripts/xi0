@@ -1,0 +1,5 @@
+#!/bin/bash
+# xi0:
+
+exec xargs -0 -i "$@"
+
