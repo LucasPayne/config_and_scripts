@@ -1,0 +1,3 @@
+#!/bin/bash
+# trn0: tr '\n' '\0'
+exec tr '\n' '\0'
