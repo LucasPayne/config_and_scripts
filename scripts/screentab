@@ -1,0 +1,4 @@
+#!/bin/bash
+# screentab: make a new tab from within screen
+# Helpful if screen keybindings are disabled.
+screen -X screen -t
