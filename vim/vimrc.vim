@@ -3352,6 +3352,8 @@ function! Lf_Popup(launcher_winid, wd, ...)
         endif
         let title .= "launcher_term: "
         let title .= string(launcher_term)..":"..bufname(launcher_term)
+        let title .= "**** Press q to change directory in the launcher shell *"
+        let title .= repeat('*', width - strlen(title))
     endif
 
     let left_pillar = '▛'

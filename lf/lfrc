@@ -558,12 +558,21 @@ map <a-U> %{{
 
 # Exit lf and cd to its directory.
 # Note: This assumes <c-u> in the shell is bound to delete to the start of the line.
-map <a-q> %{{
-    shell_type_keys '\<c-u>cd ' -e
-    shell_type_keys "$(printf '%q' "$PWD")"
-    shell_type_keys '\<cr>' -e
-    lf -remote "send $id quit"
+map q %{{
+    if in_vim && [ $lf_user_launcher_term -ne -1 ]
+    then
+        if [ ! "$lf_user_launcher_file" = "$PWD" ]
+        then
+            shell_type_keys '\<c-u>cd ' -e
+            shell_type_keys "$(printf '%q' "$PWD")"
+            shell_type_keys '\<cr>' -e
+        fi
+        lf -remote "send $id quit"
+    else
+        lf -remote "send $id quit"
+    fi
 }}
+map <a-q> quit
 
 map <a-l> %{{
     # Note: This is closing the popup for some reason anyway.
