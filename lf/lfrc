@@ -635,3 +635,13 @@ map <a--> ${{
     vim_remote_call Lf_Split "$OLDPWD" "$PWD" "$f"
 }}
 
+#TODO: This is buggy.
+# Would prefer an option without using remote calls.
+# # Centre the starting selection.
+# cmd centre-starting-selection ${{
+#     lf -remote "send $id scroll-up"
+#     lf -remote "send $id scroll-up"
+#     lf -remote "send $id scroll-up"
+#     lf -remote "send $id select $(printf '%q' "$f")"
+# }}
+# :centre-starting-selection

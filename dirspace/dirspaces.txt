@@ -28,6 +28,7 @@
 @ ~/drive/dev/piano -- Piano
 @ ~/drive/dev/visual_effects -- VFX
 @ ~/code/cg_sandbox -- code:cg_sandbox
+@ ~/test -- ~/test
 ~/code/{} -- code:{}
 @ ~/config/vim/repos/bufexplorer -- vim:bufexplorer
 ~/config/vim/repos/{} -- vim:{}

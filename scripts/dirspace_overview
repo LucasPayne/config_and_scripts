@@ -1,0 +1,18 @@
+#!/bin/bash
+# dirspace_overview:
+
+cd "$DIRSPACE_RUNTIME/vim"
+for id in *
+do
+    name="$(cat $id/dirspace_name)"
+    path="$(cat $id/dirspace_path)"
+    path="${path/#$HOME/\~}"
+    if [ "$name" = "$path" ]
+    then
+        printf '%s\n' "$name"
+    else
+        printf '%s: %s\n' "$name" "$path"
+    fi
+    vim --servername $(basename "$DIRSPACE_RUNTIME").$id --remote-expr "execute(\"tabs\")" | grep -v '^\s*$' | sed 's/Tab page //'
+    echo
+done
