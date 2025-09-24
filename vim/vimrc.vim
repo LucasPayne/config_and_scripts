@@ -2,8 +2,13 @@
 "--------------------------------------------------------------------------------/
 
 function! DEBUGLOG(str)
+    if type(a:str) != v:t_string
+        let str = string(a:str)
+    else
+        let str = a:str
+    endif
     call system("date '+%H:%M:%S ' | tr -d '\n' >> /tmp/a")
-    call system("cat >> /tmp/a", a:str)
+    call system("cat >> /tmp/a", str)
     call system("echo >> /tmp/a")
 endfunction
 
@@ -2740,7 +2745,7 @@ nnoremap <silent> <M-P> :call SystemPasteLineAndFormatNote()<cr>
 " the 'collapsed' selection.
 vnoremap <silent> <M-p> <C-c>'<V'>"_c<Esc>:call SystemPasteLine()<cr>V<Esc>
 " paste in terminal job mode
-tnoremap <silent> <M-p> <C-w>"+
+"tnoremap <silent> <M-p> <C-w>"+
 " register "+ yank
 "------todo: Apparently doesn't allow <M-y>... to be mapped. Thought this would work.
 "nnoremap <silent> <M-y> "+y
@@ -3826,19 +3831,31 @@ function! MainShell(...)
             call win_gotoid(win_getid(shell_tab, shell_winnr))
         endif
 
-        call DEBUGLOG(string(buf))
-        call DEBUGLOG(string(bufwinid(buf)))
-
-        " Change the working directory of the shell if needed.
-        if wd != getbufvar(buf, "shell_working_directory")
-            call DEBUGLOG("yes")
-            let keys = ""
-            if mode() == 'n'
-                let keys .= 'i'
+        " Get job control state of the shell.
+        let job = term_getjob(buf)
+        let pid = job_info(job)["process"]
+        let foreground_pid = -1
+        let shell_poller_runtime_subdir = getbufvar(buf, "shell_poller_runtime_subdir", "")
+        if shell_poller_runtime_subdir != ""
+            let dir = $DIRSPACE_VIM_RUNTIME.."/"..shell_poller_runtime_subdir
+            if filereadable(dir.."/foreground_pid")
+                let foreground_pid = readfile(dir.."/foreground_pid")[0]
             endif
-            let keys .= "\<c-u>cd "..shellescape(wd).."\<cr>"
-            call feedkeys(keys, 'n')
         endif
+
+        let keys = ""
+        if mode() == 'n'
+            let keys .= 'i'
+        endif
+        if foreground_pid != pid
+            " The main shell has a job foregrounded, background it.
+            let keys .= "\<c-z>"
+        endif
+        if wd != getbufvar(buf, "shell_working_directory")
+            " Change the working directory of the shell if needed.
+            let keys .= "\<c-u>cd "..shellescape(wd).."\<cr>"
+        endif
+        call feedkeys(keys, 'n')
     endif
 endfunction
 
