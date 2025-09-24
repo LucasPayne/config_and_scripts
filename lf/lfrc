@@ -561,12 +561,14 @@ map <a-U> %{{
 map q %{{
     if in_vim && [ $lf_user_launcher_term -ne -1 ]
     then
-        if [ ! "$lf_user_launcher_file" = "$PWD" ]
-        then
-            shell_type_keys '\<c-u>cd ' -e
-            shell_type_keys "$(printf '%q' "$PWD")"
-            shell_type_keys '\<cr>' -e
-        fi
+        # if [ ! "$lf_user_launcher_file" = "$PWD" ]
+        # then
+            vim_remote_expr "Lf_LauncherTerm_CD($lf_user_launcher_term, $(vim_escape_string "$PWD"))"
+
+            # shell_type_keys '\<c-u>cd ' -e
+            # shell_type_keys "$(printf '%q' "$PWD")"
+            # shell_type_keys '\<cr>' -e
+        # fi
         lf -remote "send $id quit"
     else
         lf -remote "send $id quit"

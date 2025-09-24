@@ -3843,19 +3843,34 @@ function! MainShell(...)
             endif
         endif
 
-        let keys = ""
-        if mode() == 'n'
-            let keys .= 'i'
-        endif
+        " let keys = ""
+        " if mode() == 'n'
+        "     let keys .= 'i'
+        " endif
+        " if foreground_pid != pid
+        "     " The main shell has a job foregrounded, background it.
+        "     let keys .= "\<c-z>"
+        " endif
+        " if wd != getbufvar(buf, "shell_working_directory")
+        "     " Change the working directory of the shell if needed.
+        "     let keys .= "\<c-u>cd "..shellescape(wd).."\<cr>"
+        " endif
+        " call feedkeys(keys, 'n')
+        
         if foreground_pid != pid
             " The main shell has a job foregrounded, background it.
-            let keys .= "\<c-z>"
+            call term_sendkeys(buf, "\<c-z>)
         endif
         if wd != getbufvar(buf, "shell_working_directory")
             " Change the working directory of the shell if needed.
-            let keys .= "\<c-u>cd "..shellescape(wd).."\<cr>"
+            call writefile([wd], "/tmp/shellcd")
+            call term_sendkeys(buf, "\<c-c>")
+            "HACK: Ctrl-C is handled by bash, which takes a small amount of time
+            "    asynchronously to the next keys sent. So, wait for it to be done.
+            "    Note this might fail if bash takes longer to handle the Ctrl-C.
+            sleep 100m
+            call term_sendkeys(buf, "refresh_shellcd\<cr>")
         endif
-        call feedkeys(keys, 'n')
     endif
 endfunction
 
@@ -3867,4 +3882,15 @@ nnoremap <silent> <M-c><M-c> <cmd>call TabShell()<cr>
 " Go to the main shell.
 nnoremap <silent> <M-C> <cmd>call MainShell()<cr>
 
+function! Lf_LauncherTerm_CD(launcher_term, dir)
+    let launcher_term = a:launcher_term
+    let dir = a:dir
 
+    call writefile([dir], "/tmp/shellcd")
+    call term_sendkeys(launcher_term, "\<c-c>")
+    "HACK: Ctrl-C is handled by bash, which takes a small amount of time
+    "    asynchronously to the next keys sent. So, wait for it to be done.
+    "    Note this might fail if bash takes longer to handle the Ctrl-C.
+    sleep 100m
+    call term_sendkeys(launcher_term, "refresh_shellcd\<cr>")
+endfunction

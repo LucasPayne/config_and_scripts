@@ -3,6 +3,23 @@ source $CONFIG_DIR/scripts/syncer_files/syncer-bash.sh
 
 source "$CONFIG_DIR/scripts/fzf_tools/fzf_tools.sh"
 
+refresh_shellcd ()
+{
+    if [ -f /tmp/shellcd ]
+    then
+        cd "$(cat /tmp/shellcd)"
+        echo -en '\033[F'
+        echo -en '\033[2K\r'
+        echo -en '\033[F'
+        echo -en '\033[2K\r'
+        echo -en '\033[F'
+        echo -en '\033[2K\r'
+        echo -en '\033[F'
+        echo -en '\033[2K\r'
+        # echo -e "${PS1@P}"
+    fi
+}
+
 set -o vi
 # https://unix.stackexchange.com/questions/12107/how-to-unfreeze-after-accidentally-pressing-ctrl-s-in-a-terminal
 # Deactivate terminal-driver-level flow control.
