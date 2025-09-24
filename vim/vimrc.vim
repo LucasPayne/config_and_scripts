@@ -120,7 +120,7 @@ function! UnsetAltKeyMappings()
     " Allow bufexplorer key.
     execute "set <M-l>=\el"
     " Allow paste
-    execute "set <M-p>=\ep"
+    "execute "set <M-p>=\ep"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -3894,3 +3894,18 @@ function! Lf_LauncherTerm_CD(launcher_term, dir)
     sleep 100m
     call term_sendkeys(launcher_term, "refresh_shellcd\<cr>")
 endfunction
+
+" Command line editing
+"------------------------------------------------------------
+set cedit=<C-f>
+cnoremap jk <C-f>
+augroup CmdWin
+    autocmd!
+    autocmd CmdWinEnter * nnoremap <buffer> I I<C-c>
+    autocmd CmdWinEnter * nnoremap <buffer> i i<C-c>
+    autocmd CmdWinEnter * nnoremap <buffer> A A<C-c>
+    autocmd CmdWinEnter * nnoremap <buffer> a a<C-c>
+    autocmd CmdWinEnter * nnoremap <buffer> <C-c> i<C-c>
+    autocmd CmdWinEnter * setlocal nonumber
+augroup END
+
