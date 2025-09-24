@@ -473,14 +473,14 @@ map <a-c><a-r> %{{
     vim_remote_call CurrentShell "$PWD"
     vim_remote_call Lf_Popup_EndIgnore
 }}
-map <a-C><a-C> %{{
+map <a-c><a-c> %{{
     vim_remote_call Lf_Popup_BeginIgnore
     vim_remote_call TabShell "$PWD"
     vim_remote_call Lf_Popup_EndIgnore
 }}
-map <a-c><a-C> %{{
+map <a-C> %{{
     vim_remote_call Lf_Popup_BeginIgnore
-    vim_remote_call TabShell "$PWD"
+    vim_remote_call MainShell "$PWD"
     vim_remote_call Lf_Popup_EndIgnore
 }}
 

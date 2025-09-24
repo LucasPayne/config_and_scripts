@@ -3347,12 +3347,12 @@ function! Lf_Popup(launcher_winid, wd, ...)
         let title .= launcher_file
     endif
     if launcher_term != -1
-        if launcher_file != ""
-            let title .= "    "
-        endif
-        let title .= "launcher_term: "
-        let title .= string(launcher_term)..":"..bufname(launcher_term)
-        let title .= "**** Press q to change directory in the launcher shell *"
+        " if launcher_file != ""
+        "     let title .= "    "
+        " endif
+        " let title .= "launcher_term: "
+        " let title .= string(launcher_term)..":"..bufname(launcher_term)
+        let title .= "  **** Press q to change directory in the launcher shell *"
         let title .= repeat('*', width - strlen(title))
     endif
 
@@ -3766,22 +3766,82 @@ function! CurrentShell(...)
     noautocmd execute "cd "..fnameescape(wd)
     term ++curwin ++close
     noautocmd execute "cd "..fnameescape(global_cwd)
-    set termwinsize=
 endfunction
 " Open a shell in a new tab.
 function! TabShell(...)
+    call DEBUGLOG("tabshell")
     let wd = get(a:000, 0, getcwd(-1))
     let global_cwd = getcwd(-1)
     noautocmd execute "cd "..fnameescape(wd)
     tab term ++close
     noautocmd execute "cd "..fnameescape(global_cwd)
-    set termwinsize=
+endfunction
+
+function! MainShell(...)
+    let wd = get(a:000, 0, getcwd(-1))
+
+    " Try to find an existing main shell.
+    let buf = -1
+    for b in range(1, bufnr('$'))
+        if bufexists(b) && getbufvar(b, "main_shell", 0)
+            let buf = b
+            break
+        endif
+    endfor
+
+    if buf == -1
+        " A main shell does not exist, create it.
+        let global_cwd = getcwd(-1)
+        noautocmd execute "cd "..fnameescape(wd)
+        tab term ++close
+        noautocmd execute "cd "..fnameescape(global_cwd)
+        let b:main_shell = 1
+        tabmove 0
+    else
+        " Try to find it displayed in a window.
+        let shell_tab = -1
+        let shell_winnr = -1
+        for tab in range(1, tabpagenr('$'))
+            let winnr = 1
+            for b in tabpagebuflist(tab)
+                if b == buf
+                    let shell_tab = tab
+                    let shell_winnr = winnr
+                    break
+                endif
+                let winnr += 1
+            endfor
+        endfor
+        if shell_tab == -1
+            " It is not displayed in a window, create a new tab for it.
+            execute "tab sbuffer "..buf
+            tabmove 0
+        else
+            " It does have a window, go to it.
+            call win_gotoid(win_getid(shell_tab, shell_winnr))
+        endif
+
+        call DEBUGLOG(string(buf))
+        call DEBUGLOG(string(bufwinid(buf)))
+
+        " Change the working directory of the shell if needed.
+        if wd != getbufvar(buf, "shell_working_directory")
+            call DEBUGLOG("yes")
+            let keys = ""
+            if mode() == 'n'
+                let keys .= 'i'
+            endif
+            let keys .= "\<c-u>cd "..shellescape(wd).."\<cr>"
+            call feedkeys(keys, 'n')
+        endif
+    endif
 endfunction
 
 nnoremap <silent> <M-c><M--> <cmd>call LowerShell()<cr>
 " Open a terminal in the current window.
 nnoremap <silent> <M-c><M-r> <cmd>call CurrentShell()<cr>
 " Open a terminal in a new tab.
-nnoremap <silent> <M-C><M-C> <cmd>call TabShell()<cr>
-nnoremap <silent> <M-c><M-C> <cmd>call TabShell()<cr>
+nnoremap <silent> <M-c><M-c> <cmd>call TabShell()<cr>
+" Go to the main shell.
+nnoremap <silent> <M-C> <cmd>call MainShell()<cr>
 
