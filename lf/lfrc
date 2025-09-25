@@ -467,21 +467,25 @@ map <a-c><a--> %{{
     vim_remote_call Lf_Popup_BeginIgnore
     vim_remote_call LowerShell "$PWD"
     vim_remote_call Lf_Popup_EndIgnore
+    lf -remote "send $id quit"
 }}
 map <a-c><a-r> %{{
     vim_remote_call Lf_Popup_BeginIgnore
     vim_remote_call CurrentShell "$PWD"
     vim_remote_call Lf_Popup_EndIgnore
+    lf -remote "send $id quit"
 }}
 map <a-c><a-c> %{{
     vim_remote_call Lf_Popup_BeginIgnore
     vim_remote_call TabShell "$PWD"
     vim_remote_call Lf_Popup_EndIgnore
+    lf -remote "send $id quit"
 }}
 map <a-C> %{{
     vim_remote_call Lf_Popup_BeginIgnore
     vim_remote_call MainShell "$PWD"
     vim_remote_call Lf_Popup_EndIgnore
+    lf -remote "send $id quit"
 }}
 
 # General enter key, does multiple things.
@@ -561,14 +565,12 @@ map <a-U> %{{
 map q %{{
     if in_vim && [ $lf_user_launcher_term -ne -1 ]
     then
-        # if [ ! "$lf_user_launcher_file" = "$PWD" ]
-        # then
+        if [ ! "$lf_user_launcher_file" = "$PWD" ]
+        then
+            vim_remote_call Lf_Popup_BeginIgnore
             vim_remote_expr "Lf_LauncherTerm_CD($lf_user_launcher_term, $(vim_escape_string "$PWD"))"
-
-            # shell_type_keys '\<c-u>cd ' -e
-            # shell_type_keys "$(printf '%q' "$PWD")"
-            # shell_type_keys '\<cr>' -e
-        # fi
+            vim_remote_call Lf_Popup_EndIgnore
+        fi
         lf -remote "send $id quit"
     else
         lf -remote "send $id quit"
@@ -577,11 +579,10 @@ map q %{{
 map <a-q> quit
 
 map <a-l> %{{
-    # Note: This is closing the popup for some reason anyway.
-    #       So, as long as this works, not closing it explicitly.
     vim_remote_call Lf_Popup_BeginIgnore
     vim_remote_call OpenBufExplorer
     vim_remote_call Lf_Popup_EndIgnore
+    lf -remote "send $id quit"
 }}
 
 #>>>
@@ -613,12 +614,10 @@ map <space> :toggle; on-selection-changed
 # Play a video file in the background.
 map .b ${{
     in_vim || exit
-    # vim_remote_call Lf_Popup_BeginIgnore
-    # vim_remote_call execute "call Lf_Popup_BeginIgnore() | tab term ++close mpvbg $(printf '%q' "$f")"
     vim_remote_call Lf_Popup_BeginIgnore
     vim_remote_call execute "tab term ++close mpvbg $(printf '%q' "$f")"
     vim_remote_call Lf_Popup_EndIgnore
-    sleep 5
+    lf -remote "send $id quit"
 }}
 
 #>>>
