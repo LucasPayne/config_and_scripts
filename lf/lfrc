@@ -192,11 +192,14 @@ map U setfilter
 cmap <a-\;> :cmd-enter; setfilter; LFRC::open
 
 cmap <enter> &{{
+    echo "$lf_user_filter_mode" > /tmp/a
+    echo "$lf_mode" >> /tmp/a
     if [ "$lf_mode" = filter ]
     then
         case "$lf_user_filter_mode" in
             filter-find)
-                lf -remote "send $id :cmd-enter; setfilter; LFRC::open"
+                lf -remote "send $id :cmd-enter; setfilter; open_enter 1"
+                echo benis >/tmp/a
                 ;;
             filter)
                 lf -remote "send $id :cmd-enter"
