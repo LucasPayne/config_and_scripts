@@ -200,6 +200,12 @@ cmd lf_search ${{
         no_select=0
     fi
 
+    if ! in_search && [ $no_select -eq 1 ]
+    then
+        lf -remote "send $id quit"
+        exit
+    fi
+
     if [[ -v lf_user_lf_search_dir ]] && [ ! "$lf_user_lf_search_dir" = "" ]
     then
         # Close search
