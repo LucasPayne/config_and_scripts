@@ -30,6 +30,13 @@ in_vim ()
     return $?
 }
 
+in_search ()
+{
+    search_dir=~/.local/share/lf/search
+    [[ "$PWD" =~ ^$search_dir/ ]]
+    return $?
+}
+
 shell_type_keys ()
 {
     keys="$1"
@@ -60,10 +67,15 @@ Lf_Edit ()
     file="$1"
     mode="$2"
     close="$3"
+
     if in_vim
     then
         if [ -f "$f" ]
         then
+            if in_search
+            then
+                file="$(readlink "$file")"
+            fi
             vim_remote_call Lf_Edit "$file" "$mode" "$close"
         fi
     fi

@@ -1,9 +1,8 @@
 #!/bin/bash
 
+mapfile -t files < <(cat | sed 's/\/$//')
+
 dir="$(pwd)"
-
-
-mapfile -t files < <(fd | sed 's/\/$//')
 
 runtime_dir=~/.local/share/lf/search
 if [ ! -d "$runtime_dir" ]
@@ -51,8 +50,6 @@ do
     ln -s "$dir/$file" "$tmpdir/$name"
 done
 
-ls -l "$tmpdir"
-
 echo "$tmpdir"
-lf "$tmpdir"
+# lf "$tmpdir"
 # rm -r "$tmpdir"
