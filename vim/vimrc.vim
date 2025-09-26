@@ -121,6 +121,9 @@ function! UnsetAltKeyMappings()
     execute "set <M-l>=\el"
     " Allow paste
     "execute "set <M-p>=\ep"
+    " Allow search
+    execute "set <M-f>=\ef"
+    execute "set <M-F>=\eF"
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -1275,7 +1278,7 @@ function! ToggleFullscreen()
         let w:is_fullscreen_old_winid = l:old_winid
     endif
 endfunction
-nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
+" nnoremap <silent> <M-f> :call ToggleFullscreen()<cr>
 
 " Toggle numbers and relative numberrs.
 " <M-m> : Toggle numbers, default to non-relative.
@@ -2873,7 +2876,7 @@ function! ToggleReaderMode()
         nnoremap i <C-u>
     endif
 endfunction
-nnoremap <silent> <M-F> :call ToggleReaderMode()<cr>
+" nnoremap <silent> <M-F> :call ToggleReaderMode()<cr>
 
 "https://vi.stackexchange.com/questions/17262/iedit-behaviour-in-vim/17272#17272
 "--------------------------------------------------------------------------------
@@ -3305,6 +3308,18 @@ function! Lf_Popup(launcher_winid, wd, ...)
 
     if launcher_file != ""
         let cmd += ["-command", "set user_launcher_file "..shellescape(launcher_file)]
+    endif
+
+    if launcher_term != -1
+        let cmd += ["-command", "cd "..shellescape(launcher_file)]
+    endif
+
+    let startup_commands = get(lf_options, "startup_commands", [])
+    for startup_command in startup_commands
+        let cmd += ["-command", startup_command]
+    endfor
+
+    if launcher_file != ""
         if get(lf_options, 'focus_launcher_file', 0)
             let cmd += [launcher_file]
         endif
@@ -3909,3 +3924,28 @@ augroup CmdWin
     autocmd CmdWinEnter * setlocal nonumber
 augroup END
 
+" Search
+"------------------------------------------------------------
+function! Lf_Search(dir)
+    let dir = a:dir
+
+    if dir == ""
+        let dir = expand("%:p:h")
+    endif
+
+    let startup_commands = [
+    \     "lf_search",
+    \ ]
+    let options = {
+    \    'focus_launcher_file' : 1,
+    \    'startup_commands' : startup_commands,
+    \ }
+    call Lf_Popup(win_getid(), dir, options)
+endfunction
+
+" Search in this file's directory.
+nnoremap <silent> <M-f> :call Lf_Search("")<cr>
+tnoremap <silent> <M-f> <C-w>:call Lf_Search("")<cr>
+" Search in the global working directory.
+nnoremap <silent> <M-F> :call Lf_Search(getcwd(-1))<cr>
+tnoremap <silent> <M-F> <C-w>:call Lf_Search(getcwd(-1))<cr>

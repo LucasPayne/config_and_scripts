@@ -185,17 +185,20 @@ set dirpreviews
 # MAPPINGS
 #<<<
 # Filtering <<<
-map f :set user_filter_mode "filter"; filter
+map <a-/> :set user_filter_mode "filter"; filter
 map F :set user_filter_mode "filter-find"; filter; cmd-end; cmd-delete-home
 map U setfilter
 cmap <a-\;> :cmd-enter; setfilter; LFRC::open
 # Search
 cmd lf_search ${{
+    pwd
     search_dir="$(fd | bash ~/config/lf/lf_search.sh)"
     lf -remote "send $id cd $(printf '%q' "$search_dir")"
     lf -remote "send $id set ratios 4:3"
+    lf -remote "send $id filter"
 }}
-map <a-/> :lf_search
+map <a-f> :lf_search
+map <a-F> :lf_search
 
 cmap <enter> &{{
     echo "$lf_user_filter_mode" > /tmp/a
