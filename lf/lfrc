@@ -44,6 +44,8 @@ set user_launcher_file ""
 # This can be used to use lf as a file argument selector.
 set user_launcher_term -1
 
+set user_lf_search_dir ""
+
 # White background, black text
 #set cursoractivefmt "\033[0;30;47m"
 #set cursorparentfmt "\033[0;30;47m"
@@ -191,14 +193,43 @@ map U setfilter
 cmap <a-\;> :cmd-enter; setfilter; LFRC::open
 # Search
 cmd lf_search ${{
-    pwd
-    search_dir="$(fd | bash ~/config/lf/lf_search.sh)"
-    lf -remote "send $id cd $(printf '%q' "$search_dir")"
-    lf -remote "send $id set ratios 4:3"
-    lf -remote "send $id filter"
+    if [ $# -eq 1 ] && [ "$1" = "1" ]
+    then
+        no_select=1
+    else
+        no_select=0
+    fi
+
+    if [[ -v lf_user_lf_search_dir ]] && [ ! "$lf_user_lf_search_dir" = "" ]
+    then
+        # Close search
+        lf -remote "send $id set user_lf_search_dir \"\""
+        lf -remote "send $id set ratios 1:2:3"
+        if [ $no_select -eq 1 ]
+        then
+            # Return to the search directory.
+            lf -remote "send $id cd $(printf '%q' "$lf_user_lf_search_dir")"
+        else
+            # Select the file which was focused in the search.
+            sel="$(readlink "$f")"
+            sel_dir="$(dirname "$sel")"
+            sel_name="$(basename "$sel")"
+            lf -remote "send $id cd $(printf '%q' "$sel_dir")"
+            lf -remote "send $id select $(printf '%q' "$sel_name")"
+        fi
+    else
+        # Do search
+        search_dir="$(fd | bash ~/config/lf/lf_search.sh)"
+        lf -remote "send $id cd $(printf '%q' "$search_dir")"
+        lf -remote "send $id set ratios 4:3"
+        lf -remote "send $id filter"
+        lf -remote "send $id set user_lf_search_dir $(printf '%q' "$PWD")"
+    fi
 }}
 map <a-f> :lf_search
 map <a-F> :lf_search
+map f :lf_search
+map <c-c> :lf_search 1
 
 cmap <enter> &{{
     echo "$lf_user_filter_mode" > /tmp/a
@@ -251,7 +282,7 @@ cmap <a-k> &{{
 map <c-z> $ kill -TSTP $PPID
 cmap <c-z> $ kill -TSTP $PPID
 # Ctrl-C to quit.
-map <c-c> quit
+#map <c-c> quit
 # Also Alt-x to quit.
 map <a-x> quit
 # Default: Ctrl-C in command mode cancels the command.
@@ -416,7 +447,7 @@ cmd wp ${{
     wp "$f"
 }}
 
-map <a-f> :LFRC::fzf_jump 0
+#map <a-f> :LFRC::fzf_jump 0
 #map <a-r> :LFRC::fzf_jump 1
 map x :LFRC::unarchive
 map g :top
