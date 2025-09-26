@@ -238,8 +238,6 @@ map f :lf_search
 map <c-c> :lf_search 1
 
 cmap <enter> &{{
-    echo "$lf_user_filter_mode" > /tmp/a
-    echo "$lf_mode" >> /tmp/a
     if [ "$lf_mode" = filter ]
     then
         case "$lf_user_filter_mode" in
@@ -432,6 +430,10 @@ map K :up; up; up; up; up; up; up; up
 # Execute file.
 # (No arguments)
 map <c-x> ${{
+    if in_search
+    then
+        f="$(readlink "$f")"
+    fi
     if [ -f "$f" ] && [ -x "$f" ]
     then
         "$f"
@@ -540,7 +542,14 @@ map <a-C> %{{
 # General enter key, does multiple things.
 cmd open_enter ${{
     close="$1"
+
+    if in_search
+    then
+        f="$(readlink "$f")"
+    fi
+
     mim="$(mimetype -b "$(realpath "$f")")"
+
     if in_vim && ( [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] )
     then
         # vim_remote_call Lf_Edit "$f" "here" "$close"
@@ -561,7 +570,8 @@ cmd open_enter ${{
             lf -remote "send $id open"
         fi
     else
-        xdg-open "$f"
+        echo "$f" >> /tmp/a
+        d xdg-open "$f"
         if [ $close -eq 1 ]
         then
             lf -remote "send $id quit"
