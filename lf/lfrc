@@ -576,9 +576,16 @@ map q %{{
     then
         if [ ! "$lf_user_launcher_file" = "$PWD" ]
         then
-            vim_remote_call Lf_Popup_BeginIgnore
-            vim_remote_expr "Lf_LauncherTerm_CD($lf_user_launcher_term, $(vim_escape_string "$PWD"))"
-            vim_remote_call Lf_Popup_EndIgnore
+            # Only cd if not in the search runtime files.
+            # (Those are not intended as really useful directories and are rather
+            # for lf tricks.)
+            search_dir=~/.local/share/lf/search
+            if [[ ! "$PWD" =~ ^$search_dir/ ]]
+            then
+                vim_remote_call Lf_Popup_BeginIgnore
+                vim_remote_expr "Lf_LauncherTerm_CD($lf_user_launcher_term, $(vim_escape_string "$PWD"))"
+                vim_remote_call Lf_Popup_EndIgnore
+            fi
         fi
         lf -remote "send $id quit"
     else
