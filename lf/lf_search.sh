@@ -2,7 +2,8 @@
 
 dir="$(pwd)"
 
-files="$(fd | sed 's/\/$//')"
+
+mapfile -t files < <(fd | sed 's/\/$//')
 
 runtime_dir=~/.local/share/lf/search
 if [ ! -d "$runtime_dir" ]
@@ -26,22 +27,32 @@ get_name ()
     }
     shortname="$(basename "$file")"
     shortdir="$(dirname "$file" | sed 's/\//@/g')"
-    printf '%d\x1F%s\x1F%s\n' "$depth" "$shortname" "$shortdir"
+    if [ -d "$file" ]
+    then
+        flags="."
+    else
+        flags=" "
+    fi
+    prefix="$depth$flags"
+    printf '%s\x1F%s\x1F%s\n' "$prefix" "$shortname" "$shortdir"
 }
 
-names=$(column -s $'\x1F' -t < <(
-    while read -r file
+mapfile -t names < <(column -s $'\x1F' -t < <(
+    for file in "${files[@]}"
     do
         get_name "$file"
-    done < <(echo "$files")
+    done
 ))
 
-echo "$names"
+for (( i=0 ; i < ${#names[@]} ; i++ ))
+do
+    name="${names[$i]}"
+    file="${files[$i]}"
+    ln -s "$dir/$file" "$tmpdir/$name"
+done
 
-#     name=$(get_name $(basename "$file")"
-# 
-#     ln -s "$dir/$file" "$tmpdir/$name"
-# ls -l "$tmpdir"
-# 
+ls -l "$tmpdir"
+
+echo "$tmpdir"
+lf "$tmpdir"
 # rm -r "$tmpdir"
-# echo "$tmpdir"

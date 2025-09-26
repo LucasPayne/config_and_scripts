@@ -12,6 +12,7 @@
 #    {upper} : replace with lower case string
 # @ denotes a favourite. These might be treated differently,
 # such as appearing in a fzf popup to open possibly inactive dirspaces.
+# Note: Currently {} cannot be used with @.
 
 @ ~/notes/notes.d -- Notes
 @ ~/config -- Config
