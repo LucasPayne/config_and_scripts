@@ -216,12 +216,20 @@ cmd lf_search ${{
             # Return to the search directory.
             lf -remote "send $id cd $(printf '%q' "$lf_user_lf_search_dir")"
         else
-            # Select the file which was focused in the search.
-            sel="$(readlink "$f")"
-            sel_dir="$(dirname "$sel")"
-            sel_name="$(basename "$sel")"
-            lf -remote "send $id cd $(printf '%q' "$sel_dir")"
-            lf -remote "send $id select $(printf '%q' "$sel_name")"
+            if in_search_root
+            then
+                echo hi >> /tmp/a
+                # Select the file which was focused in the search.
+                sel="$(readlink "$f")"
+                sel_dir="$(dirname "$sel")"
+                sel_name="$(basename "$sel")"
+                lf -remote "send $id cd $(printf '%q' "$sel_dir")"
+                lf -remote "send $id select $(printf '%q' "$sel_name")"
+            else
+                # TODO: Don't do full realpath, just resolve the one search link.
+                lf -remote "send $id cd $(printf '%q' "$(realpath "$PWD")")"
+                lf -remote "send $id select $(printf '%q' "$(basename "$f")")"
+            fi
         fi
     else
         # Do search

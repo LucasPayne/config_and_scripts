@@ -3949,3 +3949,4 @@ tnoremap <silent> <M-f> <C-w>:call Lf_Search("")<cr>
 " Search in the global working directory.
 nnoremap <silent> <M-F> :call Lf_Search(getcwd(-1))<cr>
 tnoremap <silent> <M-F> <C-w>:call Lf_Search(getcwd(-1))<cr>
+

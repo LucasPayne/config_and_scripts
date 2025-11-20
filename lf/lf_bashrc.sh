@@ -33,8 +33,18 @@ in_vim ()
 in_search ()
 {
     search_dir=~/.local/share/lf/search
-    [[ "$PWD" =~ ^$search_dir/ ]]
-    return $?
+    [[ $PWD == "$search_dir/"* ]]
+    err=$?
+    return $err
+}
+in_search_root ()
+{
+    search_dir=~/.local/share/lf/search
+    echo "root: $PWD" >> /tmp/a
+    [[ $PWD =~ "$search_dir/...." ]]
+    err=$?
+    echo "    $err" >> /tmp/a
+    return $err
 }
 
 shell_type_keys ()
