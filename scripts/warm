@@ -1,0 +1,8 @@
+#!/bin/bash
+# warm: make colors warm
+
+xsct_number=2750
+
+# todo: detect if xsct or sct
+xsct $xsct_number
+
