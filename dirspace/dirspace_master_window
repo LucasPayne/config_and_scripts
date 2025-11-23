@@ -5,7 +5,7 @@ tput clear
 tput civis
 stty -echo
 
-message="Welcome to the computer"
+message="Welcome"
 
 cols=$(tput cols)
 rows=$(tput lines)
@@ -17,7 +17,7 @@ tput cup $start_y $start_x
 echo "$message"
 
 mpv --no-terminal --no-video --really-quiet ~/config/sounds/office_kitano.mp3 >/dev/null 2>&1 &
-sleep 5
+sleep 1
 
 tput clear
 tput cnorm

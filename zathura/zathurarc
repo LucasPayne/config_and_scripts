@@ -12,7 +12,7 @@ set recolor true
 #set guioptions ""
 
 # Grey
-set recolor-darkcolor \#6F6F6F
+set recolor-darkcolor \#9F9FF
 
 # Green
 #set recolor-darkcolor \#537A59

@@ -8,17 +8,20 @@ xsct_number=2750
 if [ $# -eq 1 ]
 then
     case $1 in
+        0)
+            xsct_number=0
+            ;;
         1)
-            xsct_number=2000
+            xsct_number=3150
             ;;
         2)
-            xsct_number=2350
-            ;;
-        3)
             xsct_number=2750
             ;;
+        3)
+            xsct_number=2350
+            ;;
         4)
-            xsct_number=3150
+            xsct_number=2000
             ;;
         *)
             xsct_number=2750
