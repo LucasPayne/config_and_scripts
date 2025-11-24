@@ -604,8 +604,12 @@ function! GetTabPanelBufName(buf, cwd)
             else
                 " File outside vim's working directory.
                 let basename = fnamemodify(path, ":t")
-                " r for "remote".
-                let s .= "[r] "..basename
+                " let symbol = "↷"
+                " let symbol = "↱"
+                let symbol = "←"
+                let symbol = "←"
+                let symbol = "←"
+                let s .= symbol.." "..basename
             endif
         endif
     elseif buftype == "help"
