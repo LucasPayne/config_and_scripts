@@ -1,6 +1,6 @@
 #!/bin/sh
 
-opacity=90
+opacity=70
 
 zathura --mode fullscreen "$@" &
 pid="$!"

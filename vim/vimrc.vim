@@ -124,6 +124,9 @@ function! UnsetAltKeyMappings()
     " Allow search
     execute "set <M-f>=\ef"
     execute "set <M-F>=\eF"
+    " Allow dirspace overview
+    execute "set <M-'>=\e'"
+    execute 'set <M-">=\e"'
 endfunction
 autocmd ModeChanged *:t* silent! call UnsetAltKeyMappings()
 autocmd ModeChanged t*:* silent! call ResetAltKeyMappings()
@@ -3949,4 +3952,10 @@ tnoremap <silent> <M-f> <C-w>:call Lf_Search("")<cr>
 " Search in the global working directory.
 nnoremap <silent> <M-F> :call Lf_Search(getcwd(-1))<cr>
 tnoremap <silent> <M-F> <C-w>:call Lf_Search(getcwd(-1))<cr>
+
+nnoremap <silent> <M-'> :!dirspace_fzf_favorites<cr><cr>
+tnoremap <silent> <M-'> <C-w>:!dirspace_fzf_favorites<cr><cr>
+"todo: Why does this mapping not work?
+nnoremap <silent> <M-"> :!dirspace_fzf_active<cr><cr>
+tnoremap <silent> <M-"> <C-w>:!dirspace_fzf_active<cr><cr>
 

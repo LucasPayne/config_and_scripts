@@ -56,13 +56,19 @@ do
     for other_vim_id in $slot_vim_ids
     do
         dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
+        dirspace_alias="$dirspace_name"
+        # Shorten names which are full paths.
+        if [ -d "/$dirspace_alias" ]
+        then
+            dirspace_alias="$(basename "$dirspace_alias")"
+        fi
         if [ "$other_vim_id" = "$vim_id" ]
         then
             append "%#TabLineDirspaceNumberSelected#$i"
-            append "%#TabLineDirspaceSelected# $dirspace_name"
+            append "%#TabLineDirspaceSelected# $dirspace_alias"
         else
             append "%#TabLineDirspaceNumber#$i"
-            append "%#TabLineDirspace# $dirspace_name"
+            append "%#TabLineDirspace# $dirspace_alias"
         fi
         append " "
         ((i++))
@@ -73,20 +79,25 @@ do
     append "%="
 
     # Show the non-slotted vims.
-    for other_vim_id in $nonslot_vim_ids
-    do
-        dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
-        if [ "$other_vim_id" = "$vim_id" ]
-        then
-            append "%#TabLineDirspaceNumberSelected#~"
-            append "%#TabLineDirspaceSelected# $dirspace_name"
-        else
-            append "%#TabLineDirspaceNumber#"
-            append "%#TabLineDirspace# $dirspace_name"
-        fi
-        append " "
-        ((i++))
-    done
+    # for other_vim_id in $nonslot_vim_ids
+    # do
+    #     dirspace_name="$(cat "$DIRSPACE_RUNTIME/vim/$other_vim_id/dirspace_name")"
+    #     # Shorten names which are full paths.
+    #     if [ -d "/$dirspace_alias" ]
+    #     then
+    #         dirspace_alias="$(basename "$dirspace_alias")"
+    #     fi
+    #     if [ "$other_vim_id" = "$vim_id" ]
+    #     then
+    #         append "%#TabLineDirspaceNumberSelected#~"
+    #         append "%#TabLineDirspaceSelected# $dirspace_alias"
+    #     else
+    #         append "%#TabLineDirspaceNumber#"
+    #         append "%#TabLineDirspace# $dirspace_alias"
+    #     fi
+    #     append " "
+    #     ((i++))
+    # done
 
     # Add a right margin.
     append "%#TabLineDirspace#        "
