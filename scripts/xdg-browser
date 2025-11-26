@@ -8,6 +8,7 @@ then
     # Maybe no .desktop file.
     # Fallback to hardcoded browser.
     exec firefox "$@"
+    exit 0
 fi
 
 exec gtk-launch "$browser" "$@"
