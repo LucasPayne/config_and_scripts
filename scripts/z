@@ -1,6 +1,7 @@
 #!/bin/sh
 
-opacity=70
+opacity=60
+desktop_number=6
 
 zathura --mode fullscreen "$@" &
 pid="$!"
@@ -9,15 +10,15 @@ xwiopacity "$opacity" "$wid"
 
 previous_desktop="$(wmctrl -d | grep ' \* ' | getcol 1)"
 
-# Put it at virtual desktop 5.
+# Put it at a virtual desktop.
 current_num_desktops="$(wmctrl -d | wc -l)"
-if [ $current_num_desktops -lt 5 ]
+if [ $current_num_desktops -lt $desktop_number ]
 then
-    wmctrl -n 5
+    wmctrl -n $desktop_number
 fi
-wmctrl -i -r "$wid" -t 4
+wmctrl -i -r "$wid" -t $((desktop_number - 1))
 wmctrl -i -a "$wid"
 
-wait
-
-wmctrl -s "$previous_desktop"
+# wait
+# 
+# wmctrl -s "$previous_desktop"

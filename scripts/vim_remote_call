@@ -8,9 +8,11 @@
 # Could use syntax
 #     vim_remote_call win_execute "win_getid(1)" "quit" -e 1
 #     -e 1 indicating that argument 1 is an expression to place without quotation.
-#     (Or, could allow it to be always expressions. But then it would be needed to do:
+#     Or, could allow it to be always expressions. But then it would be needed to do:
 #         vim_remote_call chdir "$(vim_escape_string "$(pwd)")".
-#         Depends which one is more common to be the default.)
+#         Depends which one is more common to be the default.
+#     Or could a special prefix for string literals.
+#     vim_remote_call win_execute "win_getid(1)" %quit
 
 if [ $# -eq 0 ]
 then
