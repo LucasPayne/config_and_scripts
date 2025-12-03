@@ -1,0 +1,18 @@
+#!/bin/bash
+# vidbg: cycle video backgrounds
+
+pkill mpvbg
+vids="$(fd -tf -d1 . ~/drive/videos/vidbg)"
+num_vids="$(echo "$vids" | wc -l)"
+if [ ! -f /tmp/vidbgnumber ]
+then
+    echo 0 > /tmp/vidbgnumber
+else
+    n="$(cat /tmp/vidbgnumber)"
+    n="$(( ( n + 1 ) % num_vids ))"
+fi
+
+vid="$(echo "$vids" | sel $n)"
+
+echo "$vid"
+
