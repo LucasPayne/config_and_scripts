@@ -7,7 +7,7 @@ then
     exit 1
 fi
 
-pkg="$(dpkg -S "$(which "$1")" | cut -d: -f 1)"
+pkg="$(dpkg -S "$(realpath "$(which "$1")")" | cut -d: -f 1)"
 if [ $? -eq 0 ]
 then
     dpd "$pkg"
