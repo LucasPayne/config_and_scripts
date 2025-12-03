@@ -1,7 +1,6 @@
 #!/bin/bash
 # vidbg: cycle video backgrounds
 
-pkill mpvbg
 vids="$(fd -tf -d1 . ~/drive/videos/vidbg)"
 num_vids="$(echo "$vids" | wc -l)"
 if [ ! -f /tmp/vidbgnumber ]
@@ -10,9 +9,12 @@ then
 else
     n="$(cat /tmp/vidbgnumber)"
     n="$(( ( n + 1 ) % num_vids ))"
+    echo "$n" > /tmp/vidbgnumber
 fi
 
-vid="$(echo "$vids" | sel $n)"
+vid="$(echo "$vids" | sel $((n+1)))"
 
-echo "$vid"
+#todo: Don't kill all mpvs
+pkill '^mpv$'
 
+pid="$(d mpvbg --no-audio --video-zoom=0.15 "$vid")"

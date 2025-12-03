@@ -2,7 +2,7 @@
 # mpvbg: mpv as background player
 
 focus_wid="$(xdotool getwindowfocus)"
-mpv --loop "$@" &
+mpv --window-maximized=yes --loop "$@" &
 pid="$!"
 wid="$(xdotool search --sync --onlyvisible --pid "$pid")"
 echo "mpv pid: $pid"

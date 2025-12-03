@@ -1,3 +1,0 @@
-#!/bin/bash
-# mpv_mpvbg: rename of mpv so backgrounds can be pkilled
-exec mpv "$@"

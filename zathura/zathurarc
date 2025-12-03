@@ -17,6 +17,10 @@ set recolor true
 # White
 set recolor-darkcolor \#FFFFFF
 
+# Green light mode
+# set recolor-darkcolor \#000000
+# set recolor-lightcolor \#5DA193
+
 # Green
 #set recolor-darkcolor \#537A59
 

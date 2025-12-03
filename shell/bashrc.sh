@@ -253,10 +253,6 @@ catw ()
 # Small utilities
 #    ...
 #<<<
-# Select the n'th line of stdin.
-sel () {
-    sed "$1q;d"
-}
 
 # Split by : delimiter.
 splitc () {
