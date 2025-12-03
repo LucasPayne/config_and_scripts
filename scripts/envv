@@ -1,0 +1,3 @@
+#!/bin/bash
+# envv: Grep FOO=bar environment variables
+env | grep "$@"
