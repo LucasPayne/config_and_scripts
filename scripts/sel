@@ -1,0 +1,3 @@
+#!/bin/bash
+# sel: Select the n'th line of stdin.
+exec sed "$1q;d"
