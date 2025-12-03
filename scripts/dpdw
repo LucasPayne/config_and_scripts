@@ -1,0 +1,16 @@
+#!/bin/bash
+# dpdw: dpkg description for command
+
+if [ $# -ne 1 ]
+then
+    >&2 echo "Usage: dpdw [command]"
+    exit 1
+fi
+
+pkg="$(dpkg -S "$(which "$1")" | cut -d: -f 1)"
+if [ $? -eq 0 ]
+then
+    dpd "$pkg"
+else
+    >&2 echo "No package found for command"
+fi
