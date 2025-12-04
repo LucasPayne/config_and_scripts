@@ -1,0 +1,10 @@
+#!/bin/bash
+# pds: print dirspace
+
+if [ -v DIRSPACE_VIM_RUNTIME ]
+then
+    cat "$DIRSPACE_VIM_RUNTIME/dirspace_path"
+    exit 0
+else
+    exit 1
+fi
