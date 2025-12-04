@@ -562,6 +562,10 @@ cmd open_enter ${{
     then
         # vim_remote_call Lf_Edit "$f" "here" "$close"
         vim_remote_call Lf_Edit "$f" "tab" "$close"
+    elif [[ "$mim" =~ ^video/ ]]
+    then
+        # Video
+        mpv --no-border "$f"
     elif [ -d "$f" ]
     then
         if [ $close -eq 1 ]
