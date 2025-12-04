@@ -3125,6 +3125,15 @@ nnoremap <M-e><M-b> :.w !bash<cr>
 " Execute bash paragraph
 nnoremap <M-e><M-B> vip:.w !bash<cr>
 nnoremap <M-E><M-B> vip:.w !bash<cr>
+" Open file as html in web browser
+nnoremap <M-e><M-w> :!qutebrowser %<cr>
+function! OpenSelectedHTML()
+    let l:fname = "/tmp/vim_selected_html.html"
+    call writefile([string(@*)], l:fname)
+    call system("qutebrowser "..shellescape(l:fname))
+endfunction
+vnoremap <silent> <M-e><M-w> :<c-u>call OpenSelectedHTML()<cr>
+
 "------------------------------------------------------------
 
 "------------------------------------------------------------

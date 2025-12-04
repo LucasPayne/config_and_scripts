@@ -565,7 +565,13 @@ cmd open_enter ${{
     elif [[ "$mim" =~ ^video/ ]]
     then
         # Video
-        mpv --no-border "$f"
+        #subs="--sub-back-color=0/0/0 --sub-color=0.50/0.30/0.20"
+        subs="--sub-back-color=0.5/0.5/0.5 --sub-color=0/0/0"
+        d mpv --no-border $subs "$f"
+    elif [[ "$mim" =~ ^image/ ]]
+    then
+        # Image
+        d feh --borderless "$f"
     elif [ -d "$f" ]
     then
         if [ $close -eq 1 ]
