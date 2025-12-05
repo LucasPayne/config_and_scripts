@@ -3129,7 +3129,7 @@ nnoremap <M-E><M-B> vip:.w !bash<cr>
 nnoremap <silent> <M-e><M-w> :call job_start(["d", "qutebrowser", expand("%")])<cr>
 function! OpenSelectedHTML()
     let l:fname = "/tmp/vim_selected_html.html"
-    call writefile([string(@*)], l:fname)
+    call writefile(split(@*, '\n'), l:fname)
     call job_start(["d", "qutebrowser", l:fname])
 endfunction
 vnoremap <silent> <M-e><M-w> :<c-u>call OpenSelectedHTML()<cr>
