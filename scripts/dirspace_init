@@ -27,11 +27,6 @@ mkdir "$DIRSPACE_RUNTIME/vim"
 # These are symlinks for numbered bookmarks for open dirspaces, similar to tabs in vim.
 mkdir "$DIRSPACE_RUNTIME/slots"
 
-# Initialize empty status bar.
-STATUS_BAR="$DIRSPACE_RUNTIME/tabline_dirspace_status_bar"
-# It consists of one empty line.
-echo > "$STATUS_BAR"
-
 DIRSPACE_SESSION_ID=$(basename "$DIRSPACE_RUNTIME")
 DIRSPACE_SCREEN_ID=dirspace.$DIRSPACE_SESSION_ID
 
