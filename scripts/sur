@@ -1,0 +1,9 @@
+#!/bin/bash
+# sur:
+
+if date | grep -q " Dec "
+then
+    date | cutw 2 | xi echo "31 - {} + 15" | bc
+else
+    date | cutw 2 | xi echo "15 - {}" | bc
+fi
