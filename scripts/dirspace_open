@@ -36,6 +36,9 @@ then
     >&2 echo "A path must be given."
     exit 1
 fi
+# Expand leading ~ to home.
+arg_path="${arg_path/#\~/$HOME}"
+
 if [ ! -d "$arg_path" ]
 then
     >&2 echo "Not a directory: $arg_path"
@@ -87,5 +90,10 @@ vim_id="$(basename "$DIRSPACE_VIM_RUNTIME")"
 # (Vim has its own runtime files for implementing vim server, so vim_id is not necessarily unique.
 # It is only unique for this dirspace.)
 VIM_SERVERNAME="$DIRSPACE_SESSION_ID.$vim_id"
+
+# Return the vim servername.
+# This is useful for opening a dirspace then sending it commands,
+# like for schematics.
+echo "$VIM_SERVERNAME"
 
 screen -S "$DIRSPACE_SCREEN_ID" -X screen -t "$vim_id" ~/config/dirspace/dirspace_vim "$vim_id" "$dirspace_name" "$dirspace_path"
