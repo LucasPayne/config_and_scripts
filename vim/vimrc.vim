@@ -3969,6 +3969,6 @@ tnoremap <silent> <M-F> <C-w>:call Lf_Search(getcwd(-1))<cr>
 nnoremap <silent> <M-'> :!dirspace_fzf_favorites<cr><cr>
 tnoremap <silent> <M-'> <C-w>:!dirspace_fzf_favorites<cr><cr>
 "todo: Why does this mapping not work?
-nnoremap <silent> <M-"> :!dirspace_fzf_active<cr><cr>
-tnoremap <silent> <M-"> <C-w>:!dirspace_fzf_active<cr><cr>
+"nnoremap <silent> <M-"> :!dirspace_fzf_active<cr><cr>
+"tnoremap <silent> <M-"> <C-w>:!dirspace_fzf_active<cr><cr>
 

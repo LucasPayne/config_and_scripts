@@ -35,9 +35,14 @@ selected="$( (
         flag="${flags[$i]}"
         printf '%s\x1F%s\x1F--\x1F%s\n' "$flag" "$name" "$path"
     done
-) | column -t -s$'\x1F' | fzf )"
+) | column -t -s$'\x1F' | fzf --bind='alt-a:abort+execute(dirspace_fzf_active)')"
 
 if [ $? -ne 0 ]
+then
+    exit
+fi
+
+if [ -z "$selected" ]
 then
     exit
 fi

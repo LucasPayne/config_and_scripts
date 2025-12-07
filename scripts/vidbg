@@ -16,5 +16,6 @@ vid="$(echo "$vids" | sel $((n+1)))"
 
 #todo: Don't kill all mpvs
 pkill '^mpv$'
+pkill '^mpvbg$'
 
 pid="$(d mpvbg --no-audio --video-zoom=0.15 "$vid")"

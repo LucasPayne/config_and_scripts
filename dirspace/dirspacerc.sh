@@ -31,7 +31,7 @@ do
         cur_vim_servername="$(dirspace_open "$line")"
 
         # Give the dirspace some time to initialize.
-        sleep 1
+        sleep 0.5
     
         # Set the slot
         VIM_SERVERNAME="$cur_vim_servername" vim_remote_expr "SetDirspaceSlot($cur_slot)"
