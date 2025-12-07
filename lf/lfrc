@@ -492,6 +492,12 @@ cmd open &{{
     v "$f"
 }}
 
+# Run tig on file.
+# TODO: tig rendering is initially faulty.
+map <a-a> ${{
+    tig "$f"
+}}
+
 # Open a text file and go to the end.
 # map A &{{
 #     # Using -l because it is easy. Assuming the file is < 100000 lines long.
