@@ -32,6 +32,9 @@ then
     >&2 echo "A path must be given."
     exit 1
 fi
+# Expand leading ~ to home.
+arg_path="${arg_path/#\~/$HOME}"
+
 if [ ! -d "$arg_path" ]
 then
     >&2 echo "Not a directory: $arg_path"
