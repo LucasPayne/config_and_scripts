@@ -1,0 +1,3 @@
+#!/bin/bash
+# ppidsp: ppids piped to ps
+exec ppids | x ps
