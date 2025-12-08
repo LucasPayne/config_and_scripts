@@ -36,3 +36,4 @@
 @ ~/config/vim/repos/bufexplorer -- vim:bufexplorer
 ~/config/vim/repos/{} -- vim:{}
 ~/drive/dev/documentation/{} -- Docs:{capitalize}
+@ ~/drive/dev/browser -- WWW
