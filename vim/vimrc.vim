@@ -3830,13 +3830,26 @@ function! MainShell(...)
     endif
 endfunction
 
+function! MainShellCDToFile()
+    if &buftype != "" && &buftype != "help"
+        return MainShell()
+    endif
+    if !filereadable(expand('%:p'))
+        echo hii
+        return MainShell()
+    endif
+    return MainShell(expand("%:p:h"))
+endfunction
+
 nnoremap <silent> <M-c><M--> <cmd>call LowerShell()<cr>
 " Open a terminal in the current window.
 nnoremap <silent> <M-c><M-r> <cmd>call CurrentShell()<cr>
 " Open a terminal in a new tab.
 nnoremap <silent> <M-c><M-c> <cmd>call TabShell()<cr>
 " Go to the main shell.
-nnoremap <silent> <M-C> <cmd>call MainShell()<cr>
+"nnoremap <silent> <M-C> <cmd>call MainShell()<cr>
+" Go to the main shell and cd to directory of this file.
+nnoremap <silent> <M-C> <cmd>call MainShellCDToFile()<cr>
 
 function! Lf_LauncherTerm_CD(launcher_term, dir)
     let launcher_term = a:launcher_term
