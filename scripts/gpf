@@ -1,0 +1,3 @@
+#!/bin/bash
+# gpf: git force push
+exec git push -f
