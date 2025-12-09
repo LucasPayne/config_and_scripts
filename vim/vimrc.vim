@@ -3911,5 +3911,5 @@ tnoremap <silent> <M-'> <C-w>:!dirspace_fzf_favorites<cr><cr>
 
 " Open tig with current file.
 " Note: Why does it have to redraw? Doesn't vim use alternate screen?
-nnoremap <silent> <M-a> :silent !tig %<cr>:redraw!<cr>
+nnoremap <silent> <M-a> :silent !cd %:p:h ; tig %<cr>:redraw!<cr>
 
