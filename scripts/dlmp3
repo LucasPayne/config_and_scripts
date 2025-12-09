@@ -10,10 +10,38 @@ then
     exit 1
 fi
 
-if yt-dlp -f 233 "$url" -o "$name.mp4"
+formats="$(yt-dlp -F "$url" 2>/dev/null)"
+if [ $? -ne 0 ]
 then
-    ffmpeg -i "$name.mp4" -q:a 0 -map a "$name.mp3"
+    >&2 echo "error: yt-dlp failed to get formats."
+    exit 1
+fi
+format="$(echo "$formats" | grep " audio only " | tail -1 | cutw 1)"
+ext="$(echo "$formats" | grep " audio only " | tail -1 | cutw 2)"
+
+echo "format: $format"
+echo "extension: $ext"
+
+MUSIC_DOWNLOADS=~/Downloads/music
+if [ ! -d "$MUSIC_DOWNLOADS" ]
+then
+    mkdir -p "$MUSIC_DOWNLOADS"
+fi
+cd "$MUSIC_DOWNLOADS"
+
+echo "-----------"
+echo "DOWNLOADING"
+echo "-----------"
+if yt-dlp -f "$format" "$url" -o "$name.$ext"
+then
+    echo "-----------------"
+    echo "CONVERTING TO MP3"
+    echo "-----------------"
+    ffmpeg -i "$name.$ext" "$name.mp3"
+    rm "$name.$ext"
 else
-    >&2 echo "failed download"
+    >&2 echo "-----------------------------"
+    >&2 echo "error: yt-dlp failed download"
+    >&2 echo "-----------------------------"
     exit 1
 fi
