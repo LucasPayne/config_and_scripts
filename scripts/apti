@@ -1,0 +1,3 @@
+#!/bin/bash
+# apti: apt install
+sudo apt-get install "$@"
