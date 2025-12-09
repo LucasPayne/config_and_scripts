@@ -22,7 +22,7 @@ ext="$(echo "$formats" | grep " audio only " | tail -1 | cutw 2)"
 echo "format: $format"
 echo "extension: $ext"
 
-MUSIC_DOWNLOADS=~/Downloads/music
+MUSIC_DOWNLOADS=~/drive/music/_downloads
 if [ ! -d "$MUSIC_DOWNLOADS" ]
 then
     mkdir -p "$MUSIC_DOWNLOADS"
