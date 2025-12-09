@@ -1,10 +1,15 @@
 #!/bin/bash
 # indent: Prepend indentation to lines.
-if [ "$#" -ne 1 ]
+if [ "$#" -eq 0 ]
 then
+    # Default to one indent with no arguments.
+    n=1
+elif [ "$#" -eq 1 ]
+then
+    n="$1"
+else
     exit 1
 fi
 
-n="$1"
 spaces="$(printf ' %.0s' $(seq 1 $((4*n))))"
 sed "s/^/$spaces/"
