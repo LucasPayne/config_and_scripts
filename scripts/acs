@@ -1,2 +1,22 @@
 #!/bin/sh
-exec apt-cache search "$@"
+# acs: Search apt with grep patterns, uses caching.
+
+if [ $# -gt 1 ] && [ "$1" = "-r" ]
+then
+    # Clear cache
+    rm /tmp/apt-cache-search
+    shift
+fi
+if [ $# -eq 0 ]
+then
+    exit 0
+fi
+
+if [ ! -f /tmp/apt-cache-search ]
+then
+    # Recalculate cache
+    apt-cache search . > /tmp/apt-cache-search
+fi
+
+# Search
+cat /tmp/apt-cache-search | grep "$@"

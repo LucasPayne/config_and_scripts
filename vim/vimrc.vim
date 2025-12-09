@@ -3835,7 +3835,6 @@ function! MainShellCDToFile()
         return MainShell()
     endif
     if !filereadable(expand('%:p'))
-        echo hii
         return MainShell()
     endif
     return MainShell(expand("%:p:h"))

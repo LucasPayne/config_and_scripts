@@ -27,6 +27,8 @@ opt_quickfix=0
 opt_arglist=0
 # option: Regardless of other options, prevent opening files.
 opt_no_open=0
+# option: Files are urls, use curl.
+opt_open_urls=0
 
 files_json="[]"
 add_file()
@@ -90,12 +92,23 @@ do
         opt_no_open=1
         shift
         ;;
+    -u|--url)
+        opt_open_urls=1
+        shift
+        ;;
     *)
         add_file "$1" 1 ""
         shift
         ;;
     esac
 done
+
+# Handle incompatible flags
+if [ $opt_open_urls -eq 1 ] && [ $opt_open_scripts -eq 1 ]
+then
+    >&2 echo "error: Cannot use -s/--script and -u/--url simultaneously."
+    exit 1
+fi
 
 #debug
 # if false
@@ -157,17 +170,39 @@ fi
 # Determine the paths to be communicated to vim.
 while IFS=$'\t' read -r file line path index
 do
-    if [[ $opt_open_scripts -eq 1 ]]
+    if [ $opt_open_scripts -eq 1 ]
     then
         # Each "file" is actually a command name.
         # Attempt to find a corresponding script file for the command.
         path="$(which "$file")"
-        if [[ $? -ne 0 ]]
+        if [ $? -eq 0 ]
         then
-            path=""
-        else
             # Just in case, possibly not needed.
             path="$(realpath "$path")"
+        else
+            path=""
+        fi
+    elif [ $opt_open_urls -eq 1 ]
+    then
+        # Each "file" is actually a url.
+        # Attempt to curl each url.
+        mkdir -p /tmp/vim_tmp_curl >/dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+            tmp="$(mktemp --tmpdir=/tmp/vim_tmp_curl XXXX)"
+            curl_output="$(curl -L "$file" 2>/dev/null)"
+            if [ $? -eq 0 ]
+            then
+                echo "$curl_output" > "$tmp"
+                path="$tmp"
+            else
+                rm "$tmp"
+                path=""
+            fi
+        else
+            # Note: This error handling is just to be very careful with
+            # removing tmp files in case they aren't made.
+            path=""
         fi
     else
         # Use the full file path. This means no matter what directory vim is working in,
