@@ -1,0 +1,3 @@
+#!/bin/bash
+# clb: calibredb
+exec calibredb "$@"
