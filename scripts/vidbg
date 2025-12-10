@@ -18,4 +18,4 @@ vid="$(echo "$vids" | sel $((n+1)))"
 pkill '^mpv$'
 pkill '^mpvbg$'
 
-pid="$(d mpvbg --no-audio --video-zoom=0.15 "$vid")"
+pid="$(d mpvbg --mute=yes --video-zoom=0.15 "$vid")"

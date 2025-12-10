@@ -1,3 +1,6 @@
 #!/bin/bash
 # mltermd: mlterm config
-exec mlterm --deffont="Lora:style=Regular" --fontsize=40 --wscr=20
+
+pid=$(d mlterm --sbmod=none --borderless --deffont="Lora:style=Regular" --fontsize=40 --wscr=20)
+wid=$(waitwindow "$pid")
+xwiopacity 65 $wid

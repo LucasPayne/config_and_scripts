@@ -18,6 +18,7 @@
 
 @ ~/notes/notes.d -- Notes
 @ ~/config -- Config
+@ ~/code -- code
 @ ~/drive/videos -- Videos
 @ ~/drive/images -- Images
 @ ~/drive/music -- Music
