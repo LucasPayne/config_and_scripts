@@ -1,0 +1,3 @@
+#!/bin/bash
+# mltermd: mlterm config
+exec mlterm --deffont="Lora:style=Regular" --fontsize=40 --wscr=20
