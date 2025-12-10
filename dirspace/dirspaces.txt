@@ -26,6 +26,7 @@
 @ ~/drive/dev/computer -- Computer
 @ ~/drive/dev/documentation -- Docs
 @ ~/drive/dev/films -- Films
+@ ~/drive/dev/games -- Games
 @ ~/drive/dev/reading -- Reading
 @ ~/drive/dev/magic_the_gathering -- Magic
 @ ~/drive/dev/person -- Person
