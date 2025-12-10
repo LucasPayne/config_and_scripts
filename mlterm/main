@@ -1,0 +1,14 @@
+### Colors
+fg_color=rgb:ff/ba/00        # amber
+bg_color=rgb:00/00/00        # black
+
+### Font
+# font=DejaVu Serif:style=Book
+# font_size=30
+# 
+
+use_variable_column_width = true
+use_anti_alias = true
+# screen_width_ratio = percentage
+
+

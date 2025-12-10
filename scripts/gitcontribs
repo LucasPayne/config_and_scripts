@@ -1,0 +1,5 @@
+#!/bin/bash
+# gitcontribs: list top contributors of a single git branch.
+# note: Doesn't account for someone using different names.
+
+git log --pretty=format:"%an" | sort | uniq -c | sort -n
