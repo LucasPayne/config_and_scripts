@@ -1,15 +1,21 @@
 #!/bin/bash
-# emailkindle Email to kindle.
+# emailkindle: Email to kindle.
 #
 # Notes
 #     Currently only through gmail relay using app password.
 #     Currently only pdf and epub.
+#     Uses calibre-smtp.
+#         Is this necessary? I suppose it is just bundled in calibre for convenience.
 # Todo
 #     - Should there be a delay between emails?
 #         Google might limit it for spam.
 #     - Automatic conversion?
 #     - Use Calibre library?
-#         Create a kindle format automatically and send from there.
+#        Create a kindle format automatically and send from there.
+#     - What is the correct port?
+#        https://en.wikipedia.org/wiki/Well-known_ports
+#            587 Email Message Submission (No longer preferred; see port 465.)
+#            465 Message Submission over TLS protocol
 
 if [ $# -eq 0 ]
 then

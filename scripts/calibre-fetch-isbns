@@ -1,5 +1,8 @@
 #!/bin/bash
 # calibre-fetch-isbns:
+#
+# todo
+#     - Don't override other identifiers.
 
 # Determine ids of books without isbns.
 books="$(calibredb list --fields isbn,title,authors --for-machine | jq '[.[] | select(.isbn == "")]')"
@@ -15,7 +18,7 @@ do
     if [ $? -eq 0 ]
     then
         echo "Retrieved $isbn"
-        calibredb set_metadata "$id" --fields isbn:"$isbn"
+        calibredb set_metadata "$id" --field identifiers:"isbn:$isbn"
         if [ $? -eq 0 ]
         then
             echo "Updated isbn."

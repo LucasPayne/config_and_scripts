@@ -15,9 +15,7 @@
     videos.ns
 ~/drive/music
     music.ns
-    music_tech.ns
 ~/drive/dev/films
     films.ns
 ~/drive/dev/reading
     reading.ns
-    reading_tech.ns
