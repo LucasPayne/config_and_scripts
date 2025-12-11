@@ -1,0 +1,18 @@
+#!/bin/bash
+# vidwh: video width and height
+
+set -o pipefail
+
+[ $# -eq 1 ] || exit 1
+
+if [[ "$1" =~ ^https:// ]]
+then
+    wh="$(yt-dlp -F "$1" 2>/dev/null | tail -1 | cutw 3 | tr x ' ')"
+    [ $? -eq 0 ] || exit 1
+    echo "$wh" | tr 'x' ' '
+else
+    [ -f "$1"  ] || exit 1
+    ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$1" | tr ',' ' '
+    [ $? -eq 0 ] || exit 1
+fi
+

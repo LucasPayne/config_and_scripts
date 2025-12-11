@@ -1,0 +1,51 @@
+#!/bin/bash
+# vidbr: play video sticky at bottom right
+debug=0
+max_width_percentage=40
+max_height_percentage=60
+
+set -e
+
+[ $# -eq 1 ] || exit 1
+vid="$1"
+
+read -r vw vh < <(vidwh "$vid")
+
+if [ $debug -eq 1 ]
+then
+    echo "vw: $vw"
+    echo "vh: $vh"
+fi
+
+read -r mw mh mx my < <(xrandr --query | grep " connected " | grep -oP '\d+x\d+\+\d+\+\d+' | tr '[x+]' ' ')
+
+ww=$(( ( max_width_percentage * mw ) / 100 ))
+wh=$(( ( vh * ww ) / vw ))
+if [ $(( 100 * wh )) -gt $(( max_height_percentage * mh )) ]
+then
+    wh=$(( ( max_height_percentage * mh ) / 100 ))
+    ww=$(( ( vw * wh ) / vh ))
+fi
+
+wx=$(( mx + mw - ww ))
+wy=$(( my + mh - wh ))
+
+if [ $debug -eq 1 ]
+then
+    echo mw: $mw
+    echo mh: $mh
+    echo mx: $mx
+    echo my: $my
+    echo ww: $ww
+    echo wh: $wh
+    echo wx: $wx
+    echo wy: $wy
+fi
+
+pid=$(d mpv --no-border --ontop --geometry=${ww}x${wh}+${wx}+${wy} "$vid")
+wid=$(waitwindow "$pid")
+
+# This is unstickying?
+# xdotool windowmove $wid $wx $wy
+
+xwisticky $wid
