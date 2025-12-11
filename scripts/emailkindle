@@ -1,9 +1,15 @@
 #!/bin/bash
-# emailkindle:
-# Email epubs to kindle.
+# emailkindle Email to kindle.
 #
 # Notes
-#     Currently only through gmail relay.
+#     Currently only through gmail relay using app password.
+#     Currently only pdf and epub.
+# Todo
+#     - Should there be a delay between emails?
+#         Google might limit it for spam.
+#     - Automatic conversion?
+#     - Use Calibre library?
+#         Create a kindle format automatically and send from there.
 
 if [ $# -eq 0 ]
 then
@@ -19,9 +25,10 @@ do
         exit 1
     fi
     mime="$(mimetype -b "$arg")"
-    if ! [ "$mime" = "application/epub+zip" ]
+    if     ! [ "$mime" = "application/epub+zip" ] \
+        && ! [ "$mime" = "application/pdf" ]
     then
-        >&2 echo "error: $arg is not an epub."
+        >&2 echo "error: $arg is not a valid filetype."
         exit 1
     fi
 done
@@ -50,6 +57,8 @@ then
     echo "Reading google app password from $kindle_config_dir/google_app_password"
     PASS="$(cat "$kindle_config_dir/google_app_password")"
 else
+    echo "Entering app password manually"
+    echo "(To skip this, save the app password at $kindle_config_dir/google_app_password)"
     read -s -p "app password: " PASS
     echo
 fi
@@ -80,7 +89,6 @@ do
         echo "Success: $file"
     else
         echo "Error: $file"
-        exit 1
     fi
 done
 
