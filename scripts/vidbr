@@ -52,9 +52,10 @@ wid=$(waitwindow "$pid")
 # This is unstickying?
 # xdotool windowmove $wid $wx $wy
 
-xwisticky $wid
-
 # Opacity on mouse hover.
 xdotool behave $wid mouse-enter exec sh -c "xwiopacity 20 $wid" & disown
 xdotool behave $wid mouse-leave exec sh -c "xwiopacity 100 $wid" & disown
 xdotool behave $wid focus exec sh -c "xwiopacity 100 $wid" & disown
+
+sleep 2
+xwisticky $wid
