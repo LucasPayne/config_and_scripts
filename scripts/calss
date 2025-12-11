@@ -1,0 +1,3 @@
+#!/bin/bash
+# calss: calibredb pretty search
+exec calibredb list --for-machine --fields id,authors,title,formats --search "$@"

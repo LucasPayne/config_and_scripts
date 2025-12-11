@@ -1,0 +1,23 @@
+~/test
+~/code
+@~/notes/notes.d
+    computer.ns
+~/drive/dev/computer/twim
+    twim.ns
+~/config
+    vim/vimrc.vim
+    dirspace/schematics/schematic.txt
+    dirspace/dirspaces.txt
+~/drive/dev/documentation
+~/drive/dev/browser
+    browser.ns
+~/drive/videos
+    videos.ns
+~/drive/music
+    music.ns
+    music_tech.ns
+~/drive/dev/films
+    films.ns
+~/drive/dev/reading
+    reading.ns
+    reading_tech.ns

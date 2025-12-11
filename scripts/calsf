@@ -1,0 +1,11 @@
+#!/bin/bash
+# calsf: calibredb search for format
+
+[ $# -eq 2 ] || exit 1
+
+extension="$1"
+search="$2"
+
+calibredb list --for-machine --fields formats --search "$search" \
+    | jq -r '.[] | .formats | .[]' \
+    | grep -E "\.$extension\$"
