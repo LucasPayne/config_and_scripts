@@ -1,0 +1,67 @@
+#!/bin/bash
+# emailkindle:
+# Email epubs to kindle.
+#
+# Notes
+#     Currently only through gmail relay.
+
+if [ $# -eq 0 ]
+then
+    >&2 echo "give good args"
+    exit 1
+fi
+
+for arg in "$@"
+do
+    if [ ! -f "$arg" ]
+    then
+        >&2 echo "error: $arg is not a file."
+        exit 1
+    fi
+    mime="$(mimetype -b "$arg")"
+    if ! [ "$mime" = "application/epub+zip" ]
+    then
+        >&2 echo "error: $arg is not an epub."
+        exit 1
+    fi
+done
+
+kindle_config_dir=~/.config/config_hidden/kindle
+
+if [ ! -f "$kindle_config_dir/from_address" ]
+then
+    >&2 echo "error: Need to store relay address in $kindle_config_dir/from_address"
+    exit 1
+fi
+ADDRESS="$(cat "$kindle_config_dir/from_address")"
+
+if [ ! -f "$kindle_config_dir/kindle_address" ]
+then
+    >&2 echo "error: Need to store kindle address in $kindle_config_dir/kindle_address"
+    exit 1
+fi
+KINDLE_ADDRESS="$(cat "$kindle_config_dir/kindle_address")"
+
+echo "from: $ADDRESS"
+echo "to: $KINDLE_ADDRESS"
+
+read -s -p "password: " PASS
+
+for file in "$@"
+do
+    calibre-smtp --relay smtp.gmail.com \
+                 --port 465 \
+                 --username "$ADDRESS"
+                 --password "$PASS" \
+                 --attachment "$FILE" \
+                 "book" \
+                 "$KINDLE_ADDRESS"
+    if [ $? -eq 0 ]
+    then
+        echo "Success: $file"
+    else
+        echo "Error: $file"
+        exit 1
+    fi
+done
+
