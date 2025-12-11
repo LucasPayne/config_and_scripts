@@ -1,0 +1,28 @@
+#!/bin/bash
+# calibre-fetch-isbns:
+
+# Determine ids of books without isbns.
+books="$(calibredb list --fields isbn,title,authors --for-machine | jq '[.[] | select(.isbn == "")]')"
+
+while read -r book
+do
+    id="$(jq -r '.id' <<< "$book")"
+    title="$(jq -r '.title' <<< "$book")"
+    authors="$(jq -r '.authors' <<< "$book")"
+
+    echo "Detected missing isbn: $id: $title - $authors"
+    isbn=$(fetch-ebook-isbn --title="$title" --authors="$authors")
+    if [ $? -eq 0 ]
+    then
+        echo "Retrieved $isbn"
+        calibredb set_metadata "$id" --fields isbn:"$isbn"
+        if [ $? -eq 0 ]
+        then
+            echo "Updated isbn."
+        else
+            echo "set_metadata failed."
+        fi
+    else
+        echo "Failed to retrieve isbn."
+    fi
+done < <(jq '.[]' -c <<< "$books")
