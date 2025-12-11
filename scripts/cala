@@ -1,0 +1,3 @@
+#!/bin/bash
+# cala: calibredb add
+exec calibredb add "$@"
