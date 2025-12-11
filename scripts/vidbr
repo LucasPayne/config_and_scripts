@@ -1,5 +1,9 @@
 #!/bin/bash
 # vidbr: play video sticky at bottom right
+#
+# todo
+#     Properly have xdotool-behave die when mpv dies.
+
 debug=0
 max_width_percentage=40
 max_height_percentage=60
@@ -49,3 +53,8 @@ wid=$(waitwindow "$pid")
 # xdotool windowmove $wid $wx $wy
 
 xwisticky $wid
+
+# Opacity on mouse hover.
+xdotool behave $wid mouse-enter exec sh -c "xwiopacity 20 $wid" & disown
+xdotool behave $wid mouse-leave exec sh -c "xwiopacity 100 $wid" & disown
+xdotool behave $wid focus exec sh -c "xwiopacity 100 $wid" & disown
