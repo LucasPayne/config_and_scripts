@@ -4,27 +4,10 @@
 name="$1"
 search="$2"
 
-calibre_link="$(tmpfile --tmpdir=~/drive/books/links XXXX)"
+calibre_link="$(mktemp --tmpdir="$HOME/drive/books/links" XXXX)"
 
 echo "$search" >> "${calibre_link}.search"
 
 ln -s "$calibre_link" "$name"
 
 calibre-calculate-links
-
-ids="$(calibredb search "$search" 2>/dev/null)"
-if [ $? -ne 0 ]
-then
-    >&2 echo "error: Calibre search failed"
-    exit 1
-fi
-
-id="$(echo "$ids" | tr ',' ' ' | cutw 1)"
-
-calibredb list --fields author show_metadata $id
-
-exit 
-
-tmp="$(tmpfile --tmpdir=~/drive/books/links XXXX)"
-
-

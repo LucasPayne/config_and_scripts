@@ -1,0 +1,18 @@
+#!/bin/bash
+# calibre-calculate-links:
+
+cd ~/drive/books/links
+
+while read -r search_file
+do
+    link=${search_file%.search}
+
+    search_string="$(cat "$search_file")"
+
+    results="$(calibredb list --for-machine --fields id,formats --search "$search_string" 2>/dev/null)"
+    [ $? -eq 0 ] || continue
+    result="$(echo "$results" | jq -c '.[]' | head -1)"
+    file="$(echo "$result" | jq -r '.formats[0]')"
+
+    ln -s -f "$file" "$link"
+done < <(fd -esearch)
