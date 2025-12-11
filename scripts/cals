@@ -1,0 +1,3 @@
+#!/bin/bash
+# cals: calibredb list
+exec calibredb list "$@"
