@@ -1,0 +1,25 @@
+#!/bin/bash
+# calibre-calculate-years:
+# Try find year of first publication and set the "year" custom column.
+
+isbns="$(calibredb list --fields isbn,*year --for-machine \
+    | jq -r '.[] | select(.isbn != "") | select(has("*year") | not) | "\(.id) \(.isbn)"')"
+
+while read -r id isbn
+do
+    work="$(wget -q -O - https://openlibrary.org/isbn/$isbn.json \
+                         | jq -r '."works"[0].key')"
+
+    year="$(wget -q -O - "https://openlibrary.org${work}/editions.json?limit=100" \
+                | jq -r '.entries[] | .publish_date' \
+                | sed -n 's/.*\([0-9][0-9][0-9][0-9]\).*/\1/p' \
+                | sort -n \
+                | head -1)"
+
+    if ! [ -z "$year" ]
+    then
+        echo "$id"
+        echo "year: $year"
+        calibredb set_metadata $id --field "#year:$year"
+    fi
+done <<< "$isbns"
