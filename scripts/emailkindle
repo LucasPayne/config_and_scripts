@@ -45,17 +45,36 @@ KINDLE_ADDRESS="$(cat "$kindle_config_dir/kindle_address")"
 echo "from: $ADDRESS"
 echo "to: $KINDLE_ADDRESS"
 
-read -s -p "password: " PASS
+if [ -f "$kindle_config_dir/google_app_password" ]
+then
+    echo "Reading google app password from $kindle_config_dir/google_app_password"
+    PASS="$(cat "$kindle_config_dir/google_app_password")"
+else
+    read -s -p "app password: " PASS
+    echo
+fi
 
+if [ "${#PASS}" -ne 16 ]
+then
+    >&2 echo "error: app password must be 16 characters"
+    exit 1
+fi
+
+echo "Sending books..."
+# PORT=465
+PORT=587
 for file in "$@"
 do
     calibre-smtp --relay smtp.gmail.com \
-                 --port 465 \
-                 --username "$ADDRESS"
+                 --port "$PORT" \
+                 --encryption-method TLS \
+                 --username "$ADDRESS" \
                  --password "$PASS" \
-                 --attachment "$FILE" \
-                 "book" \
-                 "$KINDLE_ADDRESS"
+                 --attachment "$file" \
+                 --subject "book" \
+                 "$ADDRESS" \
+                 "$KINDLE_ADDRESS" \
+                 "book"
     if [ $? -eq 0 ]
     then
         echo "Success: $file"
