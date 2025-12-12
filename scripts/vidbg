@@ -5,11 +5,13 @@
 mode=dmenu
 
 vids="$(fd -tf -d1 . ~/drive/videos/vidbg)"
+num_vids="$(echo "$vids" | wc -l)"
+
+dmenu_config="-i -l $num_vids -nb #1E1E1E -nf #E8DF9B -sb #3E3E3E -sf #FFFFFF -fn Lora-22"
 
 # Cycle through videos
 if [ "$mode" = "cycle" ]
 then
-    num_vids="$(echo "$vids" | wc -l)"
     if [ ! -f /tmp/vidbgnumber ]
     then
         echo 0 > /tmp/vidbgnumber
@@ -18,15 +20,42 @@ then
         n="$(( ( n + 1 ) % num_vids ))"
         echo "$n" > /tmp/vidbgnumber
     fi
-    vid="$(echo "$vids" | sel $((n+1)))"
+    select_vid="$(echo "$vids" | sel $((n+1)))"
 elif [ "$mode" = "dmenu" ]
 then
-    vid="$(echo "$vids" | xi basename {} | dmenu)"
-    if [ -z "$vid" ]
+
+    vid_labels=()
+    while read -r vid
+    do
+        label="$(basename "$vid")"
+        label="${label%.*}"
+
+        label="$(echo "$label" | tr '_' ' ')"
+        label="$( for word in $label
+        do
+            word=${word^}
+            printf '%s ' $word
+        done )"
+
+        vid_labels+=("$label")
+    done <<< "$vids"
+
+    select_label="$(printf '%s\n' "${vid_labels[@]}" | dmenu $dmenu_config)"
+
+    if [ -z "$select_label" ]
     then
         exit
     fi
-    vid=~/drive/videos/vidbg/"$vid"
+    idx=0
+    for i in ${!vid_labels[@]}
+    do
+       if [[ "${vid_labels[$i]}" = "${select_label}" ]]
+       then
+           idx=$i
+           break
+       fi
+    done
+    select_vid="$(echo "$vids" | sel $((idx + 1)))"
 else 
     exit 1
 fi
@@ -36,4 +65,4 @@ fi
 pkill '^mpv$'
 pkill '^mpvbg$'
 
-pid="$(d mpvbg --mute=yes --video-zoom=0.15 "$vid")"
+pid="$(d mpvbg --mute=yes --video-zoom=0.15 "$select_vid")"
