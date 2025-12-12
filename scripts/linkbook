@@ -1,8 +1,28 @@
 #!/bin/bash
-# linkbook:
+# linkbook: Create a link to a book managed by calibre.
+#
+# Calibre does not have persistent paths to books,
+# since the library location can change, and calibre writes (ID) in paths.
+# This tool creates a symlink to a managed symlink
+# which can be recalculated to point to the right book.
+# 
+# Notes
+#     The given search string should be sufficient enough to
+#     uniquely identify the linked book.
 
+if [ $# -ne 2 ]
+then
+    >&2 echo "usage: linkbook <name> <search>"
+    exit 1
+fi
 name="$1"
 search="$2"
+
+# Use . for the search to reuse the name argument.
+if [[ "$search" = "." ]]
+then
+    search="$name"
+fi
 
 calibre_link="$(mktemp --tmpdir="$HOME/drive/books/links" XXXX)"
 
