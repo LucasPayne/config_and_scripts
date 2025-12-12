@@ -5,16 +5,39 @@ lines="$(cat ~/config/dirspace/dirspaces.txt | grep '^@ ' | sed 's/^@ //')"
 mapfile -t paths < <(echo "$lines" | awk -F" -- " '{print $1}' | sed 's/^~/\/home\/lucas/')
 mapfile -t names < <(echo "$lines" | awk -F" -- " '{print $2}')
 mapfile -t flags < <(echo "$lines" | sed 's/^.*$/ /')
+mapfile -t slots < <(echo "$lines" | sed 's/^.*$/ /')
+
+slot_dirspace_paths="$(fd -d1 . "$DIRSPACE_RUNTIME/slots" | sort -n | xi cat {}/dirspace_path)"
+
+get_slot_string ()
+{
+    local idx=1
+    while read -r path
+    do
+        # >&2 echo $path == $1
+        if [ "$1" = "$path" ]
+        then
+            echo $idx
+            return 0
+        fi
+        ((idx++))
+    done < <(echo "$slot_dirspace_paths")
+    echo " "
+}
 
 while read -r dir
 do
     path="$(cat "$dir/dirspace_path")"
+
+    slot="$(get_slot_string "$path")"
+
     skip=0
     for (( i=0 ; i < ${#paths[@]} ; i++ ))
     do
         if [ "$path" = "${paths[$i]}" ]
         then
             flags[$i]="*"
+            slots[$i]="$slot"
             skip=1
             break
         fi
@@ -24,6 +47,7 @@ do
     paths+=("$path")
     names+=("$name")
     flags+=("*")
+    slots+=("$slot")
 done < <(fd -td -d1 . "$DIRSPACE_RUNTIME/vim")
 
 selected="$( (
@@ -33,9 +57,10 @@ selected="$( (
         path="${paths[$i]}"
         path="${path/#\~/$HOME}"
         flag="${flags[$i]}"
-        printf '%s\x1F%s\x1F--\x1F%s\n' "$flag" "$name" "$path"
+        slot="${slots[$i]}"
+        printf '%s\x1F%s\x1F%s\x1F--\x1F%s\n' "$slot" "$flag" "$name" "$path"
     done
-) | column -t -s$'\x1F' | fzf --bind='alt-a:abort+execute(dirspace_fzf_active)')"
+) | column -t -s$'\x1F' | sort -n | tac | fzf --bind='alt-a:abort+execute(dirspace_fzf_active)')"
 
 if [ $? -ne 0 ]
 then
