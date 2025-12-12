@@ -24,9 +24,15 @@ export PATH="$PATH:$CONFIG_DIR/scripts"
 export PATH="$PATH:$NOTES_REPO_DIR:$PATH"
 export PATH="$PATH:$(realpath ~/.local/bin)"
 # Rust packages
-export PATH="$PATH:$(realpath ~/.cargo/bin)"
+if [ -d ~/.cargo/bin ]
+then
+    export PATH="$PATH:$(realpath ~/.cargo/bin)"
+fi
 # Go packages
-export PATH="$PATH:$(realpath ~/go/bin)"
+if [ -d ~/go/bin ]
+then
+    export PATH="$PATH:$(realpath ~/go/bin)"
+fi
 
 # dpkg
 # Disable paging
