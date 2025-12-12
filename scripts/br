@@ -5,7 +5,19 @@ then
     >&2 echo "usage: br 0.7"
     exit 1
 fi
+
 level="$1"
-xrandr \
-    --output DP-0 \
-    --brightness "$level"
+
+if ! [[ $level =~ ^[[:digit:]]+\.?[[:digit:]]+$ ]]
+then
+    >&2 echo "invalid brightness level: $level"
+    exit 1
+fi
+
+#TODO: Detect tool.
+# xrandr \
+#     --output DP-0 \
+#     --brightness "$level"
+
+percentage="$(echo "( $level * 100 ) / 1" | bc)"
+sudo brightnessctl set $percentage%
