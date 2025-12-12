@@ -8,7 +8,7 @@ fi
 
 level="$1"
 
-if ! [[ $level =~ ^[[:digit:]]+\.?[[:digit:]]+$ ]]
+if ! [[ $level =~ ^[[:digit:]]+(\.[[:digit:]]+)?$ ]]
 then
     >&2 echo "invalid brightness level: $level"
     exit 1
