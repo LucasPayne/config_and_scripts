@@ -36,7 +36,7 @@ do
     do
         if [ "$path" = "${paths[$i]}" ]
         then
-            flags[$i]="x"
+            flags[$i]="o"
             slots[$i]="$slot"
             skip=1
             break
@@ -46,7 +46,7 @@ do
     name="$(cat "$dir/dirspace_name")"
     paths+=("$path")
     names+=("$name")
-    flags+=("x")
+    flags+=("o")
     slots+=("$slot")
 done < <(fd -td -d1 . "$DIRSPACE_RUNTIME/vim")
 
