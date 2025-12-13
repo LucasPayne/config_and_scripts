@@ -1074,14 +1074,28 @@ ins () {
 # See https://github.com/kovidgoyal/kitty/issues/1113
 scroll_and_clear()
 {
-    seq 2 "$(tput lines)" | sed 's/^.*$//'
-    printf '\e[H'
-    printf '\e[2J'
-    # Note: For some reason when the cursor moves, bash only redraws the last line of the prompt string.
-    #       So, explicitly draw the first line in the 2-line prompt using bash 4.4 @P expansion.
-    # Bash 4.4 @P expansion
-    # https://stackoverflow.com/questions/22322879/how-to-print-current-bash-prompt#56267057
-    echo "${PS1_HEAD@P}"
+    # Kitty has its own escape code for this now.
+    # I suppose it might be faster.
+    # https://sw.kovidgoyal.net/kitty/misc-protocol/#an-escape-code-to-move-the-contents-of-the-screen-into-the-scrollback
+    if [[ "$TERM" = *-kitty* ]]
+    then
+        printf '\e[H\e[22J'
+        # Recreate two-line prompt.
+        scroll_pan_up
+        printf '\e[H\e[2J'
+        echo "${PS1_HEAD@P}"
+    else
+        # Do it manually (all terminals).
+
+        seq 2 "$(tput lines)" | sed 's/^.*$//'
+        printf '\e[H'
+        printf '\e[2J'
+        # Note: For some reason when the cursor moves, bash only redraws the last line of the prompt string.
+        #       So, explicitly draw the first line in the 2-line prompt using bash 4.4 @P expansion.
+        # Bash 4.4 @P expansion
+        # https://stackoverflow.com/questions/22322879/how-to-print-current-bash-prompt#56267057
+        echo "${PS1_HEAD@P}"
+    fi
 }
 bind -x '"\C-l":scroll_and_clear'
 
@@ -1130,6 +1144,7 @@ scroll_pan_down ()
         printf '\e[1A'
     fi
 }
+bind -x '"\C-y":scroll_pan_up'
 bind -x '"\C-e":scroll_pan_down'
 
 
