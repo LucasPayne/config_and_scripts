@@ -1,0 +1,4 @@
+#!/bin/bash
+# clsc: clear scroll
+
+printf '\e[3J'
