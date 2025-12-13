@@ -1070,4 +1070,13 @@ ins () {
 }
 #>>>
 
+# Scrolling
+# See https://github.com/kovidgoyal/kitty/issues/1113
+scroll_and_clear()
+{
+    seq 2 "$(tput lines)" | sed 's/^.*$//'
+    printf '\e[H\e[2J'
+}
+bind -x '"\C-l":scroll_and_clear'
+
 source ~/.bash_aliases
