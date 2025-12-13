@@ -1,0 +1,4 @@
+#!/bin/bash
+# aptr: apt remove
+
+apt remove "$@"
