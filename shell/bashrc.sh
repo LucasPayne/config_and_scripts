@@ -900,8 +900,8 @@ vi_bind '"\ez": "\C-ufg-next\n"'
 #    ...
 #<<<
 
-PS1=''
-PS1=$PS1'\[\033[01;32m\]\u@\h\[\033[00m\]$(prompt)\n\$ '
+PS1_HEAD='\[\033[01;32m\]\u@\h\[\033[00m\]$(prompt)'
+PS1=$PS1_HEAD'\n\$ '
 #>>>
 
 # Job control
@@ -1075,7 +1075,13 @@ ins () {
 scroll_and_clear()
 {
     seq 2 "$(tput lines)" | sed 's/^.*$//'
-    printf '\e[H\e[2J'
+    printf '\e[H'
+    printf '\e[2J'
+    # Note: For some reason when the cursor moves, bash only redraws the last line of the prompt string.
+    #       So, explicitly draw the first line in the 2-line prompt using bash 4.4 @P expansion.
+    # Bash 4.4 @P expansion
+    # https://stackoverflow.com/questions/22322879/how-to-print-current-bash-prompt#56267057
+    echo "${PS1_HEAD@P}"
 }
 bind -x '"\C-l":scroll_and_clear'
 
