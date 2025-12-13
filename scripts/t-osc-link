@@ -1,0 +1,16 @@
+#!/bin/bash
+# t-osc-link: OSC 8 hyperlink writer
+# This creates a single hyperlink contiguously, e.g. to be displayed in shell output.
+
+if [ $# -ne 2 ]
+then
+    >&2 "usage: t-osc-link <target> <linkname>"
+    exit 1
+fi
+
+target="$1"
+linkname="$2"
+
+t-osc 8 "" "$target"
+printf '%s' "$linkname"
+t-osc 8 "" ""
