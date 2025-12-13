@@ -16,6 +16,8 @@
 
 @ ~/drive/dev/computer/twim -- twim
 
+@ ~/Downloads -- Downloads
+
 @ ~/notes/notes.d -- Notes
 @ ~/config -- Config
 @ ~/code -- code

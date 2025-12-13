@@ -15,7 +15,7 @@ alias .sb="source ~/.bashrc"
 alias sudoo='sudo env PATH=$PATH'
 alias stracee='strace 2>&1'
 alias gdb='gdb -q'
-alias ls="ls --color=auto -1"
+alias ls="ls --color=auto -1 --hyperlink=auto"
 alias vless="~/.vim/macros/less.sh"
 alias grep='grep --color=auto'
 alias k9='kill -9'

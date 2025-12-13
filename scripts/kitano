@@ -1,0 +1,4 @@
+#!/bin/bash
+# kitano: play office kitano jingle
+
+d mpv ~/config/sounds/office_kitano.mp3 >/dev/null 2>&1
