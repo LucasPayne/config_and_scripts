@@ -1,4 +1,6 @@
 #!/bin/bash
 # clsc: clear scroll
 
-printf '\e[3J'
+# OSC 3J : Clear screen and scrollback (xterm extension)
+# OSC H : Cursor home (1,1)
+printf '\e[3J\e[H'

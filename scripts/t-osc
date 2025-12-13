@@ -6,13 +6,25 @@ then
     >&2 echo "OSC: Operating System Control"
     >&2 echo "OSC <n>;... ST"
     >&2 echo "OSC \e]  -- \033]  -- \x1b]  -- 1B 5D"
-    >&2 echo "ST  \e\\ -- \033\\ -- \x1b\\ -- 1B 5C"
+    >&2 echo "ST  \e\\\\ -- \033\\\\ -- \x1b\\\\ -- 1B 5C"
     >&2 echo "    7     Shell integration current working directory"
     >&2 echo "    8     Hyperlinks"
     >&2 echo "    51    Emacs shell, vim Tapi"
+    >&2 echo "    66    Kitty text sizing protocol"
     >&2 echo "    133   Shell integration commands"
     >&2 echo "    1337  iterm2 extensions"
     exit 0
 fi
 
-# printf '\e]'$n
+n="$1"
+shift
+
+printf '\e]'
+printf '%d' "$n"
+while [ $# -gt 0 ]
+do
+    printf ';'
+    printf '%s' "$1"
+    shift
+done
+printf '\e\\'

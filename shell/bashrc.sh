@@ -1085,4 +1085,52 @@ scroll_and_clear()
 }
 bind -x '"\C-l":scroll_and_clear'
 
+# Panning.
+# Logically appears like navigating the scrollback,
+# but this actually modifies the primary screen to make this apparent scroll.
+scroll_pan_up ()
+{
+    if [ $# -eq 1 ]
+    then
+        n=$1
+    else
+        n=1
+    fi
+    #TODO: Is there a tput instead?
+    if [[ "$TERM" = *-kitty* ]]
+    then
+        # Kitty extension: Get top lines from scrollback.
+        # https://sw.kovidgoyal.net/kitty/unscroll/
+        printf '\e['"$n"'+T'
+    else
+        printf '\e['"$n"'T'
+    fi
+    # Redraw the two-line prompt.
+    # Note: Hacky, just adjusted until it worked.
+    #       Breaks with single-line prompts.
+    printf '\e[1G'
+    echo "${PS1@P}"
+    printf '\e[1A'
+}
+scroll_pan_down ()
+{
+    echo -en "\e[6n"
+    read -sdR CURPOS
+
+    # Get the cursor position.
+    # https://stackoverflow.com/questions/2575037/how-to-get-the-cursor-position-in-bash
+    CURPOS=${CURPOS#*[}
+    echo "$CURPOS" > /tmp/a
+    row="$(echo "$CURPOS" | cut -d';' -f 1)"
+    # Only pan down if the prompt wouldn't go off screen.
+    # (Assumes a two-line prompt.)
+    if [ $row -gt 2 ]
+    then
+        printf '\e[S'
+        printf '\e[1A'
+    fi
+}
+bind -x '"\C-e":scroll_pan_down'
+
+
 source ~/.bash_aliases
