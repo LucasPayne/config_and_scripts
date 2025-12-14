@@ -146,7 +146,7 @@ link_system_to_config ./lf/lfrc "$xdg_config_home/lf/lfrc"
 link_system_to_config ./lf/icons "$xdg_config_home/lf/icons"
 
 # mlterm
-mkdir -p "~/.mlterm"
+mkdir -p ~/.mlterm
 link_system_to_config ./mlterm ~/.mlterm
 
 # kitty
@@ -323,7 +323,7 @@ link_config_to_system "/opt/hfs$houdini_version/houdini/config" "./houdini/syste
 #--------------------------------------------------------------------------------
 apply_xdg_settings()
 {
-    local desktop_file_dirs=("/usr/share/applications" "/usr/local/share/applications" "~/.local/share/applications")
+    local desktop_file_dirs=("/usr/share/applications" "/usr/local/share/applications" "$HOME/.local/share/applications")
 
     desktop_file_exists()
     {
