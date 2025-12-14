@@ -563,7 +563,7 @@ highlight TabLineSel cterm=underline ctermfg=white ctermbg=black
 highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
 highlight TabLineNumber cterm=underline ctermfg=blue ctermbg=black
-highlight TabLineNumberSel cterm=underline ctermfg=blue ctermbg=black
+highlight TabLineNumberSel cterm=underline ctermfg=white ctermbg=black
 highlight TabLineTag cterm=underline ctermfg=gray ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
 
@@ -3351,7 +3351,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
     setlocal nobuflisted
 endfunction
 
-hi TerminalBorder cterm=underline ctermfg=darkgrey ctermbg=black
+hi TerminalBorder cterm=underline ctermfg=grey ctermbg=black
 hi link Terminal Normal
 nnoremap <silent> <M-;> :call Lf_Popup(win_getid(), "", { 'focus_launcher_file' : 1 })<cr>
 nnoremap <silent> <M-:> :call Lf_Popup(win_getid(), getcwd(-1), {  })<cr>
