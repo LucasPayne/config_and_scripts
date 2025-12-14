@@ -7,6 +7,7 @@ pid="$!"
 wid="$(xdotool search --sync --onlyvisible --pid "$pid")"
 echo "mpv pid: $pid"
 echo "mpv window id: $wid"
+echo $pid > /tmp/mpvbgpid
 
 wmctrl -i -r $wid -b add,below
 wmctrl -i -r $wid -b add,fullscreen

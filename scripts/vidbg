@@ -61,8 +61,21 @@ else
 fi
 
 
-#todo: Don't kill all mpvs
-pkill '^mpv$'
-pkill '^mpvbg$'
+# #todo: Don't kill all mpvs
+# pkill '^mpv$'
+# pkill '^mpvbg$'
 
+#todo: Don't rely on pidfiles, the pid could be different or from
+#      a previous session.
+if [ -f  /tmp/vidbgpid ]
+then
+    kill -9 "$(cat /tmp/vidbgpid)"
+    rm /tmp/vidbgpid
+fi
+if [ -f  /tmp/mpvbgpid ]
+then
+    kill -9 "$(cat /tmp/mpvbgpid)"
+    rm /tmp/mpvbgpid
+fi
 pid="$(d mpvbg --mute=yes --video-zoom=0.15 "$select_vid")"
+echo "$pid" > /tmp/vidbgpid
