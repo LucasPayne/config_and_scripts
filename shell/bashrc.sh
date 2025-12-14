@@ -1097,8 +1097,6 @@ scroll_and_clear()
         echo "${PS1_HEAD@P}"
     fi
 }
-bind -x '"\C-l":scroll_and_clear'
-
 # Panning.
 # Logically appears like navigating the scrollback,
 # but this actually modifies the primary screen to make this apparent scroll.
@@ -1144,8 +1142,23 @@ scroll_pan_down ()
         printf '\e[1A'
     fi
 }
+
+bind -x '"\C-l":scroll_and_clear'
 bind -x '"\C-y":scroll_pan_up'
 bind -x '"\C-e":scroll_pan_down'
 
+# Delete scrollback
+# Also deletes the primary page.
+# Note: A companion function to delete scrollback without modifying the primary page
+#       might be possible.
+#       But it doesn't seem that useful as it will often cut off a command output,
+#       which can also mess with terminal emulator shell integration.
+delete_scrollback ()
+{
+    printf '\e[3J'
+    printf '\e[H'
+    printf '\e[2J'
+}
+alias cls=delete_scrollback
 
 source ~/.bash_aliases
