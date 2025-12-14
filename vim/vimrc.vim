@@ -248,7 +248,7 @@ endfunction
 "<<<
 colorscheme default
 set background=dark
-hi LineNr ctermfg=darkgrey ctermbg=None
+hi LineNr ctermfg=grey ctermbg=None
 hi QuickFixLine cterm=underline ctermfg=white ctermbg=None
 " Error message highlighting.
 hi ErrorMsg cterm=bold ctermfg=Red ctermbg=Black

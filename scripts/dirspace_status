@@ -64,16 +64,16 @@ do
         fi
         if [ "$other_vim_id" = "$vim_id" ]
         then
-            append "%#TabLineDirspaceNumberSelected#$i"
-            append "%#TabLineDirspaceSelected# $dirspace_alias"
+            append "%#TabLineNumberSel#$i"
+            append "%#TabLineSel# $dirspace_alias"
         else
-            append "%#TabLineDirspaceNumber#$i"
-            append "%#TabLineDirspace# $dirspace_alias"
+            append "%#TabLineNumber#$i"
+            append "%#TabLine# $dirspace_alias"
         fi
         append " "
         ((i++))
     done
-    append "%#TabLineDirspace#"
+    append "%#TabLine#"
 
     # Mark the rest is right-aligned.
     append "%="
@@ -89,18 +89,18 @@ do
     #     fi
     #     if [ "$other_vim_id" = "$vim_id" ]
     #     then
-    #         append "%#TabLineDirspaceNumberSelected#~"
-    #         append "%#TabLineDirspaceSelected# $dirspace_alias"
+    #         append "%#TabLineNumberSel#~"
+    #         append "%#TabLineSel# $dirspace_alias"
     #     else
-    #         append "%#TabLineDirspaceNumber#"
-    #         append "%#TabLineDirspace# $dirspace_alias"
+    #         append "%#TabLineNumber#"
+    #         append "%#TabLine# $dirspace_alias"
     #     fi
     #     append " "
     #     ((i++))
     # done
 
     # Add a right margin.
-    append "%#TabLineDirspace#        "
+    append "%#TabLine#        "
 
     echo "$status" > "$DIRSPACE_RUNTIME/vim/$vim_id/tabline_dirspace_status_bar"
 
