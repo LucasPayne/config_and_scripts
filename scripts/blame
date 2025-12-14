@@ -7,7 +7,17 @@ then
     exit 1
 fi
 
-while read -r path line
-do
-    git --no-pager blame -L "$line,$line" -- "$path"
-done < <(cat)
+if [ $# -gt 0 ]
+then
+    (
+        for f in "$@"
+        do
+            git --no-pager blame  -- "$f"
+        done
+    ) | less
+else 
+    while read -r path line
+    do
+        git --no-pager blame -L "$line,$line" -- "$path"
+    done < <(cat)
+fi
