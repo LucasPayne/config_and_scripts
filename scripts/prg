@@ -1,0 +1,4 @@
+#!/bin/bash
+# prg: pgrep frontend
+
+pgrep "$@" | x ps
