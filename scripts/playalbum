@@ -1,0 +1,17 @@
+#!/bin/bash
+# playalbum: play album in this directory
+#
+# Assumes the song names are prefixed with the number position in the album.
+
+songs=()
+while read -r file
+do
+    mime="$(mimetype -b "$file")"
+    if [[ "$mime" = audio/* ]]
+    then
+        songs+=("$file")
+    fi
+done < <(fd -tf | sort -n)
+
+mpv --no-video "${songs[@]}"
+

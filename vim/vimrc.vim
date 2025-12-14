@@ -30,6 +30,12 @@ set display=lastline
 " option: mouse
 set mouse=a
 
+" option: selectmode
+"     Enter -- SELECT -- mode when using the mouse to make selections.
+"     This causes typed text to enter insert mode and replace.
+"     Use Ctrl-R(register) to cut into a register before typing.
+set selectmode=mouse
+
 " option: incsearch?
 set noincsearch
 
@@ -343,7 +349,6 @@ set foldmarker=<<<,>>>
 set number
 set nuw=5
 set noswapfile
-set mouse=a
 " Disable splash
 set shm+=I
 set ignorecase
