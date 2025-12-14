@@ -564,7 +564,7 @@ cmd open_enter ${{
 
     mim="$(mimetype -b "$(realpath "$f")")"
 
-    if in_vim && ( [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] )
+    if in_vim && ( [ "$mim" = "application/xml" ] || [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] )
     then
         # vim_remote_call Lf_Edit "$f" "here" "$close"
         vim_remote_call Lf_Edit "$f" "tab" "$close"
