@@ -1,19 +1,19 @@
-~/test
-~/code
+*~/test
+*~/code
 @~/notes/notes.d
-    computer.ns
-~/drive/dev/computer/twim
+    kitty.ns
     twim.ns
-~/config
+    computer.ns
+*~/config
     vim/vimrc.vim
     dirspace/schematics/schematic.txt
     dirspace/dirspaces.txt
-~/drive/dev/documentation
+*~/drive/dev/documentation
 ~/drive/dev/browser
     browser.ns
 ~/drive/videos
     videos.ns
-~/drive/music
+*~/drive/music
     music.ns
 ~/drive/dev/films
     films.ns

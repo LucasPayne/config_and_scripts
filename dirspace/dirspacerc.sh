@@ -18,24 +18,35 @@ do
         # then
         #     sleep 1
         # fi
-        
-        # Check for @ initial dirspace tag.
+
         if [[ "$line" =~ ^@ ]]
         then
+            # @ initial dirspace slot tag.
             # Set as initial slot.
             init_slot=$cur_slot
             line="${line#@}"
+            is_slot=1
+        elif [[ "$line" =~ ^\* ]]
+        then
+            # * slot tag.
+            line="${line#\*}"
+            is_slot=1
+        else
+            is_slot=0
         fi
 
         cur_dir="$line"
         cur_vim_servername="$(dirspace_open "$line")"
-
+        
         # Give the dirspace some time to initialize.
         sleep 0.5
-    
-        # Set the slot
-        VIM_SERVERNAME="$cur_vim_servername" vim_remote_expr "SetDirspaceSlot($cur_slot)"
-        ((cur_slot++))
+
+        if [ $is_slot -eq 1 ] && [ $cur_slot -lt 10 ]
+        then
+            # Set the slot
+            VIM_SERVERNAME="$cur_vim_servername" vim_remote_expr "SetDirspaceSlot($cur_slot)"
+            ((cur_slot++))
+        fi
     else
         if [ -z "$cur_dir" ]
         then
