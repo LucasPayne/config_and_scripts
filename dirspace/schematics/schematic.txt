@@ -1,9 +1,9 @@
 *~/test
-*~/code
 @~/notes/notes.d
     kitty.ns
     twim.ns
     computer.ns
+*~/code
 *~/config
     vim/vimrc.vim
     dirspace/schematics/schematic.txt

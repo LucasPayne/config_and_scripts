@@ -1159,6 +1159,5 @@ delete_scrollback ()
     printf '\e[H'
     printf '\e[2J'
 }
-alias cls=delete_scrollback
 
 source ~/.bash_aliases

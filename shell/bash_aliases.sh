@@ -19,3 +19,5 @@ alias ls="ls --color=auto -1 --hyperlink=auto"
 alias vless="~/.vim/macros/less.sh"
 alias grep='grep --color=auto'
 alias k9='kill -9'
+alias cls=delete_scrollback
+alias feh='feh --borderless'

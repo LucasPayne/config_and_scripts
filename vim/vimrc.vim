@@ -3739,7 +3739,6 @@ function! CurrentShell(...)
 endfunction
 " Open a shell in a new tab.
 function! TabShell(...)
-    call DEBUGLOG("tabshell")
     let wd = get(a:000, 0, getcwd(-1))
     let global_cwd = getcwd(-1)
     noautocmd execute "cd "..fnameescape(wd)
@@ -3971,3 +3970,30 @@ if &term == "xterm-kitty"
     " kitty that do not support background color erase.
     let &t_ut=''
 endif
+
+" Cursor shape
+" DECSCUSR
+"    CSI Ps SP q
+"    0  blinking block (default)
+"    1  blinking block
+"    2	steady block
+"    3	blinking underline
+"    4	steady underline
+"    5	blinking bar
+"    6	steady bar
+let &t_SI = "\e[6 q"   " Insert mode: bar
+let &t_EI = "\e[2 q"   " Normal mode: block
+let &t_SR = "\e[4 q"   " Replace mode: underline
+
+function! Tapi_set_cursor_style(buf, n)
+    if ! ( type(a:n) == v:t_number && a:n >= 0 && a:n <= 6)
+        return
+    endif
+    call writefile(["\e["..string(a:n).." q"], "/dev/tty", "b")
+
+    " if &term == "screen"
+    "     call writefile(["\e\e[6 q"], "/dev/tty", "b")
+    " else
+    "     call writefile(["\e["..string(n).." q"], "/dev/tty", "b")
+    " endif
+endfunction
