@@ -1,0 +1,13 @@
+#!/bin/bash
+# kitty-up-add-sgr: add sgr lines to saved kitty unicode placeholders
+#
+# Assumes the input is the whole unicode placeholder image block.
+# ID must be given, as it is not stored in the unicode on copy or write.
+
+ID="$1"
+while read -r line
+do
+    printf "\e[38;5;${ID}m"
+    printf '%s' "$line"
+    printf "\e[39m"
+done
