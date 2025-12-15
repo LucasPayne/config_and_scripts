@@ -1,0 +1,5 @@
+#!/bin/bash
+# vim-passthrough:
+
+cat > /tmp/vim-passthrough
+printf '\033]51;["call", "Tapi_passthrough", "/tmp/vim-passthrough"]\007'
