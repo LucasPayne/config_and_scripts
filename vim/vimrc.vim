@@ -3985,15 +3985,12 @@ let &t_SI = "\e[6 q"   " Insert mode: bar
 let &t_EI = "\e[2 q"   " Normal mode: block
 let &t_SR = "\e[4 q"   " Replace mode: underline
 
+" Set the cursor style.
+" This works like tmux passthrough for vim terminals,
+" because vim apparently does not composit the cursor style from its terminals.
 function! Tapi_set_cursor_style(buf, n)
     if ! ( type(a:n) == v:t_number && a:n >= 0 && a:n <= 6)
         return
     endif
     call writefile(["\e["..string(a:n).." q"], "/dev/tty", "b")
-
-    " if &term == "screen"
-    "     call writefile(["\e\e[6 q"], "/dev/tty", "b")
-    " else
-    "     call writefile(["\e["..string(n).." q"], "/dev/tty", "b")
-    " endif
 endfunction

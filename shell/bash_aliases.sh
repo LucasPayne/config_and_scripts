@@ -21,3 +21,16 @@ alias grep='grep --color=auto'
 alias k9='kill -9'
 alias cls=delete_scrollback
 alias feh='feh --borderless'
+
+# Always enable images in w3m.
+# If in tty is kitty, use its image protocol (APC G).
+w3m_wrapper ()
+{
+    if [[ "$TERM" = *-kitty* ]]
+    then
+        w3m -o auto_image=TRUE -o inline_img_protocol=4 "$@"
+    else
+        w3m "$@"
+    fi
+}
+alias w3m='w3m_wrapper'
