@@ -1,0 +1,11 @@
+#!/bin/bash
+# tmux-passthrough: wrap stream with tmux passthrough
+#
+# https://github.com/tmux/tmux/wiki/FAQ#what-is-the-passthrough-escape-sequence-and-how-do-i-use-it
+
+# Start tmux passthrough.
+printf '\033Ptmux;'
+# Double the escape character of the input (required by tmux passthrough).
+perl -pe 's/\x1b/\x1b\x1b/g'
+# End tmux passthrough.
+printf '\033\\'
