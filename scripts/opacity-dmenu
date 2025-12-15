@@ -1,0 +1,22 @@
+#!/bin/bash
+# opacity-dmenu: change window opacity with dmenu
+
+set -e
+
+win=$(xwi)
+
+n="$(echo | dmenu)"
+
+if ! [[ "$n" =~ [[:digit:]]+ ]]
+then
+    notify-send -t 500 "Not a number"
+    exit 1
+fi
+
+if [ $n -lt 0 ] || [ $n -gt 100 ]
+then
+    notify-send -t 500 "Choose a number between 0 and 100"
+    exit 1
+fi
+
+xwiopacity $n $win
