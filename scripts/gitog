@@ -1,0 +1,3 @@
+#!/bin/bash
+# gitog: git oneline grep
+gitol | grep "$@"
