@@ -83,25 +83,6 @@ export LESSOPEN="| ~/.source-highlight/src-hilite-lesspipe.sh %s"
 
 export PATH="$PATH:/usr/share/doc/git/contrib/diff-highlight"
 
-# Zig
-zig ()
-{
-    if ! [[ -v ZIG ]]
-    then
-        >&2 echo "error: ZIG not set"
-        return 1
-    fi
-
-    for path in $HOME/drive/dev/documentation/zig/tars/zig-x86_64-linux-$ZIG*
-    do
-        $path/zig "$@"
-        return 0
-    done
-
-    >&2 echo "error: Could not find zig for ZIG=$ZIG"
-    return 1
-}
-
 #https://www.imagemagick.org/include/resources.php#environment
 export MAGICK_CONFIGURE_PATH="$CONFIG_DIR/imagemagick/user_config"
 

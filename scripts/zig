@@ -1,0 +1,17 @@
+#!/bin/bash
+# zig: Use the ZIG environment variable to select a zig compiler.
+
+if ! [[ -v ZIG ]]
+then
+    >&2 echo "error: ZIG not set"
+    exit 1
+fi
+
+for path in $HOME/drive/dev/documentation/zig/tars/zig-x86_64-linux-$ZIG*
+do
+    $path/zig "$@"
+    exit 0
+done
+
+>&2 echo "error: Could not find zig for ZIG=$ZIG"
+exit 1
