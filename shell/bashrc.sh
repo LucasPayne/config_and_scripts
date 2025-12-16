@@ -1160,4 +1160,17 @@ delete_scrollback ()
     printf '\e[2J'
 }
 
+mkd ()
+{
+    for arg in "$@"
+    do
+        if [[ ! "$arg" = -* ]]
+        then
+            mkdir "$@" && cd "$arg"
+            return 0
+        fi
+    done
+    return 1
+}
+
 source ~/.bash_aliases
