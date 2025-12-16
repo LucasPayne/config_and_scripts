@@ -3989,8 +3989,20 @@ let &t_SR = "\e[4 q"   " Replace mode: underline
 " This works like tmux passthrough for vim terminals,
 " because vim apparently does not composit the cursor style from its terminals.
 function! Tapi_set_cursor_style(buf, n)
-    if ! ( type(a:n) == v:t_number && a:n >= 0 && a:n <= 6)
+    if ! ( type(a:n) == v:t_number && a:n >= 0 && a:n <= 6 )
         return
     endif
     call writefile(["\e["..string(a:n).." q"], "/dev/tty", "b")
+endfunction
+
+function! Tapi_passthrough(buf, path)
+    if type(a:path) != v:t_string
+        return
+    endif
+
+    call DEBUGLOG("passthrough: "..a:path)
+
+    let lines = readfile(a:path, "b")
+    call DEBUGLOG("length: "..len(lines))
+    call writefile(lines, "/dev/tty", "b")
 endfunction

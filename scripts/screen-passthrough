@@ -1,3 +1,16 @@
 #!/bin/bash
 # screen-passthrough:
+#
+# https://www.gnu.org/software/screen/manual/html_node/Control-Sequences.html
+#
+# TODO: Doesn't work
+# Kitty APC G graphics uses ST \e\\, is this read normally by DCS (Device Control String)?
+# It looks like tmux had to create a workaround with \e doubling if the DCS starts with 'tmux;'.
 
+# Start screen passthrough.
+printf '\033P'
+# Pass through stdin.
+# TODO: Doesn't work
+perl -pe 's/\x1b/\x1b\x1b/g'
+# End screen passthrough.
+printf '\033\\'
