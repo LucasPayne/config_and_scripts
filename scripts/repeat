@@ -1,0 +1,18 @@
+#!/bin/bash
+# repeat: Repeat command n times.
+
+[[ $# -gt 1 ]] || exit 1
+
+n="$1"
+shift
+
+if ! [[ "$n" =~ [[:digit:]]+ ]]
+then
+    >&2 echo "error: not a number: $n"
+    exit 1
+fi
+
+for i in $(seq $n)
+do
+    "$@"
+done
