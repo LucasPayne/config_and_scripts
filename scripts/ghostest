@@ -1,0 +1,7 @@
+#!/bin/bash
+# ghostest: set up for testing ghostty terminal
+
+wmctrl -a 6
+pid=$(d ghostty --fullscreen)
+wid=$(waitwindow $pid)
+xwiopacity 70 $wid
