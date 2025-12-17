@@ -1,3 +1,10 @@
-links = true
+fullscreen = true
+background-opacity = 0.7
+window-decoration = none
+font-size = 10
+
+link-url = true
 link-previews = true
 
+window-inherit-working-directory = true
+window-inherit-font-size = true
