@@ -1,0 +1,19 @@
+#!/bin/bash
+# linknote: link a note from ~/notes/notes.d
+
+if [ $# -ne 1 ]
+then
+    >&2 echo "usage: linknote <name>"
+    exit 1
+fi
+
+note="$1"
+path="$HOME/notes/notes.d/$note.ns"
+target="$(basename "$note").ns"
+if [ -f "$path" ]
+then
+    ln -s "$path" "$target"
+else
+    >&2 "error: Note \"$note\" does not exist."
+    exit 1
+fi
