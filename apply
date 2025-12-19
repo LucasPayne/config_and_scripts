@@ -157,6 +157,7 @@ link_system_to_config ./rofi/config.rasi "$xdg_config_home/rofi/config.rasi"
 # kitty
 mkdir -p "$xdg_config_home/kitty"
 link_system_to_config ./kitty/kitty.conf "$xdg_config_home/kitty/kitty.conf"
+link_system_to_config ./kitty/kittens "$xdg_config_home/kitty/kittens"
 
 # ghostty
 mkdir -p "$xdg_config_home/ghostty"

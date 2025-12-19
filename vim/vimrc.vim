@@ -860,8 +860,8 @@ function! TabPanel() abort
     endif
 
     " Show separator.
-    call AddPanelText(P, "", "")
-    call FinishPanelLine(P)
+    " call AddPanelText(P, "", "")
+    " call FinishPanelLine(P)
 
     " Show the tab.
     let winids = map(range(1, tabpagewinnr(tab, '$')), {_, winnr -> win_getid(winnr, tab)})
