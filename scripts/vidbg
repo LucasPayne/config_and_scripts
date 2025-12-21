@@ -1,6 +1,8 @@
 #!/bin/bash
 # vidbg: cycle video backgrounds
 
+grayscale=1
+
 # mode=cycle
 mode=dmenu
 
@@ -77,5 +79,13 @@ then
     kill -9 "$(cat /tmp/mpvbgpid)"
     rm /tmp/mpvbgpid
 fi
-pid="$(d mpvbg --mute=yes --video-zoom=0.15 "$select_vid")"
+
+if [ $grayscale -eq 1 ]
+then
+    grayscale_args='--vf=format=gray'
+else
+    grayscale_args=''
+fi
+
+pid="$(d mpvbg $grayscale_args --mute=yes --video-zoom=0.15 "$select_vid")"
 echo "$pid" > /tmp/vidbgpid
