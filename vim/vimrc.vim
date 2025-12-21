@@ -3914,7 +3914,18 @@ tnoremap <silent> <M-'> <C-w>:!dirspace_fzf_favorites<cr><cr>
 
 " Open tig with current file.
 " Note: Why does it have to redraw? Doesn't vim use alternate screen?
-nnoremap <silent> <M-a> :silent !cd %:p:h ; tig %<cr>:redraw!<cr>
+function! TigFile()
+    let l:type = getftype(expand("%:p"))
+    if l:type == "link"
+        let l:file = resolve(expand("%:p"))
+    else
+        let l:file = expand("%:p")
+    endif
+    let l:dir = fnamemodify(l:file, ":h")
+    execute '!cd '..shellescape(l:dir)..' ; tig '..shellescape(l:file)
+    redraw!
+endfunction
+nnoremap <silent> <M-a> :call TigFile()<cr>
 
 " Kitty compatibility
 " Copied from https://sw.kovidgoyal.net/kitty/faq/#using-a-color-theme-with-a-background-color-does-not-work-well-in-vim
@@ -4006,3 +4017,12 @@ function! Tapi_passthrough(buf, path)
     call DEBUGLOG("length: "..len(lines))
     call writefile(lines, "/dev/tty", "b")
 endfunction
+
+
+function! ColorAdapt()
+    call matchadd('MyAllText', '.')
+    " hi MyAllText ctermfg=none ctermbg=black
+    hi MyAllText ctermfg=black ctermbg=white
+    " hi MyAllText ctermfg=white ctermbg=black
+endfunction
+nnoremap <M-w><M-e> :call ColorAdapt()<cr>
