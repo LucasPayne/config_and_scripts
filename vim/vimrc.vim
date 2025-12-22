@@ -4026,3 +4026,4 @@ function! ColorAdapt()
     " hi MyAllText ctermfg=white ctermbg=black
 endfunction
 nnoremap <M-w><M-e> :call ColorAdapt()<cr>
+

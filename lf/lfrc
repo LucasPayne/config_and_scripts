@@ -708,10 +708,17 @@ map <space> :toggle; on-selection-changed
 # Play a video file in the background.
 map .b ${{
     in_vim || exit
-    vim_remote_call Lf_Popup_BeginIgnore
-    vim_remote_call execute "tab term ++close mpvbg $(printf '%q' "$f")"
-    vim_remote_call Lf_Popup_EndIgnore
-    lf -remote "send $id quit"
+    # vim_remote_call Lf_Popup_BeginIgnore
+    # vim_remote_call execute "tab term ++close mpvbg $(printf '%q' "$f")"
+    # vim_remote_call Lf_Popup_EndIgnore
+    # lf -remote "send $id quit"
+
+    d mpvbg "$f"
+}}
+
+# Play a video file in the bottom right.
+map .B ${{
+    d vidbr "$f"
 }}
 
 #>>>
