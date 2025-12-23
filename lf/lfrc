@@ -713,12 +713,26 @@ map .b ${{
     # vim_remote_call Lf_Popup_EndIgnore
     # lf -remote "send $id quit"
 
-    d mpvbg "$f"
+    d mpvbg --video-zoom=0.15 --mute=yes "$f"
+}}
+
+# Background in grayscale
+map .g ${{
+    d mpvbg --vf=format=gray --video-zoom=0.15 --mute=yes "$f"
 }}
 
 # Play a video file in the bottom right.
 map .B ${{
     d vidbr "$f"
+}}
+
+# Play an album
+map .a ${{
+    in_vim || exit
+    vim_remote_call Lf_Popup_BeginIgnore
+    vim_remote_call execute "tab term ++close playalbum $(printf '%q' "$f")"
+    vim_remote_call Lf_Popup_EndIgnore
+    lf -remote "send $id quit"
 }}
 
 #>>>

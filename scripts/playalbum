@@ -1,7 +1,20 @@
 #!/bin/bash
 # playalbum: play album in this directory
+# Or, given a song file in that directory, cd to it first.
 #
 # Assumes the song names are prefixed with the number position in the album.
+
+if [ $# -eq 1 ]
+then
+    if [ ! -f "$1" ]
+    then
+        >&2 echo "error: $f is not a file."
+        exit 1
+    fi
+    dir="$(dirname "$1")"
+    cd "$dir"
+    shift
+fi
 
 songs=()
 while read -r file
