@@ -1,0 +1,4 @@
+#!/bin/bash
+# warm-meter:
+
+for i in {1..200} ; do xsct $((700 + i*100)) ; sleep 0.5 ; done
