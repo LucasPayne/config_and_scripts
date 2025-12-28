@@ -6,12 +6,16 @@
 
 if [ $# -eq 1 ]
 then
-    if [ ! -f "$1" ]
+    if [ -f "$1" ]
     then
-        >&2 echo "error: $f is not a file."
+        dir="$(dirname "$1")"
+    elif [ -d "$1" ]
+    then
+        dir="$1"
+    else
+        >&2 echo "error: $f is not a file or directory."
         exit 1
     fi
-    dir="$(dirname "$1")"
     cd "$dir"
     shift
 fi

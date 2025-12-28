@@ -2631,13 +2631,16 @@ if exists("&cmdheight") == 1
     tnoremap <silent> <M-W><M-C> <C-w>:call ToggleCmdHeight()<cr>
 endif
 
-set wincolor=Window
-hi clear Window
-hi clear Normal
+" set wincolor=Window
+" hi clear Window
+" hi clear Normal
 "hi Window ctermbg=0 ctermfg=white
-hi Window ctermbg=0 ctermfg=grey
+" hi Window ctermbg=0 ctermfg=grey
 "hi Normal ctermbg=white ctermfg=darkgrey
-hi Normal ctermbg=black ctermfg=white
+" hi Normal ctermbg=black ctermfg=white
+" highlight Normal     ctermbg=white ctermfg=black
+" highlight NonText    ctermbg=black ctermfg=white
+" highlight EndOfBuffer ctermbg=black ctermfg=white
 
 function! TerminalWinOpenCommands()
     set wincolor=Window
@@ -4020,10 +4023,14 @@ endfunction
 
 
 function! ColorAdapt()
-    call matchadd('MyAllText', '.')
+    call matchadd('MyAllText', '^.*$')
     " hi MyAllText ctermfg=none ctermbg=black
-    hi MyAllText ctermfg=black ctermbg=white
+    hi MyAllText ctermfg=none ctermbg=white
+    " hi MyAllText ctermfg=white ctermbg=black
     " hi MyAllText ctermfg=white ctermbg=black
 endfunction
 nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 
+" set list
+" set listchars=trail:·
+" hi Whitespace ctermbg=black ctermfg=black

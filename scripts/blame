@@ -1,23 +1,30 @@
 #!/bin/bash
 # blame: git blame wrapper
 
-if ! ingit
-then
-    >&2 echo "blame failed: Not in a git repo"
-    exit 1
-fi
+check_git ()
+{
+    if ! ingit
+    then
+        >&2 echo "blame failed: Not in a git repo"
+        return 1
+    fi
+}
 
 if [ $# -gt 0 ]
 then
     (
         for f in "$@"
         do
+            cd "$(dirname "$(realpath "$f")")"
+            check_git || exit 1
             git --no-pager blame  -- "$f"
         done
     ) | less
 else 
     while read -r path line
     do
+        cd "$(dirname "$(realpath "$path")")"
+        check_git || exit 1
         git --no-pager blame -L "$line,$line" -- "$path"
     done < <(cat)
 fi

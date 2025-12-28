@@ -1,7 +1,7 @@
 #!/bin/bash
 # vidbg: cycle video backgrounds
 
-grayscale=1
+grayscale=0
 
 # mode=cycle
 mode=dmenu
@@ -9,7 +9,7 @@ mode=dmenu
 vids="$(fd -tf -d1 . ~/drive/videos/vidbg)"
 num_vids="$(echo "$vids" | wc -l)"
 
-dmenu_config="-i -l $num_vids -nb #1E1E1E -nf #E8DF9B -sb #3E3E3E -sf #FFFFFF -fn Lora-22"
+dmenu_config="-i -l $num_vids"
 
 # Cycle through videos
 if [ "$mode" = "cycle" ]

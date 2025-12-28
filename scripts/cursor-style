@@ -1,0 +1,16 @@
+#!/bin/bash
+# cursor-style: set the cursor style
+
+theme="DMZ-White"
+
+#TODO: Switch on desktop/laptop.
+if 1
+then
+    size=42
+else
+    size=24
+fi
+
+xfconf-query -c xsettings -p /Gtk/CursorThemeName -s "$theme"
+xfconf-query -c xsettings -p /Gtk/CursorThemeSize -s "$size" -t int
+xfsettingsd --replace &

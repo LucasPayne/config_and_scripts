@@ -717,7 +717,7 @@ map .b ${{
 }}
 
 # Background in grayscale
-map .g ${{
+map .n ${{
     d mpvbg --vf=format=gray --video-zoom=0.15 --mute=yes "$f"
 }}
 

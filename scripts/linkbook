@@ -10,13 +10,20 @@
 #     The given search string should be sufficient enough to
 #     uniquely identify the linked book.
 
-if [ $# -ne 2 ]
+if [ $# -gt 2 ]
 then
-    >&2 echo "usage: linkbook <name> <search>"
+    >&2 echo "usage: linkbook <search> [<name>]"
     exit 1
 fi
-name="$1"
-search="$2"
+if [ $# -eq 1 ]
+then
+    search="$1"
+    # Use the search string as the name of the link.
+    name="$1"
+else
+    search="$1"
+    name="$2"
+fi
 
 # Use . for the search to reuse the name argument.
 if [[ "$search" = "." ]]
