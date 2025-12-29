@@ -389,7 +389,7 @@ nnoremap <M-?> ?^\s*
 let g:use_tabpanel = 1
 let g:tabpanel_width = 26
 function! SetTabPanelWidth(width)
-    execute "set tabpanelopt=vert,columns:"..g:tabpanel_width..",align:left"
+    execute "set tabpanelopt=columns:"..g:tabpanel_width..",align:left"
 endfunction
 call SetTabPanelWidth(g:tabpanel_width)
 
@@ -558,14 +558,14 @@ endfunction
 highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
-highlight TabLine cterm=underline ctermfg=blue ctermbg=black
+highlight TabLine cterm=underline ctermfg=black ctermbg=grey
 highlight TabLineSel cterm=underline ctermfg=white ctermbg=black
 highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
-highlight TabLineNumber cterm=underline ctermfg=blue ctermbg=black
+highlight TabLineNumber cterm=underline ctermfg=black ctermbg=white
 highlight TabLineNumberSel cterm=underline ctermfg=white ctermbg=black
-highlight TabLineTag cterm=underline ctermfg=gray ctermbg=black
-highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
+highlight TabLineTag cterm=underline ctermfg=white ctermbg=black
+highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=white
 
 " TabPanel
 hi TabPanelFill cterm=NONE
@@ -1013,7 +1013,7 @@ set tabpanel=%!TabPanel()
 " highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
 highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
 highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
-highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
+highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
 highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=black ctermbg=0
@@ -4049,3 +4049,4 @@ nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 
 hi LineNr ctermfg=grey ctermbg=0
 hi MsgArea ctermfg=0 ctermbg=none
+
