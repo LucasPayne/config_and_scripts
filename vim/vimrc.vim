@@ -568,9 +568,11 @@ highlight TabLineTag cterm=underline ctermfg=gray ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
 
 " TabPanel
-hi TabPanel cterm=NONE ctermfg=grey
 hi TabPanelFill cterm=NONE
-hi TabPanelSel cterm=NONE ctermfg=white
+" hi TabPanel cterm=NONE ctermfg=grey
+" hi TabPanelSel cterm=NONE ctermfg=white
+hi TabPanel cterm=NONE ctermfg=0 ctermbg=gray
+hi TabPanelSel cterm=NONE ctermfg=9 ctermbg=0
 set fillchars+=tpl_vert:\ 
 
 " Wrapper for redrawtabpanel so it can be remote-called through vim server commands.
@@ -998,17 +1000,27 @@ endfunction
 redrawtabpanel
 set tabpanel=%!TabPanel()
 " Custom highlights for tabpanel
-"highlight TabPanelFocusLine cterm=underline ctermfg=white ctermbg=black
+" highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
+" highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
+" highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
+" highlight TabPanelFooter ctermfg=grey ctermbg=black
+" highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
+" highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
+" highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
+" highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
+" highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
+" highlight TabPanelBufferFlag cterm=None ctermfg=grey ctermbg=black
+" highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
 highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
 highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
 highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
-highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
+highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=black ctermbg=0
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
-highlight TabPanelBufferFlag cterm=None ctermfg=grey ctermbg=black
+highlight TabPanelBufferFlag cterm=None ctermfg=0 ctermbg=grey
 highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
 "@@
 
@@ -4025,7 +4037,7 @@ endfunction
 function! ColorAdapt()
     call matchadd('MyAllText', '^.*$')
     " hi MyAllText ctermfg=none ctermbg=black
-    hi MyAllText ctermfg=none ctermbg=white
+    hi MyAllText ctermfg=9 ctermbg=0
     " hi MyAllText ctermfg=white ctermbg=black
     " hi MyAllText ctermfg=white ctermbg=black
 endfunction
@@ -4034,3 +4046,6 @@ nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 " set list
 " set listchars=trail:·
 " hi Whitespace ctermbg=black ctermfg=black
+
+hi LineNr ctermfg=grey ctermbg=0
+hi MsgArea ctermfg=0 ctermbg=none
