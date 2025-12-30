@@ -1016,9 +1016,9 @@ highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
 highlight TabPanelFooter ctermfg=grey ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
-highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=black ctermbg=0
-highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
-highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
+highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=0 ctermbg=grey
+highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=0 ctermbg=grey
+highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=0 ctermbg=blue
 highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferFlag cterm=None ctermfg=0 ctermbg=grey
 highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
@@ -4048,5 +4048,6 @@ nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 " hi Whitespace ctermbg=black ctermfg=black
 
 hi LineNr ctermfg=grey ctermbg=0
-hi MsgArea ctermfg=0 ctermbg=none
+" hi MsgArea ctermfg=0 ctermbg=none
+hi MsgArea ctermfg=1 ctermbg=none
 
