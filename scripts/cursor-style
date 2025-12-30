@@ -4,7 +4,7 @@
 theme="DMZ-White"
 
 #TODO: Switch on desktop/laptop.
-if 1
+if true
 then
     size=42
 else

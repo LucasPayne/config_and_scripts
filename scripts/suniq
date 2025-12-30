@@ -1,0 +1,4 @@
+#!/bin/bash
+# suniq: sort and uniq
+# Flags are for the uniq (e.g. suniq -c).
+sort | uniq "$@"
