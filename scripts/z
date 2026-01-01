@@ -1,6 +1,6 @@
 #!/bin/sh
 
-opacity=80
+opacity=70
 desktop_number=6
 
 zathura --mode fullscreen "$@" &

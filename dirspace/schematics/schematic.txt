@@ -1,9 +1,9 @@
 *~/test
 @~/notes/notes.d
     computer.ns
+    kitty.ns
     twim.ns
     wayland.ns
-    kitty.ns
 *~/code
 *~/config
     dirspace/schematics/schematic.txt

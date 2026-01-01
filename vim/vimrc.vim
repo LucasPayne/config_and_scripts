@@ -2125,7 +2125,7 @@ endfunction
 
 " 2D movement.
 " Horizontal: Left-right splits movement, tabs
-function! SpaceMove(vertical, amount, skip_splits)
+function! SpaceMove(vertical, amount, skip_splits, wrap)
     if a:amount == 0
         " Don't have to move.
         return
@@ -2158,8 +2158,8 @@ function! SpaceMove(vertical, amount, skip_splits)
 
     if a:skip_splits == 1
         if a:vertical == g:use_tabpanel
-            if (     ((a:amount < 0) != a:vertical) && tabpagenr() > 1
-                \ || ((a:amount > 0) != a:vertical) && tabpagenr() < tabpagenr('$'))
+            if ( a:wrap || ( ((a:amount < 0) != a:vertical) && tabpagenr() > 1
+                    \ || ((a:amount > 0) != a:vertical) && tabpagenr() < tabpagenr('$') ))
                 execute l:tabcmd
             endif
         else
@@ -2171,8 +2171,8 @@ function! SpaceMove(vertical, amount, skip_splits)
             for i in range(l:absolute_amount)
                 execute "wincmd ".l:winkey
                 if win_getid() == l:prev_wingetid
-                    if (     ((a:amount < 0) != a:vertical) && tabpagenr() > 1
-                        \ || ((a:amount > 0) != a:vertical) && tabpagenr() < tabpagenr('$'))
+                if ( a:wrap || ( ((a:amount < 0) != a:vertical) && tabpagenr() > 1
+                        \ || ((a:amount > 0) != a:vertical) && tabpagenr() < tabpagenr('$') ))
                         execute l:tabcmd
                         " Go to the left-or-rightmost split, so e.g. navigation to the right 
                         let l:prev_winnr = -1
@@ -2192,10 +2192,10 @@ function! SpaceMove(vertical, amount, skip_splits)
     call CheckSwitchToTerminalMode()
 endfunction!
 function! SpaceMoveHorizontal(amount, skip_splits)
-    call SpaceMove(0, a:amount, a:skip_splits)
+    call SpaceMove(0, a:amount, a:skip_splits, 1)
 endfunction
 function! SpaceMoveVertical(amount, skip_splits)
-    call SpaceMove(1, a:amount, a:skip_splits)
+    call SpaceMove(1, a:amount, a:skip_splits, 1)
 endfunction
 
 tnoremap <M-J><M-K> <C-\><C-n>
@@ -3356,7 +3356,7 @@ function! Lf_Popup(launcher_winid, wd, ...)
         \ 'cursorline' : 0,
         \ 'wrap' : 0,
         \ 'highlight' : 'hl-Normal',
-        \ 'border' : [1, 1, 1, 1],
+        \ 'border' : [0, 0, 0, 0],
         \ 'borderchars': [' ', left_pillar, ' ', right_pillar, right_pillar, left_pillar, left_pillar, right_pillar],
         "\ 'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
         \ 'borderhighlight' : ['TerminalBorder'],
@@ -4051,3 +4051,6 @@ hi LineNr ctermfg=grey ctermbg=0
 " hi MsgArea ctermfg=0 ctermbg=none
 hi MsgArea ctermfg=1 ctermbg=none
 
+hi Normal ctermfg=0
+hi MsgArea ctermfg=0
+hi LineNr ctermbg=none
