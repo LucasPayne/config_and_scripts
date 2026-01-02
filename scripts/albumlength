@@ -1,5 +1,6 @@
 #!/bin/bash
-# albumlength:
+# albumlength: display length information for an album
+# Album is all audio files in this directory.
 
 min_sec ()
 {
