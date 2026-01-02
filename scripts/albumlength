@@ -1,0 +1,20 @@
+#!/bin/bash
+# albumlength:
+
+total=0
+while read -r file
+do
+    mime="$(mimetype -b "$file")"
+    if [[ "$mime" = audio/* ]]
+    then
+        t="$(ffprobe -v error -show_entries format=duration \
+            -of default=noprint_wrappers=1:nokey=1 "$file")"
+        if [ $? -ne 0 ]
+        then
+            >&2 echo "error: Could not calculate length of \"$file\""
+        else
+            total="$(echo "$total + $t" | bc)"
+        fi
+    fi
+done < <(fd -d1 -tf | sort -n)
+echo "$total"
