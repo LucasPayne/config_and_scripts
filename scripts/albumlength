@@ -1,7 +1,18 @@
 #!/bin/bash
 # albumlength:
 
+min_sec ()
+{
+    local sec="$1"
+    awk -v t="$sec" 'BEGIN {
+        m = int(t / 60)
+        s = t - m*60
+        printf "%d %.6f\n", m, s
+    }'
+}
+
 total=0
+list=()
 while read -r file
 do
     mime="$(mimetype -b "$file")"
@@ -13,8 +24,12 @@ do
         then
             >&2 echo "error: Could not calculate length of \"$file\""
         else
+            list+=( "$(printf "%s\x1F%s" "$file" "$(min_sec "$t")")" )
             total="$(echo "$total + $t" | bc)"
         fi
     fi
 done < <(fd -d1 -tf | sort -n)
-echo "$total"
+
+printf '%s\n' "${list[@]}" | column -s $'\x1F' -t
+
+min_sec "$total"

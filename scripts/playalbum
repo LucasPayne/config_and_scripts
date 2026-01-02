@@ -28,7 +28,7 @@ do
     then
         songs+=("$file")
     fi
-done < <(fd -tf | sort -n)
+done < <(fd -d1 -tf | sort -n)
 
 mpv --no-video "${songs[@]}"
 

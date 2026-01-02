@@ -4047,10 +4047,12 @@ nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 " set listchars=trail:·
 " hi Whitespace ctermbg=black ctermfg=black
 
-hi LineNr ctermfg=grey ctermbg=0
-" hi MsgArea ctermfg=0 ctermbg=none
-hi MsgArea ctermfg=1 ctermbg=none
-
-hi Normal ctermfg=0
-hi MsgArea ctermfg=0
-hi LineNr ctermbg=none
+if 1
+    hi LineNr ctermfg=grey ctermbg=0
+    " hi MsgArea ctermfg=0 ctermbg=none
+    hi MsgArea ctermfg=1 ctermbg=none
+    
+    hi Normal ctermfg=0
+    hi MsgArea ctermfg=0
+    hi LineNr ctermbg=none
+endif
