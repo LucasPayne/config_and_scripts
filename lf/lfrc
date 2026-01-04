@@ -327,6 +327,8 @@ map sN set sortby name; set info
 # leader-\ mappings <<<
 # Leader key: \
 map \\b :set drawbox!
+
+set ratios 6:13:6
 # Toggle ratios
 # note: This should be in-line with where ratios are set elsewhere.
 # idea: Maybe should have a different ratio setting which those functions call.
