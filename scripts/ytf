@@ -1,0 +1,3 @@
+#!/bin/bash
+# ytf: yt-dlp -F
+exec yt-dlp -F "$@"
