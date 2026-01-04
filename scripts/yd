@@ -1,0 +1,3 @@
+#!/bin/bash
+# yd: yt-dlp
+exec yt-dlp "$@"
