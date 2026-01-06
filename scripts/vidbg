@@ -44,6 +44,14 @@ then
 
     select_label="$(printf '%s\n' "${vid_labels[@]}" | dmenu $dmenu_config)"
 
+    if grep -q -E "^${select_label%?}\$" ~/drive/videos/vidbg/gamma.txt
+    then
+        gamma="$(grep -A 1 "^${select_label%?}\$" ~/drive/videos/vidbg/gamma.txt | tail -1 | xargs printf '%s')"
+        gamma_args="--gamma=$gamma"
+    else
+        gamma_args=""
+    fi
+
     if [ -z "$select_label" ]
     then
         exit
@@ -61,7 +69,6 @@ then
 else 
     exit 1
 fi
-
 
 # #todo: Don't kill all mpvs
 # pkill '^mpv$'
@@ -87,5 +94,6 @@ else
     grayscale_args=''
 fi
 
-pid="$(d mpvbg $grayscale_args --mute=yes --video-zoom=0.15 "$select_vid")"
+
+pid="$(d mpvbg $gamma_args $grayscale_args --mute=yes --video-zoom=0.15 "$select_vid")"
 echo "$pid" > /tmp/vidbgpid
