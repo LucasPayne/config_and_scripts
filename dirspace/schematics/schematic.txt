@@ -9,7 +9,6 @@
     dirspace/schematics/schematic.txt
     dirspace/dirspaces.txt
     vim/vimrc.vim
-    ghostty/config.ghostty
     kitty/kitty.conf
 *~/drive/dev/documentation
 ~/drive/dev/browser
@@ -22,3 +21,6 @@
     films.ns
 ~/drive/dev/reading
     reading.ns
+~/drive/dev/person
+    eyes/eyes.ns
+    notebook.ns

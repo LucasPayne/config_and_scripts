@@ -573,9 +573,7 @@ cmd open_enter ${{
     elif [[ "$mim" =~ ^video/ ]]
     then
         # Video
-        #subs="--sub-back-color=0/0/0 --sub-color=0.50/0.30/0.20"
-        subs="--sub-back-color=0.5/0.5/0.5 --sub-color=0/0/0"
-        d mpv --no-border $subs "$f"
+        d mpv --no-border "$f"
     elif [[ "$mim" = "application/pdf" ]]
     then
         # Document

@@ -2408,12 +2408,12 @@ function! RefreshMagicCardPreview()
         else
             let screen_width = 2160
             let screen_height = 1350
-            let width = 488
-            let height = 680
-            let start_x = float2nr(floor(screen_width/2.0 - width/2.0))
-            let start_y = float2nr(floor(screen_height/2.0 - height/2.0))
+            let width = 732
+            let height = 1020
+            let start_x = screen_width - width - 100
+            let start_y = screen_height - height - 100
             let g:magic_card_was_hovering = 1
-            let cmd = ["bash", "-c", "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh --scale-down -g ".width."x".height."+".start_x."+".start_y." \"".card_filename."\" > /dev/null 2>&1 & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"]
+            let cmd = ["bash", "-c", "pgrep feh | xargs kill -9 ; FOCUS=$(xdotool getwindowfocus) ; feh -Z --scale-down -g ".width."x".height."+".start_x."+".start_y." \"".card_filename."\" > /dev/null 2>&1 & sleep 0.1 ; xdotool windowfocus $FOCUS > /dev/null 2>&1"]
             "todo: Is this working async? Why is vim still taking a while?
             call job_start(cmd)
             redraw!
