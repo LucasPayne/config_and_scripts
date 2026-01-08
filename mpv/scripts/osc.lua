@@ -30,7 +30,7 @@ local user_opts = {
     minmousemove = 0,           -- minimum amount of pixels the mouse has to
                                 -- move between ticks to make the OSC show up
     layout = "bottombar",
-    seekbarstyle = "knob",       -- bar, diamond or knob
+    seekbarstyle = "bar",       -- bar, diamond or knob
     seekbarhandlesize = 0.6,    -- size ratio of the diamond and knob handle
     seekrangestyle = "inverted",-- bar, line, slider, inverted or none
     seekrangeseparate = true,   -- whether the seekranges overlay on the bar-style seekbar
@@ -57,10 +57,10 @@ local user_opts = {
     chapter_fmt = "Chapter: %s", -- chapter print format for seekbar-hover. "no" to disable
     unicodeminus = false,       -- whether to use the Unicode minus sign character
 
-    background_color = "#888888",     -- background color of the osc
-    timecode_color = "#555555",       -- color of the progress bar and time color
+    background_color = "#555555",     -- background color of the osc
+    timecode_color = "#111111",       -- color of the progress bar and time color
     title_color = "#000000",          -- color of the title
-    time_pos_color = "#000000",       -- color of the timecode at hovered position
+    time_pos_color = "#FFCCCC",       -- color of the timecode at hovered position
     buttons_color = "#000000",        -- color of big buttons, wc buttons, and bar small buttons
     small_buttonsL_color = "#000000", -- color of left small buttons
     small_buttonsR_color = "#000000", -- color of right small buttons
@@ -2186,9 +2186,9 @@ local function osc_init()
     layouts[user_opts.layout]()
 
     -- load window controls
-    if window_controls_enabled() then
-        window_controls(user_opts.layout == "topbar")
-    end
+    -- if window_controls_enabled() then
+    --     window_controls(user_opts.layout == "topbar")
+    -- end
 
     --do something with the elements
     prepare_elements()
