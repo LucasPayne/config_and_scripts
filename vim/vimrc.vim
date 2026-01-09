@@ -943,8 +943,8 @@ function! TabPanel() abort
             "call AddPanelText(P, "("..num_hidden..")", "Footer")
             "call FinishPanelLine(P)
             
-            call AddPanelText(P, "", "")
-            call FinishPanelLine(P)
+            " call AddPanelText(P, "", "")
+            " call FinishPanelLine(P)
 
             let hidden_buffers = GetHiddenBuffers()
             for buf in hidden_buffers
@@ -997,6 +997,7 @@ function! TabPanel() abort
     endfor
     return panel_string
 endfunction
+
 redrawtabpanel
 set tabpanel=%!TabPanel()
 " Custom highlights for tabpanel
