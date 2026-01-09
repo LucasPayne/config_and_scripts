@@ -574,6 +574,10 @@ cmd open_enter ${{
     then
         # Video
         d mpv --no-border "$f"
+    elif [[ "$mim" =~ ^audio/ ]]
+    then
+        # Audio
+        d mpv --no-border "$f"
     elif [[ "$mim" = "application/pdf" ]]
     then
         # Document

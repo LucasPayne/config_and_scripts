@@ -18,10 +18,12 @@
     vidbg/gamma.txt
     videos.ns
 *~/drive/music
+    music_teach.ns
     music.ns
 ~/drive/dev/films
     films.ns
 ~/drive/dev/reading
+    reading_tech.ns
     reading.ns
 ~/drive/dev/person
     eyes/eyes.ns

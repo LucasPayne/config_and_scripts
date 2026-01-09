@@ -568,7 +568,7 @@ highlight TabLineTag cterm=underline ctermfg=white ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=white
 
 " TabPanel
-hi TabPanelFill cterm=NONE
+hi TabPanelFill cterm=NONE ctermbg=NONE
 " hi TabPanel cterm=NONE ctermfg=grey
 " hi TabPanelSel cterm=NONE ctermfg=white
 hi TabPanel cterm=NONE ctermfg=0 ctermbg=gray
@@ -1014,7 +1014,7 @@ set tabpanel=%!TabPanel()
 highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=grey
 highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
-highlight TabPanelFooter ctermfg=grey ctermbg=black
+highlight TabPanelFooter ctermfg=0 ctermbg=white
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=0 ctermbg=grey
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=0 ctermbg=grey
