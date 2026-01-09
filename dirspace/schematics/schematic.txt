@@ -8,12 +8,14 @@
 *~/config
     dirspace/schematics/schematic.txt
     dirspace/dirspaces.txt
+    lf/lfrc
     vim/vimrc.vim
     kitty/kitty.conf
 *~/drive/dev/documentation
 ~/drive/dev/browser
     browser.ns
 ~/drive/videos
+    vidbg/gamma.txt
     videos.ns
 *~/drive/music
     music.ns
@@ -24,3 +26,4 @@
 ~/drive/dev/person
     eyes/eyes.ns
     notebook.ns
+    italy.ns

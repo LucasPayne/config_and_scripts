@@ -559,11 +559,11 @@ highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
 highlight TabLine cterm=underline ctermfg=black ctermbg=grey
-highlight TabLineSel cterm=underline ctermfg=white ctermbg=black
+highlight TabLineSel cterm=underline ctermfg=black ctermbg=9
 highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
 highlight TabLineNumber cterm=underline ctermfg=black ctermbg=white
-highlight TabLineNumberSel cterm=underline ctermfg=white ctermbg=black
+highlight TabLineNumberSel cterm=underline ctermfg=black ctermbg=9
 highlight TabLineTag cterm=underline ctermfg=white ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=white
 
@@ -572,7 +572,7 @@ hi TabPanelFill cterm=NONE
 " hi TabPanel cterm=NONE ctermfg=grey
 " hi TabPanelSel cterm=NONE ctermfg=white
 hi TabPanel cterm=NONE ctermfg=0 ctermbg=gray
-hi TabPanelSel cterm=NONE ctermfg=9 ctermbg=0
+hi TabPanelSel cterm=NONE ctermfg=black ctermbg=9
 set fillchars+=tpl_vert:\ 
 
 " Wrapper for redrawtabpanel so it can be remote-called through vim server commands.
@@ -1011,7 +1011,7 @@ set tabpanel=%!TabPanel()
 " highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
 " highlight TabPanelBufferFlag cterm=None ctermfg=grey ctermbg=black
 " highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
-highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
+highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=grey
 highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
 highlight TabPanelFooter ctermfg=grey ctermbg=black
