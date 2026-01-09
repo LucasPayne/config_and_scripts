@@ -260,6 +260,7 @@ hi debugPC ctermbg=none
 
 set enc=utf8
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
+hi VertSplit cterm=none ctermbg=none ctermfg=grey
 set signcolumn=auto
 ">>>
 
@@ -2602,10 +2603,10 @@ augroup END
 
 " guifg trick to prevent vim from inserting ^^^ if stl/stlnc fillchars are
 " the same, see https://vi.stackexchange.com/questions/15873/carets-in-status-line
-hi StatusLine term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=red
-hi StatusLineNC term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=green
-hi StatusLineTerm term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=red
-hi StatusLineTermNC term=NONE cterm=NONE ctermfg=blue ctermbg=black guibg=green
+hi StatusLine term=NONE cterm=NONE ctermfg=grey ctermbg=none guibg=red
+hi StatusLineNC term=NONE cterm=NONE ctermfg=grey ctermbg=none guibg=green
+hi StatusLineTerm term=NONE cterm=NONE ctermfg=grey ctermbg=none guibg=red
+hi StatusLineTermNC term=NONE cterm=NONE ctermfg=grey ctermbg=none guibg=green
 
 " patch-9.0.0340
 "     a2a8973e51a0052bb52e43a2b22e7ecdecc32003
@@ -2664,9 +2665,6 @@ augroup TerminalWinOpen_augroup
     autocmd!
     autocmd TerminalWinOpen * call TerminalWinOpenCommands()
 augroup END
-
-hi clear VertSplit
-hi VertSplit ctermbg=0 ctermfg=darkgrey
 
 " register "+ paste
 " paste on new line

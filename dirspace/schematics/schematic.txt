@@ -29,3 +29,7 @@
     eyes/eyes.ns
     notebook.ns
     italy.ns
+~/Downloads
+~/drive/images
+~/drive/dev/games
+    games.ns
