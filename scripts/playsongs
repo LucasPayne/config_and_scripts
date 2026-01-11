@@ -1,0 +1,37 @@
+#!/bin/bash
+# playsongs: play a selection of songs in the album
+# playsongs 1 3   # Play only songs 1 and 3
+#
+# todo:
+# maybe: Accept range.
+
+songs=()
+while read -r file
+do
+    mime="$(mimetype -b "$file")"
+    if [[ "$mime" = audio/* ]]
+    then
+        songs+=("$file")
+    fi
+done < <(fd -d1 -tf | sort -n)
+
+selected=()
+while [[ $# -gt 0 ]]
+do
+    n="$1"
+
+    if ! [[ "$n" =~ [[:digit:]]+ ]]
+    then
+        >&2 echo "error: $n is not a number"
+        exit 1
+    elif [[ $n -eq 0 ]]
+    then
+        >&2 echo "error: song indices must be > 0"
+        exit 1
+    fi
+
+    selected+=("${songs[$((n - 1))]}")
+    shift
+done
+
+mpv --no-video "${selected[@]}"

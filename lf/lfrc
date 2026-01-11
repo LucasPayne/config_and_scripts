@@ -730,6 +730,17 @@ map .B ${{
     d vidbr "$f"
 }}
 
+# Set the kitty terminal window logo.
+map .L ${{
+    if [[ -v KITTY_WINDOW_ID ]]
+    then
+        if [[ "$(mimetype -b "$f")" =~ ^image/ ]]
+        then
+            kitty @ set-window-logo "$f"
+        fi
+    fi
+}}
+
 # Play an album
 map .a ${{
     in_vim || exit

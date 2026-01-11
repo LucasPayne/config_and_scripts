@@ -258,6 +258,8 @@ hi SignColumn ctermbg=none
 " todo: Find a good unintrusive styling for this line.
 hi debugPC ctermbg=none
 
+set nowrap
+
 set enc=utf8
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
 hi VertSplit cterm=none ctermbg=none ctermfg=grey
@@ -569,11 +571,6 @@ highlight TabLineTag cterm=underline ctermfg=white ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=white
 
 " TabPanel
-hi TabPanelFill cterm=NONE ctermbg=NONE
-" hi TabPanel cterm=NONE ctermfg=grey
-" hi TabPanelSel cterm=NONE ctermfg=white
-hi TabPanel cterm=NONE ctermfg=0 ctermbg=gray
-hi TabPanelSel cterm=NONE ctermfg=black ctermbg=9
 set fillchars+=tpl_vert:\ 
 
 " Wrapper for redrawtabpanel so it can be remote-called through vim server commands.
@@ -1001,6 +998,12 @@ endfunction
 
 redrawtabpanel
 set tabpanel=%!TabPanel()
+hi TabPanelFill cterm=NONE ctermbg=NONE
+" hi TabPanel cterm=NONE ctermfg=grey
+" hi TabPanelSel cterm=NONE ctermfg=white
+hi TabPanel cterm=NONE ctermfg=0 ctermbg=gray
+hi TabPanelSel cterm=NONE ctermfg=black ctermbg=9
+
 " Custom highlights for tabpanel
 " highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
 " highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black

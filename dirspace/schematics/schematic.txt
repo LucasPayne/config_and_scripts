@@ -18,7 +18,7 @@
     vidbg/gamma.txt
     videos.ns
 *~/drive/music
-    music_teach.ns
+    music_tech.ns
     music.ns
 ~/drive/dev/films
     films.ns
