@@ -1,0 +1,3 @@
+#!/bin/bash
+# wmn: set number of desktops
+wmctrl -n "$@"
