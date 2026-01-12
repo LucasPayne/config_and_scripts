@@ -1,5 +1,6 @@
 *~/test
 @~/notes/notes.d
+    emacs.ns
     computer.ns
     kitty.ns
     twim.ns
@@ -21,6 +22,7 @@
     music_tech.ns
     music.ns
 ~/drive/dev/films
+    films_tech.ns
     films.ns
 ~/drive/dev/reading
     reading_tech.ns
@@ -33,3 +35,4 @@
 ~/drive/images
 ~/drive/dev/games
     games.ns
+
