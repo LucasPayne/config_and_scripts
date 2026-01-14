@@ -7,6 +7,7 @@
     wayland.ns
 *~/code
 *~/config
+    scripts/syncer_files/sync.conf
     dirspace/schematics/schematic.txt
     dirspace/dirspaces.txt
     lf/lfrc
@@ -35,4 +36,6 @@
 ~/drive/images
 ~/drive/dev/games
     games.ns
+~/drive/dev/travel
+    italy_travel.ns
 

@@ -33,6 +33,7 @@
 @ ~/drive/dev/magic_the_gathering -- Magic
 @ ~/drive/dev/person -- Person
 @ ~/drive/dev/piano -- Piano
+@ ~/drive/dev/travel -- Travel
 @ ~/drive/dev/visual_effects -- VFX
 @ ~/code/cg_sandbox -- code:cg_sandbox
 @ ~/test -- ~/test
