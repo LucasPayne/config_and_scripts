@@ -10,6 +10,7 @@
     scripts/syncer_files/sync.conf
     dirspace/schematics/schematic.txt
     dirspace/dirspaces.txt
+    zathura/zathurarc
     lf/lfrc
     vim/vimrc.vim
     kitty/kitty.conf
@@ -28,7 +29,7 @@
 ~/drive/dev/reading
     reading_tech.ns
     reading.ns
-~/drive/dev/person
+*~/drive/dev/person
     eyes/eyes.ns
     notebook.ns
     italy.ns

@@ -1,0 +1,3 @@
+#!/bin/bash
+# random-country:
+cat ~/drive/dev/travel/maps/country.txt | shuf | sel 1 | xi notify-send {}

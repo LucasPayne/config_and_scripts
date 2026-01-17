@@ -4,19 +4,19 @@ set recolor true
 # set recolor-darkcolor \#6B530F
 # set recolor-lightcolor \#000000
 #medium
-set recolor-darkcolor \#AB914F
-set recolor-lightcolor \#000000
+# set recolor-darkcolor \#AB914F
+# set recolor-lightcolor \#000000
 #bright
-#set recolor-darkcolor \#E8DF9B
-#set recolor-lightcolor \#000000
-#set guioptions ""
+# set recolor-darkcolor \#E8DF9B
+# set recolor-lightcolor \#000000
+# set guioptions ""
 
 # Light (light-mode colors)
-#set recolor-darkcolor \#000000
-#set recolor-lightcolor \#E8DF9B
+set recolor-darkcolor \#000000
+set recolor-lightcolor \#E8DF9B
 
 # Grey
-#set recolor-darkcolor \#9F9FF
+# set recolor-darkcolor \#9F9FF
 
 # White
 # set recolor-darkcolor \#FFFFFF
@@ -26,27 +26,27 @@ set recolor-lightcolor \#000000
 # set recolor-lightcolor \#5DA193
 
 # Green
-#set recolor-darkcolor \#537A59
+# set recolor-darkcolor \#537A59
 
 # Blue
-#set recolor-darkcolor \#3465A4
+# set recolor-darkcolor \#3465A4
 
 # Calibrated for keratoconus
-#set recolor-lightcolor \#2e2b00
-#set recolor-darkcolor \#c9bb91
+# set recolor-lightcolor \#2e2b00
+# set recolor-darkcolor \#c9bb91
 
 
 #todo: apparently not working
-#unmap normal l
-#unmap normal ;
-#map normal l scroll left
-#map normal ; scroll right
+# unmap normal l
+# unmap normal ;
+# map normal l scroll left
+# map normal ; scroll right
 
 #set recolor-darkcolor \#c9bb91
 
 #Lighter greenish background, but still dark
-#set recolor-darkcolor \#AB914F
-#set recolor-lightcolor \#0a0a00
+# set recolor-darkcolor \#AB914F
+# set recolor-lightcolor \#0a0a00
 
 # set recolor-darkcolor \#AB914F
 # set recolor-lightcolor \#000000

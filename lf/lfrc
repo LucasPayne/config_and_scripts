@@ -158,13 +158,15 @@ cmd options ${{
 # lfrc_lib/Makefile will generate this "library" from .lf files.
 # note: If lf language had wildcards this would be easier.
 # note: This is currently run async so functions might not be loaded in initialization...
-eval source "$CONFIG_DIR/lf/lfrc_lib/build/lfrc_lib.lfso"
+#eval source "$CONFIG_DIR/lf/lfrc_lib/build/lfrc_lib.lfso"
+source "/home/lucas/config/lf/lfrc_lib/build/lfrc_lib.lfso"
 #>>>
 
 # OPTIONS
 #<<<
 set shell bash
-eval set previewer "$CONFIG_DIR/lf/previewer.sh"
+#eval set previewer "$CONFIG_DIR/lf/previewer.sh"
+set previewer "/home/lucas/config/lf/previewer.sh"
 #todo:?
 set ifs ' '
 set nodrawbox
@@ -753,7 +755,9 @@ map .a ${{
 #>>>
 
 # Source auto-generated config
-eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
+#eval source "$CONFIG_DIR/scripts/syncer_files/syncer-lf"
+# eval race condition?
+source "/home/lucas/config/scripts/syncer_files/syncer-lf"
 
 # Waiting for release 34 for on-init
 # Running here for now.
