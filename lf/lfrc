@@ -426,7 +426,7 @@ cmap <a-h> :cmd-end; cmd-delete-home; LFRC::execute-from-history
 
 #>>>
 # General mappings
-map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R $f
+map i $LESSOPEN='| ~/config/lf/previewer.sh %s' less -R "$f"
 map h
 map \; open
 map l updir
@@ -568,7 +568,7 @@ cmd open_enter ${{
 
     mim="$(mimetype -b "$(realpath "$f")")"
 
-    if in_vim && ( [ "$mim" = "application/xml" ] || [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] || [[ "$mim" = "application/x-subrip" ]] )
+    if in_vim && ( [ "$mim" = "application/xml" ] || [ "$mim" = "application/x-shellscript" ] || [[ "$mim" =~ ^text/ ]] || [[ "$mim" = "application/x-subrip" ]] || [[ "$mim" = "application/toml" ]] )
     then
         # vim_remote_call Lf_Edit "$f" "here" "$close"
         vim_remote_call Lf_Edit "$f" "tab" "$close"
@@ -579,7 +579,7 @@ cmd open_enter ${{
     elif [[ "$mim" =~ ^audio/ ]]
     then
         # Audio
-        d mpv --no-border "$f"
+        rhythmbox "$f"
     elif [[ "$mim" = "application/pdf" ]]
     then
         # Document
