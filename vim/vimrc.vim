@@ -562,11 +562,11 @@ highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
 highlight TabLine cterm=underline ctermfg=black ctermbg=grey
-highlight TabLineSel cterm=underline ctermfg=black ctermbg=9
+highlight TabLineSel cterm=underline ctermfg=white ctermbg=black
 highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
 highlight TabLineNumber cterm=underline ctermfg=black ctermbg=white
-highlight TabLineNumberSel cterm=underline ctermfg=black ctermbg=9
+highlight TabLineNumberSel cterm=underline ctermfg=white ctermbg=black
 highlight TabLineTag cterm=underline ctermfg=white ctermbg=black
 highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=white
 
@@ -1002,7 +1002,7 @@ hi TabPanelFill cterm=NONE ctermbg=NONE
 " hi TabPanel cterm=NONE ctermfg=grey
 " hi TabPanelSel cterm=NONE ctermfg=white
 hi TabPanel cterm=NONE ctermfg=0 ctermbg=gray
-hi TabPanelSel cterm=NONE ctermfg=black ctermbg=9
+hi TabPanelSel cterm=NONE ctermfg=white ctermbg=black
 
 " Custom highlights for tabpanel
 " highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
@@ -4049,7 +4049,7 @@ nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 " set listchars=trail:·
 " hi Whitespace ctermbg=black ctermfg=black
 
-if 1
+if 0
     hi LineNr ctermfg=grey ctermbg=0
     " hi MsgArea ctermfg=0 ctermbg=none
     hi MsgArea ctermfg=1 ctermbg=none

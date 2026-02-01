@@ -34,7 +34,7 @@ do
     if     ! [ "$mime" = "application/epub+zip" ] \
         && ! [ "$mime" = "application/pdf" ]
     then
-        >&2 echo "error: $arg is not a valid filetype."
+        >&2 echo "error: $arg must be an epub or pdf."
         exit 1
     fi
 done

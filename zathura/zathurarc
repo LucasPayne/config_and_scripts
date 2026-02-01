@@ -12,8 +12,12 @@ set recolor true
 # set guioptions ""
 
 # Light (light-mode colors)
+# Normal (black text, white background)
 set recolor-darkcolor \#000000
-set recolor-lightcolor \#E8DF9B
+set recolor-lightcolor \#FFFFFF
+# Yellow-ish
+# set recolor-darkcolor \#000000
+# set recolor-lightcolor \#E8DF9B
 
 # Grey
 # set recolor-darkcolor \#9F9FF

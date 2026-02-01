@@ -33,10 +33,12 @@
     eyes/eyes.ns
     notebook.ns
     italy.ns
+    calendar.ns
 ~/Downloads
 ~/drive/images
 ~/drive/dev/games
     games.ns
 ~/drive/dev/travel
     italy_travel.ns
+    the_netherlands_travel.ns
 
