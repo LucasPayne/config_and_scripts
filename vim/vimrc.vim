@@ -258,7 +258,7 @@ hi SignColumn ctermbg=none
 " todo: Find a good unintrusive styling for this line.
 hi debugPC ctermbg=none
 
-set nowrap
+set wrap
 
 set enc=utf8
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
@@ -998,25 +998,12 @@ endfunction
 
 redrawtabpanel
 set tabpanel=%!TabPanel()
-hi TabPanelFill cterm=NONE ctermbg=NONE
-" hi TabPanel cterm=NONE ctermfg=grey
-" hi TabPanelSel cterm=NONE ctermfg=white
-hi TabPanel cterm=NONE ctermfg=0 ctermbg=gray
-hi TabPanelSel cterm=NONE ctermfg=white ctermbg=black
+highlight TabPanelFill cterm=NONE ctermbg=NONE
+highlight TabPanel cterm=NONE ctermfg=white ctermbg=none
+highlight TabPanelSel cterm=NONE ctermfg=white ctermbg=black
 
 " Custom highlights for tabpanel
-" highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=cyan
-" highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
-" highlight TabPanelHeaderEnd cterm=underline ctermfg=blue ctermbg=black
-" highlight TabPanelFooter ctermfg=grey ctermbg=black
-" highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
-" highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=blue ctermbg=black
-" highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=blue ctermbg=black
-" highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=blue ctermbg=black
-" highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
-" highlight TabPanelBufferFlag cterm=None ctermfg=grey ctermbg=black
-" highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
-highlight TabPanelFocusLine cterm=None ctermfg=black ctermbg=grey
+highlight TabPanelFocusLine cterm=None ctermfg=white ctermbg=black
 highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
 highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
 highlight TabPanelFooter ctermfg=0 ctermbg=white
@@ -1025,7 +1012,7 @@ highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=0 ctermbg=grey
 highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=0 ctermbg=grey
 highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=0 ctermbg=blue
 highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
-highlight TabPanelBufferFlag cterm=None ctermfg=0 ctermbg=grey
+highlight TabPanelBufferFlag cterm=NONE ctermfg=white ctermbg=none
 highlight TabPanelLauncherFlag cterm=None ctermfg=black ctermbg=red
 "@@
 
