@@ -579,7 +579,7 @@ cmd open_enter ${{
     elif [[ "$mim" =~ ^audio/ ]]
     then
         # Audio
-        rhythmbox "$f"
+        d rhythmbox "$f"
     elif [[ "$mim" = "application/pdf" ]]
     then
         # Document

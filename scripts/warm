@@ -3,31 +3,34 @@
 
 # todo: detect if xsct or sct
 
-xsct_number=2750
-
 if [ $# -eq 1 ]
 then
-    case $1 in
-        0)
-            xsct_number=0
-            ;;
-        1)
-            xsct_number=3150
-            ;;
-        2)
-            xsct_number=2750
-            ;;
-        3)
-            xsct_number=2350
-            ;;
-        4)
-            xsct_number=2000
-            ;;
-        *)
-            xsct_number=2750
-            ;;
-    esac
+    n="$1"
+else
+    n=1
 fi
+
+case $n in
+    0)
+        xsct_number=0
+        ;;
+    1)
+        xsct_number=3350
+        ;;
+    2)
+        xsct_number=2750
+        ;;
+    3)
+        xsct_number=2350
+        ;;
+    4)
+        xsct_number=2000
+        ;;
+    *)
+        xsct_number=2750
+        ;;
+esac
+
 
 xsct $xsct_number
 
