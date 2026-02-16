@@ -32,7 +32,6 @@
 *~/drive/dev/person
     eyes/eyes.ns
     notebook.ns
-    italy.ns
     calendar.ns
 ~/Downloads
 ~/drive/images
@@ -41,4 +40,7 @@
 ~/drive/dev/travel
     italy_travel.ns
     the_netherlands_travel.ns
-
+~/drive/dev/food
+    food.ns
+* ~/drive/dev/climbing
+    climbing.ns

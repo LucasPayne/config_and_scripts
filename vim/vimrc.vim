@@ -258,7 +258,7 @@ hi SignColumn ctermbg=none
 " todo: Find a good unintrusive styling for this line.
 hi debugPC ctermbg=none
 
-set wrap
+set nowrap
 
 set enc=utf8
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
@@ -390,7 +390,7 @@ nnoremap <M-?> ?^\s*
 " :help setting-tabline
 
 let g:use_tabpanel = 1
-let g:tabpanel_width = 26
+let g:tabpanel_width = 16
 function! SetTabPanelWidth(width)
     execute "set tabpanelopt=columns:"..g:tabpanel_width..",align:left"
 endfunction
@@ -561,14 +561,14 @@ endfunction
 highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
-highlight TabLine cterm=underline ctermfg=black ctermbg=grey
-highlight TabLineSel cterm=underline ctermfg=white ctermbg=black
+highlight TabLine cterm=underline ctermfg=grey ctermbg=black
+highlight TabLineSel cterm=underline ctermfg=black ctermbg=white
 highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
-highlight TabLineNumber cterm=underline ctermfg=black ctermbg=white
-highlight TabLineNumberSel cterm=underline ctermfg=white ctermbg=black
-highlight TabLineTag cterm=underline ctermfg=white ctermbg=black
-highlight TabLineTagSel cterm=underline ctermfg=black ctermbg=white
+highlight TabLineNumber cterm=underline ctermfg=white ctermbg=black
+highlight TabLineNumberSel cterm=underline ctermfg=black ctermbg=white
+highlight TabLineTag cterm=underline ctermfg=black ctermbg=white
+highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
 
 " TabPanel
 set fillchars+=tpl_vert:\ 
@@ -1000,7 +1000,7 @@ redrawtabpanel
 set tabpanel=%!TabPanel()
 highlight TabPanelFill cterm=NONE ctermbg=NONE
 highlight TabPanel cterm=NONE ctermfg=white ctermbg=none
-highlight TabPanelSel cterm=NONE ctermfg=white ctermbg=black
+highlight TabPanelSel cterm=NONE ctermfg=black ctermbg=white
 
 " Custom highlights for tabpanel
 highlight TabPanelFocusLine cterm=None ctermfg=white ctermbg=black
@@ -1318,6 +1318,9 @@ augroup LineNumbers
     " Disable line number on notes (.ns) files.
     autocmd BufWinEnter *.ns set nonumber
 augroup END
+
+" Toggle wrap
+nnoremap <silent> <M-R> :set wrap!<cr>
 
 function! CheckSwitchToTerminalMode()
     if exists("b:switch_to_terminal_mode") && b:switch_to_terminal_mode

@@ -1,4 +1,4 @@
-set recolor true
+#set recolor true
 # Amber
 #dark
 # set recolor-darkcolor \#6B530F
@@ -7,14 +7,14 @@ set recolor true
 # set recolor-darkcolor \#AB914F
 # set recolor-lightcolor \#000000
 #bright
-# set recolor-darkcolor \#E8DF9B
-# set recolor-lightcolor \#000000
+set recolor-darkcolor \#E8DF9B
+set recolor-lightcolor \#000000
 # set guioptions ""
 
 # Light (light-mode colors)
 # Normal (black text, white background)
-set recolor-darkcolor \#000000
-set recolor-lightcolor \#FFFFFF
+# set recolor-darkcolor \#000000
+# set recolor-lightcolor \#FFFFFF
 # Yellow-ish
 # set recolor-darkcolor \#000000
 # set recolor-lightcolor \#E8DF9B

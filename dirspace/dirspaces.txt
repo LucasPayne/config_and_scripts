@@ -35,6 +35,7 @@
 @ ~/drive/dev/food -- Food
 @ ~/drive/dev/piano -- Piano
 @ ~/drive/dev/travel -- Travel
+@ ~/drive/dev/climbing -- Climbing
 @ ~/drive/dev/art -- Art
 @ ~/drive/dev/visual_effects -- VFX
 @ ~/code/cg_sandbox -- code:cg_sandbox
