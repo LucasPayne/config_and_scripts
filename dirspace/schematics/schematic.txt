@@ -42,5 +42,5 @@
     the_netherlands_travel.ns
 ~/drive/dev/food
     food.ns
-* ~/drive/dev/climbing
+*~/drive/dev/climbing
     climbing.ns

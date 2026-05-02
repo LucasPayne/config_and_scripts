@@ -258,7 +258,7 @@ hi SignColumn ctermbg=none
 " todo: Find a good unintrusive styling for this line.
 hi debugPC ctermbg=none
 
-set nowrap
+set wrap
 
 set enc=utf8
 set fillchars=eob:\ ,vert:\│,stl:⎯,stlnc:⎯
@@ -2236,19 +2236,19 @@ elseif 1
     nnoremap <silent> <M-W><M-L> :call SpaceMoveVertical(-1, 1)<cr>
     nnoremap <silent> <M-W><M-H> :call SpaceMoveVertical(1, 1)<cr>
 else
-    tnoremap <silent> <M-w><M-h> <C-w>:call SpaceMoveHorizontal(-1, 0)<cr>
-    tnoremap <silent> <M-w><M-l> <C-w>:call SpaceMoveHorizontal(1, 0)<cr>
-    tnoremap <silent> <M-W><M-H> <C-w>:call SpaceMoveHorizontal(-1, 1)<cr>
-    tnoremap <silent> <M-W><M-L> <C-w>:call SpaceMoveHorizontal(1, 1)<cr>
+    tnoremap <silent> <M-w><M-l> <C-w>:call SpaceMoveHorizontal(-1, 0)<cr>
+    tnoremap <silent> <M-w><M-;> <C-w>:call SpaceMoveHorizontal(1, 0)<cr>
+    tnoremap <silent> <M-W><M-L> <C-w>:call SpaceMoveHorizontal(-1, 1)<cr>
+    tnoremap <silent> <M-W><M-:> <C-w>:call SpaceMoveHorizontal(1, 1)<cr>
     tnoremap <silent> <M-w><M-j> <C-w>:call SpaceMoveVertical(-1, 0)<cr>
     tnoremap <silent> <M-w><M-k> <C-w>:call SpaceMoveVertical(1, 0)<cr>
     tnoremap <silent> <M-W><M-J> <C-w>:call SpaceMoveVertical(-1, 1)<cr>
     tnoremap <silent> <M-W><M-K> <C-w>:call SpaceMoveVertical(1, 1)<cr>
     nnoremap <silent> <C-c> :call CtrlCHandler()<cr>
-    nnoremap <silent> <M-w><M-h> :call SpaceMoveHorizontal(-1, 0)<cr>
-    nnoremap <silent> <M-w><M-l> :call SpaceMoveHorizontal(1, 0)<cr>
-    nnoremap <silent> <M-W><M-H> :call SpaceMoveHorizontal(-1, 1)<cr>
-    nnoremap <silent> <M-W><M-L> :call SpaceMoveHorizontal(1, 1)<cr>
+    nnoremap <silent> <M-w><M-l> :call SpaceMoveHorizontal(-1, 0)<cr>
+    nnoremap <silent> <M-w><M-;> :call SpaceMoveHorizontal(1, 0)<cr>
+    nnoremap <silent> <M-W><M-L> :call SpaceMoveHorizontal(-1, 1)<cr>
+    nnoremap <silent> <M-W><M-:> :call SpaceMoveHorizontal(1, 1)<cr>
     nnoremap <silent> <M-w><M-j> :call SpaceMoveVertical(-1, 0)<cr>
     nnoremap <silent> <M-w><M-k> :call SpaceMoveVertical(1, 0)<cr>
     nnoremap <silent> <M-W><M-J> :call SpaceMoveVertical(-1, 1)<cr>
