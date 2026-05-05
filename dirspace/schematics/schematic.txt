@@ -5,6 +5,7 @@
     kitty.ns
     twim.ns
     wayland.ns
+    notes.ns
 *~/code
 *~/config
     scripts/syncer_files/sync.conf
