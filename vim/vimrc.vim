@@ -16,8 +16,9 @@ endfunction
 " Load defaults.vim.
 " (:help usr_05.txt)
 " (:help defaults.vim)
-unlet! skip_defaults_vim
-source $VIMRUNTIME/defaults.vim
+"NOTE: Stopped working...
+" unlet! skip_defaults_vim
+" source $VIMRUNTIME/defaults.vim
 
 " I keep accidentally recording macros.
 nnoremap q <nop>
@@ -246,7 +247,6 @@ endfunction
 "    set colorscheme ...
 "    ...
 "<<<
-colorscheme default
 set background=dark
 hi LineNr ctermfg=grey ctermbg=None
 hi QuickFixLine cterm=underline ctermfg=white ctermbg=None
@@ -327,7 +327,7 @@ nnoremap Y "+y
 " Syntax off, eye problems.
 "todo: Would prefer to at least have the comment highlight group.
 "      Perhaps rather a very muted palette with comments, and possibly keywords, a different colour.
-syntax off
+" syntax off
 set path=.,,
 filetype indent on
 filetype plugin on
@@ -1784,7 +1784,7 @@ endif
 " Debugging
 " ...
 "<<<
-packadd termdebug
+" packadd termdebug
 
 let g:termdebug_config = {
             \ 'winbar' : 0,
