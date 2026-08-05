@@ -24,16 +24,9 @@
 *~/drive/music
     music_tech.ns
     music.ns
-~/drive/dev/films
-    films_tech.ns
-    films.ns
-~/drive/dev/reading
+*~/drive/dev/reading
     reading_tech.ns
     reading.ns
-*~/drive/dev/person
-    eyes/eyes.ns
-    notebook.ns
-    calendar.ns
 ~/Downloads
 ~/drive/images
 ~/drive/dev/games
@@ -43,5 +36,17 @@
     the_netherlands_travel.ns
 ~/drive/dev/food
     food.ns
-*~/drive/dev/climbing
+*~/drive/dev/films
+    films_tech.ns
+    films.ns
+~/drive/dev/climbing
     climbing.ns
+*~/drive/dev/person
+    eyes/eyes.ns
+    notebook.ns
+    calendar.ns
+    education.ns
+    jobs.ns
+~/drive/dev/language
+    language_tech.ns
+    russian.ns

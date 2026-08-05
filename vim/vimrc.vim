@@ -248,7 +248,7 @@ endfunction
 "    ...
 "<<<
 set background=dark
-hi LineNr ctermfg=grey ctermbg=None
+hi LineNr ctermfg=0 ctermbg=None
 hi QuickFixLine cterm=underline ctermfg=white ctermbg=None
 " Error message highlighting.
 hi ErrorMsg cterm=bold ctermfg=Red ctermbg=Black
@@ -2648,6 +2648,8 @@ endif
 " highlight Normal     ctermbg=white ctermfg=black
 " highlight NonText    ctermbg=black ctermfg=white
 " highlight EndOfBuffer ctermbg=black ctermfg=white
+hi Normal ctermfg=white
+hi LineNr ctermfg=cyan
 
 function! TerminalWinOpenCommands()
     set wincolor=Window
