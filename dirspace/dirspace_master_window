@@ -7,19 +7,23 @@ stty -echo
 
 message="Welcome"
 
-# Display a startup screen
-cols=$(tput cols)
-rows=$(tput lines)
-
-message_len="${#message}"
-start_x=$(( cols / 2  - message_len / 2 ))
-start_y=$(( rows / 2 - 1 ))
-tput cup $start_y $start_x
-echo "$message"
 
 # Play a startup sound
 mpv --no-terminal --no-video --really-quiet ~/config/sounds/office_kitano.mp3 >/dev/null 2>&1 &
-sleep 1
+
+if 0
+then
+    # Display a startup screen
+    cols=$(tput cols)
+    rows=$(tput lines)
+    
+    message_len="${#message}"
+    start_x=$(( cols / 2  - message_len / 2 ))
+    start_y=$(( rows / 2 - 1 ))
+    tput cup $start_y $start_x
+    echo "$message"
+    sleep 1
+fi
 
 tput clear
 tput cnorm

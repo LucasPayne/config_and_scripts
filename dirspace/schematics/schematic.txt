@@ -1,48 +1,31 @@
 *~/test
 @~/notes/notes.d
-    emacs.ns
-    computer.ns
-    kitty.ns
-    twim.ns
-    wayland.ns
     notes.ns
 *~/code
 *~/config
-    scripts/syncer_files/sync.conf
-    dirspace/schematics/schematic.txt
     dirspace/dirspaces.txt
-    zathura/zathurarc
-    lf/lfrc
-    vim/vimrc.vim
-    kitty/kitty.conf
+    dirspace/schematics/schematic.txt
 *~/drive/dev/documentation
+    csharp/csharp.ns
 ~/drive/dev/browser
     browser.ns
 ~/drive/videos
     vidbg/gamma.txt
     videos.ns
-*~/drive/music
+~/drive/music
     music_tech.ns
     music.ns
-*~/drive/dev/reading
+~/drive/dev/reading
     reading_tech.ns
     reading.ns
 ~/Downloads
 ~/drive/images
-~/drive/dev/games
-    games.ns
-~/drive/dev/travel
-    italy_travel.ns
-    the_netherlands_travel.ns
-~/drive/dev/food
-    food.ns
-*~/drive/dev/films
+~/drive/dev/films
     films_tech.ns
     films.ns
 ~/drive/dev/climbing
     climbing.ns
 *~/drive/dev/person
-    eyes/eyes.ns
     notebook.ns
     calendar.ns
     education.ns

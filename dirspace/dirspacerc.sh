@@ -39,7 +39,7 @@ do
         cur_vim_servername="$(dirspace_open "$line")"
         
         # Give the dirspace some time to initialize.
-        sleep 0.5
+        sleep 0.1
 
         if [ $is_slot -eq 1 ] && [ $cur_slot -lt 10 ]
         then
