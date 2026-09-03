@@ -1,0 +1,4 @@
+#!/bin/bash
+# pdf:
+
+pdflatex *.tex && z *.pdf
