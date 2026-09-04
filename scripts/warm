@@ -15,10 +15,10 @@ case $n in
         xsct_number=0
         ;;
     1)
-        xsct_number=3350
+        xsct_number=5250
         ;;
     2)
-        xsct_number=2750
+        xsct_number=3600
         ;;
     3)
         xsct_number=2350
