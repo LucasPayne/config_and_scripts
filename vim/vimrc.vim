@@ -561,14 +561,14 @@ endfunction
 highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
-highlight TabLine cterm=underline ctermfg=grey ctermbg=none
+highlight TabLine cterm=underline ctermfg=black ctermbg=none
 "highlight TabLineSel cterm=underline ctermfg=0 ctermbg=white
-highlight TabLineSel cterm=underline ctermfg=white ctermbg=0
+highlight TabLineSel cterm=underline ctermfg=black ctermbg=white
 highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
-highlight TabLineNumber cterm=underline ctermfg=white ctermbg=none
+highlight TabLineNumber cterm=underline ctermfg=black ctermbg=none
 "highlight TabLineNumberSel cterm=underline ctermfg=black ctermbg=white
-highlight TabLineNumberSel cterm=underline ctermfg=white ctermbg=black
+highlight TabLineNumberSel cterm=underline ctermfg=black ctermbg=white
 highlight TabLineTag cterm=underline ctermfg=black ctermbg=white
 highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
 
@@ -1001,9 +1001,9 @@ endfunction
 redrawtabpanel
 set tabpanel=%!TabPanel()
 highlight TabPanelFill cterm=NONE ctermbg=NONE
-highlight TabPanel cterm=NONE ctermfg=white ctermbg=none
-"highlight TabPanelSel cterm=NONE ctermfg=black ctermbg=white
-highlight TabPanelSel cterm=NONE ctermfg=white ctermbg=black
+highlight TabPanel cterm=NONE ctermfg=black ctermbg=white
+highlight TabPanelSel cterm=NONE ctermfg=black ctermbg=white
+" highlight TabPanelSel cterm=NONE ctermfg=white ctermbg=black
 
 " Custom highlights for tabpanel
 highlight TabPanelFocusLine cterm=None ctermfg=white ctermbg=black
@@ -1011,7 +1011,7 @@ highlight TabPanelFocusLine cterm=None ctermfg=white ctermbg=black
 "highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
 "highlight TabPanelFooter ctermfg=0 ctermbg=white
 highlight TabPanelHeader cterm=none ctermfg=black ctermbg=white
-highlight TabPanelHeaderEnd cterm=none ctermfg=white ctermbg=black
+highlight TabPanelHeaderEnd cterm=none ctermfg=black ctermbg=white
 highlight TabPanelFooter cterm=none ctermfg=black ctermbg=white
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
 highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=0 ctermbg=grey
@@ -2654,7 +2654,6 @@ endif
 " highlight Normal     ctermbg=white ctermfg=black
 " highlight NonText    ctermbg=black ctermfg=white
 " highlight EndOfBuffer ctermbg=black ctermfg=white
-hi Normal ctermfg=white
 hi LineNr ctermfg=cyan
 
 function! TerminalWinOpenCommands()
