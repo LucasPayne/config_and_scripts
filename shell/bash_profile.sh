@@ -10,3 +10,4 @@ if [ -f ~/.bashrc ]
 then
     source ~/.bashrc
 fi
+. "/home/lucas/.deno/env"

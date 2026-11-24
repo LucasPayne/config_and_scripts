@@ -77,3 +77,4 @@ export PATH="$(realpath ~/bin):$PATH"
 export SOURCE_HIGHLIGHT_DATADIR="$HOME/config/source-highlight/datadir"
 
 export GDB_DEV="$HOME/config/gdb"
+. "/home/lucas/.deno/env"

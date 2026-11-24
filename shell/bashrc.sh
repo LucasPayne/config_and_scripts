@@ -1174,3 +1174,4 @@ mkd ()
 }
 
 source ~/.bash_aliases
+. "/home/lucas/.deno/env"

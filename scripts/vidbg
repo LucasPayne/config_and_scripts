@@ -44,13 +44,15 @@ then
 
     select_label="$(printf '%s\n' "${vid_labels[@]}" | dmenu $dmenu_config)"
 
-    if grep -q -E "^${select_label%?}\$" ~/drive/videos/vidbg/gamma.txt
-    then
-        gamma="$(grep -A 1 "^${select_label%?}\$" ~/drive/videos/vidbg/gamma.txt | tail -1 | xargs printf '%s')"
-        gamma_args="--gamma=$gamma"
-    else
-        gamma_args=""
-    fi
+    key_args=""
+    for key in gamma saturation
+    do
+        if grep -q -E "^${select_label%?}\$" ~/drive/videos/vidbg/$key.txt
+        then
+            val="$(grep -A 1 "^${select_label%?}\$" ~/drive/videos/vidbg/$key.txt | tail -1 | xargs printf '%s')"
+            key_args="$key_args --$key=$val"
+        fi
+    done
 
     if [ -z "$select_label" ]
     then
@@ -95,5 +97,5 @@ else
 fi
 
 
-pid="$(d mpvbg $gamma_args $grayscale_args --mute=yes --video-zoom=0.15 "$select_vid")"
+pid="$(d mpvbg $key_args $grayscale_args --mute=yes --video-zoom=0.15 "$select_vid")"
 echo "$pid" > /tmp/vidbgpid
