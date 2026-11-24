@@ -561,13 +561,11 @@ endfunction
 highlight clear TabLine
 highlight clear TabLineSel
 highlight clear TabLineFill
-highlight TabLine cterm=underline ctermfg=black ctermbg=none
-"highlight TabLineSel cterm=underline ctermfg=0 ctermbg=white
+highlight TabLine cterm=underline ctermfg=grey ctermbg=none
 highlight TabLineSel cterm=underline ctermfg=black ctermbg=white
 highlight TabLineFill cterm=underline ctermfg=blue ctermbg=black
 " custom
-highlight TabLineNumber cterm=underline ctermfg=black ctermbg=none
-"highlight TabLineNumberSel cterm=underline ctermfg=black ctermbg=white
+highlight TabLineNumber cterm=underline ctermfg=white ctermbg=none
 highlight TabLineNumberSel cterm=underline ctermfg=black ctermbg=white
 highlight TabLineTag cterm=underline ctermfg=black ctermbg=white
 highlight TabLineTagSel cterm=underline ctermfg=white ctermbg=black
@@ -1001,21 +999,17 @@ endfunction
 redrawtabpanel
 set tabpanel=%!TabPanel()
 highlight TabPanelFill cterm=NONE ctermbg=NONE
-highlight TabPanel cterm=NONE ctermfg=black ctermbg=white
+highlight TabPanel cterm=NONE ctermfg=white ctermbg=none
 highlight TabPanelSel cterm=NONE ctermfg=black ctermbg=white
-" highlight TabPanelSel cterm=NONE ctermfg=white ctermbg=black
 
 " Custom highlights for tabpanel
 highlight TabPanelFocusLine cterm=None ctermfg=white ctermbg=black
-"highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
-"highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
-"highlight TabPanelFooter ctermfg=0 ctermbg=white
-highlight TabPanelHeader cterm=none ctermfg=black ctermbg=white
-highlight TabPanelHeaderEnd cterm=none ctermfg=black ctermbg=white
-highlight TabPanelFooter cterm=none ctermfg=black ctermbg=white
+highlight TabPanelHeader cterm=none ctermfg=blue ctermbg=black
+highlight TabPanelHeaderEnd ctermfg=black ctermbg=white
+highlight TabPanelFooter ctermfg=white ctermbg=black
 highlight TabPanelHeader2 cterm=None ctermfg=grey ctermbg=black
-highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=0 ctermbg=grey
-highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=0 ctermbg=grey
+highlight TabPanelBufferDescriptionCommand cterm=None ctermfg=white ctermbg=black
+highlight TabPanelBufferDescriptionArgs cterm=None ctermfg=white ctermbg=black
 highlight TabPanelBufferDescriptionFilesCWD cterm=None ctermfg=0 ctermbg=blue
 highlight TabPanelPopupIndicator cterm=None ctermfg=blue ctermbg=black
 highlight TabPanelBufferFlag cterm=NONE ctermfg=white ctermbg=none
@@ -1208,7 +1202,7 @@ inoremap <M-s> <Esc>:w<cr>a
 "tnoremap <M-L> <C-w>l
 " Close window
 nnoremap <silent> <M-w><M-x> :quit<cr>
-nnoremap <silent> <M-x> :quit<cr>
+nnoremap <silent> <M-x> :tabclose<cr>
 tnoremap <silent> <M-W><M-x> :quit<cr>
 " And wipeout buffer, with prompt of file modified.
 nnoremap <silent> <M-X> :bwipeout<cr>
@@ -2654,6 +2648,7 @@ endif
 " highlight Normal     ctermbg=white ctermfg=black
 " highlight NonText    ctermbg=black ctermfg=white
 " highlight EndOfBuffer ctermbg=black ctermfg=white
+hi Normal ctermfg=white
 hi LineNr ctermfg=cyan
 
 function! TerminalWinOpenCommands()
@@ -4034,11 +4029,10 @@ endfunction
 
 
 function! ColorAdapt()
-    call matchadd('MyAllText', '^.*$')
-    " hi MyAllText ctermfg=none ctermbg=black
-    hi MyAllText ctermfg=9 ctermbg=0
-    " hi MyAllText ctermfg=white ctermbg=black
-    " hi MyAllText ctermfg=white ctermbg=black
+    " call matchadd('MyAllText', '^.*$')
+    " hi MyAllText guifg=#ff0000 guibg=#000001
+    highlight Test guifg=#ff8800 guibg=#00ff00
+    syntax match Test /./
 endfunction
 nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 

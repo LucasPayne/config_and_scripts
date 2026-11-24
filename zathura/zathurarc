@@ -1,4 +1,4 @@
-#set recolor true
+set recolor true
 # Amber
 #dark
 # set recolor-darkcolor \#6B530F
@@ -36,9 +36,8 @@ set recolor-lightcolor \#000000
 # set recolor-darkcolor \#3465A4
 
 # Calibrated for keratoconus
-# set recolor-lightcolor \#2e2b00
-# set recolor-darkcolor \#c9bb91
-
+set recolor-lightcolor \#c9bb91
+set recolor-darkcolor \#2e2b00
 
 #todo: apparently not working
 # unmap normal l
@@ -54,3 +53,4 @@ set recolor-lightcolor \#000000
 
 # set recolor-darkcolor \#AB914F
 # set recolor-lightcolor \#000000
+

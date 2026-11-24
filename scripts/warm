@@ -21,13 +21,13 @@ case $n in
         xsct_number=3600
         ;;
     3)
-        xsct_number=2350
+        xsct_number=3000
         ;;
     4)
-        xsct_number=2000
+        xsct_number=2600
         ;;
     *)
-        xsct_number=2750
+        xsct_number=2400
         ;;
 esac
 

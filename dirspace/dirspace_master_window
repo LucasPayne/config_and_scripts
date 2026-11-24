@@ -9,7 +9,7 @@ message="Welcome"
 
 
 # Play a startup sound
-mpv --no-terminal --no-video --really-quiet ~/config/sounds/office_kitano.mp3 >/dev/null 2>&1 &
+# mpv --no-terminal --no-video --really-quiet ~/config/sounds/office_kitano.mp3 >/dev/null 2>&1 &
 
 if 0
 then

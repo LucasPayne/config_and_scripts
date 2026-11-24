@@ -5,8 +5,8 @@
 *~/config
     dirspace/dirspaces.txt
     dirspace/schematics/schematic.txt
+    kitty/kitty.conf
 *~/drive/dev/documentation
-    csharp/csharp.ns
 ~/drive/dev/browser
     browser.ns
 ~/drive/videos

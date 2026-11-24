@@ -26,6 +26,15 @@ then
     exit 0
 fi
 
+mime="$(mimetype -b "$f")"
+# echo "mime: $mime"
+case "$mime" in
+    image/*)
+        kitty +kitten icat --silent --stdin no --transfer-mode file --place "${width}x${height}@${horizontal_position}x${vertical_position}" "$f" < /dev/null > /dev/tty
+        exit 0
+        ;;
+esac
+
 case "$f" in
     *.tar*)
         tar tf "$f"
