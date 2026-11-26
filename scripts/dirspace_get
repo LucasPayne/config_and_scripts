@@ -87,10 +87,12 @@ do
         if [ ! -d "$expanding_path" ]
         then
             # Skip silently.
-            continue  path
+            continue
         fi
         while read -r path
         do
+            # Remove trailing / output by fd.
+            path="${path::-1}"
             if match_path "$path"
             then
                 pathlen=${#path}

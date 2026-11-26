@@ -20,6 +20,9 @@ endfunction
 " unlet! skip_defaults_vim
 " source $VIMRUNTIME/defaults.vim
 
+set runtimepath^=/usr/local/share/vim/vim92
+let $VIMRUNTIME = '/usr/local/share/vim/vim92'
+
 " I keep accidentally recording macros.
 nnoremap q <nop>
 nnoremap <C-q> q
@@ -323,7 +326,7 @@ nnoremap Y "+y
 "    syntax on
 "    ...
 "<<<
-"syntax on
+syntax on
 " Syntax off, eye problems.
 "todo: Would prefer to at least have the comment highlight group.
 "      Perhaps rather a very muted palette with comments, and possibly keywords, a different colour.
@@ -1202,7 +1205,7 @@ inoremap <M-s> <Esc>:w<cr>a
 "tnoremap <M-L> <C-w>l
 " Close window
 nnoremap <silent> <M-w><M-x> :quit<cr>
-nnoremap <silent> <M-x> :tabclose<cr>
+nnoremap <silent> <M-x> :close<cr>
 tnoremap <silent> <M-W><M-x> :quit<cr>
 " And wipeout buffer, with prompt of file modified.
 nnoremap <silent> <M-X> :bwipeout<cr>
@@ -3714,11 +3717,12 @@ for i in range(1, 9)
     execute "tnoremap <silent> <M-W>d"..i.." <C-w>:call DeleteDirspaceSlot("..i..")<cr>"
 endfor
 
-"TODO: Does double enter cause problems?
 nnoremap <M-W><M-W> :!dirspace_fzf_active<cr><cr>
 tnoremap <M-W><M-W> <C-w>:!dirspace_fzf_active<cr><cr>
 nnoremap <M-W><M-E> :!dirspace_fzf_favorites<cr><cr>
-tnoremap <M-W><M-E> <C-w>:!dirspace_fzf_favorites<cr><cr>
+tnoremap <M-W><M-R> <C-w>:!dirspace_fzf_favorites<cr><cr>
+nnoremap <M-W><M-R> :!dirspace_fzf<cr><cr>
+tnoremap <M-W><M-R> <C-w>:!dirspace_fzf<cr><cr>
 
 "------------------------------------------------------------
 " Shell prefix
@@ -3915,11 +3919,11 @@ tnoremap <silent> <M-f> <C-w>:call Lf_Search("")<cr>
 nnoremap <silent> <M-F> :call Lf_Search(getcwd(-1))<cr>
 tnoremap <silent> <M-F> <C-w>:call Lf_Search(getcwd(-1))<cr>
 
-nnoremap <silent> <M-'> :!dirspace_fzf_favorites<cr><cr>
-tnoremap <silent> <M-'> <C-w>:!dirspace_fzf_favorites<cr><cr>
-"todo: Why does this mapping not work?
-"nnoremap <silent> <M-"> :!dirspace_fzf_active<cr><cr>
-"tnoremap <silent> <M-"> <C-w>:!dirspace_fzf_active<cr><cr>
+" nnoremap <silent> <M-'> :!dirspace_fzf_favorites<cr><cr>
+" tnoremap <silent> <M-'> <C-w>:!dirspace_fzf_favorites<cr><cr>
+" "todo: Why does this mapping not work?
+" nnoremap <silent> <M-"> :!dirspace_fzf_active<cr><cr>
+" tnoremap <silent> <M-"> <C-w>:!dirspace_fzf_active<cr><cr>
 
 " Open tig with current file.
 " Note: Why does it have to redraw? Doesn't vim use alternate screen?
@@ -4027,12 +4031,11 @@ function! Tapi_passthrough(buf, path)
     call writefile(lines, "/dev/tty", "b")
 endfunction
 
-
 function! ColorAdapt()
-    " call matchadd('MyAllText', '^.*$')
-    " hi MyAllText guifg=#ff0000 guibg=#000001
-    highlight Test guifg=#ff8800 guibg=#00ff00
-    syntax match Test /./
+    call matchadd('MyAllText', '^.*$')
+    hi MyAllText ctermfg=black ctermbg=white
+    " highlight Test guifg=#ff8800 guibg=#00ff00
+    " syntax match Test /./
 endfunction
 nnoremap <M-w><M-e> :call ColorAdapt()<cr>
 

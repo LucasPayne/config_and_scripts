@@ -41,9 +41,19 @@ do
     fi
 done < <(echo "$lines")
 
-column -s $'\x1F' -t < <(
+selected="$(column -s $'\x1F' -t < <(
     for i in "${!paths[@]}"
     do
-        printf "%s\x1F%s\n" "${names[$i]}" "${paths[$i]}"
+        printf "%s\x1F--\x1F%s\n" "${names[$i]}" "${paths[$i]}"
     done
-)
+    ) | fzf)"
+
+
+if [ $? -ne 0 ]
+then
+    exit
+fi
+
+path="$(echo "$selected" | awk -F' -- ' '{print $2}' | trs)"
+
+dirspace_open "$path"
